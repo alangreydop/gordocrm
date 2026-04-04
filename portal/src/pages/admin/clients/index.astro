@@ -4,60 +4,66 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 <AdminLayout title="Clientes">
   <div class="space-y-6">
-    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">Clientes</h1>
-        <p class="text-gray-500 mt-1">Control comercial y operativo de cada cuenta: plan, dataset, capacidad y seguimiento.</p>
+    <section class="crm-page-header">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">Cuentas</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Clientes</h1>
+          <p class="crm-page-header__meta mt-4">
+            Control comercial y operativo de cada cuenta: plan, dataset,
+            capacidad, acceso al portal y seguimiento.
+          </p>
+        </div>
+        <div class="flex gap-3 md:items-end">
+          <input
+            type="search"
+            id="clients-search"
+            placeholder="Buscar por nombre, email o empresa"
+            class="crm-input w-full md:w-80"
+          />
+          <a href="/admin/clients/new" class="crm-button crm-button-primary whitespace-nowrap">
+            Nuevo cliente
+          </a>
+        </div>
       </div>
-      <div class="flex gap-3">
-        <input
-          type="search"
-          id="clients-search"
-          placeholder="Buscar por nombre, email o empresa"
-          class="w-full md:w-80 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
-        <a href="/admin/clients/new" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 whitespace-nowrap">
-          Nuevo cliente
-        </a>
-      </div>
-    </div>
+    </section>
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Clientes totales</p>
-        <p id="metric-total-clients" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Clientes totales</p>
+        <p id="metric-total-clients" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Suscripciones activas</p>
-        <p id="metric-active-clients" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Suscripciones activas</p>
+        <p id="metric-active-clients" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Con acceso al portal</p>
-        <p id="metric-portal-access" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Con acceso al portal</p>
+        <p id="metric-portal-access" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Reviews proximas</p>
-        <p id="metric-reviews" class="text-3xl font-bold mt-2">—</p>
-        <p class="text-sm text-gray-500 mt-2">Ventana de 14 dias</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Reviews proximas</p>
+        <p id="metric-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p class="mt-2 text-sm text-slate-400">Ventana de 14 dias</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="crm-table-wrap">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
+        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Cliente</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Operacion</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Pipeline</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Seguimiento</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Portal</th>
+              <th class="px-6 py-3 text-left">Cliente</th>
+              <th class="px-6 py-3 text-left">Operacion</th>
+              <th class="px-6 py-3 text-left">Pipeline</th>
+              <th class="px-6 py-3 text-left">Seguimiento</th>
+              <th class="px-6 py-3 text-left">Portal</th>
               <th class="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody id="clients-body" class="divide-y divide-gray-200">
             <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-gray-500">Cargando clientes...</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-400">Cargando clientes...</td>
             </tr>
           </tbody>
         </table>
@@ -133,7 +139,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-gray-500">No hay clientes para ese filtro.</td>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-400">No hay clientes para ese filtro.</td>
             </tr>
           `;
           return;
@@ -142,16 +148,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         tbody.innerHTML = filtered.map((client) => `
           <tr class="hover:bg-gray-50 align-top">
             <td class="px-6 py-4">
-              <p class="font-medium text-gray-900">${escapeHtml(client.name)}</p>
+              <p class="font-medium text-white">${escapeHtml(client.name)}</p>
               <p class="text-gray-500 mt-1">${escapeHtml(client.email)}</p>
               <p class="text-xs text-gray-500 mt-2">${escapeHtml(client.company ?? 'Sin empresa')}</p>
             </td>
             <td class="px-6 py-4">
               <div class="flex flex-wrap gap-2">
-                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}">
                   ${escapeHtml(client.subscriptionStatus ?? 'inactive')}
                 </span>
-                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${datasetStatusClass(client.datasetStatus ?? '')}">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${datasetStatusClass(client.datasetStatus ?? '')}">
                   dataset ${escapeHtml(client.datasetStatus ?? 'pending_capture')}
                 </span>
               </div>
@@ -173,17 +179,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               ${
                 client.userId
                   ? `
-                    <span class="inline-flex px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">activo</span>
+                    <span class="inline-flex rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-100">activo</span>
                     <p class="text-xs text-gray-500 mt-2">Acceso listo</p>
                   `
                   : `
-                    <span class="inline-flex px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-900">pendiente</span>
+                    <span class="inline-flex rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-100">pendiente</span>
                     <p class="text-xs text-gray-500 mt-2">Sin acceso portal</p>
                   `
               }
             </td>
             <td class="px-6 py-4 text-right">
-              <a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="text-blue-600 hover:text-blue-800 font-medium">
+              <a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="font-medium text-sky-200 transition hover:text-white">
                 Abrir
               </a>
             </td>
@@ -199,7 +205,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-red-600">No se pudieron cargar los clientes.</td>
+              <td colspan="6" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los clientes.</td>
             </tr>
           `;
         }

@@ -28,16 +28,22 @@ const marginOptions = [
 
 <AdminLayout title="Nuevo cliente">
   <div class="max-w-5xl space-y-6">
-    <div>
-      <h1 class="text-2xl font-bold">Nuevo cliente</h1>
-      <p class="text-gray-500 mt-1">Crea la ficha comercial, operativa y de acceso al portal en un solo paso.</p>
-    </div>
+    <section class="crm-page-header">
+      <p class="crm-kicker">Nueva cuenta</p>
+      <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Nuevo cliente</h1>
+      <p class="crm-page-header__meta mt-4">
+        Crea la ficha comercial, operativa y de acceso al portal en un solo paso.
+      </p>
+    </section>
 
     <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 text-sm"></div>
 
     <form id="client-form" class="space-y-6">
-      <section class="bg-white rounded-lg shadow p-6 space-y-4">
-        <h2 class="text-lg font-semibold">Identidad</h2>
+      <section class="crm-form-section space-y-4">
+        <div class="crm-form-section__header">
+          <h2 class="crm-form-section__title">Identidad</h2>
+          <p class="crm-form-section__text">Base de contacto y ownership operativo de la cuenta.</p>
+        </div>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
@@ -62,8 +68,11 @@ const marginOptions = [
         </div>
       </section>
 
-      <section class="bg-white rounded-lg shadow p-6 space-y-4">
-        <h2 class="text-lg font-semibold">Plan y operativa</h2>
+      <section class="crm-form-section space-y-4">
+        <div class="crm-form-section__header">
+          <h2 class="crm-form-section__title">Plan y operativa</h2>
+          <p class="crm-form-section__text">Configuracion comercial, capacidad y proximas revisiones.</p>
+        </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div>
             <label for="plan" class="block text-sm font-medium text-gray-700 mb-1">Plan</label>
@@ -123,10 +132,10 @@ const marginOptions = [
         </div>
       </section>
 
-      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+      <section class="crm-form-section space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Acceso al portal</h2>
-          <p class="text-sm text-gray-500 mt-1">Si defines una contraseña ahora, el cliente sale ya con acceso habilitado.</p>
+          <h2 class="crm-form-section__title">Acceso al portal</h2>
+          <p class="crm-form-section__text">Si defines una contrasena ahora, el cliente sale ya con acceso habilitado.</p>
         </div>
         <div class="max-w-md">
           <label for="portalPassword" class="block text-sm font-medium text-gray-700 mb-1">Contraseña inicial</label>
@@ -136,10 +145,10 @@ const marginOptions = [
       </section>
 
       <div class="flex gap-3">
-        <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
+        <button type="submit" class="crm-button crm-button-primary">
           Crear cliente
         </button>
-        <a href="/admin/clients" class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
+        <a href="/admin/clients" class="crm-button crm-button-secondary">
           Cancelar
         </a>
       </div>

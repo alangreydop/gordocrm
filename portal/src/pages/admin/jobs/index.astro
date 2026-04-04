@@ -4,61 +4,67 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 <AdminLayout title="Trabajos">
   <div class="space-y-6">
-    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">Trabajos</h1>
-        <p class="text-gray-500 mt-1">Vista de produccion con deadline, stack, consumo, margen y urgencia.</p>
+    <section class="crm-page-header">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">Produccion</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Trabajos</h1>
+          <p class="crm-page-header__meta mt-4">
+            Vista de produccion con deadline, stack, consumo, margen y urgencia
+            para priorizar bien antes de entrar al detalle.
+          </p>
+        </div>
+        <div class="flex gap-3 md:items-end">
+          <input
+            type="search"
+            id="jobs-search"
+            placeholder="Buscar por cliente, brief, lane o plataforma"
+            class="crm-input w-full md:w-80"
+          />
+          <a href="/admin/jobs/new" class="crm-button crm-button-primary whitespace-nowrap">
+            Nuevo trabajo
+          </a>
+        </div>
       </div>
-      <div class="flex gap-3">
-        <input
-          type="search"
-          id="jobs-search"
-          placeholder="Buscar por cliente, brief, lane o plataforma"
-          class="w-full md:w-80 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
-        <a href="/admin/jobs/new" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 whitespace-nowrap">
-          Nuevo trabajo
-        </a>
-      </div>
-    </div>
+    </section>
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Trabajos activos</p>
-        <p id="metric-active-jobs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Trabajos activos</p>
+        <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Urgentes</p>
-        <p id="metric-urgent-jobs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Urgentes</p>
+        <p id="metric-urgent-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Margen bajo</p>
-        <p id="metric-low-margin" class="text-3xl font-bold mt-2">—</p>
-        <p class="text-sm text-gray-500 mt-2">&lt; 65%</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Margen bajo</p>
+        <p id="metric-low-margin" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p class="mt-2 text-sm text-slate-400">&lt; 65%</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Due en 7 dias</p>
-        <p id="metric-due-soon" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Due en 7 dias</p>
+        <p id="metric-due-soon" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="crm-table-wrap">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
+        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Cliente</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Brief</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Due</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Operacion</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Margen</th>
+              <th class="px-6 py-3 text-left">Cliente</th>
+              <th class="px-6 py-3 text-left">Brief</th>
+              <th class="px-6 py-3 text-left">Estado</th>
+              <th class="px-6 py-3 text-left">Due</th>
+              <th class="px-6 py-3 text-left">Operacion</th>
+              <th class="px-6 py-3 text-left">Margen</th>
               <th class="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody id="jobs-body" class="divide-y divide-gray-200">
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
+              <td colspan="7" class="px-6 py-8 text-center text-slate-400">Cargando trabajos...</td>
             </tr>
           </tbody>
         </table>
@@ -139,7 +145,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay trabajos para ese filtro.</td>
+              <td colspan="7" class="px-6 py-8 text-center text-slate-400">No hay trabajos para ese filtro.</td>
             </tr>
           `;
           return;
@@ -148,25 +154,25 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         tbody.innerHTML = filtered.map((job) => `
           <tr class="hover:bg-gray-50 align-top">
             <td class="px-6 py-4">
-              <p class="font-medium text-gray-900">${escapeHtml(job.clientName ?? '—')}</p>
+              <p class="font-medium text-white">${escapeHtml(job.clientName ?? '—')}</p>
               <p class="text-xs text-gray-500 mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
             </td>
             <td class="px-6 py-4">
-              <p class="font-medium text-gray-900 max-w-xs">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+              <p class="font-medium text-white max-w-xs">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
               <p class="text-xs text-gray-500 mt-1">Benchmark ${escapeHtml(job.benchmarkLevel ?? '—')}</p>
             </td>
             <td class="px-6 py-4">
-              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
                 ${escapeHtml(job.status ?? 'pending')}
               </span>
             </td>
             <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.dueAt))}</td>
             <td class="px-6 py-4 text-gray-600">
               <div class="flex flex-wrap gap-2">
-                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${turnaroundClass(job.turnaround ?? 'normal')}">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${turnaroundClass(job.turnaround ?? 'normal')}">
                   ${escapeHtml(job.turnaround ?? 'normal')}
                 </span>
-                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}">
                   lane ${escapeHtml(job.stackLane ?? '—')}
                 </span>
               </div>
@@ -174,7 +180,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             </td>
             <td class="px-6 py-4 text-gray-600">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
             <td class="px-6 py-4 text-right">
-              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800 font-medium">
+              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-sky-200 transition hover:text-white">
                 Abrir
               </a>
             </td>
@@ -190,7 +196,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-red-600">No se pudieron cargar los trabajos.</td>
+              <td colspan="7" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los trabajos.</td>
             </tr>
           `;
         }
