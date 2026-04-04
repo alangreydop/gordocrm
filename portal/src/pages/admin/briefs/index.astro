@@ -4,55 +4,62 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 <AdminLayout title="Briefs">
   <div class="space-y-6">
-    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">Briefs</h1>
-        <p class="text-gray-500 mt-1">Inbox operativo de contexto entrante desde la web publica y futuras capas de intake.</p>
+    <section class="crm-panel-strong p-6 md:p-8">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">Inbox de contexto</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Briefs</h1>
+          <p class="mt-4 max-w-3xl text-sm leading-relaxed text-slate-300 md:text-base">
+            Bandeja operativa para el contexto que entra desde la web publica y para las
+            siguientes capas de intake del sistema.
+          </p>
+        </div>
+        <div class="w-full md:w-80">
+          <label for="briefs-search" class="mb-2 block text-sm font-medium text-slate-200">Buscar</label>
+          <input
+            type="search"
+            id="briefs-search"
+            placeholder="Cliente, email o contenido"
+            class="crm-input"
+          />
+        </div>
       </div>
-      <div class="flex gap-3">
-        <input
-          type="search"
-          id="briefs-search"
-          placeholder="Buscar por cliente, email o contenido"
-          class="w-full md:w-80 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-        />
-      </div>
-    </div>
+    </section>
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Briefs totales</p>
-        <p id="metric-total-briefs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-panel p-5">
+        <p class="crm-kicker">Briefs totales</p>
+        <p id="metric-total-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Nuevos</p>
-        <p id="metric-new-briefs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-panel p-5">
+        <p class="crm-kicker">Nuevos</p>
+        <p id="metric-new-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Revisados</p>
-        <p id="metric-reviewed-briefs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-panel p-5">
+        <p class="crm-kicker">Revisados</p>
+        <p id="metric-reviewed-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-sm text-gray-500">Sin cliente enlazado</p>
-        <p id="metric-unlinked-briefs" class="text-3xl font-bold mt-2">—</p>
+      <div class="crm-panel p-5">
+        <p class="crm-kicker">Sin cliente enlazado</p>
+        <p id="metric-unlinked-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="crm-table-wrap">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-          <thead class="bg-gray-50">
+        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Cliente</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Entrada</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Resumen</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
-              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Acciones</th>
+              <th class="px-6 py-3 text-left">Cliente</th>
+              <th class="px-6 py-3 text-left">Entrada</th>
+              <th class="px-6 py-3 text-left">Resumen</th>
+              <th class="px-6 py-3 text-left">Estado</th>
+              <th class="px-6 py-3 text-left">Acciones</th>
             </tr>
           </thead>
           <tbody id="briefs-body" class="divide-y divide-gray-200">
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando briefs...</td>
+              <td colspan="5" class="px-6 py-8 text-center text-slate-400">Cargando briefs...</td>
             </tr>
           </tbody>
         </table>
@@ -80,10 +87,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
       const briefStatusClass = (status) => (
         {
-          new: 'bg-amber-100 text-amber-800',
-          reviewed: 'bg-green-100 text-green-800',
-          archived: 'bg-gray-100 text-gray-600',
-        }[status] ?? 'bg-gray-100 text-gray-600'
+          new: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
+          reviewed: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+          archived: 'border border-white/10 bg-white/5 text-slate-200',
+        }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
       );
 
       const excerpt = (value) => {
@@ -138,7 +145,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay briefs para ese filtro.</td>
+              <td colspan="5" class="px-6 py-8 text-center text-slate-400">No hay briefs para ese filtro.</td>
             </tr>
           `;
           return;
@@ -160,27 +167,27 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               <p class="max-w-xl leading-relaxed">${escapeHtml(excerpt(brief.description))}</p>
               ${
                 brief.sourcePage
-                  ? `<a href="${escapeHtml(brief.sourcePage)}" target="_blank" rel="noreferrer" class="inline-flex mt-3 text-xs text-blue-600 hover:text-blue-800">Abrir origen</a>`
+                  ? `<a href="${escapeHtml(brief.sourcePage)}" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-medium text-sky-200 transition hover:text-white">Abrir origen</a>`
                   : ''
               }
             </td>
             <td class="px-6 py-4">
-              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${briefStatusClass(brief.status)}">
+              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${briefStatusClass(brief.status)}">
                 ${escapeHtml(brief.status ?? 'new')}
               </span>
             </td>
             <td class="px-6 py-4">
               <div class="flex flex-col gap-2 items-start">
-                <button data-brief-id="${escapeHtml(brief.id)}" data-status="reviewed" class="rounded-md bg-gray-900 px-3 py-2 text-xs font-medium text-white hover:bg-gray-800">
+                <button data-brief-id="${escapeHtml(brief.id)}" data-status="reviewed" class="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-semibold text-slate-950 transition hover:-translate-y-0.5">
                   Marcar revisado
                 </button>
-                <button data-brief-id="${escapeHtml(brief.id)}" data-status="archived" class="rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:border-gray-400 hover:text-gray-900">
+                <button data-brief-id="${escapeHtml(brief.id)}" data-status="archived" class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/8">
                   Archivar
                 </button>
                 ${
                   brief.clientId
-                    ? `<a href="/admin/clients/detail?id=${encodeURIComponent(brief.clientId)}" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Abrir cliente</a>`
-                    : '<span class="text-xs text-amber-700">Pendiente de enlazar</span>'
+                    ? `<a href="/admin/clients/detail?id=${encodeURIComponent(brief.clientId)}" class="text-xs font-medium text-sky-200 transition hover:text-white">Abrir cliente</a>`
+                    : '<span class="text-xs text-amber-100">Pendiente de enlazar</span>'
                 }
               </div>
             </td>
@@ -196,7 +203,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-red-600">No se pudieron cargar los briefs.</td>
+              <td colspan="5" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los briefs.</td>
             </tr>
           `;
         }

@@ -1,1 +1,330 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --crm-bg: #05070b;
+  --crm-bg-elevated: #0b1018;
+  --crm-panel: rgba(9, 14, 22, 0.84);
+  --crm-panel-strong: rgba(12, 18, 28, 0.94);
+  --crm-panel-soft: rgba(255, 255, 255, 0.035);
+  --crm-border: rgba(255, 255, 255, 0.09);
+  --crm-border-strong: rgba(255, 255, 255, 0.15);
+  --crm-text: #f7f8fb;
+  --crm-muted: #a0abbd;
+  --crm-subtle: #7c889a;
+  --crm-accent: #6e47a4;
+  --crm-accent-2: #7a9fff;
+  --crm-accent-soft: rgba(110, 71, 164, 0.16);
+  --crm-success: #39d98a;
+  --crm-warning: #f2b24c;
+  --crm-danger: #f26d7d;
+  --crm-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body.crm-body {
+  font-family: 'Satoshi', 'Avenir Next', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(110, 71, 164, 0.18), transparent 30%),
+    radial-gradient(circle at 82% 12%, rgba(122, 159, 255, 0.14), transparent 24%),
+    linear-gradient(180deg, #05070b 0%, #060910 42%, #0a0f18 100%);
+  color: var(--crm-text);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(122, 159, 255, 0.28);
+  color: #ffffff;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.crm-shell {
+  position: relative;
+  min-height: 100vh;
+}
+
+.crm-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(110, 71, 164, 0.12), transparent 24%),
+    radial-gradient(circle at 78% 0%, rgba(122, 159, 255, 0.08), transparent 18%);
+  opacity: 0.9;
+}
+
+.crm-sidebar {
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(24px);
+  background: linear-gradient(180deg, rgba(8, 11, 18, 0.94), rgba(5, 7, 13, 0.98));
+  border-right: 1px solid var(--crm-border);
+}
+
+.crm-sidebar--client {
+  background: linear-gradient(180deg, rgba(14, 19, 31, 0.94), rgba(6, 9, 16, 0.98));
+}
+
+.crm-main {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  padding: 1.25rem;
+}
+
+.crm-main::after {
+  content: "";
+  position: absolute;
+  inset: 1rem 1rem auto;
+  height: 16rem;
+  border-radius: 2rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.crm-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--crm-subtle);
+}
+
+.crm-panel {
+  border: 1px solid var(--crm-border);
+  border-radius: 1.5rem;
+  background: var(--crm-panel);
+  box-shadow: var(--crm-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.crm-panel-strong {
+  border: 1px solid var(--crm-border-strong);
+  border-radius: 1.75rem;
+  background: var(--crm-panel-strong);
+  box-shadow: var(--crm-shadow);
+  backdrop-filter: blur(22px);
+}
+
+.crm-panel-soft {
+  border: 1px solid var(--crm-border);
+  border-radius: 1.25rem;
+  background: var(--crm-panel-soft);
+}
+
+.crm-link-tile {
+  display: block;
+  border: 1px solid var(--crm-border);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 1.05rem 1.1rem;
+}
+
+.crm-input {
+  width: 100%;
+  border: 1px solid var(--crm-border);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--crm-text);
+  padding: 0.8rem 1rem;
+}
+
+.crm-input::placeholder {
+  color: color-mix(in srgb, var(--crm-muted) 88%, transparent);
+}
+
+.crm-input:focus {
+  outline: none;
+  border-color: rgba(122, 159, 255, 0.46);
+  box-shadow: 0 0 0 4px rgba(122, 159, 255, 0.12);
+}
+
+.crm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.crm-button-primary {
+  background: linear-gradient(135deg, var(--crm-accent), var(--crm-accent-2));
+  color: #ffffff;
+  box-shadow: 0 14px 40px rgba(110, 71, 164, 0.24);
+}
+
+.crm-button-primary:hover,
+.crm-button-primary:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 46px rgba(110, 71, 164, 0.34);
+}
+
+.crm-button-secondary {
+  border: 1px solid var(--crm-border-strong);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--crm-text);
+}
+
+.crm-button-secondary:hover,
+.crm-button-secondary:focus {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.crm-table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--crm-border);
+  border-radius: 1.5rem;
+  background: var(--crm-panel);
+  box-shadow: var(--crm-shadow);
+}
+
+.crm-table thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.crm-table th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--crm-subtle);
+}
+
+.crm-table tr {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.crm-table tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.crm-empty {
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 1.35rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2rem;
+  text-align: center;
+  color: var(--crm-muted);
+}
+
+.crm-main .bg-white.rounded-lg.shadow,
+.crm-main section.bg-white.rounded-lg.shadow,
+.crm-main div.bg-white.rounded-lg.shadow {
+  background: var(--crm-panel);
+  border: 1px solid var(--crm-border);
+  border-radius: 1.5rem;
+  box-shadow: var(--crm-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.crm-main .rounded-lg.bg-gray-50,
+.crm-main .bg-gray-50.rounded-lg,
+.crm-main div.rounded-lg.bg-gray-50 {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--crm-border);
+}
+
+.crm-main .bg-gray-50 {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.crm-main .bg-blue-50 {
+  background: rgba(122, 159, 255, 0.08) !important;
+  border: 1px solid rgba(122, 159, 255, 0.18);
+}
+
+.crm-main .bg-gray-100 {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.crm-main .bg-gray-900 {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.crm-main .border-gray-200,
+.crm-main .border-gray-300,
+.crm-main .border-gray-800 {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+.crm-main .divide-gray-200 > :not([hidden]) ~ :not([hidden]),
+.crm-main .divide-gray-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.crm-main .text-gray-500,
+.crm-main .text-gray-600,
+.crm-main .text-gray-700 {
+  color: var(--crm-muted) !important;
+}
+
+.crm-main .text-gray-900 {
+  color: var(--crm-text) !important;
+}
+
+.crm-main .hover\:bg-gray-50:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.crm-main .hover\:bg-gray-800:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.crm-main .bg-blue-900 {
+  background: linear-gradient(135deg, var(--crm-accent), var(--crm-accent-2)) !important;
+  color: #ffffff !important;
+}
+
+.crm-main .hover\:bg-blue-800:hover {
+  filter: brightness(1.06);
+}
+
+.crm-main .hover\:border-gray-300:hover,
+.crm-main .hover\:border-gray-400:hover {
+  border-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+.crm-main .shadow {
+  box-shadow: var(--crm-shadow) !important;
+}
+
+@media (max-width: 1023px) {
+  .crm-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--crm-border);
+  }
+}
+
+@media (min-width: 768px) {
+  .crm-main {
+    padding: 2rem;
+  }
+}

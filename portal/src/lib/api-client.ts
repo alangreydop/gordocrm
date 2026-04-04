@@ -195,63 +195,63 @@ export function getQueryParam(name: string): string | null {
 export function jobStatusClass(status: string): string {
   return (
     {
-      pending: 'bg-yellow-100 text-yellow-800',
-      processing: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
-      failed: 'bg-red-100 text-red-800',
-      delivered: 'bg-purple-100 text-purple-800',
-    }[status] ?? 'bg-gray-100 text-gray-600'
+      pending: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
+      processing: 'border border-sky-300/20 bg-sky-400/10 text-sky-100',
+      completed: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+      failed: 'border border-rose-300/20 bg-rose-400/10 text-rose-100',
+      delivered: 'border border-fuchsia-300/20 bg-fuchsia-400/10 text-fuchsia-100',
+    }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
 
 export function subscriptionClass(status: string): string {
   return (
     {
-      active: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      inactive: 'bg-gray-100 text-gray-600',
-    }[status] ?? 'bg-gray-100 text-gray-600'
+      active: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+      cancelled: 'border border-rose-300/20 bg-rose-400/10 text-rose-100',
+      inactive: 'border border-white/10 bg-white/5 text-slate-200',
+    }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
 
 export function datasetStatusClass(status: string): string {
   return (
     {
-      pending_capture: 'bg-orange-100 text-orange-800',
-      captured: 'bg-sky-100 text-sky-800',
-      trained: 'bg-indigo-100 text-indigo-800',
-      active: 'bg-green-100 text-green-800',
-      archived: 'bg-gray-100 text-gray-600',
-    }[status] ?? 'bg-gray-100 text-gray-600'
+      pending_capture: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
+      captured: 'border border-sky-300/20 bg-sky-400/10 text-sky-100',
+      trained: 'border border-indigo-300/20 bg-indigo-400/10 text-indigo-100',
+      active: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+      archived: 'border border-white/10 bg-white/5 text-slate-200',
+    }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
 
 export function stackLaneClass(lane: string): string {
   return (
     {
-      A: 'bg-emerald-100 text-emerald-800',
-      B: 'bg-blue-100 text-blue-800',
-      C: 'bg-fuchsia-100 text-fuchsia-800',
-      D: 'bg-amber-100 text-amber-900',
-    }[lane] ?? 'bg-gray-100 text-gray-600'
+      A: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+      B: 'border border-sky-300/20 bg-sky-400/10 text-sky-100',
+      C: 'border border-fuchsia-300/20 bg-fuchsia-400/10 text-fuchsia-100',
+      D: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
+    }[lane] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
 
 export function qaStatusClass(status: string): string {
   return (
     {
-      approved: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800',
-      pending: 'bg-amber-100 text-amber-900',
-    }[status] ?? 'bg-gray-100 text-gray-600'
+      approved: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
+      rejected: 'border border-rose-300/20 bg-rose-400/10 text-rose-100',
+      pending: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
+    }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
 
 export function turnaroundClass(turnaround: string): string {
   return (
     {
-      urgente: 'bg-red-100 text-red-800',
-      normal: 'bg-gray-100 text-gray-600',
-    }[turnaround] ?? 'bg-gray-100 text-gray-600'
+      urgente: 'border border-rose-300/20 bg-rose-400/10 text-rose-100',
+      normal: 'border border-white/10 bg-white/5 text-slate-200',
+    }[turnaround] ?? 'border border-white/10 bg-white/5 text-slate-200'
   );
 }
