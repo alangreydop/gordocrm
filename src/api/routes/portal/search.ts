@@ -1,4 +1,4 @@
-import { like, or, sql } from 'drizzle-orm';
+import { desc, eq, like, or, sql } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { schema } from '../../../../db/index.js';
 import { requireAdmin } from '../../../lib/auth.js';
@@ -18,7 +18,7 @@ searchRoutes.get('/', async (c) => {
   const db = c.get('db');
   const pattern = `%${q}%`;
 
-  const [clients, jobs] = await Promise.all([
+  const [clients, jobs, briefs] = await Promise.all([
     db
       .select({
         id: schema.clients.id,
@@ -31,6 +31,7 @@ searchRoutes.get('/', async (c) => {
         or(
           like(schema.clients.name, pattern),
           like(schema.clients.company, pattern),
+          like(schema.clients.email, pattern),
         ),
       )
       .limit(5),
@@ -45,7 +46,26 @@ searchRoutes.get('/', async (c) => {
       .from(schema.jobs)
       .where(like(schema.jobs.briefText, pattern))
       .limit(5),
+    db
+      .select({
+        id: schema.briefSubmissions.id,
+        email: schema.briefSubmissions.email,
+        tipo: schema.briefSubmissions.contentType,
+        status: schema.briefSubmissions.status,
+        clientId: schema.briefSubmissions.clientId,
+        clientName: schema.clients.name,
+      })
+      .from(schema.briefSubmissions)
+      .leftJoin(schema.clients, eq(schema.clients.id, schema.briefSubmissions.clientId))
+      .where(
+        or(
+          like(schema.briefSubmissions.email, pattern),
+          like(schema.briefSubmissions.description, pattern),
+        ),
+      )
+      .orderBy(desc(schema.briefSubmissions.createdAt))
+      .limit(5),
   ]);
 
-  return c.json({ clients, jobs });
+  return c.json({ clients, jobs, briefs });
 });

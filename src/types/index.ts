@@ -32,6 +32,8 @@ export type BenchmarkLevel = 'L0' | 'L1' | 'L2' | 'L3';
 export type StackLane = 'A' | 'B' | 'C' | 'D';
 export type AssetType = 'image' | 'video';
 export type AssetQaStatus = 'pending' | 'approved' | 'rejected';
+export type BriefContentType = 'foto' | 'video' | 'ambos';
+export type BriefStatus = 'new' | 'reviewed' | 'archived';
 
 export interface AuthUser {
   id: string;

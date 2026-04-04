@@ -1,5 +1,6 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
+import { siteLinks } from '../../lib/site-links';
 ---
 
 <ClientLayout title="Perfil">
@@ -86,20 +87,47 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         </div>
       </div>
     </section>
+
+    <section class="bg-white rounded-lg shadow p-6">
+      <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 class="text-lg font-semibold">Ultimo brief recibido</h2>
+          <p id="profile-brief-meta" class="text-sm text-gray-500 mt-2">
+            Aun no tenemos un brief reciente asociado a tu cuenta.
+          </p>
+          <p id="profile-brief-description" class="text-sm text-gray-700 mt-3 leading-relaxed">
+            Si quieres actualizar contexto, referencias o necesidades, puedes hacerlo desde la web y quedará conectado con tu operativa del CRM.
+          </p>
+        </div>
+        <a
+          href={siteLinks.brief}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex items-center justify-center rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800"
+        >
+          Actualizar brief
+        </a>
+      </div>
+    </section>
   </div>
 
   <script>
     (async () => {
       const {
+        api,
         API_BASE,
         formatDate,
         formatNumber,
         getSessionContext,
       } = await import('../../lib/api-client');
 
-      const session = await getSessionContext();
+      const [session, briefData] = await Promise.all([
+        getSessionContext(),
+        api('/api/portal/briefs/latest').catch(() => ({ brief: null })),
+      ]);
       const user = session?.user;
       const client = session?.client;
+      const latestBrief = briefData?.brief ?? null;
 
       const setText = (id, value) => {
         const element = document.getElementById(id);
@@ -121,6 +149,21 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         setText('profile-next-review', formatDate(client.nextReviewAt));
         setText('profile-last-contact', formatDate(client.lastContactedAt));
         setText('profile-notes', client.notes ?? 'Sin notas compartidas por ahora.');
+      }
+
+      const profileBriefMeta = document.getElementById('profile-brief-meta');
+      const profileBriefDescription = document.getElementById('profile-brief-description');
+      if (latestBrief) {
+        if (profileBriefMeta) {
+          profileBriefMeta.textContent =
+            `${latestBrief.tipo ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)} · estado ${latestBrief.status ?? 'new'}`;
+        }
+
+        if (profileBriefDescription) {
+          const excerpt = String(latestBrief.description ?? '').trim();
+          profileBriefDescription.textContent =
+            excerpt.length > 280 ? `${excerpt.slice(0, 277)}...` : excerpt || 'Brief recibido correctamente.';
+        }
       }
 
       const form = document.getElementById('password-form');

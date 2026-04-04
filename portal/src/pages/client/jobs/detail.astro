@@ -1,5 +1,6 @@
 ---
 import ClientLayout from '../../../layouts/ClientLayout.astro';
+import { siteLinks } from '../../../lib/site-links';
 ---
 
 <ClientLayout title="Detalle trabajo">
@@ -49,10 +50,21 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         </div>
 
         <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-lg font-semibold">Soporte</h2>
+          <h2 class="text-lg font-semibold">Soporte y contexto</h2>
           <div class="mt-4 space-y-3 text-sm text-gray-600">
             <p><span class="font-medium text-gray-900">Contacto:</span> hola@grandeandgordo.com</p>
             <p><span class="font-medium text-gray-900">Si necesitas algo urgente:</span> responde por email indicando el trabajo y el objetivo del cambio.</p>
+          </div>
+          <div class="mt-5 grid gap-3">
+            <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:text-gray-900">
+              Actualizar brief
+            </a>
+            <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:text-gray-900">
+              Ver onboarding
+            </a>
+            <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:text-gray-900">
+              Abrir centro de cliente
+            </a>
           </div>
         </div>
       </section>

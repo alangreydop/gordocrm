@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { siteLinks } from '../lib/site-links';
 
 interface Props {
   title: string;
@@ -43,9 +44,26 @@ const navItems = [
           );
         })}
       </nav>
+      <div class="mt-8 rounded-2xl border border-blue-900 bg-blue-900/40 p-4">
+        <p class="text-xs uppercase tracking-[0.22em] text-blue-300/70">Recursos</p>
+        <div class="mt-3 space-y-2 text-sm">
+          <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="block text-blue-100 transition hover:text-white">
+            Centro de cliente
+          </a>
+          <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="block text-blue-100 transition hover:text-white">
+            Brief de proyecto
+          </a>
+          <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="block text-blue-100 transition hover:text-white">
+            Onboarding
+          </a>
+          <a href={siteLinks.home} target="_blank" rel="noreferrer" class="block text-blue-100 transition hover:text-white">
+            Web publica
+          </a>
+        </div>
+      </div>
       <div class="mt-auto pt-8 border-t border-blue-900 mt-8">
         <p class="text-xs uppercase tracking-[0.2em] text-blue-300/70">Soporte</p>
-        <p class="text-sm text-blue-100 mt-2">hola@grandeandgordo.com</p>
+        <p class="text-sm text-blue-100 mt-2">{siteLinks.supportEmail}</p>
         <p id="sidebar-user-name" class="text-sm text-blue-200">Cargando...</p>
         <p id="sidebar-user-email" class="text-xs text-blue-300"></p>
         <button type="button" id="logout-button" class="text-sm text-blue-200 hover:text-white mt-2 cursor-pointer">

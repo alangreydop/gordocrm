@@ -1,5 +1,6 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
+import { siteLinks } from '../../lib/site-links';
 ---
 
 <ClientLayout title="Resumen">
@@ -35,6 +36,70 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
       </div>
     </div>
 
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-[0.24em] text-gray-500">Siguiente paso</p>
+            <h2 id="next-step-title" class="text-xl font-semibold mt-2">Estamos preparando tu siguiente mejor movimiento.</h2>
+            <p id="next-step-description" class="text-sm text-gray-500 mt-3 max-w-2xl">
+              Vamos a usar tu estado de cuenta y el momento del proyecto para recomendarte la accion mas util ahora mismo.
+            </p>
+          </div>
+          <span id="next-step-badge" class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+            Journey conectado
+          </span>
+        </div>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a
+            id="next-step-link"
+            href={siteLinks.brief}
+            target="_blank"
+            rel="noreferrer"
+            class="inline-flex items-center justify-center rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800"
+          >
+            Abrir siguiente paso
+          </a>
+          <a
+            href={siteLinks.portalHub}
+            target="_blank"
+            rel="noreferrer"
+            class="inline-flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:text-gray-900"
+          >
+            Ver centro de cliente
+          </a>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6">
+        <p class="text-xs uppercase tracking-[0.24em] text-gray-500">Web + CRM</p>
+        <h2 class="text-xl font-semibold mt-2">Todo el journey, conectado</h2>
+        <div class="mt-5 rounded-lg bg-gray-50 p-4">
+          <p class="text-xs uppercase tracking-[0.22em] text-gray-500">Ultimo brief recibido</p>
+          <p id="latest-brief-meta" class="mt-2 text-sm font-medium text-gray-900">
+            Aun no tenemos un brief reciente en tu cuenta.
+          </p>
+          <p id="latest-brief-description" class="mt-2 text-sm leading-relaxed text-gray-500">
+            Si cambian objetivos, referencias o necesidades, actualiza el brief desde la web y quedará conectado con tu operativa del CRM.
+          </p>
+        </div>
+        <div class="mt-5 grid gap-3">
+          <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="rounded-lg border border-gray-200 p-4 transition hover:border-gray-300 hover:bg-gray-50">
+            <p class="font-medium text-gray-900">Brief de proyecto</p>
+            <p class="text-sm text-gray-500 mt-1">Comparte referencias, producto, tono y necesidades nuevas.</p>
+          </a>
+          <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="rounded-lg border border-gray-200 p-4 transition hover:border-gray-300 hover:bg-gray-50">
+            <p class="font-medium text-gray-900">Onboarding y checklist</p>
+            <p class="text-sm text-gray-500 mt-1">Revisa preparacion de sesion, materiales y preguntas frecuentes.</p>
+          </a>
+          <a href={siteLinks.home} target="_blank" rel="noreferrer" class="rounded-lg border border-gray-200 p-4 transition hover:border-gray-300 hover:bg-gray-50">
+            <p class="font-medium text-gray-900">Web publica</p>
+            <p class="text-sm text-gray-500 mt-1">Servicios, pricing y referencias de Grande&Gordo cuando necesites contexto mas amplio.</p>
+          </a>
+        </div>
+      </section>
+    </div>
+
     <div class="bg-white rounded-lg shadow overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-200">
         <h2 class="text-lg font-semibold">Tus trabajos</h2>
@@ -62,7 +127,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
   </div>
 
-  <script>
+  <script define:vars={{ briefUrl: siteLinks.brief, onboardingUrl: siteLinks.onboarding, portalHubUrl: siteLinks.portalHub }}>
     (async () => {
       const {
         api,
@@ -76,6 +141,59 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
       } = await import('../../lib/api-client');
 
       const tbody = document.getElementById('jobs-body');
+      const nextStepTitle = document.getElementById('next-step-title');
+      const nextStepDescription = document.getElementById('next-step-description');
+      const nextStepBadge = document.getElementById('next-step-badge');
+      const nextStepLink = document.getElementById('next-step-link');
+      const latestBriefMeta = document.getElementById('latest-brief-meta');
+      const latestBriefDescription = document.getElementById('latest-brief-description');
+
+      const nextStepForClient = (client, jobs) => {
+        const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
+        const datasetStatus = client?.datasetStatus ?? 'pending_capture';
+
+        if (datasetStatus === 'pending_capture') {
+          return {
+            badge: 'Preparacion',
+            title: 'Completa el brief para acelerar la sesion.',
+            description:
+              'Todavia estamos en fase de captura inicial. Cuanto mejor contexto nos dejes en la web, mejor saldra la preparacion del proyecto y la primera sesion.',
+            href: briefUrl,
+            label: 'Completar brief',
+          };
+        }
+
+        if (datasetStatus === 'captured') {
+          return {
+            badge: 'Activacion',
+            title: 'Revisa el onboarding mientras activamos tu sistema visual.',
+            description:
+              'Tu captura ya esta hecha. Este es el mejor momento para revisar checklist, expectativas y siguientes pasos del proceso.',
+            href: onboardingUrl,
+            label: 'Abrir onboarding',
+          };
+        }
+
+        if (activeJobs.length === 0) {
+          return {
+            badge: 'Operacion',
+            title: 'No tienes trabajos activos: deja el siguiente contexto preparado.',
+            description:
+              'Si quieres arrancar un nuevo trabajo o abrir una nueva linea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
+            href: briefUrl,
+            label: 'Actualizar brief',
+          };
+        }
+
+        return {
+          badge: 'Seguimiento',
+          title: 'Tu operacion ya esta en marcha.',
+          description:
+            'Usa el CRM para seguir entregables y mantennos alineados desde la web cuando necesites sumar contexto, referencias o nuevos objetivos.',
+          href: portalHubUrl,
+          label: 'Ver centro de cliente',
+        };
+      };
 
       const setText = (id, value) => {
         const element = document.getElementById(id);
@@ -83,13 +201,15 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
       };
 
       try {
-        const [session, jobsData] = await Promise.all([
+        const [session, jobsData, briefData] = await Promise.all([
           getSessionContext(),
           api('/api/portal/jobs'),
+          api('/api/portal/briefs/latest').catch(() => ({ brief: null })),
         ]);
 
         const client = session?.client;
         const jobs = Array.isArray(jobsData.jobs) ? jobsData.jobs : [];
+        const latestBrief = briefData?.brief ?? null;
 
         if (client) {
           const heading = document.getElementById('client-heading');
@@ -120,6 +240,26 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           }
 
           setText('metric-capacity', `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)} unidades`);
+        }
+
+        const nextStep = nextStepForClient(client, jobs);
+        if (nextStepTitle) nextStepTitle.textContent = nextStep.title;
+        if (nextStepDescription) nextStepDescription.textContent = nextStep.description;
+        if (nextStepBadge) nextStepBadge.textContent = nextStep.badge;
+        if (nextStepLink instanceof HTMLAnchorElement) {
+          nextStepLink.href = nextStep.href;
+          nextStepLink.textContent = nextStep.label;
+        }
+
+        if (latestBriefMeta && latestBriefDescription) {
+          if (latestBrief) {
+            latestBriefMeta.textContent =
+              `${latestBrief.tipo ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)}`;
+
+            const excerpt = String(latestBrief.description ?? '').trim();
+            latestBriefDescription.textContent =
+              excerpt.length > 180 ? `${excerpt.slice(0, 177)}...` : excerpt || 'Brief recibido correctamente.';
+          }
         }
 
         setText(

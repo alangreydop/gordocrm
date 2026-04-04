@@ -1,0 +1,232 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Briefs">
+  <div class="space-y-6">
+    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Briefs</h1>
+        <p class="text-gray-500 mt-1">Inbox operativo de contexto entrante desde la web publica y futuras capas de intake.</p>
+      </div>
+      <div class="flex gap-3">
+        <input
+          type="search"
+          id="briefs-search"
+          placeholder="Buscar por cliente, email o contenido"
+          class="w-full md:w-80 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+        />
+      </div>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Briefs totales</p>
+        <p id="metric-total-briefs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Nuevos</p>
+        <p id="metric-new-briefs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Revisados</p>
+        <p id="metric-reviewed-briefs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Sin cliente enlazado</p>
+        <p id="metric-unlinked-briefs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Cliente</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Entrada</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Resumen</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="briefs-body" class="divide-y divide-gray-200">
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando briefs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const {
+        api,
+        escapeHtml,
+        formatDate,
+      } = await import('../../../lib/api-client');
+
+      const tbody = document.getElementById('briefs-body');
+      const searchInput = document.getElementById('briefs-search');
+
+      let briefs = [];
+
+      const setMetric = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
+
+      const briefStatusClass = (status) => (
+        {
+          new: 'bg-amber-100 text-amber-800',
+          reviewed: 'bg-green-100 text-green-800',
+          archived: 'bg-gray-100 text-gray-600',
+        }[status] ?? 'bg-gray-100 text-gray-600'
+      );
+
+      const excerpt = (value) => {
+        const text = String(value ?? '').trim();
+        if (!text) return 'Sin descripcion';
+        return text.length > 180 ? `${text.slice(0, 177)}...` : text;
+      };
+
+      const setBriefStatus = async (briefId, status) => {
+        await api(`/api/portal/briefs/${encodeURIComponent(briefId)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        });
+      };
+
+      const render = () => {
+        if (!tbody) return;
+
+        const query =
+          searchInput instanceof HTMLInputElement
+            ? searchInput.value.trim().toLowerCase()
+            : '';
+
+        const filtered = briefs.filter((brief) => {
+          if (!query) return true;
+          return [
+            brief.clientName,
+            brief.clientCompany,
+            brief.email,
+            brief.description,
+            brief.tipo,
+            brief.status,
+          ]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(query));
+        });
+
+        setMetric('metric-total-briefs', String(briefs.length));
+        setMetric(
+          'metric-new-briefs',
+          String(briefs.filter((brief) => brief.status === 'new').length),
+        );
+        setMetric(
+          'metric-reviewed-briefs',
+          String(briefs.filter((brief) => brief.status === 'reviewed').length),
+        );
+        setMetric(
+          'metric-unlinked-briefs',
+          String(briefs.filter((brief) => !brief.clientId).length),
+        );
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay briefs para ese filtro.</td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((brief) => `
+          <tr class="align-top hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <p class="font-medium text-gray-900">${escapeHtml(brief.clientName ?? 'Sin cliente enlazado')}</p>
+              <p class="text-gray-500 mt-1">${escapeHtml(brief.email)}</p>
+              <p class="text-xs text-gray-500 mt-2">${escapeHtml(brief.clientCompany ?? brief.clientPlan ?? 'Cuenta sin enlazar')}</p>
+            </td>
+            <td class="px-6 py-4 text-gray-600">
+              <p class="font-medium text-gray-900">${escapeHtml(brief.tipo ?? 'brief')}</p>
+              <p class="mt-1">${escapeHtml(formatDate(brief.createdAt))}</p>
+              <p class="text-xs text-gray-500 mt-2">Source: ${escapeHtml(brief.source ?? 'website')}</p>
+            </td>
+            <td class="px-6 py-4 text-gray-600">
+              <p class="max-w-xl leading-relaxed">${escapeHtml(excerpt(brief.description))}</p>
+              ${
+                brief.sourcePage
+                  ? `<a href="${escapeHtml(brief.sourcePage)}" target="_blank" rel="noreferrer" class="inline-flex mt-3 text-xs text-blue-600 hover:text-blue-800">Abrir origen</a>`
+                  : ''
+              }
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${briefStatusClass(brief.status)}">
+                ${escapeHtml(brief.status ?? 'new')}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-2 items-start">
+                <button data-brief-id="${escapeHtml(brief.id)}" data-status="reviewed" class="rounded-md bg-gray-900 px-3 py-2 text-xs font-medium text-white hover:bg-gray-800">
+                  Marcar revisado
+                </button>
+                <button data-brief-id="${escapeHtml(brief.id)}" data-status="archived" class="rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:border-gray-400 hover:text-gray-900">
+                  Archivar
+                </button>
+                ${
+                  brief.clientId
+                    ? `<a href="/admin/clients/detail?id=${encodeURIComponent(brief.clientId)}" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Abrir cliente</a>`
+                    : '<span class="text-xs text-amber-700">Pendiente de enlazar</span>'
+                }
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      };
+
+      try {
+        const data = await api('/api/portal/briefs');
+        briefs = Array.isArray(data.briefs) ? data.briefs : [];
+        render();
+      } catch {
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-red-600">No se pudieron cargar los briefs.</td>
+            </tr>
+          `;
+        }
+      }
+
+      searchInput?.addEventListener('input', render);
+
+      tbody?.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLButtonElement)) return;
+
+        const briefId = target.dataset.briefId;
+        const status = target.dataset.status;
+        if (!briefId || !status) return;
+
+        const previousLabel = target.textContent;
+        target.disabled = true;
+        target.textContent = 'Guardando...';
+
+        try {
+          await setBriefStatus(briefId, status);
+          briefs = briefs.map((brief) =>
+            brief.id === briefId ? { ...brief, status } : brief,
+          );
+          render();
+        } catch {
+          target.disabled = false;
+          target.textContent = previousLabel;
+        }
+      });
+    })();
+  </script>
+</AdminLayout>

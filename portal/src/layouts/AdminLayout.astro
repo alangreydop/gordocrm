@@ -11,6 +11,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/clients', label: 'Clientes' },
   { href: '/admin/jobs', label: 'Trabajos' },
+  { href: '/admin/briefs', label: 'Briefs' },
   { href: '/admin/settings', label: 'Configuracion' },
 ];
 ---
@@ -29,7 +30,7 @@ const navItems = [
           <input
             id="global-search"
             type="text"
-            placeholder="Buscar clientes o trabajos..."
+            placeholder="Buscar clientes, trabajos o briefs..."
             class="w-full rounded-lg bg-gray-900 border border-gray-800 py-2 pl-9 pr-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600"
           />
         </div>
@@ -116,6 +117,12 @@ const navItems = [
             html += '<div class="px-3 py-1.5 text-xs uppercase tracking-wider text-gray-500 border-b border-gray-800">Trabajos</div>';
             for (const j of data.jobs) {
               html += `<a href="/admin/jobs/detail?id=${encodeURIComponent(j.id)}" class="block px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 transition"><span class="font-medium">${escapeHtml(j.briefText ?? '(sin brief)')}</span> <span class="text-gray-500">— ${escapeHtml(j.clientName)}</span></a>`;
+            }
+          }
+          if (data.briefs.length > 0) {
+            html += '<div class="px-3 py-1.5 text-xs uppercase tracking-wider text-gray-500 border-b border-gray-800">Briefs</div>';
+            for (const b of data.briefs) {
+              html += `<a href="/admin/briefs" class="block px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 transition"><span class="font-medium">${escapeHtml(b.email)}</span> <span class="text-gray-500">— ${escapeHtml(b.clientName ?? b.tipo)}</span></a>`;
             }
           }
           if (!html) {

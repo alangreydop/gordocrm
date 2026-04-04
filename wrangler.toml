@@ -17,7 +17,7 @@ migrations_dir = "db/migrations"
 
 [env.production.vars]
 APP_ENV = "production"
-CORS_ORIGIN = "https://gordocrm-api-production.alangreydop.workers.dev"
+CORS_ORIGIN = "https://gordocrm-api-production.alangreydop.workers.dev,https://grandeandgordo.com,https://www.grandeandgordo.com"
 
 [[env.production.d1_databases]]
 binding = "DB"

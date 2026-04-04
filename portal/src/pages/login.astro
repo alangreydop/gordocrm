@@ -1,44 +1,126 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteLinks } from '../lib/site-links';
 ---
 
 <BaseLayout title="Login">
-  <div class="flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-      <h1 class="text-2xl font-bold text-center mb-6">Grande&Gordo</h1>
-      <p class="text-gray-500 text-center mb-8">Portal de gestion</p>
+  <div class="min-h-screen bg-slate-950 text-white">
+    <div class="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
+      <section class="relative overflow-hidden border-b border-white/10 px-6 py-14 lg:border-b-0 lg:border-r">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(245,158,11,0.18),_transparent_38%)]"></div>
+        <div class="relative mx-auto flex h-full max-w-2xl flex-col">
+          <a href={siteLinks.home} class="inline-flex items-center gap-2 text-sm font-semibold text-slate-300 transition hover:text-white">
+            <span aria-hidden="true">&larr;</span>
+            Volver a grandeandgordo.com
+          </a>
 
-      <div id="login-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+          <div class="mt-14 max-w-xl">
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-sky-200/70">Portal cliente</p>
+            <h1 class="mt-5 text-4xl font-black leading-tight text-white md:text-6xl">
+              Misma marca.
+              <br />
+              Mismo cliente.
+              <br />
+              Mejor continuidad.
+            </h1>
+            <p class="mt-6 text-lg leading-relaxed text-slate-300">
+              La web publica te acompana con onboarding, brief y recursos. Este CRM
+              concentra seguimiento, trabajos, entregables y cuenta. Los dos forman
+              parte del mismo journey.
+            </p>
+          </div>
 
-      <form id="login-form" class="space-y-4">
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
-            placeholder="admin@grandegordo.com"
-          />
+          <div class="mt-10 grid gap-4 md:grid-cols-3">
+            <a href={siteLinks.portalHub} class="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30 hover:bg-white/8">
+              <p class="text-sm font-semibold text-white">Centro de cliente</p>
+              <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                Vista general para moverte entre portal, brief y onboarding.
+              </p>
+            </a>
+            <a href={siteLinks.brief} class="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30 hover:bg-white/8">
+              <p class="text-sm font-semibold text-white">Brief</p>
+              <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                Comparte contexto de marca, referencias y necesidades del proyecto.
+              </p>
+            </a>
+            <a href={siteLinks.onboarding} class="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30 hover:bg-white/8">
+              <p class="text-sm font-semibold text-white">Onboarding</p>
+              <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                Revisa checklist, preparacion de sesion y preguntas frecuentes.
+              </p>
+            </a>
+          </div>
+
+          <div class="mt-auto pt-10 text-sm text-slate-400">
+            Si aun no tienes acceso o tu equipo necesita soporte, escribe a
+            {' '}
+            <a href={siteLinks.supportMailto} class="font-semibold text-white underline decoration-white/30 underline-offset-4 transition hover:decoration-white">
+              {siteLinks.supportEmail}
+            </a>
+            .
+          </div>
         </div>
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contrasena</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
-          />
+      </section>
+
+      <section class="flex items-center px-6 py-14">
+        <div class="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-slate-900 shadow-2xl shadow-black/30">
+          <div class="mb-8">
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-slate-400">Acceso seguro</p>
+            <h2 class="mt-3 text-3xl font-black text-slate-950">Entrar al CRM</h2>
+            <p class="mt-3 text-sm leading-relaxed text-slate-500">
+              Usa el email y la contrasena con los que te dimos acceso. Si vienes desde
+              la web, este es el siguiente paso para ver trabajos y entregables.
+            </p>
+          </div>
+
+          <div id="login-error" class="mb-4 hidden rounded-xl bg-red-50 p-3 text-sm text-red-700"></div>
+
+          <form id="login-form" class="space-y-4">
+            <div>
+              <label for="email" class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full rounded-xl border border-slate-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                placeholder="cliente@tumarca.com"
+              />
+            </div>
+            <div>
+              <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Contrasena</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="w-full rounded-xl border border-slate-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full rounded-xl bg-slate-950 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
+            >
+              Iniciar sesion
+            </button>
+          </form>
+
+          <div class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            <p class="font-semibold text-slate-900">Antes o despues de entrar</p>
+            <div class="mt-3 flex flex-wrap gap-3">
+              <a href={siteLinks.brief} class="font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-950 hover:decoration-slate-950">
+                Brief
+              </a>
+              <a href={siteLinks.onboarding} class="font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-950 hover:decoration-slate-950">
+                Onboarding
+              </a>
+              <a href={siteLinks.portalHub} class="font-medium text-slate-700 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-950 hover:decoration-slate-950">
+                Centro de cliente
+              </a>
+            </div>
+          </div>
         </div>
-        <button
-          type="submit"
-          class="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
-        >
-          Iniciar sesion
-        </button>
-      </form>
+      </section>
     </div>
   </div>
 

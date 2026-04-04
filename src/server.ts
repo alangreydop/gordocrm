@@ -2,10 +2,12 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { getDb } from '../db/index.js';
 import { authRoutes } from './api/routes/portal/auth.js';
+import { briefRoutes } from './api/routes/portal/briefs.js';
 import { clientRoutes } from './api/routes/portal/clients.js';
 import { dashboardRoutes } from './api/routes/portal/dashboard.js';
 import { jobRoutes } from './api/routes/portal/jobs.js';
 import { searchRoutes } from './api/routes/portal/search.js';
+import { publicBriefRoutes } from './api/routes/public/briefs.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import type { AppContext } from './types/index.js';
 
@@ -46,9 +48,11 @@ app.get('/health', (c) => {
 });
 
 app.route('/api/portal/auth', authRoutes);
+app.route('/api/portal/briefs', briefRoutes);
 app.route('/api/portal/clients', clientRoutes);
 app.route('/api/portal/jobs', jobRoutes);
 app.route('/api/portal/dashboard', dashboardRoutes);
 app.route('/api/portal/search', searchRoutes);
+app.route('/api/public/briefs', publicBriefRoutes);
 
 export default app;

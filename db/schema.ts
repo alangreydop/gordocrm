@@ -138,6 +138,35 @@ export const assets = sqliteTable(
   ],
 );
 
+export const briefSubmissions = sqliteTable(
+  'brief_submissions',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id').references(() => clients.id),
+    email: text('email').notNull(),
+    contentType: text('content_type').notNull(),
+    description: text('description').notNull(),
+    status: text('status').notNull().default('new'),
+    source: text('source').notNull().default('website'),
+    sourcePage: text('source_page'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    check(
+      'brief_submissions_content_type_check',
+      sql`${table.contentType} IN ('foto', 'video', 'ambos')`,
+    ),
+    check(
+      'brief_submissions_status_check',
+      sql`${table.status} IN ('new', 'reviewed', 'archived')`,
+    ),
+    index('idx_brief_submissions_client_id').on(table.clientId),
+    index('idx_brief_submissions_email').on(table.email),
+    index('idx_brief_submissions_created_at').on(table.createdAt),
+  ],
+);
+
 export const sessions = sqliteTable(
   'sessions',
   {

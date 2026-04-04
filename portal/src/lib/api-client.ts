@@ -114,6 +114,7 @@ export async function logout(): Promise<void> {
 export interface SearchResult {
   clients: { id: string; name: string; company: string | null; email: string }[];
   jobs: { id: string; briefText: string | null; status: string; clientId: string; clientName: string }[];
+  briefs: { id: string; email: string; tipo: string; status: string; clientId: string | null; clientName: string | null }[];
 }
 
 export async function search(q: string): Promise<SearchResult> {
