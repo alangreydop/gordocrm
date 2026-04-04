@@ -1,14 +1,5 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { apiWithCookie } from '../../lib/api-client';
-
-const cookie = Astro.request.headers.get('cookie') ?? '';
-const fetchApi = apiWithCookie<any>(cookie);
-
-let stats = { activeJobs: 0, completedThisMonth: 0, totalClients: 0 };
-try {
-  stats = await fetchApi('/api/portal/dashboard/stats');
-} catch {}
 ---
 
 <AdminLayout title="Dashboard">
@@ -17,15 +8,32 @@ try {
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Trabajos activos</p>
-      <p class="text-3xl font-bold mt-1">{stats.activeJobs}</p>
+      <p id="active-jobs" class="text-3xl font-bold mt-1">—</p>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Completados este mes</p>
-      <p class="text-3xl font-bold mt-1">{stats.completedThisMonth}</p>
+      <p id="completed-this-month" class="text-3xl font-bold mt-1">—</p>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Clientes</p>
-      <p class="text-3xl font-bold mt-1">{stats.totalClients}</p>
+      <p id="total-clients" class="text-3xl font-bold mt-1">—</p>
     </div>
   </div>
+
+  <script type="module">
+    import { api } from '../../lib/api-client';
+
+    try {
+      const stats = await api('/api/portal/dashboard/stats');
+      const active = document.getElementById('active-jobs');
+      const completed = document.getElementById('completed-this-month');
+      const clients = document.getElementById('total-clients');
+
+      if (active) active.textContent = String(stats.activeJobs ?? 0);
+      if (completed) completed.textContent = String(stats.completedThisMonth ?? 0);
+      if (clients) clients.textContent = String(stats.totalClients ?? 0);
+    } catch {
+      // Auth/layout script handles redirects; keeping the dashboard quiet here is enough.
+    }
+  </script>
 </AdminLayout>

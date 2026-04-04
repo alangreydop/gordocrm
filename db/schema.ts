@@ -1,39 +1,52 @@
-import { pgTable, uuid, text, timestamp, check } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import {
+  check,
+  index,
+  integer,
+  sqliteTable,
+  text,
+} from 'drizzle-orm/sqlite-core';
 
-export const users = pgTable(
+const timestampNow = () => new Date();
+const randomId = () => crypto.randomUUID();
+
+export const users = sqliteTable(
   'users',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    email: text('email').unique().notNull(),
+    id: text('id').primaryKey().$defaultFn(randomId),
+    email: text('email').notNull().unique(),
     passwordHash: text('password_hash').notNull(),
     role: text('role').notNull(),
     name: text('name').notNull(),
     company: text('company'),
     stripeCustomerId: text('stripe_customer_id'),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
-  (table) => [check('role_check', sql`${table.role} IN ('admin', 'client')`)],
+  (table) => [check('users_role_check', sql`${table.role} IN ('admin', 'client')`)],
 );
 
-export const clients = pgTable('clients', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id),
-  name: text('name').notNull(),
-  email: text('email').notNull(),
-  company: text('company'),
-  stripeCustomerId: text('stripe_customer_id'),
-  subscriptionStatus: text('subscription_status').default('inactive'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
+export const clients = sqliteTable(
+  'clients',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    userId: text('user_id').references(() => users.id),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    company: text('company'),
+    stripeCustomerId: text('stripe_customer_id'),
+    subscriptionStatus: text('subscription_status').notNull().default('inactive'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [index('idx_clients_user_id').on(table.userId)],
+);
 
-export const jobs = pgTable(
+export const jobs = sqliteTable(
   'jobs',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    clientId: uuid('client_id')
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
       .notNull()
       .references(() => clients.id),
     status: text('status').notNull().default('pending'),
@@ -42,56 +55,64 @@ export const jobs = pgTable(
     type: text('type'),
     loraModelId: text('lora_model_id'),
     stripePaymentIntentId: text('stripe_payment_intent_id'),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
   (table) => [
     check(
-      'status_check',
+      'jobs_status_check',
       sql`${table.status} IN ('pending', 'processing', 'completed', 'failed', 'delivered')`,
     ),
     check(
-      'platform_check',
+      'jobs_platform_check',
       sql`${table.platform} IS NULL OR ${table.platform} IN ('instagram', 'tiktok', 'amazon_pdp', 'paid_ads')`,
     ),
     check(
-      'type_check',
+      'jobs_type_check',
       sql`${table.type} IS NULL OR ${table.type} IN ('image', 'video')`,
     ),
+    index('idx_jobs_client_id').on(table.clientId),
+    index('idx_jobs_status').on(table.status),
   ],
 );
 
-export const assets = pgTable(
+export const assets = sqliteTable(
   'assets',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    jobId: uuid('job_id')
+    id: text('id').primaryKey().$defaultFn(randomId),
+    jobId: text('job_id')
       .notNull()
       .references(() => jobs.id),
     type: text('type').notNull(),
     r2Key: text('r2_key').notNull(),
     qaStatus: text('qa_status'),
     qaNotes: text('qa_notes'),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
   (table) => [
+    check('assets_type_check', sql`${table.type} IN ('image', 'video')`),
     check(
-      'asset_type_check',
-      sql`${table.type} IN ('image', 'video')`,
-    ),
-    check(
-      'qa_status_check',
+      'assets_qa_status_check',
       sql`${table.qaStatus} IS NULL OR ${table.qaStatus} IN ('pending', 'approved', 'rejected')`,
     ),
+    index('idx_assets_job_id').on(table.jobId),
   ],
 );
 
-export const sessions = pgTable('sessions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id),
-  token: text('token').unique().notNull(),
-  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-});
+export const sessions = sqliteTable(
+  'sessions',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    token: text('token').notNull().unique(),
+    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_sessions_token').on(table.token),
+    index('idx_sessions_user_id').on(table.userId),
+    index('idx_sessions_expires_at').on(table.expiresAt),
+  ],
+);

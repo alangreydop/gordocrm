@@ -1,11 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getSessionUser } from '../lib/session';
-
-const user = await getSessionUser(Astro.cookies);
-if (user) {
-  return Astro.redirect(user.role === 'admin' ? '/admin' : '/client');
-}
 ---
 
 <BaseLayout title="Login">
@@ -48,24 +42,33 @@ if (user) {
     </div>
   </div>
 
-  <script>
-    const form = document.getElementById('login-form') as HTMLFormElement;
-    const errorDiv = document.getElementById('login-error') as HTMLDivElement;
-    const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+  <script type="module">
+    import { API_BASE, getSessionUser } from '../lib/api-client';
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorDiv.classList.add('hidden');
+    const existingUser = await getSessionUser();
+    if (existingUser) {
+      window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
+    }
 
-      const email = (document.getElementById('email') as HTMLInputElement).value;
-      const password = (document.getElementById('password') as HTMLInputElement).value;
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('login-error');
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorDiv?.classList.add('hidden');
+
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
 
       try {
-        const res = await fetch(`${apiBase}/api/portal/auth/login`, {
+        const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({
+            email: email instanceof HTMLInputElement ? email.value : '',
+            password: password instanceof HTMLInputElement ? password.value : '',
+          }),
         });
 
         if (!res.ok) {
@@ -75,9 +78,11 @@ if (user) {
 
         const data = await res.json();
         window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
-      } catch (err: any) {
-        errorDiv.textContent = err.message;
-        errorDiv.classList.remove('hidden');
+      } catch (error) {
+        if (errorDiv instanceof HTMLDivElement) {
+          errorDiv.textContent = error instanceof Error ? error.message : 'Login failed';
+          errorDiv.classList.remove('hidden');
+        }
       }
     });
   </script>

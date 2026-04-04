@@ -1,113 +1,118 @@
-# Grande&Gordo
+# Grande&Gordo CRM
 
-> One studio session. Unlimited on-brand assets.
+CRM portal para Grande&Gordo desplegado sobre Cloudflare:
 
-Grande&Gordo trains a proprietary Flux LoRA from a single product shoot, then generates unlimited photos and videos on demand — eliminating repeated, expensive studio days for mid-market ecommerce brands.
+- `API`: Cloudflare Worker con `Hono`
+- `DB`: Cloudflare `D1`
+- `Portal`: Astro estatico servido desde Cloudflare
 
-## Architecture Overview
+## Stack
 
-```
-Client Brief (WhatsApp/Email/Slack)
-        │
-        ▼
-  Brief Worker ──► Stripe Checkout
-                         │
-                         ▼
-                  LoRA Training (fal.ai)
-                         │
-                         ▼
-              Image/Video Generation (Flux + Kling)
-                         │
-                         ▼
-               Automated QA (GPT-4V)
-                         │
-                         ▼
-              Asset Delivery (Cloudflare R2)
-                         │
-                         ▼
-                Client Email (Resend)
-```
+| Capa | Tecnologia |
+| --- | --- |
+| Runtime API | Cloudflare Workers |
+| HTTP | Hono |
+| ORM | Drizzle ORM |
+| Base de datos | Cloudflare D1 |
+| Frontend | Astro estatico + fetch al API |
+| Auth | Cookie httpOnly + sesiones en D1 |
+| Storage futuro | Cloudflare R2 |
 
-## Tech Stack
+## Arquitectura
 
-| Layer | Technology |
-|-------|-----------|
-| Runtime | Node.js 20+, TypeScript |
-| HTTP Server | Fastify |
-| Job Queue | BullMQ + Redis |
-| ML Training & Inference | fal.ai (Flux LoRA, Kling) |
-| Image QA | OpenAI GPT-4V |
-| Payments | Stripe |
-| Storage | Cloudflare R2 |
-| Client Management | Airtable |
-| Email | Resend |
+El repo tiene dos apps:
 
-## Prerequisites
+- `src/`: API worker con rutas `/api/portal/*`
+- `portal/`: portal estatico que consume esa API desde el navegador
 
-- Node.js 20+
-- npm 10+
-- Redis (for job queues)
-- Accounts: Stripe, fal.ai, OpenAI, Cloudflare R2, Airtable, Resend
+La sesion se guarda en D1 y viaja en cookie `gg_session`. En produccion, portal y API deben vivir bajo el mismo dominio raiz para compartir cookie, por ejemplo:
 
-## Setup
+- `crm.grandegordo.com`
+- `api.grandegordo.com`
+
+Y el worker debe recibir `SESSION_COOKIE_DOMAIN=.grandegordo.com`.
+
+## Primer arranque
 
 ```bash
-# 1. Clone
-git clone <repo-url>
-cd grande-gordo
-
-# 2. Install dependencies
 npm install
-
-# 3. Configure environment
+cd portal && npm install && cd ..
 cp .env.example .env
-# Fill in all values in .env — see .env.example for docs
+```
 
-# 4. Start Redis (if not running)
-docker run -d -p 6379:6379 redis:7-alpine
+## Configurar D1
 
-# 5. Run in development mode
+1. Crear la base:
+
+```bash
+npx wrangler d1 create gordocrm
+```
+
+2. Copiar el `database_id` que devuelve Cloudflare en [wrangler.toml](/tmp/gordocrm/wrangler.toml).
+
+3. Aplicar la migracion local:
+
+```bash
+npm run db:migrate
+```
+
+4. Seed local del admin:
+
+```bash
+npm run db:seed
+```
+
+Credenciales por defecto:
+
+- `admin@grandegordo.com`
+- `changeme123`
+
+## Desarrollo
+
+API:
+
+```bash
 npm run dev
 ```
 
-The server starts at `http://localhost:3000`. Check `/health` to confirm it's up.
+Portal:
 
-## Development Commands
-
-| Command | Purpose |
-|---------|---------|
-| `npm run dev` | Start server with hot reload |
-| `npm run build` | Compile TypeScript |
-| `npm run typecheck` | Type-check without emitting |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Auto-fix lint errors |
-| `npm run format` | Format with Prettier |
-| `npm test` | Run tests |
-| `npm run test:watch` | Watch mode |
-| `npm run test:coverage` | Coverage report |
-| `npm run ci` | Full CI check (typecheck + lint + test) |
-
-## Project Structure
-
-```
-src/
-├── api/
-│   └── routes/       # Fastify route handlers
-├── workers/          # BullMQ job processors
-├── services/         # Business logic (fal.ai, R2, Airtable, etc.)
-├── lib/
-│   └── config.ts     # Typed env var validation
-├── types/
-│   └── index.ts      # Shared domain types
-├── test/
-│   └── setup.ts      # Vitest global setup
-└── server.ts         # Entry point
+```bash
+cd portal
+npm run dev
 ```
 
-## Environment Variables
+Defaults locales:
 
-See `.env.example` for a full list with descriptions.
+- API: `http://127.0.0.1:8787`
+- Portal: `http://localhost:4321`
 
-## Contributing
+## Produccion
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+Checklist minimo:
+
+1. Crear la D1 real y actualizar `database_id` en [wrangler.toml](/tmp/gordocrm/wrangler.toml).
+2. Ejecutar `npm run db:migrate:remote`.
+3. Ejecutar `npm run db:seed:remote`.
+4. Desplegar el API worker con `npm run deploy`.
+5. Desplegar el portal estatico en Cloudflare Pages.
+6. Configurar estas variables:
+   - `APP_ENV=production`
+   - `CORS_ORIGIN=https://crm.tu-dominio.com`
+   - `SESSION_SECRET=<secreto-largo>`
+   - `SESSION_COOKIE_DOMAIN=.tu-dominio.com`
+   - `API_URL=https://api.tu-dominio.com`
+   - `PUBLIC_API_URL=https://api.tu-dominio.com`
+
+## Migraciones
+
+- Generar SQL nuevo: `npm run db:generate`
+- Aplicar en local: `npm run db:migrate`
+- Aplicar en remoto: `npm run db:migrate:remote`
+
+## Notas
+
+- `Supabase` ya no es la linea oficial de este repo.
+- `D1` es la base primaria y el repo ya esta orientado a Cloudflare como runtime.
+- El portal ya no depende de SSR ni del adapter `@astrojs/cloudflare`.
+- `REDIS`, `Airtable`, `Stripe`, `R2`, `Resend` quedan como integraciones opcionales o fases futuras.

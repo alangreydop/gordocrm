@@ -1,23 +1,5 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { apiWithCookie } from '../../../lib/api-client';
-
-const cookie = Astro.request.headers.get('cookie') ?? '';
-const fetchApi = apiWithCookie<any>(cookie);
-
-let jobs: any[] = [];
-try {
-  const data = await fetchApi('/api/portal/jobs');
-  jobs = data.jobs;
-} catch {}
-
-const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  processing: 'bg-blue-100 text-blue-800',
-  completed: 'bg-green-100 text-green-800',
-  failed: 'bg-red-100 text-red-800',
-  delivered: 'bg-purple-100 text-purple-800',
-};
 ---
 
 <AdminLayout title="Trabajos">
@@ -41,33 +23,59 @@ const statusColors: Record<string, string> = {
           <th class="px-6 py-3"></th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200">
-        {jobs.length === 0 ? (
-          <tr>
-            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-              No hay trabajos todavia.
-            </td>
-          </tr>
-        ) : (
-          jobs.map((j: any) => (
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 font-medium text-sm">{j.clientName ?? '—'}</td>
-              <td class="px-6 py-4 text-sm max-w-xs truncate">{j.briefText ?? '—'}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{j.platform ?? '—'}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{j.type ?? '—'}</td>
-              <td class="px-6 py-4">
-                <span class={`inline-block px-2 py-1 rounded text-xs font-medium ${statusColors[j.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                  {j.status}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-500">{new Date(j.createdAt).toLocaleDateString('es-ES')}</td>
-              <td class="px-6 py-4 text-right">
-                <a href={`/admin/jobs/${j.id}`} class="text-blue-600 hover:text-blue-800 text-sm">Ver</a>
-              </td>
-            </tr>
-          ))
-        )}
+      <tbody id="jobs-body" class="divide-y divide-gray-200">
+        <tr>
+          <td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
+        </tr>
       </tbody>
     </table>
   </div>
+
+  <script type="module">
+    import { api, escapeHtml, formatDate, jobStatusClass } from '../../../lib/api-client';
+
+    const tbody = document.getElementById('jobs-body');
+
+    try {
+      const data = await api('/api/portal/jobs');
+      const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+
+      if (!tbody) return;
+
+      if (jobs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay trabajos todavia.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = jobs.map((job) => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 font-medium text-sm">${escapeHtml(job.clientName ?? '—')}</td>
+          <td class="px-6 py-4 text-sm max-w-xs truncate">${escapeHtml(job.briefText ?? '—')}</td>
+          <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.platform ?? '—')}</td>
+          <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.type ?? '—')}</td>
+          <td class="px-6 py-4">
+            <span class="inline-block px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+              ${escapeHtml(job.status ?? 'pending')}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-500">${escapeHtml(formatDate(job.createdAt))}</td>
+          <td class="px-6 py-4 text-right">
+            <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800 text-sm">Ver</a>
+          </td>
+        </tr>
+      `).join('');
+    } catch {
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="px-6 py-8 text-center text-red-600">No se pudieron cargar los trabajos.</td>
+          </tr>
+        `;
+      }
+    }
+  </script>
 </AdminLayout>

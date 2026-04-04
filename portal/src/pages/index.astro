@@ -1,7 +1,16 @@
 ---
-import { getSessionUser } from '../lib/session';
-
-const user = await getSessionUser(Astro.cookies);
-if (!user) return Astro.redirect('/login');
-return Astro.redirect(user.role === 'admin' ? '/admin' : '/client');
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
+
+<BaseLayout title="Redirigiendo">
+  <div class="min-h-screen flex items-center justify-center text-gray-500">
+    Cargando portal...
+  </div>
+
+  <script type="module">
+    import { getSessionUser } from '../lib/api-client';
+
+    const user = await getSessionUser();
+    window.location.href = user ? (user.role === 'admin' ? '/admin' : '/client') : '/login';
+  </script>
+</BaseLayout>

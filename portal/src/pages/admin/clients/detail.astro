@@ -1,0 +1,118 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Detalle cliente">
+  <div class="flex justify-between items-start mb-6">
+    <div>
+      <a href="/admin/clients" class="text-sm text-gray-500 hover:text-gray-700 mb-2 inline-block">&larr; Clientes</a>
+      <h1 id="client-name" class="text-2xl font-bold">Cargando cliente...</h1>
+      <p id="client-email" class="text-gray-600">—</p>
+      <p id="client-company" class="text-gray-500 text-sm"></p>
+    </div>
+    <span id="client-status" class="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+      —
+    </span>
+  </div>
+
+  <div class="flex justify-between items-center mb-4">
+    <h2 id="jobs-heading" class="text-lg font-semibold">Trabajos</h2>
+    <a id="new-job-link" href="/admin/jobs/new" class="bg-gray-900 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-800">
+      Nuevo trabajo
+    </a>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brief</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plataforma</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+          <th class="px-6 py-3"></th>
+        </tr>
+      </thead>
+      <tbody id="client-jobs-body" class="divide-y divide-gray-200">
+        <tr>
+          <td colspan="6" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import {
+      api,
+      escapeHtml,
+      formatDate,
+      getQueryParam,
+      jobStatusClass,
+      subscriptionClass,
+    } from '../../../lib/api-client';
+
+    const id = getQueryParam('id');
+    if (!id) {
+      window.location.href = '/admin/clients';
+    } else {
+      const name = document.getElementById('client-name');
+      const email = document.getElementById('client-email');
+      const company = document.getElementById('client-company');
+      const status = document.getElementById('client-status');
+      const heading = document.getElementById('jobs-heading');
+      const newJobLink = document.getElementById('new-job-link');
+      const tbody = document.getElementById('client-jobs-body');
+
+      try {
+        const data = await api(`/api/portal/clients/${encodeURIComponent(id)}`);
+        const client = data.client;
+        const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+
+        if (name) name.textContent = client.name;
+        if (email) email.textContent = client.email;
+        if (company) company.textContent = client.company ?? '';
+        if (heading) heading.textContent = `Trabajos (${jobs.length})`;
+
+        if (status) {
+          status.textContent = client.subscriptionStatus ?? 'inactive';
+          status.className = `inline-block px-2 py-1 rounded text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}`;
+        }
+
+        if (newJobLink instanceof HTMLAnchorElement) {
+          newJobLink.href = `/admin/jobs/new?clientId=${encodeURIComponent(client.id)}`;
+        }
+
+        if (!tbody) return;
+
+        if (jobs.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">Este cliente no tiene trabajos.</td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = jobs.map((job) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm">${escapeHtml(job.briefText ?? '—')}</td>
+            <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.platform ?? '—')}</td>
+            <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.type ?? '—')}</td>
+            <td class="px-6 py-4">
+              <span class="inline-block px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+                ${escapeHtml(job.status ?? 'pending')}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500">${escapeHtml(formatDate(job.createdAt))}</td>
+            <td class="px-6 py-4 text-right">
+              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800 text-sm">Ver</a>
+            </td>
+          </tr>
+        `).join('');
+      } catch {
+        window.location.href = '/admin/clients';
+      }
+    }
+  </script>
+</AdminLayout>

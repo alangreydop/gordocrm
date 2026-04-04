@@ -1,9 +1,5 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
-import { getSessionUser } from '../../lib/session';
-
-const user = await getSessionUser(Astro.cookies);
-if (!user) return Astro.redirect('/login');
 ---
 
 <ClientLayout title="Mi perfil">
@@ -13,16 +9,31 @@ if (!user) return Astro.redirect('/login');
     <div class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-500">Nombre</label>
-        <p class="mt-1 text-lg">{user.name}</p>
+        <p id="profile-name" class="mt-1 text-lg">Cargando...</p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-500">Email</label>
-        <p class="mt-1 text-lg">{user.email}</p>
+        <p id="profile-email" class="mt-1 text-lg">—</p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-500">Empresa</label>
-        <p class="mt-1 text-lg">{user.company ?? '—'}</p>
+        <p id="profile-company" class="mt-1 text-lg">—</p>
       </div>
     </div>
   </div>
+
+  <script type="module">
+    import { getSessionUser } from '../../lib/api-client';
+
+    const user = await getSessionUser();
+    if (!user) return;
+
+    const name = document.getElementById('profile-name');
+    const email = document.getElementById('profile-email');
+    const company = document.getElementById('profile-company');
+
+    if (name) name.textContent = user.name;
+    if (email) email.textContent = user.email;
+    if (company) company.textContent = user.company ?? '—';
+  </script>
 </ClientLayout>

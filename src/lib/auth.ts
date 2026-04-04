@@ -1,36 +1,84 @@
-import { randomUUID } from 'node:crypto';
-import { eq, and, gt } from 'drizzle-orm';
+import { and, eq, gt } from 'drizzle-orm';
+import type { Context, MiddlewareHandler } from 'hono';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import bcrypt from 'bcryptjs';
-import type { FastifyRequest, FastifyReply } from 'fastify';
-import { db, schema } from '../../db/index.js';
+import { schema, type Database } from '../../db/index.js';
+import { getConfig, isProduction } from './config.js';
+import type { AppBindings, AppContext, AuthUser, UserRole } from '../types/index.js';
 
 const SESSION_COOKIE = 'gg_session';
-const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const SESSION_MAX_AGE_SECONDS = SESSION_MAX_AGE_MS / 1000;
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: 'admin' | 'client';
-  name: string;
-  company: string | null;
+function toHex(buffer: ArrayBuffer): string {
+  return [...new Uint8Array(buffer)]
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function hashSessionToken(
+  sessionSecret: string,
+  rawToken: string,
+): Promise<string> {
+  const payload = new TextEncoder().encode(`${sessionSecret}:${rawToken}`);
+  const digest = await crypto.subtle.digest('SHA-256', payload);
+  return toHex(digest);
+}
+
+function getCookieOptions(env: AppBindings) {
+  const config = getConfig(env);
+  const options = {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'Lax' as const,
+    secure: isProduction(env),
+    maxAge: SESSION_MAX_AGE_SECONDS,
+  };
+
+  if (!config.SESSION_COOKIE_DOMAIN) {
+    return options;
+  }
+
+  return {
+    ...options,
+    domain: config.SESSION_COOKIE_DOMAIN,
+  };
 }
 
 export async function createUser(
+  db: Database,
   email: string,
   password: string,
-  role: 'admin' | 'client',
+  role: UserRole,
   name: string,
   company?: string,
 ) {
+  const id = crypto.randomUUID();
+  const now = new Date();
   const passwordHash = await bcrypt.hash(password, 12);
+
+  await db.insert(schema.users).values({
+    id,
+    email,
+    passwordHash,
+    role,
+    name,
+    company: company ?? null,
+    createdAt: now,
+    updatedAt: now,
+  });
+
   const [user] = await db
-    .insert(schema.users)
-    .values({ email, passwordHash, role, name, company: company ?? null })
-    .returning();
-  return user;
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.id, id))
+    .limit(1);
+
+  return user ?? null;
 }
 
 export async function verifyCredentials(
+  db: Database,
   email: string,
   password: string,
 ): Promise<AuthUser | null> {
@@ -41,32 +89,55 @@ export async function verifyCredentials(
     .limit(1);
 
   if (!user) return null;
+
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return null;
 
   return {
     id: user.id,
     email: user.email,
-    role: user.role as 'admin' | 'client',
+    role: user.role as UserRole,
     name: user.name,
-    company: user.company,
+    company: user.company ?? null,
   };
 }
 
-export async function createSession(userId: string): Promise<string> {
-  const token = randomUUID();
+export async function createSession(
+  db: Database,
+  env: AppBindings,
+  userId: string,
+): Promise<string> {
+  const rawToken = crypto.randomUUID();
+  const tokenHash = await hashSessionToken(getConfig(env).SESSION_SECRET, rawToken);
+  const now = new Date();
   const expiresAt = new Date(Date.now() + SESSION_MAX_AGE_MS);
-  await db.insert(schema.sessions).values({ userId, token, expiresAt });
-  return token;
+
+  await db.insert(schema.sessions).values({
+    id: crypto.randomUUID(),
+    userId,
+    token: tokenHash,
+    expiresAt,
+    createdAt: now,
+  });
+
+  return rawToken;
 }
 
-export async function destroySession(token: string): Promise<void> {
-  await db.delete(schema.sessions).where(eq(schema.sessions.token, token));
+export async function destroySession(
+  db: Database,
+  env: AppBindings,
+  rawToken: string,
+): Promise<void> {
+  const tokenHash = await hashSessionToken(getConfig(env).SESSION_SECRET, rawToken);
+  await db.delete(schema.sessions).where(eq(schema.sessions.token, tokenHash));
 }
 
 export async function getUserFromSession(
-  token: string,
+  db: Database,
+  env: AppBindings,
+  rawToken: string,
 ): Promise<AuthUser | null> {
+  const tokenHash = await hashSessionToken(getConfig(env).SESSION_SECRET, rawToken);
   const [row] = await db
     .select({
       id: schema.users.id,
@@ -79,69 +150,74 @@ export async function getUserFromSession(
     .innerJoin(schema.users, eq(schema.sessions.userId, schema.users.id))
     .where(
       and(
-        eq(schema.sessions.token, token),
+        eq(schema.sessions.token, tokenHash),
         gt(schema.sessions.expiresAt, new Date()),
       ),
     )
     .limit(1);
 
   if (!row) return null;
+
   return {
     id: row.id,
     email: row.email,
-    role: row.role as 'admin' | 'client',
+    role: row.role as UserRole,
     name: row.name,
     company: row.company ?? null,
   };
 }
 
-export function getSessionToken(request: FastifyRequest): string | null {
-  const cookie = request.headers.cookie ?? '';
-  const match = cookie.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=([^;]+)`));
-  return match?.[1] ?? null;
+export function getSessionToken(c: Context<AppContext>): string | null {
+  return getCookie(c, SESSION_COOKIE) ?? null;
 }
 
-export function setSessionCookie(reply: FastifyReply, token: string): void {
-  const maxAge = SESSION_MAX_AGE_MS / 1000;
-  reply.header(
-    'set-cookie',
-    `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}`,
-  );
+export function setSessionCookie(c: Context<AppContext>, token: string): void {
+  setCookie(c, SESSION_COOKIE, token, getCookieOptions(c.env));
 }
 
-export function clearSessionCookie(reply: FastifyReply): void {
-  reply.header(
-    'set-cookie',
-    `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`,
-  );
+export function clearSessionCookie(c: Context<AppContext>): void {
+  const options = {
+    path: '/',
+  };
+  const { SESSION_COOKIE_DOMAIN } = getConfig(c.env);
+
+  if (!SESSION_COOKIE_DOMAIN) {
+    deleteCookie(c, SESSION_COOKIE, options);
+    return;
+  }
+
+  deleteCookie(c, SESSION_COOKIE, {
+    ...options,
+    domain: SESSION_COOKIE_DOMAIN,
+  });
 }
 
-// Fastify preHandler hooks
-export async function requireAuth(
-  request: FastifyRequest,
-  reply: FastifyReply,
-): Promise<void> {
-  const token = getSessionToken(request);
+export const requireAuth: MiddlewareHandler<AppContext> = async (c, next) => {
+  const token = getSessionToken(c);
   if (!token) {
-    reply.code(401).send({ error: 'Not authenticated' });
-    return;
+    return c.json({ error: 'Not authenticated' }, 401);
   }
-  const user = await getUserFromSession(token);
-  if (!user) {
-    reply.code(401).send({ error: 'Invalid or expired session' });
-    return;
-  }
-  (request as any).user = user;
-}
 
-export async function requireAdmin(
-  request: FastifyRequest,
-  reply: FastifyReply,
-): Promise<void> {
-  await requireAuth(request, reply);
-  if (reply.sent) return;
-  const user = (request as any).user as AuthUser;
-  if (user.role !== 'admin') {
-    reply.code(403).send({ error: 'Admin access required' });
+  const user = await getUserFromSession(c.get('db'), c.env, token);
+  if (!user) {
+    clearSessionCookie(c);
+    return c.json({ error: 'Invalid or expired session' }, 401);
   }
-}
+
+  c.set('user', user);
+  await next();
+  return;
+};
+
+export const requireAdmin: MiddlewareHandler<AppContext> = async (c, next) => {
+  const authResponse = await requireAuth(c, async () => undefined);
+  if (authResponse) return authResponse;
+
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  await next();
+  return;
+};

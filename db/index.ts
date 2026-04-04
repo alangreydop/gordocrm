@@ -1,10 +1,10 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import pg from 'pg';
+import { drizzle, type DrizzleD1Database } from 'drizzle-orm/d1';
 import * as schema from './schema.js';
 
-const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+export type Database = DrizzleD1Database<typeof schema>;
 
-export const db = drizzle(pool, { schema });
+export function getDb(env: { DB: D1Database }): Database {
+  return drizzle(env.DB, { schema });
+}
+
 export { schema };

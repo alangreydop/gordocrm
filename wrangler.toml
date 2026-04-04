@@ -1,0 +1,14 @@
+name = "gordocrm-api"
+main = "src/server.ts"
+compatibility_date = "2026-04-04"
+
+[vars]
+APP_ENV = "development"
+CORS_ORIGIN = "http://localhost:4321"
+SESSION_SECRET = "local-development-session-secret"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gordocrm"
+database_id = "replace-with-your-d1-database-id"
+migrations_dir = "db/migrations"

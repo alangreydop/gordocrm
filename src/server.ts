@@ -1,32 +1,52 @@
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import { config } from './lib/config.js';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { getDb } from '../db/index.js';
 import { authRoutes } from './api/routes/portal/auth.js';
 import { clientRoutes } from './api/routes/portal/clients.js';
-import { jobRoutes } from './api/routes/portal/jobs.js';
 import { dashboardRoutes } from './api/routes/portal/dashboard.js';
+import { jobRoutes } from './api/routes/portal/jobs.js';
+import { getAllowedOrigins, getConfig } from './lib/config.js';
+import type { AppContext } from './types/index.js';
 
-const server = Fastify({
-  logger: {
-    level: config.NODE_ENV === 'production' ? 'info' : 'debug',
-  },
+const app = new Hono<AppContext>();
+
+app.onError((error, c) => {
+  console.error(error);
+  return c.json({ error: 'Internal server error' }, 500);
 });
 
-await server.register(cors, {
-  origin: config.NODE_ENV === 'production' ? false : true,
+app.use('*', async (c, next) => {
+  c.set('db', getDb(c.env));
+  await next();
 });
 
-// Routes are registered here as they are implemented
-// await server.register(webhookRoutes, { prefix: '/webhooks' });
-// await server.register(generationRoutes, { prefix: '/api/generations' });
+app.use(
+  '/api/*',
+  cors({
+    credentials: true,
+    allowMethods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowHeaders: ['Content-Type'],
+    origin: (origin, c) => {
+      if (!origin) return undefined;
+      const allowedOrigins = getAllowedOrigins(c.env);
+      return allowedOrigins.includes(origin) ? origin : undefined;
+    },
+  }),
+);
 
-// Portal CRM routes
-await server.register(authRoutes, { prefix: '/api/portal/auth' });
-await server.register(clientRoutes, { prefix: '/api/portal/clients' });
-await server.register(jobRoutes, { prefix: '/api/portal/jobs' });
-await server.register(dashboardRoutes, { prefix: '/api/portal/dashboard' });
+app.get('/health', (c) => {
+  const config = getConfig(c.env);
+  return c.json({
+    status: 'ok',
+    runtime: 'cloudflare-workers',
+    database: 'd1',
+    environment: config.APP_ENV,
+  });
+});
 
-server.get('/health', async () => ({ status: 'ok' }));
+app.route('/api/portal/auth', authRoutes);
+app.route('/api/portal/clients', clientRoutes);
+app.route('/api/portal/jobs', jobRoutes);
+app.route('/api/portal/dashboard', dashboardRoutes);
 
-const address = await server.listen({ port: config.PORT, host: '0.0.0.0' });
-server.log.info(`Server listening at ${address}`);
+export default app;

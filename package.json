@@ -1,7 +1,7 @@
 {
   "name": "grande-gordo",
   "version": "0.1.0",
-  "description": "AI content production system — one studio session, unlimited on-brand assets",
+  "description": "Grande&Gordo CRM API on Cloudflare Workers + D1",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,9 +9,9 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "wrangler dev",
     "build": "tsc --project tsconfig.build.json",
-    "start": "node dist/server.js",
+    "deploy": "wrangler deploy",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -22,32 +22,32 @@
     "typecheck": "tsc --noEmit",
     "ci": "npm run typecheck && npm run lint && npm run test",
     "db:generate": "drizzle-kit generate --config db/drizzle.config.ts",
-    "db:migrate": "drizzle-kit migrate --config db/drizzle.config.ts",
-    "db:seed": "tsx db/seed.ts"
+    "db:migrate": "wrangler d1 migrations apply gordocrm --local",
+    "db:migrate:remote": "wrangler d1 migrations apply gordocrm --remote",
+    "db:seed": "node --import tsx db/seed.ts --local",
+    "db:seed:remote": "node --import tsx db/seed.ts --remote"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
     "@aws-sdk/s3-request-presigner": "^3.0.0",
     "@fal-ai/client": "^1.0.0",
-    "@fastify/cors": "^9.0.0",
     "airtable": "^0.12.0",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.0.0",
     "dotenv": "^16.0.0",
     "drizzle-orm": "^0.45.2",
-    "fastify": "^4.0.0",
+    "hono": "^4.9.2",
     "ioredis": "^5.0.0",
     "openai": "^4.0.0",
-    "pg": "^8.20.0",
     "pino": "^9.0.0",
     "resend": "^3.0.0",
     "stripe": "^14.0.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260403.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.0.0",
-    "@types/pg": "^8.20.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@vitest/coverage-v8": "^1.0.0",
@@ -56,6 +56,7 @@
     "prettier": "^3.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
+    "vitest": "^1.0.0",
+    "wrangler": "^4.27.0"
   }
 }

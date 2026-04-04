@@ -9,7 +9,6 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.4",
     "@astrojs/react": "^5.0.2",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.3",

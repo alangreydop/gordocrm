@@ -36,35 +36,48 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </form>
   </div>
 
-  <script>
-    const form = document.getElementById('client-form') as HTMLFormElement;
-    const errorDiv = document.getElementById('form-error') as HTMLDivElement;
-    const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+  <script type="module">
+    import { API_BASE } from '../../../lib/api-client';
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorDiv.classList.add('hidden');
+    const form = document.getElementById('client-form');
+    const errorDiv = document.getElementById('form-error');
 
-      const name = (document.getElementById('name') as HTMLInputElement).value;
-      const email = (document.getElementById('email') as HTMLInputElement).value;
-      const company = (document.getElementById('company') as HTMLInputElement).value || undefined;
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorDiv?.classList.add('hidden');
+
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const company = document.getElementById('company');
 
       try {
-        const res = await fetch(`${apiBase}/api/portal/clients`, {
+        const res = await fetch(`${API_BASE}/api/portal/clients`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ name, email, company }),
+          body: JSON.stringify({
+            name: name instanceof HTMLInputElement ? name.value : '',
+            email: email instanceof HTMLInputElement ? email.value : '',
+            company:
+              company instanceof HTMLInputElement && company.value
+                ? company.value
+                : undefined,
+          }),
         });
+
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error ?? 'Error creating client');
         }
+
         const data = await res.json();
-        window.location.href = `/admin/clients/${data.client.id}`;
-      } catch (err: any) {
-        errorDiv.textContent = err.message;
-        errorDiv.classList.remove('hidden');
+        window.location.href = `/admin/clients/detail?id=${encodeURIComponent(data.client.id)}`;
+      } catch (error) {
+        if (errorDiv instanceof HTMLDivElement) {
+          errorDiv.textContent =
+            error instanceof Error ? error.message : 'Error creating client';
+          errorDiv.classList.remove('hidden');
+        }
       }
     });
   </script>

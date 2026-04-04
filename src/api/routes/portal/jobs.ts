@@ -1,76 +1,40 @@
-import type { FastifyInstance } from 'fastify';
+import { desc, eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import { z } from 'zod';
-import { eq, desc, and } from 'drizzle-orm';
-import { db, schema } from '../../../../db/index.js';
-import { requireAuth, type AuthUser } from '../../../lib/auth.js';
+import { schema } from '../../../../db/index.js';
+import { requireAuth } from '../../../lib/auth.js';
+import type { AppContext } from '../../../types/index.js';
 
 const createJobSchema = z.object({
   clientId: z.string().uuid(),
   briefText: z.string().optional(),
-  platform: z.enum(['instagram', 'tiktok', 'amazon_pdp', 'paid_ads']).optional(),
+  platform: z
+    .enum(['instagram', 'tiktok', 'amazon_pdp', 'paid_ads'])
+    .optional(),
   type: z.enum(['image', 'video']).optional(),
 });
 
 const updateJobSchema = z.object({
-  status: z.enum(['pending', 'processing', 'completed', 'failed', 'delivered']).optional(),
+  status: z
+    .enum(['pending', 'processing', 'completed', 'failed', 'delivered'])
+    .optional(),
   briefText: z.string().optional(),
-  platform: z.enum(['instagram', 'tiktok', 'amazon_pdp', 'paid_ads']).optional(),
+  platform: z
+    .enum(['instagram', 'tiktok', 'amazon_pdp', 'paid_ads'])
+    .optional(),
   type: z.enum(['image', 'video']).optional(),
 });
 
-export async function jobRoutes(app: FastifyInstance): Promise<void> {
-  app.addHook('preHandler', requireAuth);
+export const jobRoutes = new Hono<AppContext>();
 
-  // List jobs — admin sees all, client sees only their own
-  app.get('/', async (request) => {
-    const user = (request as any).user as AuthUser;
+jobRoutes.use('*', requireAuth);
 
-    if (user.role === 'admin') {
-      const rows = await db
-        .select({
-          id: schema.jobs.id,
-          clientId: schema.jobs.clientId,
-          clientName: schema.clients.name,
-          status: schema.jobs.status,
-          briefText: schema.jobs.briefText,
-          platform: schema.jobs.platform,
-          type: schema.jobs.type,
-          createdAt: schema.jobs.createdAt,
-          updatedAt: schema.jobs.updatedAt,
-        })
-        .from(schema.jobs)
-        .leftJoin(schema.clients, eq(schema.clients.id, schema.jobs.clientId))
-        .orderBy(desc(schema.jobs.createdAt));
+jobRoutes.get('/', async (c) => {
+  const user = c.get('user');
+  const db = c.get('db');
 
-      return { jobs: rows };
-    }
-
-    // Client: find their client record first
-    const [clientRecord] = await db
-      .select()
-      .from(schema.clients)
-      .where(eq(schema.clients.userId, user.id))
-      .limit(1);
-
-    if (!clientRecord) {
-      return { jobs: [] };
-    }
-
+  if (user.role === 'admin') {
     const rows = await db
-      .select()
-      .from(schema.jobs)
-      .where(eq(schema.jobs.clientId, clientRecord.id))
-      .orderBy(desc(schema.jobs.createdAt));
-
-    return { jobs: rows };
-  });
-
-  // Get single job
-  app.get<{ Params: { id: string } }>('/:id', async (request, reply) => {
-    const user = (request as any).user as AuthUser;
-    const { id } = request.params;
-
-    const [job] = await db
       .select({
         id: schema.jobs.id,
         clientId: schema.jobs.clientId,
@@ -79,95 +43,166 @@ export async function jobRoutes(app: FastifyInstance): Promise<void> {
         briefText: schema.jobs.briefText,
         platform: schema.jobs.platform,
         type: schema.jobs.type,
-        loraModelId: schema.jobs.loraModelId,
         createdAt: schema.jobs.createdAt,
         updatedAt: schema.jobs.updatedAt,
       })
       .from(schema.jobs)
       .leftJoin(schema.clients, eq(schema.clients.id, schema.jobs.clientId))
-      .where(eq(schema.jobs.id, id))
-      .limit(1);
+      .orderBy(desc(schema.jobs.createdAt));
 
-    if (!job) {
-      return reply.code(404).send({ error: 'Job not found' });
-    }
+    return c.json({ jobs: rows });
+  }
 
-    // Client can only see their own jobs
-    if (user.role === 'client') {
-      const [clientRecord] = await db
-        .select()
-        .from(schema.clients)
-        .where(eq(schema.clients.userId, user.id))
-        .limit(1);
+  const [clientRecord] = await db
+    .select()
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, user.id))
+    .limit(1);
 
-      if (!clientRecord || job.clientId !== clientRecord.id) {
-        return reply.code(403).send({ error: 'Access denied' });
-      }
-    }
+  if (!clientRecord) {
+    return c.json({ jobs: [] });
+  }
 
-    const assets = await db
-      .select()
-      .from(schema.assets)
-      .where(eq(schema.assets.jobId, id));
+  const rows = await db
+    .select()
+    .from(schema.jobs)
+    .where(eq(schema.jobs.clientId, clientRecord.id))
+    .orderBy(desc(schema.jobs.createdAt));
 
-    return { job, assets };
-  });
+  return c.json({ jobs: rows });
+});
 
-  // Create job (admin only)
-  app.post('/', async (request, reply) => {
-    const user = (request as any).user as AuthUser;
-    if (user.role !== 'admin') {
-      return reply.code(403).send({ error: 'Admin access required' });
-    }
+jobRoutes.get('/:id', async (c) => {
+  const user = c.get('user');
+  const id = c.req.param('id');
+  const db = c.get('db');
 
-    const body = createJobSchema.safeParse(request.body);
-    if (!body.success) {
-      return reply.code(400).send({ error: 'Invalid data', details: body.error.issues });
-    }
+  const [job] = await db
+    .select({
+      id: schema.jobs.id,
+      clientId: schema.jobs.clientId,
+      clientName: schema.clients.name,
+      status: schema.jobs.status,
+      briefText: schema.jobs.briefText,
+      platform: schema.jobs.platform,
+      type: schema.jobs.type,
+      loraModelId: schema.jobs.loraModelId,
+      createdAt: schema.jobs.createdAt,
+      updatedAt: schema.jobs.updatedAt,
+    })
+    .from(schema.jobs)
+    .leftJoin(schema.clients, eq(schema.clients.id, schema.jobs.clientId))
+    .where(eq(schema.jobs.id, id))
+    .limit(1);
 
-    // Verify client exists
-    const [client] = await db
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  if (user.role === 'client') {
+    const [clientRecord] = await db
       .select()
       .from(schema.clients)
-      .where(eq(schema.clients.id, body.data.clientId))
+      .where(eq(schema.clients.userId, user.id))
       .limit(1);
 
-    if (!client) {
-      return reply.code(400).send({ error: 'Client not found' });
+    if (!clientRecord || job.clientId !== clientRecord.id) {
+      return c.json({ error: 'Access denied' }, 403);
     }
+  }
 
-    const [job] = await db
-      .insert(schema.jobs)
-      .values(body.data)
-      .returning();
+  const assets = await db
+    .select()
+    .from(schema.assets)
+    .where(eq(schema.assets.jobId, id));
 
-    return reply.code(201).send({ job });
+  return c.json({ job, assets });
+});
+
+jobRoutes.post('/', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  const payload = await c.req.json().catch(() => null);
+  const body = createJobSchema.safeParse(payload);
+
+  if (!body.success) {
+    return c.json({ error: 'Invalid data', details: body.error.issues }, 400);
+  }
+
+  const db = c.get('db');
+  const [client] = await db
+    .select()
+    .from(schema.clients)
+    .where(eq(schema.clients.id, body.data.clientId))
+    .limit(1);
+
+  if (!client) {
+    return c.json({ error: 'Client not found' }, 400);
+  }
+
+  const id = crypto.randomUUID();
+  const now = new Date();
+
+  await db.insert(schema.jobs).values({
+    id,
+    clientId: body.data.clientId,
+    briefText: body.data.briefText,
+    platform: body.data.platform,
+    type: body.data.type,
+    status: 'pending',
+    createdAt: now,
+    updatedAt: now,
   });
 
-  // Update job (admin only)
-  app.patch<{ Params: { id: string } }>('/:id', async (request, reply) => {
-    const user = (request as any).user as AuthUser;
-    if (user.role !== 'admin') {
-      return reply.code(403).send({ error: 'Admin access required' });
-    }
+  const [job] = await db
+    .select()
+    .from(schema.jobs)
+    .where(eq(schema.jobs.id, id))
+    .limit(1);
 
-    const { id } = request.params;
-    const body = updateJobSchema.safeParse(request.body);
-    if (!body.success) {
-      return reply.code(400).send({ error: 'Invalid data', details: body.error.issues });
-    }
+  return c.json({ job }, 201);
+});
 
-    const updates = { ...body.data, updatedAt: new Date() };
-    const [job] = await db
-      .update(schema.jobs)
-      .set(updates)
-      .where(eq(schema.jobs.id, id))
-      .returning();
+jobRoutes.patch('/:id', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
 
-    if (!job) {
-      return reply.code(404).send({ error: 'Job not found' });
-    }
+  const id = c.req.param('id');
+  const payload = await c.req.json().catch(() => null);
+  const body = updateJobSchema.safeParse(payload);
 
-    return { job };
-  });
-}
+  if (!body.success) {
+    return c.json({ error: 'Invalid data', details: body.error.issues }, 400);
+  }
+
+  if (Object.keys(body.data).length === 0) {
+    return c.json({ error: 'No changes provided' }, 400);
+  }
+
+  const db = c.get('db');
+
+  await db
+    .update(schema.jobs)
+    .set({
+      ...body.data,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.jobs.id, id));
+
+  const [job] = await db
+    .select()
+    .from(schema.jobs)
+    .where(eq(schema.jobs.id, id))
+    .limit(1);
+
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  return c.json({ job });
+});
