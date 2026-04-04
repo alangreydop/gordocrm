@@ -1,28 +1,31 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+import { apiWithCookie } from '../../lib/api-client';
+
+const cookie = Astro.request.headers.get('cookie') ?? '';
+const fetchApi = apiWithCookie<any>(cookie);
+
+let stats = { activeJobs: 0, completedThisMonth: 0, totalClients: 0 };
+try {
+  stats = await fetchApi('/api/portal/dashboard/stats');
+} catch {}
 ---
 
 <AdminLayout title="Dashboard">
   <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Trabajos activos</p>
-      <p class="text-3xl font-bold mt-1">—</p>
+      <p class="text-3xl font-bold mt-1">{stats.activeJobs}</p>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Completados este mes</p>
-      <p class="text-3xl font-bold mt-1">—</p>
+      <p class="text-3xl font-bold mt-1">{stats.completedThisMonth}</p>
     </div>
     <div class="bg-white rounded-lg shadow p-6">
       <p class="text-sm text-gray-500">Clientes</p>
-      <p class="text-3xl font-bold mt-1">—</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-sm text-gray-500">Ingresos del mes</p>
-      <p class="text-3xl font-bold mt-1">—</p>
+      <p class="text-3xl font-bold mt-1">{stats.totalClients}</p>
     </div>
   </div>
-
-  <p class="text-gray-500">Los datos del dashboard se conectaran en Fase 3 (CRUD de trabajos).</p>
 </AdminLayout>

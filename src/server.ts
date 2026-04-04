@@ -2,6 +2,9 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { config } from './lib/config.js';
 import { authRoutes } from './api/routes/portal/auth.js';
+import { clientRoutes } from './api/routes/portal/clients.js';
+import { jobRoutes } from './api/routes/portal/jobs.js';
+import { dashboardRoutes } from './api/routes/portal/dashboard.js';
 
 const server = Fastify({
   logger: {
@@ -19,6 +22,9 @@ await server.register(cors, {
 
 // Portal CRM routes
 await server.register(authRoutes, { prefix: '/api/portal/auth' });
+await server.register(clientRoutes, { prefix: '/api/portal/clients' });
+await server.register(jobRoutes, { prefix: '/api/portal/jobs' });
+await server.register(dashboardRoutes, { prefix: '/api/portal/dashboard' });
 
 server.get('/health', async () => ({ status: 'ok' }));
 

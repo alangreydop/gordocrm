@@ -1,0 +1,71 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Nuevo cliente">
+  <div class="max-w-xl">
+    <h1 class="text-2xl font-bold mb-6">Nuevo cliente</h1>
+
+    <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+    <form id="client-form" class="space-y-4">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+        <input type="text" id="name" name="name" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+      </div>
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input type="email" id="email" name="email" required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+      </div>
+      <div>
+        <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa (opcional)</label>
+        <input type="text" id="company" name="company"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+      </div>
+      <div class="flex gap-3">
+        <button type="submit"
+          class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
+          Crear cliente
+        </button>
+        <a href="/admin/clients" class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('client-form') as HTMLFormElement;
+    const errorDiv = document.getElementById('form-error') as HTMLDivElement;
+    const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.classList.add('hidden');
+
+      const name = (document.getElementById('name') as HTMLInputElement).value;
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const company = (document.getElementById('company') as HTMLInputElement).value || undefined;
+
+      try {
+        const res = await fetch(`${apiBase}/api/portal/clients`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name, email, company }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error ?? 'Error creating client');
+        }
+        const data = await res.json();
+        window.location.href = `/admin/clients/${data.client.id}`;
+      } catch (err: any) {
+        errorDiv.textContent = err.message;
+        errorDiv.classList.remove('hidden');
+      }
+    });
+  </script>
+</AdminLayout>

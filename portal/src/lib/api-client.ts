@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+const API_BASE = import.meta.env.API_URL ?? 'http://localhost:3000';
 
 export async function api<T>(
   path: string,
@@ -14,4 +14,12 @@ export async function api<T>(
     throw new Error(body.error ?? `API error: ${res.status}`);
   }
   return res.json();
+}
+
+export function apiWithCookie<T>(cookie: string) {
+  return (path: string, options: RequestInit = {}) =>
+    api<T>(path, {
+      ...options,
+      headers: { Cookie: cookie, ...options.headers },
+    });
 }
