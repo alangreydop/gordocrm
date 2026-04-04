@@ -27,10 +27,11 @@ async function hashSessionToken(
 
 function getCookieOptions(env: AppBindings) {
   const config = getConfig(env);
+  const sameSite = isProduction(env) ? ('None' as const) : ('Lax' as const);
   const options = {
     path: '/',
     httpOnly: true,
-    sameSite: 'Lax' as const,
+    sameSite,
     secure: isProduction(env),
     maxAge: SESSION_MAX_AGE_SECONDS,
   };

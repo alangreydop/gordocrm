@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "build": "tsc --project tsconfig.build.json",
-    "deploy": "wrangler deploy",
+    "build:portal": "npm --prefix portal run build",
+    "deploy": "npm run build:portal && wrangler deploy --env production",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",

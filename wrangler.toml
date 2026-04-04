@@ -5,10 +5,22 @@ compatibility_date = "2026-04-04"
 [vars]
 APP_ENV = "development"
 CORS_ORIGIN = "http://localhost:4321"
-SESSION_SECRET = "local-development-session-secret"
+
+[assets]
+directory = "./portal/dist"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "gordocrm"
-database_id = "replace-with-your-d1-database-id"
+database_id = "557ac4b2-6aa6-4b77-9607-d6b347d54512"
+migrations_dir = "db/migrations"
+
+[env.production.vars]
+APP_ENV = "production"
+CORS_ORIGIN = "https://gordocrm-api-production.alangreydop.workers.dev"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "gordocrm"
+database_id = "557ac4b2-6aa6-4b77-9607-d6b347d54512"
 migrations_dir = "db/migrations"

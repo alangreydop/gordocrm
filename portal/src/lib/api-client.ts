@@ -6,10 +6,27 @@ export interface SessionUser {
   company: string | null;
 }
 
-export const API_BASE =
-  import.meta.env.PUBLIC_API_URL ??
-  import.meta.env.API_URL ??
-  'http://127.0.0.1:8787';
+function resolveApiBase(): string {
+  const configured =
+    import.meta.env.PUBLIC_API_URL ?? import.meta.env.API_URL;
+
+  if (configured) {
+    return configured;
+  }
+
+  if (typeof window === 'undefined') {
+    return 'http://127.0.0.1:8787';
+  }
+
+  const { hostname, origin } = window.location;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://127.0.0.1:8787';
+  }
+
+  return origin;
+}
+
+export const API_BASE = resolveApiBase();
 
 export async function api<T>(
   path: string,

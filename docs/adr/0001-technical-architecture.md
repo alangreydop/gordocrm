@@ -10,7 +10,7 @@ El CRM de Grande&Gordo necesita:
 - coste cercano a cero para poco trafico
 - integracion nativa con Cloudflare
 - una base relacional simple
-- despliegue facil para portal y API
+- despliegue facil con el menor numero de piezas posible
 
 La direccion anterior con `Supabase/Postgres` ya no encaja con esa prioridad.
 
@@ -19,6 +19,7 @@ La direccion anterior con `Supabase/Postgres` ya no encaja con esa prioridad.
 Adoptamos esta arquitectura:
 
 - `Cloudflare Workers` para la API
+- `Cloudflare Workers Static Assets` para servir el portal
 - `Hono` como capa HTTP
 - `Cloudflare D1` como base de datos principal
 - `Drizzle ORM` para schema y consultas
@@ -40,11 +41,12 @@ Adoptamos esta arquitectura:
 - buena ergonomia TypeScript
 - mas natural que mantener un servidor Node/Fastify dentro de Cloudflare
 
-### Por que mantener API y portal separados
+### Por que unificar API y portal en un solo Worker
 
-- el portal puede compilar como sitio estatico y seguir usando Astro
-- la API queda limpia y reusable
-- el dominio puede dividirse en `crm.*` y `api.*`
+- simplifica el despliegue y baja el coste operativo
+- evita depender de Pages para un portal pequeno
+- reduce problemas de cookies y CORS
+- sigue permitiendo que el portal se compile como sitio estatico
 
 ## Consequences
 
@@ -53,12 +55,12 @@ Adoptamos esta arquitectura:
 - menos infraestructura externa
 - stack coherente con Cloudflare
 - despliegue barato y simple
+- una sola origin para portal y API
 
 ### Tradeoffs
 
 - `D1` usa SQLite semantics, no Postgres
 - las migraciones se aplican con `wrangler d1 migrations apply`
-- las cookies requieren dominio compartido entre portal y API
 - las rutas dinamicas del portal se resuelven en cliente con query params
 
 ## Operational rules
@@ -66,4 +68,4 @@ Adoptamos esta arquitectura:
 1. No introducir de nuevo `DATABASE_URL` como dependencia central.
 2. Toda nueva persistencia relacional debe modelarse para `D1`.
 3. La configuracion oficial del runtime vive en `wrangler.toml`.
-4. Las decisiones de auth deben preservar compatibilidad con un portal estatico servido desde Cloudflare.
+4. El despliegue oficial sirve `portal/dist` desde el mismo Worker que expone `/api/*`.

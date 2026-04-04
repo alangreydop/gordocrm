@@ -10,7 +10,7 @@ La nueva base es:
 
 - `API` en Cloudflare Workers
 - `DB` en Cloudflare D1
-- `Portal` en Astro estatico desplegable en Cloudflare
+- `Portal` en Astro estatico servido por el mismo Worker
 
 ## Lo que ya esta adaptado
 
@@ -49,7 +49,7 @@ La nueva base es:
 - `portal/astro.config.mjs`
   - Build estatico
 - `portal/src/lib/api-client.ts`
-  - Default API local en `http://127.0.0.1:8787`
+  - Usa mismo origen en produccion y `http://127.0.0.1:8787` en local
 - `portal/src/lib/session.ts`
   - Reexport de helpers cliente
 - layouts y forms
@@ -84,23 +84,20 @@ npm run db:seed
 
 ### Produccion
 
-Separar en dos servicios dentro de Cloudflare:
+Desplegar un solo servicio dentro de Cloudflare:
 
-1. `gordocrm-api`
+1. `gordocrm-api-production`
    - Worker
    - binding D1 `DB`
-2. `gordocrm-portal`
-   - Astro estatico en Cloudflare Pages
+   - assets estaticos servidos desde `portal/dist`
 
 ### Dominio recomendado
 
-Para que las cookies funcionen bien entre frontend estatico y API:
+El camino mas simple es poner un solo dominio al Worker completo, por ejemplo:
 
-- portal: `crm.tu-dominio.com`
-- api: `api.tu-dominio.com`
-- variable compartida: `SESSION_COOKIE_DOMAIN=.tu-dominio.com`
+- `crm.tu-dominio.com`
 
-Eso hace que el navegador pueda compartir la cookie entre el portal y el worker API.
+Si algun dia separas frontend y API, entonces si necesitarias coordinar `CORS_ORIGIN` y `SESSION_COOKIE_DOMAIN`.
 
 ## Variables importantes
 
@@ -109,7 +106,6 @@ Eso hace que el navegador pueda compartir la cookie entre el portal y el worker 
 - `APP_ENV`
 - `CORS_ORIGIN`
 - `SESSION_SECRET`
-- `SESSION_COOKIE_DOMAIN`
 
 ### Para Drizzle/seed remoto
 
@@ -118,15 +114,11 @@ Eso hace que el navegador pueda compartir la cookie entre el portal y el worker 
 - `CLOUDFLARE_DATABASE_NAME`
 - `CLOUDFLARE_D1_TOKEN`
 
-### Portal
-
-- `API_URL`
-- `PUBLIC_API_URL`
-
 ## Scripts que ahora importan
 
 - `npm run dev`
 - `npm run deploy`
+- `npm run build:portal`
 - `npm run db:generate`
 - `npm run db:migrate`
 - `npm run db:migrate:remote`
@@ -155,5 +147,5 @@ No seguir usando estas premisas:
 1. Instalar dependencias y regenerar lockfiles.
 2. Ejecutar typecheck y build.
 3. Crear la D1 real en Cloudflare.
-4. Conectar el portal a un dominio compartido con el API.
+4. Apuntar un dominio al Worker unico cuando quieras dejar de usar `workers.dev`.
 5. Luego abordar assets en R2 y colas Cloudflare si hiciera falta.
