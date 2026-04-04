@@ -3,38 +3,167 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Dashboard">
-  <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+  <div class="space-y-6">
+    <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Dashboard</h1>
+        <p class="text-gray-500">Visibilidad rápida de pipeline, margen, capacidad y seguimiento comercial.</p>
+      </div>
+      <div class="text-sm text-gray-500">
+        Email operativo: <span class="font-medium text-gray-900">hola@grandeandgordo.com</span>
+      </div>
+    </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-sm text-gray-500">Trabajos activos</p>
-      <p id="active-jobs" class="text-3xl font-bold mt-1">—</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Trabajos activos</p>
+        <p id="active-jobs" class="text-3xl font-bold mt-2">—</p>
+        <p id="urgent-jobs" class="text-sm text-red-600 mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Capacidad del mes</p>
+        <p id="units-planned" class="text-3xl font-bold mt-2">—</p>
+        <p id="units-consumed" class="text-sm text-gray-500 mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Margen estimado medio</p>
+        <p id="avg-margin" class="text-3xl font-bold mt-2">—</p>
+        <p id="low-margin-jobs" class="text-sm text-amber-700 mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Clientes y revisiones</p>
+        <p id="total-clients" class="text-3xl font-bold mt-2">—</p>
+        <p id="reviews-due" class="text-sm text-blue-700 mt-2">—</p>
+      </div>
     </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-sm text-gray-500">Completados este mes</p>
-      <p id="completed-this-month" class="text-3xl font-bold mt-1">—</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-sm text-gray-500">Clientes</p>
-      <p id="total-clients" class="text-3xl font-bold mt-1">—</p>
+
+    <div class="grid gap-6 xl:grid-cols-[1.35fr_.95fr]">
+      <section class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold">Trabajos recientes</h2>
+            <p class="text-sm text-gray-500">Lo que conviene revisar hoy antes de producir.</p>
+          </div>
+          <a href="/admin/jobs" class="text-sm text-blue-600 hover:text-blue-800">Ver todos</a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Cliente</th>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Brief</th>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Due</th>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Lane</th>
+                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Margen</th>
+                <th class="px-6 py-3"></th>
+              </tr>
+            </thead>
+            <tbody id="recent-jobs-body" class="divide-y divide-gray-200">
+              <tr>
+                <td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold">Revisiones próximas</h2>
+          <p class="text-sm text-gray-500">Clientes que deberían tener seguimiento en los próximos 14 días.</p>
+        </div>
+        <div id="reviews-list" class="divide-y divide-gray-200">
+          <div class="px-6 py-8 text-center text-gray-500">Cargando revisiones...</div>
+        </div>
+      </section>
     </div>
   </div>
 
   <script>
     (async () => {
-    const { api } = await import('../../lib/api-client');
+    const {
+      api,
+      escapeHtml,
+      formatDate,
+      formatPercent,
+      jobStatusClass,
+      stackLaneClass,
+    } = await import('../../lib/api-client');
+
+    const recentJobsBody = document.getElementById('recent-jobs-body');
+    const reviewsList = document.getElementById('reviews-list');
 
     try {
       const stats = await api('/api/portal/dashboard/stats');
-      const active = document.getElementById('active-jobs');
-      const completed = document.getElementById('completed-this-month');
-      const clients = document.getElementById('total-clients');
 
-      if (active) active.textContent = String(stats.activeJobs ?? 0);
-      if (completed) completed.textContent = String(stats.completedThisMonth ?? 0);
-      if (clients) clients.textContent = String(stats.totalClients ?? 0);
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
+
+      setText('active-jobs', String(stats.activeJobs ?? 0));
+      setText('urgent-jobs', `${stats.urgentJobs ?? 0} urgentes`);
+      setText('units-planned', String(stats.unitsPlannedThisMonth ?? 0));
+      setText('units-consumed', `${stats.unitsConsumedThisMonth ?? 0} unidades consumidas`);
+      setText('avg-margin', formatPercent(stats.avgEstimatedMargin ?? 0));
+      setText('low-margin-jobs', `${stats.lowMarginJobs ?? 0} trabajos por debajo del 65%`);
+      setText('total-clients', String(stats.totalClients ?? 0));
+      setText('reviews-due', `${stats.reviewsDueSoon ?? 0} revisiones próximas`);
+
+      const recentJobs = Array.isArray(stats.recentJobs) ? stats.recentJobs : [];
+      if (recentJobsBody) {
+        recentJobsBody.innerHTML = recentJobs.length === 0
+          ? `<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay trabajos recientes.</td></tr>`
+          : recentJobs.map((job) => `
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 font-medium">${escapeHtml(job.clientName ?? '—')}</td>
+              <td class="px-6 py-4 max-w-xs truncate">${escapeHtml(job.briefText ?? 'Sin brief')}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+                  ${escapeHtml(job.status ?? 'pending')}
+                </span>
+                ${job.turnaround === 'urgente' ? '<span class="inline-flex ml-2 px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">urgente</span>' : ''}
+              </td>
+              <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.dueAt))}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}">
+                  ${escapeHtml(job.stackLane ?? '—')}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-gray-600">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
+              <td class="px-6 py-4 text-right">
+                <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800">Ver</a>
+              </td>
+            </tr>
+          `).join('');
+      }
+
+      const reviews = Array.isArray(stats.upcomingReviews) ? stats.upcomingReviews : [];
+      if (reviewsList) {
+        reviewsList.innerHTML = reviews.length === 0
+          ? `<div class="px-6 py-8 text-center text-gray-500">No hay revisiones próximas.</div>`
+          : reviews.map((client) => `
+            <div class="px-6 py-4 flex items-start justify-between gap-4">
+              <div>
+                <p class="font-medium text-gray-900">${escapeHtml(client.name)}</p>
+                <p class="text-sm text-gray-500">${escapeHtml(client.company ?? client.plan ?? 'Sin empresa')}</p>
+                <p class="text-sm text-gray-500 mt-1">Account manager: ${escapeHtml(client.accountManager ?? 'hola@grandeandgordo.com')}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-medium text-gray-900">${escapeHtml(formatDate(client.nextReviewAt))}</p>
+                <a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="text-sm text-blue-600 hover:text-blue-800">Abrir cliente</a>
+              </div>
+            </div>
+          `).join('');
+      }
     } catch {
-      // Auth/layout script handles redirects; keeping the dashboard quiet here is enough.
+      if (recentJobsBody) {
+        recentJobsBody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-red-600">No se pudo cargar el dashboard.</td></tr>`;
+      }
+      if (reviewsList) {
+        reviewsList.innerHTML = `<div class="px-6 py-8 text-center text-red-600">No se pudieron cargar las revisiones.</div>`;
+      }
     }
     })();
   </script>

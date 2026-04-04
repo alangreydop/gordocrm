@@ -56,7 +56,7 @@ export async function createUser(
 ) {
   const id = crypto.randomUUID();
   const now = new Date();
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await hashPassword(password);
 
   await db.insert(schema.users).values({
     id,
@@ -78,6 +78,17 @@ export async function createUser(
   return user ?? null;
 }
 
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
+export async function checkPassword(
+  password: string,
+  passwordHash: string,
+): Promise<boolean> {
+  return bcrypt.compare(password, passwordHash);
+}
+
 export async function verifyCredentials(
   db: Database,
   email: string,
@@ -91,7 +102,7 @@ export async function verifyCredentials(
 
   if (!user) return null;
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+  const valid = await checkPassword(password, user.passwordHash);
   if (!valid) return null;
 
   return {
@@ -101,6 +112,40 @@ export async function verifyCredentials(
     name: user.name,
     company: user.company ?? null,
   };
+}
+
+export async function getUserRecordById(
+  db: Database,
+  userId: string,
+) {
+  const [user] = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.id, userId))
+    .limit(1);
+
+  return user ?? null;
+}
+
+export async function updateUserPassword(
+  db: Database,
+  userId: string,
+  password: string,
+): Promise<void> {
+  await db
+    .update(schema.users)
+    .set({
+      passwordHash: await hashPassword(password),
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.users.id, userId));
+}
+
+export async function clearSessionsForUser(
+  db: Database,
+  userId: string,
+): Promise<void> {
+  await db.delete(schema.sessions).where(eq(schema.sessions.userId, userId));
 }
 
 export async function createSession(

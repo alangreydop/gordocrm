@@ -27,6 +27,35 @@ El repo tiene dos piezas:
 
 La sesion se guarda en D1 y viaja en cookie `gg_session`. En la estrategia actual, el mismo Worker sirve el portal y la API, asi que no hace falta separar `crm.*` y `api.*` para que el login funcione.
 
+## Lo que ya cubre el CRM
+
+- Dashboard admin con foco en pipeline, urgencias, margen y reviews proximas
+- Ficha completa de cliente con:
+  - plan
+  - account manager
+  - estado de dataset
+  - capacidad mensual
+  - segmento
+  - perfil de margen
+  - notas internas
+  - proxima review
+- Provision y reseteo de acceso al portal cliente desde la ficha del cliente
+- Cambio de contrasena para admin y cliente
+- Ficha de trabajo con:
+  - due date
+  - units planned / consumed
+  - costes AI estimados y reales
+  - margen estimado
+  - benchmark
+  - stack lane
+  - candidatos y stack ganador
+  - riesgo legal
+  - portabilidad
+  - demanda estructural
+  - notas internas
+- Gestion de assets con QA y `deliveryUrl`
+- Portal cliente mostrando solo assets aprobados y el contacto operativo `hola@grandeandgordo.com`
+
 ## Primer arranque
 
 ```bash

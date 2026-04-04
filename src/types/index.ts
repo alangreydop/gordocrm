@@ -2,6 +2,14 @@ import type { Database } from '../../db/index.js';
 
 export type UserRole = 'admin' | 'client';
 export type ClientSubscriptionStatus = 'active' | 'inactive' | 'cancelled';
+export type ClientDatasetStatus =
+  | 'pending_capture'
+  | 'captured'
+  | 'trained'
+  | 'active'
+  | 'archived';
+export type ClientSegment = 'rentable' | 'growth' | 'premium' | 'enterprise';
+export type MarginProfile = 'estrecho' | 'medio' | 'alto';
 export type JobStatus =
   | 'pending'
   | 'processing'
@@ -9,6 +17,19 @@ export type JobStatus =
   | 'failed'
   | 'delivered';
 export type JobPlatform = 'instagram' | 'tiktok' | 'amazon_pdp' | 'paid_ads';
+export type JobAssetDominant =
+  | 'catalogo'
+  | 'paid_static'
+  | 'pdp_packaging'
+  | 'video_ads'
+  | 'video_edit'
+  | 'mixto';
+export type LegalRisk = 'normal' | 'alto';
+export type Turnaround = 'normal' | 'urgente';
+export type PortabilityRequired = 'si' | 'no';
+export type StructuralDemand = 'normal' | 'alta';
+export type BenchmarkLevel = 'L0' | 'L1' | 'L2' | 'L3';
+export type StackLane = 'A' | 'B' | 'C' | 'D';
 export type AssetType = 'image' | 'video';
 export type AssetQaStatus = 'pending' | 'approved' | 'rejected';
 

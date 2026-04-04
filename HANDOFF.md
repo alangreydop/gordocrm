@@ -57,6 +57,20 @@ La nueva base es:
   - guards cliente alineados con Worker local
 - paginas de detalle
   - pasan a query params (`/detail?id=...`) para evitar rutas dinamicas SSR
+- dashboard y fichas
+  - admin ya cubre clientes, trabajos, password, acceso portal, margen, stack y QA
+  - cliente ya cubre resumen, cambio de contrasena y assets aprobados
+
+## Modelo operativo actual
+
+El CRM ya esta pensado para la forma de trabajo de Grande&Gordo:
+
+- contacto operativo oficial: `hola@grandeandgordo.com`
+- seguimiento por cliente con `accountManager`, `nextReviewAt` y `lastContactedAt`
+- clasificacion por `segment`, `marginProfile` y `datasetStatus`
+- control de produccion por `unitsPlanned`, `unitsConsumed`, `dueAt` y `turnaround`
+- decision tecnica por `benchmarkLevel`, `stackLane`, `stackCandidate*`, `stackWinner` y `stackSnapshot`
+- control de entrega por `assets`, `qaStatus`, `qaNotes` y `deliveryUrl`
 
 ## Estrategia de despliegue
 

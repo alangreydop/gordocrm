@@ -1,32 +1,142 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const subscriptionOptions = [
+  ['inactive', 'Inactive'],
+  ['active', 'Active'],
+  ['cancelled', 'Cancelled'],
+];
+const datasetOptions = [
+  ['pending_capture', 'Pendiente captura'],
+  ['captured', 'Capturado'],
+  ['trained', 'Entrenado'],
+  ['active', 'Activo'],
+  ['archived', 'Archivado'],
+];
+const segmentOptions = [
+  ['rentable', 'Rentable'],
+  ['growth', 'Growth'],
+  ['premium', 'Premium'],
+  ['enterprise', 'Enterprise'],
+];
+const marginOptions = [
+  ['estrecho', 'Estrecho'],
+  ['medio', 'Medio'],
+  ['alto', 'Alto'],
+];
 ---
 
 <AdminLayout title="Nuevo cliente">
-  <div class="max-w-xl">
-    <h1 class="text-2xl font-bold mb-6">Nuevo cliente</h1>
+  <div class="max-w-5xl space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold">Nuevo cliente</h1>
+      <p class="text-gray-500 mt-1">Crea la ficha comercial, operativa y de acceso al portal en un solo paso.</p>
+    </div>
 
-    <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+    <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 text-sm"></div>
 
-    <form id="client-form" class="space-y-4">
-      <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-        <input type="text" id="name" name="name" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
-      </div>
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-        <input type="email" id="email" name="email" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
-      </div>
-      <div>
-        <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa (opcional)</label>
-        <input type="text" id="company" name="company"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
-      </div>
+    <form id="client-form" class="space-y-6">
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Identidad</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" id="name" name="name" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email principal</label>
+            <input type="email" id="email" name="email" required placeholder="hola@grandeandgordo.com"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+            <input type="text" id="company" name="company"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="accountManager" class="block text-sm font-medium text-gray-700 mb-1">Account manager</label>
+            <input type="text" id="accountManager" name="accountManager" value="hola@grandeandgordo.com"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Plan y operativa</h2>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div>
+            <label for="plan" class="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+            <input type="text" id="plan" name="plan" placeholder="Campaña Pro"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="subscriptionStatus" class="block text-sm font-medium text-gray-700 mb-1">Suscripción</label>
+            <select id="subscriptionStatus" name="subscriptionStatus"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+              {subscriptionOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="datasetStatus" class="block text-sm font-medium text-gray-700 mb-1">Dataset</label>
+            <select id="datasetStatus" name="datasetStatus"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+              {datasetOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="monthlyUnitCapacity" class="block text-sm font-medium text-gray-700 mb-1">Capacidad mensual</label>
+            <input type="number" id="monthlyUnitCapacity" name="monthlyUnitCapacity" min="0" placeholder="72"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="segment" class="block text-sm font-medium text-gray-700 mb-1">Segmento</label>
+            <select id="segment" name="segment"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="marginProfile" class="block text-sm font-medium text-gray-700 mb-1">Perfil margen</label>
+            <select id="marginProfile" name="marginProfile"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="lastContactedAt" class="block text-sm font-medium text-gray-700 mb-1">Último contacto</label>
+            <input type="date" id="lastContactedAt" name="lastContactedAt"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="nextReviewAt" class="block text-sm font-medium text-gray-700 mb-1">Próxima review</label>
+            <input type="date" id="nextReviewAt" name="nextReviewAt"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+        </div>
+        <div>
+          <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
+          <textarea id="notes" name="notes" rows="4" placeholder="Contexto comercial, próximas acciones, riesgos..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Acceso al portal</h2>
+          <p class="text-sm text-gray-500 mt-1">Si defines una contraseña ahora, el cliente sale ya con acceso habilitado.</p>
+        </div>
+        <div class="max-w-md">
+          <label for="portalPassword" class="block text-sm font-medium text-gray-700 mb-1">Contraseña inicial</label>
+          <input type="password" id="portalPassword" name="portalPassword" minlength="8"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900" />
+        </div>
+      </section>
+
       <div class="flex gap-3">
-        <button type="submit"
-          class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
+        <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
           Crear cliente
         </button>
         <a href="/admin/clients" class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
@@ -47,9 +157,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       event.preventDefault();
       errorDiv?.classList.add('hidden');
 
-      const name = document.getElementById('name');
-      const email = document.getElementById('email');
-      const company = document.getElementById('company');
+      const fieldValue = (id) => {
+        const field = document.getElementById(id);
+        return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement
+          ? field.value
+          : '';
+      };
 
       try {
         const res = await fetch(`${API_BASE}/api/portal/clients`, {
@@ -57,12 +170,20 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            name: name instanceof HTMLInputElement ? name.value : '',
-            email: email instanceof HTMLInputElement ? email.value : '',
-            company:
-              company instanceof HTMLInputElement && company.value
-                ? company.value
-                : undefined,
+            name: fieldValue('name'),
+            email: fieldValue('email'),
+            company: fieldValue('company') || undefined,
+            plan: fieldValue('plan') || undefined,
+            accountManager: fieldValue('accountManager') || undefined,
+            subscriptionStatus: fieldValue('subscriptionStatus') || undefined,
+            datasetStatus: fieldValue('datasetStatus') || undefined,
+            monthlyUnitCapacity: fieldValue('monthlyUnitCapacity') || undefined,
+            segment: fieldValue('segment') || undefined,
+            marginProfile: fieldValue('marginProfile') || undefined,
+            lastContactedAt: fieldValue('lastContactedAt') || undefined,
+            nextReviewAt: fieldValue('nextReviewAt') || undefined,
+            notes: fieldValue('notes') || undefined,
+            portalPassword: fieldValue('portalPassword') || undefined,
           }),
         });
 

@@ -1,52 +1,242 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const platformOptions = [
+  ['instagram', 'Instagram'],
+  ['tiktok', 'TikTok'],
+  ['amazon_pdp', 'Amazon PDP'],
+  ['paid_ads', 'Paid Ads'],
+];
+const typeOptions = [
+  ['image', 'Imagen'],
+  ['video', 'Video'],
+];
+const segmentOptions = [
+  ['rentable', 'Rentable'],
+  ['growth', 'Growth'],
+  ['premium', 'Premium'],
+  ['enterprise', 'Enterprise'],
+];
+const marginOptions = [
+  ['estrecho', 'Estrecho'],
+  ['medio', 'Medio'],
+  ['alto', 'Alto'],
+];
+const assetDominantOptions = [
+  ['catalogo', 'Catalogo'],
+  ['paid_static', 'Paid Static'],
+  ['pdp_packaging', 'PDP Packaging'],
+  ['video_ads', 'Video Ads'],
+  ['video_edit', 'Video Edit'],
+  ['mixto', 'Mixto'],
+];
+const legalRiskOptions = [
+  ['normal', 'Normal'],
+  ['alto', 'Alto'],
+];
+const turnaroundOptions = [
+  ['normal', 'Normal'],
+  ['urgente', 'Urgente'],
+];
+const portabilityOptions = [
+  ['si', 'Si'],
+  ['no', 'No'],
+];
+const structuralDemandOptions = [
+  ['normal', 'Normal'],
+  ['alta', 'Alta'],
+];
+const benchmarkOptions = [
+  ['L0', 'L0'],
+  ['L1', 'L1'],
+  ['L2', 'L2'],
+  ['L3', 'L3'],
+];
+const stackLaneOptions = [
+  ['A', 'A'],
+  ['B', 'B'],
+  ['C', 'C'],
+  ['D', 'D'],
+];
 ---
 
 <AdminLayout title="Nuevo trabajo">
-  <div class="max-w-xl">
-    <h1 class="text-2xl font-bold mb-6">Nuevo trabajo</h1>
+  <div class="max-w-6xl space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold">Nuevo trabajo</h1>
+      <p class="text-gray-500 mt-1">Abre un trabajo con todo el contexto operativo desde el principio.</p>
+    </div>
 
-    <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+    <div id="form-error" class="hidden bg-red-50 text-red-700 rounded p-3 text-sm"></div>
 
-    <form id="job-form" class="space-y-4">
-      <div>
-        <label for="clientId" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
-        <select id="clientId" name="clientId" required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
-          <option value="">Cargando clientes...</option>
-        </select>
-      </div>
-      <div>
-        <label for="briefText" class="block text-sm font-medium text-gray-700 mb-1">Brief</label>
-        <textarea id="briefText" name="briefText" rows="3"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
-          placeholder="Descripcion del trabajo..."></textarea>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label for="platform" class="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
-          <select id="platform" name="platform"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
-            <option value="">Sin especificar</option>
-            <option value="instagram">Instagram</option>
-            <option value="tiktok">TikTok</option>
-            <option value="amazon_pdp">Amazon PDP</option>
-            <option value="paid_ads">Paid Ads</option>
-          </select>
+    <form id="job-form" class="space-y-6">
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <div class="grid md:grid-cols-[1.1fr_.9fr] gap-4">
+          <div>
+            <label for="clientId" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+            <select id="clientId" name="clientId" required class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Cargando clientes...</option>
+            </select>
+            <p id="selected-client-hint" class="text-xs text-gray-500 mt-2">Selecciona el cliente para cargar contexto comercial.</p>
+          </div>
+          <div>
+            <label for="dueAt" class="block text-sm font-medium text-gray-700 mb-1">Due date</label>
+            <input type="date" id="dueAt" name="dueAt" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
         </div>
         <div>
-          <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-          <select id="type" name="type"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900">
-            <option value="">Sin especificar</option>
-            <option value="image">Imagen</option>
-            <option value="video">Video</option>
-          </select>
+          <label for="briefText" class="block text-sm font-medium text-gray-700 mb-1">Brief</label>
+          <textarea id="briefText" name="briefText" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Que hay que producir, para que plataforma y con que objetivo"></textarea>
         </div>
-      </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Produccion</h2>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div>
+            <label for="platform" class="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
+            <select id="platform" name="platform" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+            <select id="type" name="type" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="turnaround" class="block text-sm font-medium text-gray-700 mb-1">Turnaround</label>
+            <select id="turnaround" name="turnaround" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="assetDominant" class="block text-sm font-medium text-gray-700 mb-1">Dominante</label>
+            <select id="assetDominant" name="assetDominant" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="unitsPlanned" class="block text-sm font-medium text-gray-700 mb-1">Units planned</label>
+            <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" value="0" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="unitsConsumed" class="block text-sm font-medium text-gray-700 mb-1">Units consumed</label>
+            <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" value="0" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="portabilityRequired" class="block text-sm font-medium text-gray-700 mb-1">Portabilidad</label>
+            <select id="portabilityRequired" name="portabilityRequired" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="structuralDemand" class="block text-sm font-medium text-gray-700 mb-1">Demanda estructural</label>
+            <select id="structuralDemand" name="structuralDemand" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Economia y riesgo</h2>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div>
+            <label for="clientSegment" class="block text-sm font-medium text-gray-700 mb-1">Segmento</label>
+            <select id="clientSegment" name="clientSegment" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="marginProfile" class="block text-sm font-medium text-gray-700 mb-1">Perfil margen</label>
+            <select id="marginProfile" name="marginProfile" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="grossMarginEstimated" class="block text-sm font-medium text-gray-700 mb-1">Margen bruto estimado</label>
+            <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="legalRisk" class="block text-sm font-medium text-gray-700 mb-1">Riesgo legal</label>
+            <select id="legalRisk" name="legalRisk" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="aiCostEstimated" class="block text-sm font-medium text-gray-700 mb-1">Coste AI estimado</label>
+            <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="aiCostReal" class="block text-sm font-medium text-gray-700 mb-1">Coste AI real</label>
+            <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="benchmarkLevel" class="block text-sm font-medium text-gray-700 mb-1">Nivel benchmark</label>
+            <select id="benchmarkLevel" name="benchmarkLevel" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label for="stackLane" class="block text-sm font-medium text-gray-700 mb-1">Stack lane</label>
+            <select id="stackLane" name="stackLane" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+              <option value="">Sin definir</option>
+              {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-lg shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold">Stack y contexto</h2>
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div>
+            <label for="stackCandidate1" class="block text-sm font-medium text-gray-700 mb-1">Candidate 1</label>
+            <input type="text" id="stackCandidate1" name="stackCandidate1" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="stackCandidate2" class="block text-sm font-medium text-gray-700 mb-1">Candidate 2</label>
+            <input type="text" id="stackCandidate2" name="stackCandidate2" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="stackCandidate3" class="block text-sm font-medium text-gray-700 mb-1">Candidate 3</label>
+            <input type="text" id="stackCandidate3" name="stackCandidate3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+          <div>
+            <label for="stackWinner" class="block text-sm font-medium text-gray-700 mb-1">Ganador</label>
+            <input type="text" id="stackWinner" name="stackWinner" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="stackSnapshot" class="block text-sm font-medium text-gray-700 mb-1">Snapshot stack</label>
+            <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Motivo de la decision, tradeoffs y stack elegido"></textarea>
+          </div>
+          <div>
+            <label for="clientGoal" class="block text-sm font-medium text-gray-700 mb-1">Objetivo del cliente</label>
+            <textarea id="clientGoal" name="clientGoal" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Conversion, velocidad, catalogo, ads, PDP..."></textarea>
+          </div>
+        </div>
+        <div>
+          <label for="internalNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
+          <textarea id="internalNotes" name="internalNotes" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" placeholder="Dependencias, riesgos o instrucciones internas"></textarea>
+        </div>
+      </section>
+
       <div class="flex gap-3">
-        <button type="submit"
-          class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
+        <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
           Crear trabajo
         </button>
         <a href="/admin/jobs" class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50">
@@ -58,78 +248,137 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
   <script>
     (async () => {
-    const { API_BASE, api, escapeHtml, getQueryParam } = await import('../../../lib/api-client');
+      const { API_BASE, api, escapeHtml, getQueryParam } = await import('../../../lib/api-client');
 
-    const form = document.getElementById('job-form');
-    const errorDiv = document.getElementById('form-error');
-    const clientSelect = document.getElementById('clientId');
-    const preselectedClientId = getQueryParam('clientId');
+      const form = document.getElementById('job-form');
+      const errorDiv = document.getElementById('form-error');
+      const clientSelect = document.getElementById('clientId');
+      const selectedClientHint = document.getElementById('selected-client-hint');
+      const preselectedClientId = getQueryParam('clientId');
 
-    try {
-      const data = await api('/api/portal/clients');
-      const clients = Array.isArray(data.clients) ? data.clients : [];
+      const clientData = new Map();
 
-      if (clientSelect instanceof HTMLSelectElement) {
-        clientSelect.innerHTML = `
-          <option value="">Seleccionar cliente...</option>
-          ${clients.map((client) => `
-            <option value="${escapeHtml(client.id)}" ${client.id === preselectedClientId ? 'selected' : ''}>
-              ${escapeHtml(client.name)} (${escapeHtml(client.email)})
-            </option>
-          `).join('')}
-        `;
-      }
-    } catch {
-      if (clientSelect instanceof HTMLSelectElement) {
-        clientSelect.innerHTML = `<option value="">No se pudieron cargar los clientes</option>`;
-      }
-    }
+      const fieldValue = (id) => {
+        const field = document.getElementById(id);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          return field.value;
+        }
+        return '';
+      };
 
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      errorDiv?.classList.add('hidden');
+      const setIfEmpty = (id, value) => {
+        const field = document.getElementById(id);
+        if (
+          (field instanceof HTMLInputElement ||
+            field instanceof HTMLTextAreaElement ||
+            field instanceof HTMLSelectElement) &&
+          !field.value &&
+          value
+        ) {
+          field.value = value;
+        }
+      };
 
-      const briefText = document.getElementById('briefText');
-      const platform = document.getElementById('platform');
-      const type = document.getElementById('type');
+      const syncClientHint = () => {
+        if (!(clientSelect instanceof HTMLSelectElement) || !selectedClientHint) return;
+        const client = clientData.get(clientSelect.value);
+        if (!client) {
+          selectedClientHint.textContent = 'Selecciona el cliente para cargar contexto comercial.';
+          return;
+        }
+
+        selectedClientHint.textContent =
+          `Plan: ${client.plan ?? 'Sin plan'} · Segmento: ${client.segment ?? 'Sin definir'} · Capacidad: ${client.monthlyUnitCapacity ?? 0} unidades`;
+
+        setIfEmpty('clientSegment', client.segment ?? '');
+        setIfEmpty('marginProfile', client.marginProfile ?? '');
+      };
 
       try {
-        const res = await fetch(`${API_BASE}/api/portal/jobs`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            clientId: clientSelect instanceof HTMLSelectElement ? clientSelect.value : '',
-            briefText:
-              briefText instanceof HTMLTextAreaElement && briefText.value
-                ? briefText.value
-                : undefined,
-            platform:
-              platform instanceof HTMLSelectElement && platform.value
-                ? platform.value
-                : undefined,
-            type:
-              type instanceof HTMLSelectElement && type.value
-                ? type.value
-                : undefined,
-          }),
-        });
+        const data = await api('/api/portal/clients');
+        const clients = Array.isArray(data.clients) ? data.clients : [];
 
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error ?? 'Error creating job');
+        if (clientSelect instanceof HTMLSelectElement) {
+          clientSelect.innerHTML = `
+            <option value="">Seleccionar cliente...</option>
+            ${clients.map((client) => {
+              clientData.set(client.id, client);
+              const selected = client.id === preselectedClientId ? 'selected' : '';
+              return `
+                <option value="${escapeHtml(client.id)}" ${selected}>
+                  ${escapeHtml(client.name)} (${escapeHtml(client.email)})
+                </option>
+              `;
+            }).join('')}
+          `;
         }
 
-        const data = await res.json();
-        window.location.href = `/admin/jobs/detail?id=${encodeURIComponent(data.job.id)}`;
-      } catch (error) {
-        if (errorDiv instanceof HTMLDivElement) {
-          errorDiv.textContent =
-            error instanceof Error ? error.message : 'Error creating job';
-          errorDiv.classList.remove('hidden');
+        syncClientHint();
+      } catch {
+        if (clientSelect instanceof HTMLSelectElement) {
+          clientSelect.innerHTML = '<option value="">No se pudieron cargar los clientes</option>';
         }
       }
-    });
+
+      clientSelect?.addEventListener('change', syncClientHint);
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorDiv?.classList.add('hidden');
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/jobs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              clientId: fieldValue('clientId'),
+              briefText: fieldValue('briefText') || null,
+              platform: fieldValue('platform') || undefined,
+              type: fieldValue('type') || undefined,
+              dueAt: fieldValue('dueAt') || null,
+              unitsPlanned: fieldValue('unitsPlanned') || 0,
+              unitsConsumed: fieldValue('unitsConsumed') || 0,
+              aiCostEstimated: fieldValue('aiCostEstimated') || null,
+              aiCostReal: fieldValue('aiCostReal') || null,
+              grossMarginEstimated: fieldValue('grossMarginEstimated') || null,
+              clientSegment: fieldValue('clientSegment') || undefined,
+              marginProfile: fieldValue('marginProfile') || undefined,
+              assetDominant: fieldValue('assetDominant') || undefined,
+              legalRisk: fieldValue('legalRisk') || undefined,
+              turnaround: fieldValue('turnaround') || undefined,
+              portabilityRequired: fieldValue('portabilityRequired') || undefined,
+              structuralDemand: fieldValue('structuralDemand') || undefined,
+              benchmarkLevel: fieldValue('benchmarkLevel') || undefined,
+              stackLane: fieldValue('stackLane') || undefined,
+              stackCandidate1: fieldValue('stackCandidate1') || null,
+              stackCandidate2: fieldValue('stackCandidate2') || null,
+              stackCandidate3: fieldValue('stackCandidate3') || null,
+              stackWinner: fieldValue('stackWinner') || null,
+              stackSnapshot: fieldValue('stackSnapshot') || null,
+              clientGoal: fieldValue('clientGoal') || null,
+              internalNotes: fieldValue('internalNotes') || null,
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'Error creating job');
+          }
+
+          const data = await res.json();
+          window.location.href = `/admin/jobs/detail?id=${encodeURIComponent(data.job.id)}`;
+        } catch (error) {
+          if (errorDiv instanceof HTMLDivElement) {
+            errorDiv.textContent = error instanceof Error ? error.message : 'Error creating job';
+            errorDiv.classList.remove('hidden');
+          }
+        }
+      });
     })();
   </script>
 </AdminLayout>

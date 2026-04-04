@@ -1,110 +1,506 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const statusOptions = [
+  ['pending', 'Pending'],
+  ['processing', 'Processing'],
+  ['completed', 'Completed'],
+  ['failed', 'Failed'],
+  ['delivered', 'Delivered'],
+];
+const platformOptions = [
+  ['instagram', 'Instagram'],
+  ['tiktok', 'TikTok'],
+  ['amazon_pdp', 'Amazon PDP'],
+  ['paid_ads', 'Paid Ads'],
+];
+const typeOptions = [
+  ['image', 'Imagen'],
+  ['video', 'Video'],
+];
+const segmentOptions = [
+  ['rentable', 'Rentable'],
+  ['growth', 'Growth'],
+  ['premium', 'Premium'],
+  ['enterprise', 'Enterprise'],
+];
+const marginOptions = [
+  ['estrecho', 'Estrecho'],
+  ['medio', 'Medio'],
+  ['alto', 'Alto'],
+];
+const assetDominantOptions = [
+  ['catalogo', 'Catalogo'],
+  ['paid_static', 'Paid Static'],
+  ['pdp_packaging', 'PDP Packaging'],
+  ['video_ads', 'Video Ads'],
+  ['video_edit', 'Video Edit'],
+  ['mixto', 'Mixto'],
+];
+const legalRiskOptions = [
+  ['normal', 'Normal'],
+  ['alto', 'Alto'],
+];
+const turnaroundOptions = [
+  ['normal', 'Normal'],
+  ['urgente', 'Urgente'],
+];
+const portabilityOptions = [
+  ['si', 'Si'],
+  ['no', 'No'],
+];
+const structuralDemandOptions = [
+  ['normal', 'Normal'],
+  ['alta', 'Alta'],
+];
+const benchmarkOptions = [
+  ['L0', 'L0'],
+  ['L1', 'L1'],
+  ['L2', 'L2'],
+  ['L3', 'L3'],
+];
+const stackLaneOptions = [
+  ['A', 'A'],
+  ['B', 'B'],
+  ['C', 'C'],
+  ['D', 'D'],
+];
+const qaOptions = [
+  ['pending', 'Pending'],
+  ['approved', 'Approved'],
+  ['rejected', 'Rejected'],
+];
 ---
 
 <AdminLayout title="Detalle trabajo">
-  <a href="/admin/jobs" class="text-sm text-gray-500 hover:text-gray-700 mb-2 inline-block">&larr; Trabajos</a>
-
-  <div class="bg-white rounded-lg shadow p-6 mb-6">
-    <div class="flex justify-between items-start mb-4">
+  <div class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div>
-        <h1 id="job-title" class="text-xl font-bold">Cargando trabajo...</h1>
+        <a href="/admin/jobs" class="text-sm text-gray-500 hover:text-gray-700 inline-block">&larr; Trabajos</a>
+        <h1 id="job-title" class="text-2xl font-bold mt-2">Cargando trabajo...</h1>
         <p class="text-gray-600 mt-1">
           Cliente: <a id="job-client-link" href="/admin/clients" class="text-blue-600 hover:text-blue-800">—</a>
         </p>
       </div>
-      <span id="job-status-pill" class="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-        —
-      </span>
+      <div class="flex flex-wrap gap-2">
+        <span id="job-status-pill" class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">—</span>
+        <span id="job-lane-pill" class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">—</span>
+      </div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-      <div>
-        <p class="text-gray-500">Plataforma</p>
-        <p id="job-platform" class="font-medium">—</p>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Due</p>
+        <p id="metric-due" class="text-3xl font-bold mt-2">—</p>
+        <p id="metric-turnaround" class="text-sm text-gray-500 mt-2">—</p>
       </div>
-      <div>
-        <p class="text-gray-500">Tipo</p>
-        <p id="job-type" class="font-medium">—</p>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Units</p>
+        <p id="metric-units" class="text-3xl font-bold mt-2">—</p>
+        <p id="metric-platform" class="text-sm text-gray-500 mt-2">—</p>
       </div>
-      <div>
-        <p class="text-gray-500">Creado</p>
-        <p id="job-created-at" class="font-medium">—</p>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Margen y coste</p>
+        <p id="metric-margin" class="text-3xl font-bold mt-2">—</p>
+        <p id="metric-ai-cost" class="text-sm text-gray-500 mt-2">—</p>
       </div>
-      <div>
-        <p class="text-gray-500">Actualizado</p>
-        <p id="job-updated-at" class="font-medium">—</p>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Assets</p>
+        <p id="metric-assets" class="text-3xl font-bold mt-2">—</p>
+        <p id="metric-updated" class="text-sm text-gray-500 mt-2">—</p>
       </div>
     </div>
-  </div>
 
-  <div class="bg-white rounded-lg shadow p-6 mb-6">
-    <h2 class="text-lg font-semibold mb-3">Cambiar estado</h2>
-    <div id="status-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-3 text-sm"></div>
-    <div class="flex gap-2 flex-wrap">
-      <button data-status="pending" class="status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50">pending</button>
-      <button data-status="processing" class="status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50">processing</button>
-      <button data-status="completed" class="status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50">completed</button>
-      <button data-status="failed" class="status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50">failed</button>
-      <button data-status="delivered" class="status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50">delivered</button>
-    </div>
-  </div>
+    <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-semibold">Ficha de produccion</h2>
+            <p class="text-sm text-gray-500">Estado, stack, benchmark, riesgo, margen y notas internas.</p>
+          </div>
+          <div id="job-save-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
+        </div>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 id="assets-heading" class="text-lg font-semibold mb-3">Assets</h2>
-    <div id="assets-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <p class="text-gray-500">Cargando assets...</p>
+        <div id="job-save-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+        <form id="job-form" class="space-y-5">
+          <div>
+            <label for="briefText" class="block text-sm font-medium text-gray-700 mb-1">Brief</label>
+            <textarea id="briefText" name="briefText" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+          </div>
+
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div>
+              <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <select id="status" name="status" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                {statusOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="platform" class="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
+              <select id="platform" name="platform" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+              <select id="type" name="type" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="dueAt" class="block text-sm font-medium text-gray-700 mb-1">Due date</label>
+              <input type="date" id="dueAt" name="dueAt" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="unitsPlanned" class="block text-sm font-medium text-gray-700 mb-1">Units planned</label>
+              <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="unitsConsumed" class="block text-sm font-medium text-gray-700 mb-1">Units consumed</label>
+              <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="turnaround" class="block text-sm font-medium text-gray-700 mb-1">Turnaround</label>
+              <select id="turnaround" name="turnaround" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="assetDominant" class="block text-sm font-medium text-gray-700 mb-1">Dominante</label>
+              <select id="assetDominant" name="assetDominant" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="clientSegment" class="block text-sm font-medium text-gray-700 mb-1">Segmento</label>
+              <select id="clientSegment" name="clientSegment" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="marginProfile" class="block text-sm font-medium text-gray-700 mb-1">Perfil margen</label>
+              <select id="marginProfile" name="marginProfile" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="grossMarginEstimated" class="block text-sm font-medium text-gray-700 mb-1">Margen bruto estimado</label>
+              <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="legalRisk" class="block text-sm font-medium text-gray-700 mb-1">Riesgo legal</label>
+              <select id="legalRisk" name="legalRisk" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="aiCostEstimated" class="block text-sm font-medium text-gray-700 mb-1">Coste AI estimado</label>
+              <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="aiCostReal" class="block text-sm font-medium text-gray-700 mb-1">Coste AI real</label>
+              <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="portabilityRequired" class="block text-sm font-medium text-gray-700 mb-1">Portabilidad</label>
+              <select id="portabilityRequired" name="portabilityRequired" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="structuralDemand" class="block text-sm font-medium text-gray-700 mb-1">Demanda estructural</label>
+              <select id="structuralDemand" name="structuralDemand" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="benchmarkLevel" class="block text-sm font-medium text-gray-700 mb-1">Nivel benchmark</label>
+              <select id="benchmarkLevel" name="benchmarkLevel" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="stackLane" class="block text-sm font-medium text-gray-700 mb-1">Stack lane</label>
+              <select id="stackLane" name="stackLane" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div>
+              <label for="stackCandidate1" class="block text-sm font-medium text-gray-700 mb-1">Candidate 1</label>
+              <input type="text" id="stackCandidate1" name="stackCandidate1" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="stackCandidate2" class="block text-sm font-medium text-gray-700 mb-1">Candidate 2</label>
+              <input type="text" id="stackCandidate2" name="stackCandidate2" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="stackCandidate3" class="block text-sm font-medium text-gray-700 mb-1">Candidate 3</label>
+              <input type="text" id="stackCandidate3" name="stackCandidate3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="stackWinner" class="block text-sm font-medium text-gray-700 mb-1">Ganador</label>
+              <input type="text" id="stackWinner" name="stackWinner" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+          </div>
+
+          <div>
+            <label for="stackSnapshot" class="block text-sm font-medium text-gray-700 mb-1">Snapshot stack</label>
+            <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+          </div>
+          <div>
+            <label for="clientGoal" class="block text-sm font-medium text-gray-700 mb-1">Objetivo del cliente</label>
+            <textarea id="clientGoal" name="clientGoal" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+          </div>
+          <div>
+            <label for="internalNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
+            <textarea id="internalNotes" name="internalNotes" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+          </div>
+
+          <div class="flex gap-3">
+            <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">Guardar trabajo</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="space-y-6">
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 class="text-lg font-semibold">Nuevo asset</h2>
+              <p class="text-sm text-gray-500">Registra entregables, links y estado de QA.</p>
+            </div>
+            <div id="asset-create-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
+          </div>
+
+          <div id="asset-create-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+          <form id="asset-form" class="space-y-4">
+            <div>
+              <label for="assetLabel" class="block text-sm font-medium text-gray-700 mb-1">Label</label>
+              <input type="text" id="assetLabel" name="assetLabel" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="assetType" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                <select id="assetType" name="assetType" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                  {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label for="assetQaStatus" class="block text-sm font-medium text-gray-700 mb-1">QA</label>
+                <select id="assetQaStatus" name="assetQaStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                  {qaOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="assetR2Key" class="block text-sm font-medium text-gray-700 mb-1">R2 key</label>
+              <input type="text" id="assetR2Key" name="assetR2Key" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="assetDeliveryUrl" class="block text-sm font-medium text-gray-700 mb-1">Delivery URL</label>
+              <input type="url" id="assetDeliveryUrl" name="assetDeliveryUrl" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="assetQaNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas QA</label>
+              <textarea id="assetQaNotes" name="assetQaNotes" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-800">
+              Crear asset
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-semibold">Operacion</h2>
+          <div class="mt-4 space-y-3 text-sm text-gray-600">
+            <p><span class="font-medium text-gray-900">Email operativo:</span> hola@grandeandgordo.com</p>
+            <p><span class="font-medium text-gray-900">Recomendacion:</span> usa QA aprobado para lo que deba ver el cliente y deja notas internas si algo cambia.</p>
+          </div>
+        </div>
+      </section>
     </div>
+
+    <section class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <h2 id="assets-heading" class="text-lg font-semibold">Assets</h2>
+          <p class="text-sm text-gray-500">Edita metadata, links de entrega y estado de QA sin salir del trabajo.</p>
+        </div>
+        <div id="asset-update-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
+      </div>
+
+      <div id="asset-update-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+      <div id="assets-grid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <p class="text-gray-500">Cargando assets...</p>
+      </div>
+    </section>
   </div>
 
   <script>
     (async () => {
-    const {
-      API_BASE,
-      api,
-      escapeHtml,
-      formatDate,
-      getQueryParam,
-      jobStatusClass,
-    } = await import('../../../lib/api-client');
+      const {
+        API_BASE,
+        api,
+        dateInputValue,
+        escapeHtml,
+        formatCurrency,
+        formatDate,
+        formatNumber,
+        formatPercent,
+        jobStatusClass,
+        numberInputValue,
+        qaStatusClass,
+        stackLaneClass,
+        turnaroundClass,
+      } = await import('../../../lib/api-client');
 
-    const jobId = getQueryParam('id');
-    if (!jobId) {
-      window.location.href = '/admin/jobs';
-    } else {
-      const title = document.getElementById('job-title');
-      const clientLink = document.getElementById('job-client-link');
-      const statusPill = document.getElementById('job-status-pill');
-      const platform = document.getElementById('job-platform');
-      const type = document.getElementById('job-type');
-      const createdAt = document.getElementById('job-created-at');
-      const updatedAt = document.getElementById('job-updated-at');
-      const errorDiv = document.getElementById('status-error');
-      const assetsHeading = document.getElementById('assets-heading');
+      const jobId = new URLSearchParams(window.location.search).get('id');
+      if (!jobId) {
+        window.location.href = '/admin/jobs';
+        return;
+      }
+
+      const jobForm = document.getElementById('job-form');
+      const jobError = document.getElementById('job-save-error');
+      const jobSuccess = document.getElementById('job-save-success');
+      const assetForm = document.getElementById('asset-form');
+      const assetCreateError = document.getElementById('asset-create-error');
+      const assetCreateSuccess = document.getElementById('asset-create-success');
+      const assetUpdateError = document.getElementById('asset-update-error');
+      const assetUpdateSuccess = document.getElementById('asset-update-success');
       const assetsGrid = document.getElementById('assets-grid');
+      const assetsHeading = document.getElementById('assets-heading');
 
-      const syncStatusButtons = (currentStatus) => {
-        document.querySelectorAll('.status-btn').forEach((button) => {
-          if (!(button instanceof HTMLButtonElement)) return;
-          const status = button.dataset.status;
-          const active = status === currentStatus;
-          button.disabled = active;
-          button.className = active
-            ? 'status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-900 bg-gray-900 text-white cursor-default'
-            : 'status-btn px-3 py-1.5 rounded text-sm font-medium border transition border-gray-300 hover:bg-gray-50 cursor-pointer';
-        });
+      let currentJob = null;
+      let currentAssets = [];
+
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
       };
 
-      const loadJob = async () => {
-        const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
-        const job = data.job;
-        const assets = Array.isArray(data.assets) ? data.assets : [];
+      const setInputValue = (id, value) => {
+        const field = document.getElementById(id);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          field.value = value ?? '';
+        }
+      };
+
+      const fieldValue = (id) => {
+        const field = document.getElementById(id);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          return field.value;
+        }
+        return '';
+      };
+
+      const renderAssets = () => {
+        if (!assetsGrid) return;
+        if (assetsHeading) assetsHeading.textContent = `Assets (${currentAssets.length})`;
+
+        if (currentAssets.length === 0) {
+          assetsGrid.innerHTML = '<p class="text-gray-500">Todavia no hay assets registrados.</p>';
+          return;
+        }
+
+        assetsGrid.innerHTML = currentAssets.map((asset) => `
+          <article class="border border-gray-200 rounded-lg p-4 space-y-3" data-asset-id="${escapeHtml(asset.id)}">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-medium text-gray-900">${escapeHtml(asset.label ?? asset.type)}</p>
+                <p class="text-xs text-gray-500 mt-1">${escapeHtml(asset.r2Key ?? 'Sin key')}</p>
+              </div>
+              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${qaStatusClass(asset.qaStatus ?? 'pending')}">
+                ${escapeHtml(asset.qaStatus ?? 'pending')}
+              </span>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Label</label>
+                <input data-field="label" type="text" value="${escapeHtml(asset.label ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
+                  <select data-field="type" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <option value="image" ${asset.type === 'image' ? 'selected' : ''}>Imagen</option>
+                    <option value="video" ${asset.type === 'video' ? 'selected' : ''}>Video</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-500 mb-1">QA</label>
+                  <select data-field="qaStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    <option value="pending" ${asset.qaStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                    <option value="approved" ${asset.qaStatus === 'approved' ? 'selected' : ''}>Approved</option>
+                    <option value="rejected" ${asset.qaStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">R2 key</label>
+                <input data-field="r2Key" type="text" value="${escapeHtml(asset.r2Key ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Delivery URL</label>
+                <input data-field="deliveryUrl" type="url" value="${escapeHtml(asset.deliveryUrl ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">QA notes</label>
+                <textarea data-field="qaNotes" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">${escapeHtml(asset.qaNotes ?? '')}</textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3">
+              ${
+                asset.deliveryUrl
+                  ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="text-sm text-blue-600 hover:text-blue-800">Abrir entrega</a>`
+                  : '<span class="text-sm text-gray-400">Sin link de entrega</span>'
+              }
+              <button type="button" class="asset-save-button bg-gray-900 text-white px-3 py-2 rounded-md text-sm hover:bg-gray-800">
+                Guardar asset
+              </button>
+            </div>
+          </article>
+        `).join('');
+      };
+
+      const render = (payload) => {
+        const { job, assets } = payload;
+        currentJob = job;
+        currentAssets = Array.isArray(assets) ? assets : [];
+
+        const title = document.getElementById('job-title');
+        const clientLink = document.getElementById('job-client-link');
+        const statusPill = document.getElementById('job-status-pill');
+        const lanePill = document.getElementById('job-lane-pill');
 
         if (title) title.textContent = job.briefText ?? `Trabajo ${job.id.slice(0, 8)}`;
-        if (platform) platform.textContent = job.platform ?? '—';
-        if (type) type.textContent = job.type ?? '—';
-        if (createdAt) createdAt.textContent = formatDate(job.createdAt);
-        if (updatedAt) updatedAt.textContent = formatDate(job.updatedAt);
 
         if (clientLink instanceof HTMLAnchorElement) {
           clientLink.textContent = job.clientName ?? '—';
@@ -113,63 +509,229 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
         if (statusPill) {
           statusPill.textContent = job.status ?? 'pending';
-          statusPill.className = `inline-block px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}`;
+          statusPill.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}`;
         }
 
-        syncStatusButtons(job.status ?? '');
-
-        if (assetsHeading) assetsHeading.textContent = `Assets (${assets.length})`;
-        if (assetsGrid) {
-          assetsGrid.innerHTML = assets.length === 0
-            ? `<p class="text-gray-500">Este trabajo todavia no tiene assets.</p>`
-            : assets.map((asset) => `
-              <div class="border rounded-lg p-3 text-center">
-                <p class="text-sm font-medium">${escapeHtml(asset.type)}</p>
-                <p class="text-xs text-gray-500 truncate mt-1">${escapeHtml(asset.r2Key)}</p>
-                ${asset.qaStatus ? `<span class="inline-block mt-2 px-2 py-0.5 rounded text-xs ${asset.qaStatus === 'approved' ? 'bg-green-100 text-green-800' : asset.qaStatus === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">${escapeHtml(asset.qaStatus)}</span>` : ''}
-              </div>
-            `).join('');
+        if (lanePill) {
+          lanePill.textContent = `lane ${job.stackLane ?? '—'}`;
+          lanePill.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}`;
         }
+
+        setText('metric-due', formatDate(job.dueAt));
+        setText('metric-turnaround', job.turnaround ?? 'Sin turnaround definido');
+        setText('metric-units', `${formatNumber(job.unitsConsumed ?? 0)} / ${formatNumber(job.unitsPlanned ?? 0)}`);
+        setText('metric-platform', `${job.platform ?? 'Sin plataforma'} · ${job.type ?? 'Sin tipo'}`);
+        setText('metric-margin', formatPercent(job.grossMarginEstimated));
+        setText('metric-ai-cost', `${formatCurrency(job.aiCostEstimated)} est. · ${formatCurrency(job.aiCostReal)} real`);
+        setText('metric-assets', String(currentAssets.length));
+        setText('metric-updated', `Actualizado ${formatDate(job.updatedAt)}`);
+
+        setInputValue('briefText', job.briefText ?? '');
+        setInputValue('status', job.status ?? 'pending');
+        setInputValue('platform', job.platform ?? '');
+        setInputValue('type', job.type ?? '');
+        setInputValue('dueAt', dateInputValue(job.dueAt));
+        setInputValue('unitsPlanned', numberInputValue(job.unitsPlanned));
+        setInputValue('unitsConsumed', numberInputValue(job.unitsConsumed));
+        setInputValue('turnaround', job.turnaround ?? '');
+        setInputValue('assetDominant', job.assetDominant ?? '');
+        setInputValue('clientSegment', job.clientSegment ?? '');
+        setInputValue('marginProfile', job.marginProfile ?? '');
+        setInputValue('grossMarginEstimated', numberInputValue(job.grossMarginEstimated));
+        setInputValue('legalRisk', job.legalRisk ?? '');
+        setInputValue('aiCostEstimated', numberInputValue(job.aiCostEstimated));
+        setInputValue('aiCostReal', numberInputValue(job.aiCostReal));
+        setInputValue('portabilityRequired', job.portabilityRequired ?? '');
+        setInputValue('structuralDemand', job.structuralDemand ?? '');
+        setInputValue('benchmarkLevel', job.benchmarkLevel ?? '');
+        setInputValue('stackLane', job.stackLane ?? '');
+        setInputValue('stackCandidate1', job.stackCandidate1 ?? '');
+        setInputValue('stackCandidate2', job.stackCandidate2 ?? '');
+        setInputValue('stackCandidate3', job.stackCandidate3 ?? '');
+        setInputValue('stackWinner', job.stackWinner ?? '');
+        setInputValue('stackSnapshot', job.stackSnapshot ?? '');
+        setInputValue('clientGoal', job.clientGoal ?? '');
+        setInputValue('internalNotes', job.internalNotes ?? '');
+
+        renderAssets();
+      };
+
+      const load = async () => {
+        const payload = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
+        render(payload);
       };
 
       try {
-        await loadJob();
+        await load();
       } catch {
         window.location.href = '/admin/jobs';
+        return;
       }
 
-      document.querySelectorAll('.status-btn').forEach((button) => {
-        button.addEventListener('click', async () => {
-          if (!(button instanceof HTMLButtonElement)) return;
-          const nextStatus = button.dataset.status;
-          if (!nextStatus) return;
+      jobForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        jobError?.classList.add('hidden');
+        jobSuccess?.classList.add('hidden');
 
-          errorDiv?.classList.add('hidden');
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              briefText: fieldValue('briefText') || null,
+              status: fieldValue('status') || undefined,
+              platform: fieldValue('platform') || null,
+              type: fieldValue('type') || null,
+              dueAt: fieldValue('dueAt') || null,
+              unitsPlanned: fieldValue('unitsPlanned') || 0,
+              unitsConsumed: fieldValue('unitsConsumed') || 0,
+              turnaround: fieldValue('turnaround') || null,
+              assetDominant: fieldValue('assetDominant') || null,
+              clientSegment: fieldValue('clientSegment') || null,
+              marginProfile: fieldValue('marginProfile') || null,
+              grossMarginEstimated: fieldValue('grossMarginEstimated') || null,
+              legalRisk: fieldValue('legalRisk') || null,
+              aiCostEstimated: fieldValue('aiCostEstimated') || null,
+              aiCostReal: fieldValue('aiCostReal') || null,
+              portabilityRequired: fieldValue('portabilityRequired') || null,
+              structuralDemand: fieldValue('structuralDemand') || null,
+              benchmarkLevel: fieldValue('benchmarkLevel') || null,
+              stackLane: fieldValue('stackLane') || null,
+              stackCandidate1: fieldValue('stackCandidate1') || null,
+              stackCandidate2: fieldValue('stackCandidate2') || null,
+              stackCandidate3: fieldValue('stackCandidate3') || null,
+              stackWinner: fieldValue('stackWinner') || null,
+              stackSnapshot: fieldValue('stackSnapshot') || null,
+              clientGoal: fieldValue('clientGoal') || null,
+              internalNotes: fieldValue('internalNotes') || null,
+            }),
+          });
 
-          try {
-            const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}`, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ status: nextStatus }),
-            });
-
-            if (!res.ok) {
-              const data = await res.json().catch(() => ({}));
-              throw new Error(data.error ?? 'Error updating status');
-            }
-
-            await loadJob();
-          } catch (error) {
-            if (errorDiv instanceof HTMLDivElement) {
-              errorDiv.textContent =
-                error instanceof Error ? error.message : 'Error updating status';
-              errorDiv.classList.remove('hidden');
-            }
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'No se pudo guardar el trabajo');
           }
-        });
+
+          await load();
+
+          if (jobSuccess instanceof HTMLDivElement) {
+            jobSuccess.textContent = 'Trabajo actualizado.';
+            jobSuccess.classList.remove('hidden');
+          }
+        } catch (error) {
+          if (jobError instanceof HTMLDivElement) {
+            jobError.textContent = error instanceof Error ? error.message : 'No se pudo guardar el trabajo';
+            jobError.classList.remove('hidden');
+          }
+        }
       });
-    }
+
+      assetForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        assetCreateError?.classList.add('hidden');
+        assetCreateSuccess?.classList.add('hidden');
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}/assets`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              label: fieldValue('assetLabel') || null,
+              type: fieldValue('assetType'),
+              r2Key: fieldValue('assetR2Key'),
+              deliveryUrl: fieldValue('assetDeliveryUrl') || null,
+              qaStatus: fieldValue('assetQaStatus') || 'pending',
+              qaNotes: fieldValue('assetQaNotes') || null,
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'No se pudo crear el asset');
+          }
+
+          if (assetForm instanceof HTMLFormElement) {
+            assetForm.reset();
+          }
+          setInputValue('assetQaStatus', 'pending');
+          setInputValue('assetType', 'image');
+
+          await load();
+
+          if (assetCreateSuccess instanceof HTMLDivElement) {
+            assetCreateSuccess.textContent = 'Asset creado.';
+            assetCreateSuccess.classList.remove('hidden');
+          }
+        } catch (error) {
+          if (assetCreateError instanceof HTMLDivElement) {
+            assetCreateError.textContent = error instanceof Error ? error.message : 'No se pudo crear el asset';
+            assetCreateError.classList.remove('hidden');
+          }
+        }
+      });
+
+      assetsGrid?.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement) || !target.classList.contains('asset-save-button')) {
+          return;
+        }
+
+        const card = target.closest('[data-asset-id]');
+        if (!(card instanceof HTMLElement)) return;
+
+        const assetId = card.dataset.assetId;
+        if (!assetId) return;
+
+        assetUpdateError?.classList.add('hidden');
+        assetUpdateSuccess?.classList.add('hidden');
+
+        const readField = (field) => {
+          const element = card.querySelector(`[data-field="${field}"]`);
+          if (
+            element instanceof HTMLInputElement ||
+            element instanceof HTMLTextAreaElement ||
+            element instanceof HTMLSelectElement
+          ) {
+            return element.value;
+          }
+          return '';
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}/assets/${encodeURIComponent(assetId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              label: readField('label') || null,
+              type: readField('type') || null,
+              r2Key: readField('r2Key') || null,
+              deliveryUrl: readField('deliveryUrl') || null,
+              qaStatus: readField('qaStatus') || null,
+              qaNotes: readField('qaNotes') || null,
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'No se pudo actualizar el asset');
+          }
+
+          await load();
+
+          if (assetUpdateSuccess instanceof HTMLDivElement) {
+            assetUpdateSuccess.textContent = 'Asset actualizado.';
+            assetUpdateSuccess.classList.remove('hidden');
+          }
+        } catch (error) {
+          if (assetUpdateError instanceof HTMLDivElement) {
+            assetUpdateError.textContent = error instanceof Error ? error.message : 'No se pudo actualizar el asset';
+            assetUpdateError.classList.remove('hidden');
+          }
+        }
+      });
     })();
   </script>
 </AdminLayout>

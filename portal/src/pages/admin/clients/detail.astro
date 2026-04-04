@@ -1,120 +1,513 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const subscriptionOptions = [
+  ['inactive', 'Inactive'],
+  ['active', 'Active'],
+  ['cancelled', 'Cancelled'],
+];
+const datasetOptions = [
+  ['pending_capture', 'Pendiente captura'],
+  ['captured', 'Capturado'],
+  ['trained', 'Entrenado'],
+  ['active', 'Activo'],
+  ['archived', 'Archivado'],
+];
+const segmentOptions = [
+  ['rentable', 'Rentable'],
+  ['growth', 'Growth'],
+  ['premium', 'Premium'],
+  ['enterprise', 'Enterprise'],
+];
+const marginOptions = [
+  ['estrecho', 'Estrecho'],
+  ['medio', 'Medio'],
+  ['alto', 'Alto'],
+];
 ---
 
 <AdminLayout title="Detalle cliente">
-  <div class="flex justify-between items-start mb-6">
-    <div>
-      <a href="/admin/clients" class="text-sm text-gray-500 hover:text-gray-700 mb-2 inline-block">&larr; Clientes</a>
-      <h1 id="client-name" class="text-2xl font-bold">Cargando cliente...</h1>
-      <p id="client-email" class="text-gray-600">—</p>
-      <p id="client-company" class="text-gray-500 text-sm"></p>
+  <div class="space-y-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div>
+        <a href="/admin/clients" class="text-sm text-gray-500 hover:text-gray-700 inline-block">&larr; Clientes</a>
+        <h1 id="client-name" class="text-2xl font-bold mt-2">Cargando cliente...</h1>
+        <p id="client-email" class="text-gray-600 mt-1">—</p>
+        <p id="client-company" class="text-sm text-gray-500 mt-1"></p>
+        <div class="flex flex-wrap gap-2 mt-4">
+          <span id="client-status" class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">—</span>
+          <span id="client-dataset" class="inline-flex px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">—</span>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <a id="new-job-link" href="/admin/jobs/new" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
+          Nuevo trabajo
+        </a>
+      </div>
     </div>
-    <span id="client-status" class="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
-      —
-    </span>
-  </div>
 
-  <div class="flex justify-between items-center mb-4">
-    <h2 id="jobs-heading" class="text-lg font-semibold">Trabajos</h2>
-    <a id="new-job-link" href="/admin/jobs/new" class="bg-gray-900 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-800">
-      Nuevo trabajo
-    </a>
-  </div>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Trabajos totales</p>
+        <p id="summary-total-jobs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Activos</p>
+        <p id="summary-active-jobs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Entregados</p>
+        <p id="summary-delivered-jobs" class="text-3xl font-bold mt-2">—</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-5">
+        <p class="text-sm text-gray-500">Unidades</p>
+        <p id="summary-units" class="text-3xl font-bold mt-2">—</p>
+        <p id="summary-capacity" class="text-sm text-gray-500 mt-2">—</p>
+      </div>
+    </div>
 
-  <div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brief</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plataforma</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-          <th class="px-6 py-3"></th>
-        </tr>
-      </thead>
-      <tbody id="client-jobs-body" class="divide-y divide-gray-200">
-        <tr>
-          <td colspan="6" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
+      <section class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-lg font-semibold">Ficha cliente</h2>
+            <p class="text-sm text-gray-500">Identidad, estado comercial, capacidad y seguimiento.</p>
+          </div>
+          <div id="client-save-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
+        </div>
+
+        <div id="client-save-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+        <form id="client-form" class="space-y-5">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+              <input type="text" id="name" name="name" required class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email principal</label>
+              <input type="email" id="email" name="email" required class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+              <input type="text" id="company" name="company" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="accountManager" class="block text-sm font-medium text-gray-700 mb-1">Account manager</label>
+              <input type="text" id="accountManager" name="accountManager" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="plan" class="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+              <input type="text" id="plan" name="plan" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="monthlyUnitCapacity" class="block text-sm font-medium text-gray-700 mb-1">Capacidad mensual</label>
+              <input type="number" min="0" id="monthlyUnitCapacity" name="monthlyUnitCapacity" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="subscriptionStatus" class="block text-sm font-medium text-gray-700 mb-1">Suscripcion</label>
+              <select id="subscriptionStatus" name="subscriptionStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                {subscriptionOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="datasetStatus" class="block text-sm font-medium text-gray-700 mb-1">Dataset</label>
+              <select id="datasetStatus" name="datasetStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                {datasetOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="segment" class="block text-sm font-medium text-gray-700 mb-1">Segmento</label>
+              <select id="segment" name="segment" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="marginProfile" class="block text-sm font-medium text-gray-700 mb-1">Perfil margen</label>
+              <select id="marginProfile" name="marginProfile" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
+                <option value="">Sin definir</option>
+                {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label for="lastContactedAt" class="block text-sm font-medium text-gray-700 mb-1">Ultimo contacto</label>
+              <input type="date" id="lastContactedAt" name="lastContactedAt" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="nextReviewAt" class="block text-sm font-medium text-gray-700 mb-1">Proxima review</label>
+              <input type="date" id="nextReviewAt" name="nextReviewAt" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+          </div>
+          <div>
+            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
+            <textarea id="notes" name="notes" rows="5" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">Guardar cambios</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="space-y-6">
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 class="text-lg font-semibold">Acceso al portal</h2>
+              <p class="text-sm text-gray-500">Crea o resetea el acceso del cliente cuando lo necesites.</p>
+            </div>
+            <div id="portal-access-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
+          </div>
+
+          <div id="portal-access-summary" class="rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
+            Cargando acceso del portal...
+          </div>
+
+          <div id="portal-access-error" class="hidden bg-red-50 text-red-700 rounded p-3 mt-4 text-sm"></div>
+
+          <form id="portal-access-form" class="space-y-4 mt-4">
+            <div>
+              <label for="portalName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del usuario portal</label>
+              <input type="text" id="portalName" name="portalName" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="portalEmail" class="block text-sm font-medium text-gray-700 mb-1">Email del usuario portal</label>
+              <input type="email" id="portalEmail" name="portalEmail" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <div>
+              <label for="portalPassword" class="block text-sm font-medium text-gray-700 mb-1">Nueva contrasena</label>
+              <input type="password" id="portalPassword" name="portalPassword" minlength="8" required class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
+            </div>
+            <button type="submit" id="portal-access-button" class="w-full bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-blue-800">
+              Crear acceso
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-semibold">Operacion Grande&Gordo</h2>
+          <div class="mt-4 space-y-3 text-sm text-gray-600">
+            <p><span class="font-medium text-gray-900">Email operativo:</span> hola@grandeandgordo.com</p>
+            <p><span class="font-medium text-gray-900">Objetivo:</span> concentrar seguimiento, acceso, delivery y margen por cuenta.</p>
+            <p><span class="font-medium text-gray-900">Recomendacion:</span> mantén revisiones y dataset al dia para evitar cuellos de botella.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div>
+          <h2 id="jobs-heading" class="text-lg font-semibold">Trabajos</h2>
+          <p class="text-sm text-gray-500">Produccion vinculada al cliente con foco en margen, stack y deadline.</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Brief</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Due</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Units</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Lane</th>
+              <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Margen</th>
+              <th class="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody id="client-jobs-body" class="divide-y divide-gray-200">
+            <tr>
+              <td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando trabajos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
   <script>
     (async () => {
-    const {
-      api,
-      escapeHtml,
-      formatDate,
-      getQueryParam,
-      jobStatusClass,
-      subscriptionClass,
-    } = await import('../../../lib/api-client');
+      const {
+        API_BASE,
+        api,
+        datasetStatusClass,
+        dateInputValue,
+        escapeHtml,
+        formatDate,
+        formatNumber,
+        formatPercent,
+        jobStatusClass,
+        stackLaneClass,
+        subscriptionClass,
+      } = await import('../../../lib/api-client');
 
-    const id = getQueryParam('id');
-    if (!id) {
-      window.location.href = '/admin/clients';
-    } else {
-      const name = document.getElementById('client-name');
-      const email = document.getElementById('client-email');
-      const company = document.getElementById('client-company');
-      const status = document.getElementById('client-status');
-      const heading = document.getElementById('jobs-heading');
+      const clientId = new URLSearchParams(window.location.search).get('id');
+      if (!clientId) {
+        window.location.href = '/admin/clients';
+        return;
+      }
+
+      const nameEl = document.getElementById('client-name');
+      const emailEl = document.getElementById('client-email');
+      const companyEl = document.getElementById('client-company');
+      const statusEl = document.getElementById('client-status');
+      const datasetEl = document.getElementById('client-dataset');
+      const jobsHeading = document.getElementById('jobs-heading');
       const newJobLink = document.getElementById('new-job-link');
-      const tbody = document.getElementById('client-jobs-body');
+      const jobsBody = document.getElementById('client-jobs-body');
+      const portalSummary = document.getElementById('portal-access-summary');
+      const portalButton = document.getElementById('portal-access-button');
 
-      try {
-        const data = await api(`/api/portal/clients/${encodeURIComponent(id)}`);
-        const client = data.client;
-        const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+      const clientForm = document.getElementById('client-form');
+      const clientError = document.getElementById('client-save-error');
+      const clientSuccess = document.getElementById('client-save-success');
+      const portalForm = document.getElementById('portal-access-form');
+      const portalError = document.getElementById('portal-access-error');
+      const portalSuccess = document.getElementById('portal-access-success');
 
-        if (name) name.textContent = client.name;
-        if (email) email.textContent = client.email;
-        if (company) company.textContent = client.company ?? '';
-        if (heading) heading.textContent = `Trabajos (${jobs.length})`;
+      let currentClient = null;
 
-        if (status) {
-          status.textContent = client.subscriptionStatus ?? 'inactive';
-          status.className = `inline-block px-2 py-1 rounded text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}`;
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
+
+      const setInputValue = (id, value) => {
+        const field = document.getElementById(id);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          field.value = value ?? '';
+        }
+      };
+
+      const fieldValue = (id) => {
+        const field = document.getElementById(id);
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLTextAreaElement ||
+          field instanceof HTMLSelectElement
+        ) {
+          return field.value;
+        }
+        return '';
+      };
+
+      const renderPortalSummary = (portalUser) => {
+        if (!portalSummary) return;
+
+        if (!portalUser) {
+          portalSummary.innerHTML = `
+            <p class="font-medium text-gray-900">Sin acceso activo</p>
+            <p class="mt-1">Este cliente todavia no tiene usuario para entrar al portal.</p>
+          `;
+          if (portalButton) portalButton.textContent = 'Crear acceso';
+          return;
+        }
+
+        portalSummary.innerHTML = `
+          <p class="font-medium text-gray-900">Acceso activo</p>
+          <p class="mt-1">Usuario: ${escapeHtml(portalUser.name ?? '—')}</p>
+          <p class="mt-1">Email: ${escapeHtml(portalUser.email ?? '—')}</p>
+          <p class="mt-1">Actualizado: ${escapeHtml(formatDate(portalUser.updatedAt))}</p>
+        `;
+        if (portalButton) portalButton.textContent = 'Resetear acceso';
+      };
+
+      const renderJobs = (jobs) => {
+        if (!jobsBody) return;
+
+        if (jobsHeading) jobsHeading.textContent = `Trabajos (${jobs.length})`;
+
+        if (jobs.length === 0) {
+          jobsBody.innerHTML = `
+            <tr>
+              <td colspan="7" class="px-6 py-8 text-center text-gray-500">Este cliente todavia no tiene trabajos.</td>
+            </tr>
+          `;
+          return;
+        }
+
+        jobsBody.innerHTML = jobs.map((job) => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <p class="font-medium text-gray-900">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+              <p class="text-xs text-gray-500 mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+                ${escapeHtml(job.status ?? 'pending')}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.dueAt))}</td>
+            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}">
+                ${escapeHtml(job.stackLane ?? '—')}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
+            <td class="px-6 py-4 text-right">
+              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800 font-medium">Abrir</a>
+            </td>
+          </tr>
+        `).join('');
+      };
+
+      const renderClient = (payload) => {
+        const { client, summary, jobs, portalUser } = payload;
+        currentClient = client;
+
+        if (nameEl) nameEl.textContent = client.name;
+        if (emailEl) emailEl.textContent = client.email;
+        if (companyEl) companyEl.textContent = client.company ?? 'Sin empresa asignada';
+
+        if (statusEl) {
+          statusEl.textContent = client.subscriptionStatus ?? 'inactive';
+          statusEl.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}`;
+        }
+
+        if (datasetEl) {
+          datasetEl.textContent = `dataset ${client.datasetStatus ?? 'pending_capture'}`;
+          datasetEl.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${datasetStatusClass(client.datasetStatus ?? '')}`;
         }
 
         if (newJobLink instanceof HTMLAnchorElement) {
           newJobLink.href = `/admin/jobs/new?clientId=${encodeURIComponent(client.id)}`;
         }
 
-        if (!tbody) return;
+        setText('summary-total-jobs', String(summary?.totalJobs ?? 0));
+        setText('summary-active-jobs', String(summary?.activeJobs ?? 0));
+        setText('summary-delivered-jobs', String(summary?.deliveredJobs ?? 0));
+        setText(
+          'summary-units',
+          `${formatNumber(summary?.unitsConsumed ?? 0)} / ${formatNumber(summary?.unitsPlanned ?? 0)}`,
+        );
+        setText(
+          'summary-capacity',
+          `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)}`,
+        );
 
-        if (jobs.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-gray-500">Este cliente no tiene trabajos.</td>
-            </tr>
-          `;
-          return;
-        }
+        setInputValue('name', client.name);
+        setInputValue('email', client.email);
+        setInputValue('company', client.company ?? '');
+        setInputValue('accountManager', client.accountManager ?? 'hola@grandeandgordo.com');
+        setInputValue('plan', client.plan ?? '');
+        setInputValue('monthlyUnitCapacity', client.monthlyUnitCapacity ?? '');
+        setInputValue('subscriptionStatus', client.subscriptionStatus ?? 'inactive');
+        setInputValue('datasetStatus', client.datasetStatus ?? 'pending_capture');
+        setInputValue('segment', client.segment ?? '');
+        setInputValue('marginProfile', client.marginProfile ?? '');
+        setInputValue('lastContactedAt', dateInputValue(client.lastContactedAt));
+        setInputValue('nextReviewAt', dateInputValue(client.nextReviewAt));
+        setInputValue('notes', client.notes ?? '');
 
-        tbody.innerHTML = jobs.map((job) => `
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm">${escapeHtml(job.briefText ?? '—')}</td>
-            <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.platform ?? '—')}</td>
-            <td class="px-6 py-4 text-sm text-gray-600">${escapeHtml(job.type ?? '—')}</td>
-            <td class="px-6 py-4">
-              <span class="inline-block px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
-                ${escapeHtml(job.status ?? 'pending')}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-500">${escapeHtml(formatDate(job.createdAt))}</td>
-            <td class="px-6 py-4 text-right">
-              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="text-blue-600 hover:text-blue-800 text-sm">Ver</a>
-            </td>
-          </tr>
-        `).join('');
+        setInputValue('portalName', portalUser?.name ?? client.name);
+        setInputValue('portalEmail', portalUser?.email ?? client.email);
+        setInputValue('portalPassword', '');
+        renderPortalSummary(portalUser);
+        renderJobs(Array.isArray(jobs) ? jobs : []);
+      };
+
+      const load = async () => {
+        const payload = await api(`/api/portal/clients/${encodeURIComponent(clientId)}`);
+        renderClient(payload);
+      };
+
+      try {
+        await load();
       } catch {
         window.location.href = '/admin/clients';
+        return;
       }
-    }
+
+      clientForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clientError?.classList.add('hidden');
+        clientSuccess?.classList.add('hidden');
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/clients/${encodeURIComponent(clientId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              name: fieldValue('name'),
+              email: fieldValue('email'),
+              company: fieldValue('company') || null,
+              accountManager: fieldValue('accountManager') || null,
+              plan: fieldValue('plan') || null,
+              monthlyUnitCapacity: fieldValue('monthlyUnitCapacity') || null,
+              subscriptionStatus: fieldValue('subscriptionStatus') || undefined,
+              datasetStatus: fieldValue('datasetStatus') || undefined,
+              segment: fieldValue('segment') || null,
+              marginProfile: fieldValue('marginProfile') || null,
+              lastContactedAt: fieldValue('lastContactedAt') || null,
+              nextReviewAt: fieldValue('nextReviewAt') || null,
+              notes: fieldValue('notes') || null,
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'No se pudo guardar el cliente');
+          }
+
+          await load();
+
+          if (clientSuccess instanceof HTMLDivElement) {
+            clientSuccess.textContent = 'Ficha del cliente actualizada.';
+            clientSuccess.classList.remove('hidden');
+          }
+        } catch (error) {
+          if (clientError instanceof HTMLDivElement) {
+            clientError.textContent =
+              error instanceof Error ? error.message : 'No se pudo guardar el cliente';
+            clientError.classList.remove('hidden');
+          }
+        }
+      });
+
+      portalForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        portalError?.classList.add('hidden');
+        portalSuccess?.classList.add('hidden');
+        const hadPortalAccess = Boolean(currentClient?.userId);
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/clients/${encodeURIComponent(clientId)}/portal-access`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              name: fieldValue('portalName'),
+              email: fieldValue('portalEmail'),
+              password: fieldValue('portalPassword'),
+            }),
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'No se pudo actualizar el acceso');
+          }
+
+          await load();
+
+          if (portalSuccess instanceof HTMLDivElement) {
+            portalSuccess.textContent =
+              hadPortalAccess ? 'Acceso de portal reseteado.' : 'Acceso de portal creado.';
+            portalSuccess.classList.remove('hidden');
+          }
+        } catch (error) {
+          if (portalError instanceof HTMLDivElement) {
+            portalError.textContent =
+              error instanceof Error ? error.message : 'No se pudo actualizar el acceso';
+            portalError.classList.remove('hidden');
+          }
+        }
+      });
     })();
   </script>
 </AdminLayout>

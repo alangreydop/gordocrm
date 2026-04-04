@@ -6,6 +6,29 @@ export interface SessionUser {
   company: string | null;
 }
 
+export interface SessionClient {
+  id: string;
+  userId: string | null;
+  name: string;
+  email: string;
+  company: string | null;
+  accountManager?: string | null;
+  subscriptionStatus: string;
+  plan: string | null;
+  monthlyUnitCapacity: number | null;
+  datasetStatus: string;
+  segment: string | null;
+  marginProfile: string | null;
+  notes: string | null;
+  nextReviewAt: string | number | Date | null;
+  lastContactedAt: string | number | Date | null;
+}
+
+export interface SessionContext {
+  user: SessionUser;
+  client: SessionClient | null;
+}
+
 function resolveApiBase(): string {
   const configured =
     import.meta.env.PUBLIC_API_URL ?? import.meta.env.API_URL;
@@ -55,6 +78,14 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   }
 }
 
+export async function getSessionContext(): Promise<SessionContext | null> {
+  try {
+    return await api<SessionContext>('/api/portal/auth/me');
+  } catch {
+    return null;
+  }
+}
+
 export async function requireRole(
   role: 'admin' | 'client',
 ): Promise<SessionUser | null> {
@@ -96,6 +127,57 @@ export function formatDate(value: unknown): string {
   return date.toLocaleDateString('es-ES');
 }
 
+export function formatDateTime(value: unknown): string {
+  if (!value) return '—';
+  const date = new Date(value as string | number | Date);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleString('es-ES', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
+export function formatCurrency(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return '—';
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+export function formatNumber(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return '—';
+  return new Intl.NumberFormat('es-ES').format(amount);
+}
+
+export function formatPercent(value: unknown): string {
+  if (value === null || value === undefined || value === '') return '—';
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return '—';
+  return `${amount.toFixed(1)}%`;
+}
+
+export function dateInputValue(value: unknown): string {
+  if (!value) return '';
+  const date = new Date(value as string | number | Date);
+  if (Number.isNaN(date.getTime())) return '';
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function numberInputValue(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  const amount = Number(value);
+  return Number.isFinite(amount) ? String(amount) : '';
+}
+
 export function getQueryParam(name: string): string | null {
   return new URLSearchParams(window.location.search).get(name);
 }
@@ -113,7 +195,53 @@ export function jobStatusClass(status: string): string {
 }
 
 export function subscriptionClass(status: string): string {
-  return status === 'active'
-    ? 'bg-green-100 text-green-800'
-    : 'bg-gray-100 text-gray-600';
+  return (
+    {
+      active: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
+      inactive: 'bg-gray-100 text-gray-600',
+    }[status] ?? 'bg-gray-100 text-gray-600'
+  );
+}
+
+export function datasetStatusClass(status: string): string {
+  return (
+    {
+      pending_capture: 'bg-orange-100 text-orange-800',
+      captured: 'bg-sky-100 text-sky-800',
+      trained: 'bg-indigo-100 text-indigo-800',
+      active: 'bg-green-100 text-green-800',
+      archived: 'bg-gray-100 text-gray-600',
+    }[status] ?? 'bg-gray-100 text-gray-600'
+  );
+}
+
+export function stackLaneClass(lane: string): string {
+  return (
+    {
+      A: 'bg-emerald-100 text-emerald-800',
+      B: 'bg-blue-100 text-blue-800',
+      C: 'bg-fuchsia-100 text-fuchsia-800',
+      D: 'bg-amber-100 text-amber-900',
+    }[lane] ?? 'bg-gray-100 text-gray-600'
+  );
+}
+
+export function qaStatusClass(status: string): string {
+  return (
+    {
+      approved: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800',
+      pending: 'bg-amber-100 text-amber-900',
+    }[status] ?? 'bg-gray-100 text-gray-600'
+  );
+}
+
+export function turnaroundClass(turnaround: string): string {
+  return (
+    {
+      urgente: 'bg-red-100 text-red-800',
+      normal: 'bg-gray-100 text-gray-600',
+    }[turnaround] ?? 'bg-gray-100 text-gray-600'
+  );
 }
