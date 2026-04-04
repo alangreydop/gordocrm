@@ -2,6 +2,7 @@ import { desc, eq, or } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
+import { sendBriefNotifications } from '../../../lib/email.js';
 import type { AppContext } from '../../../types/index.js';
 
 const briefContentTypes = ['foto', 'video', 'ambos'] as const;
@@ -69,6 +70,21 @@ publicBriefRoutes.post('/', async (c) => {
         updatedAt: now,
       })
       .where(eq(schema.clients.id, matchedClient.id));
+  }
+
+  try {
+    await sendBriefNotifications(c.env, {
+      email,
+      tipo: body.data.tipo,
+      description: body.data.descripcion,
+      briefId,
+      clientName: matchedClient?.name ?? null,
+      clientCompany: matchedClient?.company ?? null,
+      source: body.data.source?.trim() || 'website',
+      sourcePage: body.data.sourcePage?.trim() || null,
+    });
+  } catch (error) {
+    console.error('BRIEF_NOTIFICATION_FAILED', error);
   }
 
   return c.json({
