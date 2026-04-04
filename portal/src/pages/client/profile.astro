@@ -22,8 +22,9 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
   </div>
 
-  <script type="module">
-    import { getSessionUser } from '../../lib/api-client';
+  <script>
+    (async () => {
+    const { getSessionUser } = await import('../../lib/api-client');
 
     const user = await getSessionUser();
     if (!user) return;
@@ -35,5 +36,6 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     if (name) name.textContent = user.name;
     if (email) email.textContent = user.email;
     if (company) company.textContent = user.company ?? '—';
+    })();
   </script>
 </ClientLayout>

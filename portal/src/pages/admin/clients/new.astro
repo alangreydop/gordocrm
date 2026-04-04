@@ -36,8 +36,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </form>
   </div>
 
-  <script type="module">
-    import { API_BASE } from '../../../lib/api-client';
+  <script>
+    (async () => {
+    const { API_BASE } = await import('../../../lib/api-client');
 
     const form = document.getElementById('client-form');
     const errorDiv = document.getElementById('form-error');
@@ -80,5 +81,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         }
       }
     });
+    })();
   </script>
 </AdminLayout>

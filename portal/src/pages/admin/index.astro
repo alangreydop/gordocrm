@@ -20,8 +20,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <script type="module">
-    import { api } from '../../lib/api-client';
+  <script>
+    (async () => {
+    const { api } = await import('../../lib/api-client');
 
     try {
       const stats = await api('/api/portal/dashboard/stats');
@@ -35,5 +36,6 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     } catch {
       // Auth/layout script handles redirects; keeping the dashboard quiet here is enough.
     }
+    })();
   </script>
 </AdminLayout>

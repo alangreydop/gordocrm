@@ -44,14 +44,15 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
     <p>Tu trabajo esta en progreso. Los assets apareceran aqui cuando esten listos.</p>
   </div>
 
-  <script type="module">
-    import {
+  <script>
+    (async () => {
+    const {
       api,
       escapeHtml,
       formatDate,
       getQueryParam,
       jobStatusClass,
-    } from '../../../lib/api-client';
+    } = await import('../../../lib/api-client');
 
     const jobId = getQueryParam('id');
     if (!jobId) {
@@ -108,5 +109,6 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         window.location.href = '/client';
       }
     }
+    })();
   </script>
 </ClientLayout>

@@ -30,8 +30,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </table>
   </div>
 
-  <script type="module">
-    import { api, escapeHtml, subscriptionClass } from '../../../lib/api-client';
+  <script>
+    (async () => {
+    const { api, escapeHtml, subscriptionClass } = await import('../../../lib/api-client');
 
     const tbody = document.getElementById('clients-body');
 
@@ -75,5 +76,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         `;
       }
     }
+    })();
   </script>
 </AdminLayout>

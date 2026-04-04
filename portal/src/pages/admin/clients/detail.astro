@@ -42,15 +42,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </table>
   </div>
 
-  <script type="module">
-    import {
+  <script>
+    (async () => {
+    const {
       api,
       escapeHtml,
       formatDate,
       getQueryParam,
       jobStatusClass,
       subscriptionClass,
-    } from '../../../lib/api-client';
+    } = await import('../../../lib/api-client');
 
     const id = getQueryParam('id');
     if (!id) {
@@ -114,5 +115,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         window.location.href = '/admin/clients';
       }
     }
+    })();
   </script>
 </AdminLayout>

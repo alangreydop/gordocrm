@@ -57,15 +57,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <script type="module">
-    import {
+  <script>
+    (async () => {
+    const {
       API_BASE,
       api,
       escapeHtml,
       formatDate,
       getQueryParam,
       jobStatusClass,
-    } from '../../../lib/api-client';
+    } = await import('../../../lib/api-client');
 
     const jobId = getQueryParam('id');
     if (!jobId) {
@@ -169,5 +170,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         });
       });
     }
+    })();
   </script>
 </AdminLayout>

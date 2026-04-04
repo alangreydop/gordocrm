@@ -42,8 +42,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </div>
 
-  <script type="module">
-    import { API_BASE, getSessionUser } from '../lib/api-client';
+  <script>
+    (async () => {
+    const { API_BASE, getSessionUser } = await import('../lib/api-client');
 
     const existingUser = await getSessionUser();
     if (existingUser) {
@@ -85,5 +86,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
       }
     });
+    })();
   </script>
 </BaseLayout>

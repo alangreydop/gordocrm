@@ -29,8 +29,9 @@ const { title } = Astro.props;
     </main>
   </div>
 
-  <script type="module">
-    import { logout, requireRole } from '../lib/api-client';
+  <script>
+    (async () => {
+    const { logout, requireRole } = await import('../lib/api-client');
 
     const user = await requireRole('client');
     if (user) {
@@ -45,5 +46,6 @@ const { title } = Astro.props;
       await logout();
       window.location.href = '/login';
     });
+    })();
   </script>
 </BaseLayout>

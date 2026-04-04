@@ -56,8 +56,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </form>
   </div>
 
-  <script type="module">
-    import { API_BASE, api, escapeHtml, getQueryParam } from '../../../lib/api-client';
+  <script>
+    (async () => {
+    const { API_BASE, api, escapeHtml, getQueryParam } = await import('../../../lib/api-client');
 
     const form = document.getElementById('job-form');
     const errorDiv = document.getElementById('form-error');
@@ -129,5 +130,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         }
       }
     });
+    })();
   </script>
 </AdminLayout>

@@ -7,10 +7,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     Cargando portal...
   </div>
 
-  <script type="module">
-    import { getSessionUser } from '../lib/api-client';
+  <script>
+    (async () => {
+    const { getSessionUser } = await import('../lib/api-client');
 
     const user = await getSessionUser();
     window.location.href = user ? (user.role === 'admin' ? '/admin' : '/client') : '/login';
+    })();
   </script>
 </BaseLayout>

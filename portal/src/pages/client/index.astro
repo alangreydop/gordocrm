@@ -25,8 +25,9 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </table>
   </div>
 
-  <script type="module">
-    import { api, escapeHtml, formatDate, jobStatusClass } from '../../lib/api-client';
+  <script>
+    (async () => {
+    const { api, escapeHtml, formatDate, jobStatusClass } = await import('../../lib/api-client');
 
     const tbody = document.getElementById('jobs-body');
 
@@ -70,5 +71,6 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         `;
       }
     }
+    })();
   </script>
 </ClientLayout>

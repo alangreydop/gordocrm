@@ -31,8 +31,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </table>
   </div>
 
-  <script type="module">
-    import { api, escapeHtml, formatDate, jobStatusClass } from '../../../lib/api-client';
+  <script>
+    (async () => {
+    const { api, escapeHtml, formatDate, jobStatusClass } = await import('../../../lib/api-client');
 
     const tbody = document.getElementById('jobs-body');
 
@@ -77,5 +78,6 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         `;
       }
     }
+    })();
   </script>
 </AdminLayout>
