@@ -111,6 +111,15 @@ export async function logout(): Promise<void> {
   }).catch(() => null);
 }
 
+export interface SearchResult {
+  clients: { id: string; name: string; company: string | null; email: string }[];
+  jobs: { id: string; briefText: string | null; status: string; clientId: string; clientName: string }[];
+}
+
+export async function search(q: string): Promise<SearchResult> {
+  return api<SearchResult>(`/api/portal/search?q=${encodeURIComponent(q)}`);
+}
+
 export function escapeHtml(value: unknown): string {
   return String(value ?? '')
     .replaceAll('&', '&amp;')

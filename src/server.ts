@@ -5,6 +5,7 @@ import { authRoutes } from './api/routes/portal/auth.js';
 import { clientRoutes } from './api/routes/portal/clients.js';
 import { dashboardRoutes } from './api/routes/portal/dashboard.js';
 import { jobRoutes } from './api/routes/portal/jobs.js';
+import { searchRoutes } from './api/routes/portal/search.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import type { AppContext } from './types/index.js';
 
@@ -48,5 +49,6 @@ app.route('/api/portal/auth', authRoutes);
 app.route('/api/portal/clients', clientRoutes);
 app.route('/api/portal/jobs', jobRoutes);
 app.route('/api/portal/dashboard', dashboardRoutes);
+app.route('/api/portal/search', searchRoutes);
 
 export default app;
