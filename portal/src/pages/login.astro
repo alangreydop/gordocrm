@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSessionUser } from '../lib/session';
+
+const user = await getSessionUser(Astro.cookies);
+if (user) {
+  return Astro.redirect(user.role === 'admin' ? '/admin' : '/client');
+}
+---
+
+<BaseLayout title="Login">
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+      <h1 class="text-2xl font-bold text-center mb-6">Grande&Gordo</h1>
+      <p class="text-gray-500 text-center mb-8">Portal de gestion</p>
+
+      <div id="login-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+            placeholder="admin@grandegordo.com"
+          />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contrasena</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
+        >
+          Iniciar sesion
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('login-form') as HTMLFormElement;
+    const errorDiv = document.getElementById('login-error') as HTMLDivElement;
+    const apiBase = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorDiv.classList.add('hidden');
+
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+
+      try {
+        const res = await fetch(`${apiBase}/api/portal/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error ?? 'Login failed');
+        }
+
+        const data = await res.json();
+        window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
+      } catch (err: any) {
+        errorDiv.textContent = err.message;
+        errorDiv.classList.remove('hidden');
+      }
+    });
+  </script>
+</BaseLayout>

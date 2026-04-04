@@ -1,0 +1,7 @@
+---
+import { getSessionUser } from '../lib/session';
+
+const user = await getSessionUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+return Astro.redirect(user.role === 'admin' ? '/admin' : '/client');
+---

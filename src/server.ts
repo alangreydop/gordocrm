@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { config } from './lib/config.js';
+import { authRoutes } from './api/routes/portal/auth.js';
 
 const server = Fastify({
   logger: {
@@ -15,6 +16,9 @@ await server.register(cors, {
 // Routes are registered here as they are implemented
 // await server.register(webhookRoutes, { prefix: '/webhooks' });
 // await server.register(generationRoutes, { prefix: '/api/generations' });
+
+// Portal CRM routes
+await server.register(authRoutes, { prefix: '/api/portal/auth' });
 
 server.get('/health', async () => ({ status: 'ok' }));
 

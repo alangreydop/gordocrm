@@ -1,0 +1,36 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { getSessionUser } from '../lib/session';
+
+const user = await getSessionUser(Astro.cookies);
+if (!user) return Astro.redirect('/login');
+if (user.role !== 'admin') return Astro.redirect('/client');
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<BaseLayout title={title}>
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-gray-900 text-white p-6">
+      <h1 class="text-xl font-bold mb-8">Grande&Gordo</h1>
+      <nav class="space-y-2">
+        <a href="/admin" class="block px-3 py-2 rounded hover:bg-gray-800">Dashboard</a>
+        <a href="/admin/clients" class="block px-3 py-2 rounded hover:bg-gray-800">Clientes</a>
+        <a href="/admin/jobs" class="block px-3 py-2 rounded hover:bg-gray-800">Trabajos</a>
+      </nav>
+      <div class="mt-auto pt-8 border-t border-gray-700 mt-8">
+        <p class="text-sm text-gray-400">{user.name}</p>
+        <p class="text-xs text-gray-500">{user.email}</p>
+        <form method="POST" action="/api/logout">
+          <button type="submit" class="text-sm text-gray-400 hover:text-white mt-2">Cerrar sesion</button>
+        </form>
+      </div>
+    </aside>
+    <main class="flex-1 p-8">
+      <slot />
+    </main>
+  </div>
+</BaseLayout>

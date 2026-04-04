@@ -26,6 +26,9 @@ const configSchema = z.object({
   AIRTABLE_API_KEY: z.string(),
   AIRTABLE_BASE_ID: z.string(),
 
+  // PostgreSQL (Supabase)
+  DATABASE_URL: z.string(),
+
   // Redis (BullMQ)
   REDIS_URL: z.string().default('redis://localhost:6379'),
 
