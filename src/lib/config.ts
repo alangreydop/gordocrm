@@ -5,35 +5,35 @@ const configSchema = z.object({
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
-  // Stripe
-  STRIPE_SECRET_KEY: z.string(),
-  STRIPE_WEBHOOK_SECRET: z.string(),
-
-  // fal.ai
-  FAL_KEY: z.string(),
-
-  // OpenAI (GPT-4V QA)
-  OPENAI_API_KEY: z.string(),
-
-  // Cloudflare R2
-  R2_ACCOUNT_ID: z.string(),
-  R2_ACCESS_KEY_ID: z.string(),
-  R2_SECRET_ACCESS_KEY: z.string(),
-  R2_BUCKET_NAME: z.string(),
-  R2_PUBLIC_URL: z.string().optional(),
-
-  // Airtable
-  AIRTABLE_API_KEY: z.string(),
-  AIRTABLE_BASE_ID: z.string(),
-
-  // PostgreSQL (Supabase)
+  // PostgreSQL (Supabase) — required for CRM portal
   DATABASE_URL: z.string(),
 
-  // Redis (BullMQ)
+  // Stripe (optional — needed for payments)
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  // fal.ai (optional — needed for AI generation)
+  FAL_KEY: z.string().optional(),
+
+  // OpenAI (optional — needed for GPT-4V QA)
+  OPENAI_API_KEY: z.string().optional(),
+
+  // Cloudflare R2 (optional — needed for asset storage)
+  R2_ACCOUNT_ID: z.string().optional(),
+  R2_ACCESS_KEY_ID: z.string().optional(),
+  R2_SECRET_ACCESS_KEY: z.string().optional(),
+  R2_BUCKET_NAME: z.string().optional(),
+  R2_PUBLIC_URL: z.string().optional(),
+
+  // Airtable (optional — legacy, migrating to PostgreSQL)
+  AIRTABLE_API_KEY: z.string().optional(),
+  AIRTABLE_BASE_ID: z.string().optional(),
+
+  // Redis (optional — needed for BullMQ job queues)
   REDIS_URL: z.string().default('redis://localhost:6379'),
 
-  // Email (Resend)
-  RESEND_API_KEY: z.string(),
+  // Email (optional — needed for transactional emails)
+  RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default('noreply@grandegordo.com'),
 });
 
