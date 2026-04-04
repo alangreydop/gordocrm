@@ -30,7 +30,7 @@ const changePasswordSchema = z.object({
 export const authRoutes = new Hono<AppContext>();
 
 authRoutes.post('/login', async (c) => {
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = loginSchema.safeParse(payload);
 
   if (!body.success) {
@@ -96,7 +96,7 @@ authRoutes.get('/me', requireAuth, async (c) => {
 });
 
 authRoutes.post('/change-password', requireAuth, async (c) => {
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = changePasswordSchema.safeParse(payload);
 
   if (!body.success) {

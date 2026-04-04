@@ -70,7 +70,7 @@ briefRoutes.get('/latest', async (c) => {
 
   const emailClauses = [client.email, user.email]
     .filter((value, index, values) => Boolean(value) && values.indexOf(value) === index)
-    .map((value) => eq(schema.briefSubmissions.email, value as string));
+    .map((value) => eq(schema.briefSubmissions.email, value));
 
   const emailFallbackClause =
     emailClauses.length === 0
@@ -117,7 +117,7 @@ briefRoutes.patch('/:id', async (c) => {
     return c.json({ error: 'Admin access only' }, 403);
   }
 
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = updateBriefSchema.safeParse(payload);
 
   if (!body.success) {

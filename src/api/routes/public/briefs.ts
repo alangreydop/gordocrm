@@ -17,7 +17,7 @@ const createBriefSchema = z.object({
 export const publicBriefRoutes = new Hono<AppContext>();
 
 publicBriefRoutes.post('/', async (c) => {
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = createBriefSchema.safeParse(payload);
 
   if (!body.success) {

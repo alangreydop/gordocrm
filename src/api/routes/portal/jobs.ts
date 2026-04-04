@@ -3,21 +3,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
-import type {
-  AppContext,
-  AssetQaStatus,
-  BenchmarkLevel,
-  ClientSegment,
-  JobAssetDominant,
-  JobPlatform,
-  JobStatus,
-  LegalRisk,
-  MarginProfile,
-  PortabilityRequired,
-  StackLane,
-  StructuralDemand,
-  Turnaround,
-} from '../../../types/index.js';
+import type { AppContext } from '../../../types/index.js';
 
 const jobStatuses = ['pending', 'processing', 'completed', 'failed', 'delivered'] as const;
 const jobPlatforms = ['instagram', 'tiktok', 'amazon_pdp', 'paid_ads'] as const;
@@ -49,13 +35,6 @@ const optionalNullableString = z.preprocess((value) => {
   }
   return value;
 }, z.union([z.string(), z.null()]).optional());
-
-const optionalNullableInteger = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null || value === '') return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? Math.trunc(parsed) : value;
-}, z.union([z.number().int().min(0), z.null()]).optional());
 
 const optionalInteger = z.preprocess((value) => {
   if (value === undefined || value === '') return undefined;
@@ -347,7 +326,7 @@ jobRoutes.post('/', async (c) => {
     return c.json({ error: 'Admin access required' }, 403);
   }
 
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = createJobSchema.safeParse(payload);
 
   if (!body.success) {
@@ -417,7 +396,7 @@ jobRoutes.patch('/:id', async (c) => {
   }
 
   const id = c.req.param('id');
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = updateJobSchema.safeParse(payload);
 
   if (!body.success) {
@@ -434,23 +413,17 @@ jobRoutes.patch('/:id', async (c) => {
     .update(schema.jobs)
     .set({
       ...body.data,
-      status: body.data.status as JobStatus | undefined,
-      platform: body.data.platform as JobPlatform | null | undefined,
-      clientSegment: body.data.clientSegment as ClientSegment | null | undefined,
-      marginProfile: body.data.marginProfile as MarginProfile | null | undefined,
-      assetDominant: body.data.assetDominant as JobAssetDominant | null | undefined,
-      legalRisk: body.data.legalRisk as LegalRisk | null | undefined,
-      turnaround: body.data.turnaround as Turnaround | null | undefined,
-      portabilityRequired: body.data.portabilityRequired as
-        | PortabilityRequired
-        | null
-        | undefined,
-      structuralDemand: body.data.structuralDemand as
-        | StructuralDemand
-        | null
-        | undefined,
-      benchmarkLevel: body.data.benchmarkLevel as BenchmarkLevel | null | undefined,
-      stackLane: body.data.stackLane as StackLane | null | undefined,
+      status: body.data.status,
+      platform: body.data.platform,
+      clientSegment: body.data.clientSegment,
+      marginProfile: body.data.marginProfile,
+      assetDominant: body.data.assetDominant,
+      legalRisk: body.data.legalRisk,
+      turnaround: body.data.turnaround,
+      portabilityRequired: body.data.portabilityRequired,
+      structuralDemand: body.data.structuralDemand,
+      benchmarkLevel: body.data.benchmarkLevel,
+      stackLane: body.data.stackLane,
       updatedAt: new Date(),
     })
     .where(eq(schema.jobs.id, id));
@@ -475,7 +448,7 @@ jobRoutes.post('/:id/assets', async (c) => {
   }
 
   const jobId = c.req.param('id');
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = createAssetSchema.safeParse(payload);
 
   if (!body.success) {
@@ -523,7 +496,7 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
 
   const jobId = c.req.param('id');
   const assetId = c.req.param('assetId');
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = updateAssetSchema.safeParse(payload);
 
   if (!body.success) {
@@ -557,7 +530,7 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
       type: body.data.type ?? undefined,
       r2Key: body.data.r2Key ?? undefined,
       deliveryUrl: body.data.deliveryUrl,
-      qaStatus: body.data.qaStatus as AssetQaStatus | null | undefined,
+      qaStatus: body.data.qaStatus,
       qaNotes: body.data.qaNotes,
     })
     .where(eq(schema.assets.id, assetId));

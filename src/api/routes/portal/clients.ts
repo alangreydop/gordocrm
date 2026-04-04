@@ -8,13 +8,7 @@ import {
   hashPassword,
   requireAdmin,
 } from '../../../lib/auth.js';
-import type {
-  AppContext,
-  ClientDatasetStatus,
-  ClientSegment,
-  ClientSubscriptionStatus,
-  MarginProfile,
-} from '../../../types/index.js';
+import type { AppContext } from '../../../types/index.js';
 
 const clientSubscriptionStatuses = ['active', 'inactive', 'cancelled'] as const;
 const clientDatasetStatuses = [
@@ -227,7 +221,7 @@ clientRoutes.get('/:id', async (c) => {
 });
 
 clientRoutes.post('/', async (c) => {
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = createClientSchema.safeParse(payload);
 
   if (!body.success) {
@@ -301,7 +295,7 @@ clientRoutes.post('/', async (c) => {
 
 clientRoutes.patch('/:id', async (c) => {
   const id = c.req.param('id');
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = updateClientSchema.safeParse(payload);
 
   if (!body.success) {
@@ -339,14 +333,10 @@ clientRoutes.patch('/:id', async (c) => {
     .update(schema.clients)
     .set({
       ...body.data,
-      subscriptionStatus: body.data.subscriptionStatus as
-        | ClientSubscriptionStatus
-        | undefined,
-      datasetStatus: body.data.datasetStatus as
-        | ClientDatasetStatus
-        | undefined,
-      segment: body.data.segment as ClientSegment | null | undefined,
-      marginProfile: body.data.marginProfile as MarginProfile | null | undefined,
+      subscriptionStatus: body.data.subscriptionStatus,
+      datasetStatus: body.data.datasetStatus,
+      segment: body.data.segment,
+      marginProfile: body.data.marginProfile,
       updatedAt: new Date(),
     })
     .where(eq(schema.clients.id, id));
@@ -380,7 +370,7 @@ clientRoutes.patch('/:id', async (c) => {
 
 clientRoutes.post('/:id/portal-access', async (c) => {
   const clientId = c.req.param('id');
-  const payload = await c.req.json().catch(() => null);
+  const payload: unknown = await c.req.json().catch(() => null);
   const body = portalAccessSchema.safeParse(payload);
 
   if (!body.success) {

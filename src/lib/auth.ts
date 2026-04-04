@@ -256,6 +256,7 @@ export const requireAuth: MiddlewareHandler<AppContext> = async (c, next) => {
 };
 
 export const requireAdmin: MiddlewareHandler<AppContext> = async (c, next) => {
+  // eslint-disable-next-line @typescript-eslint/require-await
   const authResponse = await requireAuth(c, async () => undefined);
   if (authResponse) return authResponse;
 

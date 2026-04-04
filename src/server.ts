@@ -9,7 +9,7 @@ import { jobRoutes } from './api/routes/portal/jobs.js';
 import { searchRoutes } from './api/routes/portal/search.js';
 import { publicBriefRoutes } from './api/routes/public/briefs.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
-import type { AppContext } from './types/index.js';
+import type { AppBindings, AppContext } from './types/index.js';
 
 const app = new Hono<AppContext>();
 
@@ -31,7 +31,7 @@ app.use(
     allowHeaders: ['Content-Type'],
     origin: (origin, c) => {
       if (!origin) return undefined;
-      const allowedOrigins = getAllowedOrigins(c.env);
+      const allowedOrigins = getAllowedOrigins(c.env as AppBindings);
       return allowedOrigins.includes(origin) ? origin : undefined;
     },
   }),
