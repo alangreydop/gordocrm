@@ -1,0 +1,422 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
+---
+
+<AdminLayout title="Detalle de Factura">
+  <div class="space-y-6">
+    <!-- Header -->
+    <section class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="/admin/invoices" class="text-zinc-400 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </a>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Factura</p>
+          <h1 id="invoice-number" class="mt-2 text-3xl font-black tracking-tight text-white">
+            Cargando...
+          </h1>
+          <p id="invoice-status" class="mt-2 text-sm"></p>
+        </div>
+      </div>
+      <div id="action-buttons" class="flex gap-3">
+        <!-- Buttons injected by JS based on status -->
+      </div>
+    </section>
+
+    <!-- Invoice Details -->
+    <div class="grid lg:grid-cols-3 gap-6">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Client Info -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Cliente</h2>
+          <div id="client-info" class="text-sm text-zinc-400">
+            Cargando...
+          </div>
+        </section>
+
+        <!-- Issuer Info -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Emisor</h2>
+          <div id="issuer-info" class="text-sm text-zinc-400">
+            Cargando...
+          </div>
+        </section>
+
+        <!-- Lines -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Líneas de factura</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead class="border-b border-zinc-800">
+                <tr>
+                  <th class="py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Descripción</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Cant.</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Precio</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Subtotal</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">IVA</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Total</th>
+                </tr>
+              </thead>
+              <tbody id="lines-body" class="divide-y divide-zinc-800">
+                <tr>
+                  <td colspan="6" class="py-4 text-center text-zinc-500">Cargando líneas...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Totals -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Importes</h2>
+          <div class="space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-400">Subtotal</span>
+              <span id="subtotal-display" class="text-white">€0,00</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-400">IVA (21%)</span>
+              <span id="tax-display" class="text-white">€0,00</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-400">IRPF</span>
+              <span id="irpf-display" class="text-white">€0,00</span>
+            </div>
+            <div class="border-t border-zinc-800 pt-3 flex justify-between text-lg font-bold">
+              <span class="text-white">Total</span>
+              <span id="total-display" class="text-white">€0,00</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Payment Info -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Pago</h2>
+          <div class="space-y-3 text-sm">
+            <div>
+              <span class="text-zinc-400">Vencimiento</span>
+              <p id="due-date-display" class="mt-1 font-medium text-white">—</p>
+            </div>
+            <div>
+              <span class="text-zinc-400">Método</span>
+              <p id="payment-method-display" class="mt-1 font-medium text-white">—</p>
+            </div>
+            <div>
+              <span class="text-zinc-400">Notas</span>
+              <p id="payment-notes-display" class="mt-1 text-zinc-300">—</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Metadata -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Metadata</h2>
+          <div class="space-y-3 text-sm">
+            <div>
+              <span class="text-zinc-400">Fecha de emisión</span>
+              <p id="issue-date-display" class="mt-1 font-medium text-white">—</p>
+            </div>
+            <div>
+              <span class="text-zinc-400">Año fiscal</span>
+              <p id="fiscal-year-display" class="mt-1 font-medium text-white">—</p>
+            </div>
+            <div>
+              <span class="text-zinc-400">Serie</span>
+              <p id="series-display" class="mt-1 font-medium text-white">—</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Audit Log -->
+        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4">Actividad</h2>
+          <div id="audit-log" class="space-y-2 text-sm">
+            <p class="text-zinc-500">Cargando actividad...</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:8787';
+
+    const statusLabels = {
+      draft: 'Borrador',
+      issued: 'Emitida',
+      sent: 'Enviada',
+      paid: 'Pagada',
+      cancelled: 'Cancelada',
+      overdue: 'Vencida',
+    };
+
+    const statusClasses = {
+      draft: 'bg-zinc-800 text-zinc-300',
+      issued: 'bg-blue-900/30 text-blue-300 border border-blue-800/50',
+      sent: 'bg-violet-900/30 text-violet-300 border border-violet-800/50',
+      paid: 'bg-emerald-900/30 text-emerald-300 border border-emerald-800/50',
+      cancelled: 'bg-red-900/30 text-red-300 border border-red-800/50',
+      overdue: 'bg-amber-900/30 text-amber-300 border border-amber-800/50',
+    };
+
+    const formatMoney = (cents) => {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(cents / 100);
+    };
+
+    const formatDate = (dateString) => {
+      if (!dateString) return '—';
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }).format(date);
+    };
+
+    const escapeHtml = (value) => {
+      if (!value) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+
+    const renderActionButtons = (invoice) => {
+      const container = document.getElementById('action-buttons');
+      const buttons = [];
+
+      if (invoice.status === 'draft') {
+        buttons.push(`
+          <button onclick="issueInvoice()" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-500">
+            Emitir factura
+          </button>
+        `);
+      }
+
+      if (['issued', 'sent'].includes(invoice.status)) {
+        buttons.push(`
+          <button onclick="sendInvoice()" class="rounded-full bg-violet-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-violet-500">
+            Enviar por email
+          </button>
+        `);
+      }
+
+      if (['issued', 'sent', 'overdue'].includes(invoice.status)) {
+        buttons.push(`
+          <button onclick="markAsPaid()" class="rounded-full bg-emerald-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-500">
+            Marcar como pagada
+          </button>
+        `);
+      }
+
+      if (['draft', 'issued', 'sent'].includes(invoice.status)) {
+        buttons.push(`
+          <button onclick="cancelInvoice()" class="rounded-full border border-rose-700 bg-rose-950/20 px-6 py-3 text-sm font-bold text-rose-400 transition hover:border-rose-600 hover:text-rose-300">
+            Cancelar
+          </button>
+        `);
+      }
+
+      container.innerHTML = buttons.join('');
+    };
+
+    const issueInvoice = async () => {
+      if (!confirm('¿Emitir esta factura? Una vez emitida, el número de factura es definitivo.')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/issue`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Error al emitir');
+        }
+
+        window.location.reload();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    const sendInvoice = async () => {
+      if (!confirm('¿Enviar factura por email al cliente?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/send`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Error al enviar');
+        }
+
+        alert('Factura enviada correctamente');
+        window.location.reload();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    const markAsPaid = async () => {
+      const paymentMethod = prompt('Método de pago:', 'transferencia');
+      if (paymentMethod === null) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/pay`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ paymentMethod }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Error al marcar como pagada');
+        }
+
+        window.location.reload();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    const cancelInvoice = async () => {
+      const reason = prompt('Motivo de la cancelación:');
+      if (!reason) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ reason }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Error al cancelar');
+        }
+
+        window.location.reload();
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    let invoiceId = '';
+
+    const loadInvoice = async () => {
+      const params = new URLSearchParams(window.location.search);
+      invoiceId = params.get('id');
+
+      if (!invoiceId) {
+        alert('ID de factura no válido');
+        window.location.href = '/admin/invoices';
+        return;
+      }
+
+      try {
+        const [invoiceRes, itemsRes, logsRes] = await Promise.all([
+          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
+          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
+          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
+        ]);
+
+        if (!invoiceRes.ok) throw new Error('Factura no encontrada');
+
+        const data = await invoiceRes.json();
+        const invoice = data.invoice;
+
+        // Render header
+        document.getElementById('invoice-number').textContent = invoice.invoiceNumber;
+        document.getElementById('invoice-status').innerHTML = `
+          <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${statusClasses[invoice.status]}">
+            ${statusLabels[invoice.status]}
+          </span>
+        `;
+
+        // Render action buttons
+        renderActionButtons(invoice);
+
+        // Render client info
+        document.getElementById('client-info').innerHTML = `
+          <p class="font-medium text-white">${escapeHtml(invoice.clientLegalName)}</p>
+          <p>NIF: ${escapeHtml(invoice.clientTaxId)}</p>
+          <p>${escapeHtml(invoice.clientAddressLine1)}</p>
+          <p>${escapeHtml(invoice.clientPostalCode)} ${escapeHtml(invoice.clientCity)}</p>
+          <p class="mt-2 text-zinc-500">${escapeHtml(invoice.clientEmail)}</p>
+        `;
+
+        // Render issuer info
+        document.getElementById('issuer-info').innerHTML = `
+          <p class="font-medium text-white">${escapeHtml(invoice.issuerLegalName)}</p>
+          <p>NIF: ${escapeHtml(invoice.issuerTaxId)}</p>
+          <p>${escapeHtml(invoice.issuerAddressLine1)}</p>
+          <p>${escapeHtml(invoice.issuerPostalCode)} ${escapeHtml(invoice.issuerCity)}</p>
+        `;
+
+        // Render lines (using same data since items are included)
+        const linesBody = document.getElementById('lines-body');
+        // For now, show placeholder - items would need separate endpoint or include
+        linesBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-4 text-center text-zinc-500">Líneas no disponibles en esta vista</td>
+          </tr>
+        `;
+
+        // Render totals
+        document.getElementById('subtotal-display').textContent = formatMoney(invoice.subtotalCents);
+        document.getElementById('tax-display').textContent = formatMoney(invoice.taxAmountCents);
+        document.getElementById('irpf-display').textContent = formatMoney(invoice.irpfAmountCents || 0);
+        document.getElementById('total-display').textContent = formatMoney(invoice.totalCents);
+
+        // Render payment info
+        document.getElementById('due-date-display').textContent = formatDate(invoice.dueDate);
+        document.getElementById('payment-method-display').textContent = invoice.paymentMethod || '—';
+        document.getElementById('payment-notes-display').textContent = invoice.paymentNotes || '—';
+
+        // Render metadata
+        document.getElementById('issue-date-display').textContent = formatDate(invoice.issueDate);
+        document.getElementById('fiscal-year-display').textContent = invoice.fiscalYear;
+        document.getElementById('series-display').textContent = invoice.series;
+
+        // Render audit log
+        if (data.logs && data.logs.length > 0) {
+          document.getElementById('audit-log').innerHTML = data.logs.map(log => `
+            <div class="flex items-center gap-2 text-zinc-400">
+              <span class="w-2 h-2 rounded-full bg-zinc-600"></span>
+              <span>${escapeHtml(log.action)} - ${formatDate(log.createdAt)}</span>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('audit-log').innerHTML = '<p class="text-zinc-500">Sin actividad registrada</p>';
+        }
+
+      } catch (error) {
+        console.error('Error loading invoice:', error);
+        alert('Error al cargar la factura');
+        window.location.href = '/admin/invoices';
+      }
+    };
+
+    // Initialize
+    loadInvoice();
+  </script>
+</AdminLayout>

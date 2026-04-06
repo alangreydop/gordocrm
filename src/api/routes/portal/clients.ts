@@ -71,6 +71,19 @@ const createClientSchema = z.object({
   nextReviewAt: optionalNullableDate,
   lastContactedAt: optionalNullableDate,
   portalPassword: z.string().min(8).optional(),
+
+  // Campos fiscales
+  taxId: optionalNullableString,
+  taxIdType: z.enum(['NIF', 'CIF', 'NIE', 'VIES']).optional(),
+  legalName: optionalNullableString,
+  addressLine1: optionalNullableString,
+  addressLine2: optionalNullableString,
+  city: optionalNullableString,
+  region: optionalNullableString,
+  postalCode: optionalNullableString,
+  country: z.string().length(2).optional(),
+  phone: optionalNullableString,
+  registrationNumber: optionalNullableString,
 });
 
 const updateClientSchema = z.object({
@@ -87,6 +100,19 @@ const updateClientSchema = z.object({
   notes: optionalNullableString,
   nextReviewAt: optionalNullableDate,
   lastContactedAt: optionalNullableDate,
+
+  // Campos fiscales
+  taxId: optionalNullableString,
+  taxIdType: z.enum(['NIF', 'CIF', 'NIE', 'VIES']).optional(),
+  legalName: optionalNullableString,
+  addressLine1: optionalNullableString,
+  addressLine2: optionalNullableString,
+  city: optionalNullableString,
+  region: optionalNullableString,
+  postalCode: optionalNullableString,
+  country: z.string().length(2).optional(),
+  phone: optionalNullableString,
+  registrationNumber: optionalNullableString,
 });
 
 const portalAccessSchema = z.object({
@@ -117,6 +143,13 @@ clientRoutes.get('/', async (c) => {
       monthlyUnitCapacity: schema.clients.monthlyUnitCapacity,
       nextReviewAt: schema.clients.nextReviewAt,
       createdAt: schema.clients.createdAt,
+      // Campos fiscales
+      taxId: schema.clients.taxId,
+      taxIdType: schema.clients.taxIdType,
+      legalName: schema.clients.legalName,
+      city: schema.clients.city,
+      postalCode: schema.clients.postalCode,
+      country: schema.clients.country,
       jobCount: sql<number>`cast(count(${schema.jobs.id}) as integer)`,
       activeJobs:
         sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
@@ -140,6 +173,12 @@ clientRoutes.get('/', async (c) => {
       schema.clients.monthlyUnitCapacity,
       schema.clients.nextReviewAt,
       schema.clients.createdAt,
+      schema.clients.taxId,
+      schema.clients.taxIdType,
+      schema.clients.legalName,
+      schema.clients.city,
+      schema.clients.postalCode,
+      schema.clients.country,
     )
     .orderBy(desc(schema.clients.createdAt));
 
@@ -217,7 +256,26 @@ clientRoutes.get('/:id', async (c) => {
       .orderBy(desc(schema.jobs.createdAt)),
   ]);
 
-  return c.json({ client, portalUser, summary, jobs });
+  return c.json({
+    client: {
+      ...client,
+      // Incluir campos fiscales completos
+      taxId: client.taxId,
+      taxIdType: client.taxIdType,
+      legalName: client.legalName,
+      addressLine1: client.addressLine1,
+      addressLine2: client.addressLine2,
+      city: client.city,
+      region: client.region,
+      postalCode: client.postalCode,
+      country: client.country,
+      phone: client.phone,
+      registrationNumber: client.registrationNumber,
+    },
+    portalUser,
+    summary,
+    jobs
+  });
 });
 
 clientRoutes.post('/', async (c) => {
@@ -259,6 +317,18 @@ clientRoutes.post('/', async (c) => {
     notes: body.data.notes ?? null,
     nextReviewAt: body.data.nextReviewAt ?? null,
     lastContactedAt: body.data.lastContactedAt ?? null,
+    // Campos fiscales
+    taxId: body.data.taxId ?? null,
+    taxIdType: body.data.taxIdType ?? 'NIF',
+    legalName: body.data.legalName ?? null,
+    addressLine1: body.data.addressLine1 ?? null,
+    addressLine2: body.data.addressLine2 ?? null,
+    city: body.data.city ?? null,
+    region: body.data.region ?? null,
+    postalCode: body.data.postalCode ?? null,
+    country: body.data.country ?? 'ES',
+    phone: body.data.phone ?? null,
+    registrationNumber: body.data.registrationNumber ?? null,
     createdAt: now,
     updatedAt: now,
   });
@@ -337,6 +407,18 @@ clientRoutes.patch('/:id', async (c) => {
       datasetStatus: body.data.datasetStatus,
       segment: body.data.segment,
       marginProfile: body.data.marginProfile,
+      // Campos fiscales
+      taxId: body.data.taxId ?? null,
+      taxIdType: body.data.taxIdType ?? 'NIF',
+      legalName: body.data.legalName ?? null,
+      addressLine1: body.data.addressLine1 ?? null,
+      addressLine2: body.data.addressLine2 ?? null,
+      city: body.data.city ?? null,
+      region: body.data.region ?? null,
+      postalCode: body.data.postalCode ?? null,
+      country: body.data.country ?? 'ES',
+      phone: body.data.phone ?? null,
+      registrationNumber: body.data.registrationNumber ?? null,
       updatedAt: new Date(),
     })
     .where(eq(schema.clients.id, id));

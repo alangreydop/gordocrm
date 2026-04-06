@@ -42,12 +42,28 @@ export const clients = sqliteTable(
     onboardingCompletedAt: integer('onboarding_completed_at', { mode: 'timestamp_ms' }),
     firstSessionAt: integer('first_session_at', { mode: 'timestamp_ms' }),
     externalClientId: text('external_client_id'), // ID en otros sistemas
+
+    // Campos fiscales (B2B)
+    taxId: text('tax_id'), // CIF/NIF
+    taxIdType: text('tax_id_type').default('NIF'), // NIF, CIF, NIE, VIES
+    legalName: text('legal_name'), // Razón social
+    addressLine1: text('address_line_1'),
+    addressLine2: text('address_line_2'),
+    city: text('city'),
+    region: text('region'),
+    postalCode: text('postal_code'),
+    country: text('country').default('ES'),
+    phone: text('phone'),
+    registrationNumber: text('registration_number'), // Registro mercantil
+
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
   (table) => [
     index('idx_clients_user_id').on(table.userId),
     index('idx_clients_next_review_at').on(table.nextReviewAt),
+    index('idx_clients_tax_id').on(table.taxId),
+    index('idx_clients_country').on(table.country),
   ],
 );
 
@@ -179,3 +195,115 @@ export const sessions = sqliteTable(
     index('idx_sessions_expires_at').on(table.expiresAt),
   ],
 );
+
+// ============================================
+// Sistema de Facturación
+// ============================================
+
+export const invoices = sqliteTable('invoices', {
+  id: text('id').primaryKey().$defaultFn(randomId),
+  invoiceNumber: text('invoice_number').notNull().unique(), // F2026-001
+  series: text('series').notNull().default('F'),
+  fiscalYear: integer('fiscal_year').notNull(),
+
+  // Cliente (snapshot en momento de emisión)
+  clientId: text('client_id').notNull().references(() => clients.id),
+  clientTaxId: text('client_tax_id').notNull(),
+  clientLegalName: text('client_legal_name').notNull(),
+  clientAddressLine1: text('client_address_line_1').notNull(),
+  clientAddressLine2: text('client_address_line_2'),
+  clientCity: text('client_city').notNull(),
+  clientRegion: text('client_region'),
+  clientPostalCode: text('client_postal_code').notNull(),
+  clientCountry: text('client_country').default('ES'),
+  clientEmail: text('client_email').notNull(),
+
+  // Emisor (Grande & Gordo)
+  issuerTaxId: text('issuer_tax_id').notNull(),
+  issuerLegalName: text('issuer_legal_name').notNull(),
+  issuerAddressLine1: text('issuer_address_line_1').notNull(),
+  issuerCity: text('issuer_city').notNull(),
+  issuerPostalCode: text('issuer_postal_code').notNull(),
+  issuerCountry: text('issuer_country').default('ES'),
+  issuerEmail: text('issuer_email').notNull(),
+
+  // Fechas
+  issueDate: integer('issue_date', { mode: 'timestamp_ms' }).notNull(),
+  dueDate: integer('due_date', { mode: 'timestamp_ms' }).notNull(),
+  paidAt: integer('paid_at', { mode: 'timestamp_ms' }),
+
+  // Conceptos
+  description: text('description'),
+
+  // Importes (en céntimos)
+  subtotalCents: integer('subtotal_cents').notNull().default(0),
+  taxRate: real('tax_rate').notNull().default(0.21), // 21% IVA
+  taxAmountCents: integer('tax_amount_cents').notNull().default(0),
+  irpfRate: real('irpf_rate'),
+  irpfAmountCents: integer('irpf_amount_cents'),
+  totalCents: integer('total_cents').notNull().default(0),
+
+  // Estado
+  status: text('status').notNull().default('draft'), // draft, issued, sent, paid, cancelled, overdue
+  paymentMethod: text('payment_method'),
+  paymentNotes: text('payment_notes'),
+
+  // Rectificativa
+  isRectificative: integer('is_rectificative').default(0),
+  rectificativeReason: text('rectificative_reason'),
+  originalInvoiceId: text('original_invoice_id').references(() => invoices.id),
+
+  // Jobs relacionados
+  relatedJobIds: text('related_job_ids'), // JSON array
+
+  // Metadata
+  notes: text('notes'),
+  terms: text('terms'),
+  footer: text('footer'),
+
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
+});
+
+export const invoiceItems = sqliteTable('invoice_items', {
+  id: text('id').primaryKey().$defaultFn(randomId),
+  invoiceId: text('invoice_id').notNull().references(() => invoices.id, { onDelete: 'cascade' }),
+
+  // Concepto
+  description: text('description').notNull(),
+  quantity: real('quantity').notNull().default(1),
+  unitPriceCents: integer('unit_price_cents').notNull(),
+
+  // Importes
+  subtotalCents: integer('subtotal_cents').notNull(),
+  taxRate: real('tax_rate').notNull().default(0.21),
+  taxAmountCents: integer('tax_amount_cents').notNull(),
+  irpfRate: real('irpf_rate'),
+  irpfAmountCents: integer('irpf_amount_cents'),
+  totalCents: integer('total_cents').notNull(),
+
+  // Orden
+  sortOrder: integer('sort_order').notNull().default(0),
+
+  // Metadata
+  jobId: text('job_id').references(() => jobs.id),
+  metadata: text('metadata'), // JSON
+
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+});
+
+export const invoiceLogs = sqliteTable('invoice_logs', {
+  id: text('id').primaryKey().$defaultFn(randomId),
+  invoiceId: text('invoice_id').notNull().references(() => invoices.id, { onDelete: 'cascade' }),
+  action: text('action').notNull(), // created, issued, sent, paid, cancelled, modified, emailed
+  userId: text('user_id'),
+  details: text('details'), // JSON
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+});
+
+// Tabla de configuración
+export const config = sqliteTable('config', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
+});

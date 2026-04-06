@@ -1,0 +1,448 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
+---
+
+<AdminLayout title="Nueva Factura">
+  <div class="space-y-6">
+    <!-- Header -->
+    <section class="flex items-center gap-4">
+      <a href="/admin/invoices" class="text-zinc-400 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </a>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Facturación</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight text-white">Nueva Factura</h1>
+        <p class="mt-2 text-sm text-zinc-400">Crea una nueva factura para un cliente</p>
+      </div>
+    </section>
+
+    <!-- Form -->
+    <form id="invoice-form" class="space-y-6">
+      <!-- Cliente -->
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Cliente</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="client-id" class="block text-sm font-medium text-zinc-300 mb-2">
+              Cliente <span class="text-rose-400">*</span>
+            </label>
+            <select
+              id="client-id"
+              name="clientId"
+              required
+              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+            >
+              <option value="">Selecciona un cliente...</option>
+            </select>
+            <p id="client-fiscal-info" class="mt-2 text-sm text-zinc-400"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Líneas de factura -->
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-white">Líneas de factura</h2>
+          <button
+            type="button"
+            id="add-line-btn"
+            class="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Añadir línea
+          </button>
+        </div>
+
+        <div id="lines-container" class="space-y-3">
+          <!-- Las líneas se añaden dinámicamente -->
+        </div>
+
+        <!-- Totales -->
+        <div class="mt-6 border-t border-zinc-800 pt-6">
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-400">Subtotal</span>
+              <span id="subtotal-display" class="text-white">€0,00</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-400">IVA (21%)</span>
+              <span id="tax-display" class="text-white">€0,00</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold">
+              <span class="text-white">Total</span>
+              <span id="total-display" class="text-white">€0,00</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detalles de pago -->
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Detalles de pago</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label for="due-date" class="block text-sm font-medium text-zinc-300 mb-2">
+              Fecha de vencimiento
+            </label>
+            <input
+              type="date"
+              id="due-date"
+              name="dueDate"
+              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label for="payment-method" class="block text-sm font-medium text-zinc-300 mb-2">
+              Método de pago
+            </label>
+            <select
+              id="payment-method"
+              name="paymentMethod"
+              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+            >
+              <option value="transferencia">Transferencia bancaria</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="bizum">Bizum</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-4">
+          <label for="payment-notes" class="block text-sm font-medium text-zinc-300 mb-2">
+            Notas de pago (ej: cuenta bancaria)
+          </label>
+          <textarea
+            id="payment-notes"
+            name="paymentNotes"
+            rows="2"
+            class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+            placeholder="Transferencia a ES00 0000 0000 0000 0000 0000 - Banco XXX"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- Descripción y notas -->
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <h2 class="text-xl font-bold text-white mb-4">Descripción y notas</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="description" class="block text-sm font-medium text-zinc-300 mb-2">
+              Descripción (opcional)
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows="2"
+              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              placeholder="Descripción general de la factura"
+            ></textarea>
+          </div>
+          <div>
+            <label for="notes" class="block text-sm font-medium text-zinc-300 mb-2">
+              Notas internas
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
+              rows="2"
+              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              placeholder="Notas que solo verá el admin"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Submit -->
+      <div class="sticky bottom-4 z-10 flex gap-3">
+        <button
+          type="button"
+          id="save-draft-btn"
+          class="flex-1 rounded-full border border-zinc-700 bg-black px-6 py-4 text-sm font-bold text-white transition hover:border-zinc-500"
+        >
+          Guardar borrador
+        </button>
+        <button
+          type="submit"
+          id="create-btn"
+          class="flex-1 rounded-full bg-white px-6 py-4 text-sm font-bold text-black transition hover:bg-zinc-200"
+        >
+          Crear factura
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:8787';
+
+    let lineCount = 0;
+    let clients = [];
+
+    // Template de línea de factura
+    const createLineTemplate = (index = 0) => `
+      <div class="line-item grid grid-cols-12 gap-3 items-start p-4 rounded-xl border border-zinc-800 bg-black" data-line="${index}">
+        <div class="col-span-5">
+          <label class="block text-xs font-medium text-zinc-500 mb-1">Descripción</label>
+          <input
+            type="text"
+            name="lines[${index}][description]"
+            required
+            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none"
+            placeholder="Concepto del servicio"
+          />
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-zinc-500 mb-1">Cantidad</label>
+          <input
+            type="number"
+            name="lines[${index}][quantity]"
+            value="1"
+            min="0.01"
+            step="0.01"
+            required
+            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none"
+          />
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-zinc-500 mb-1">Precio (€)</label>
+          <input
+            type="number"
+            name="lines[${index}][unitPrice]"
+            value=""
+            min="0"
+            step="0.01"
+            required
+            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none line-price"
+            placeholder="0.00"
+          />
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs font-medium text-zinc-500 mb-1">Subtotal</label>
+          <div class="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-sm text-zinc-400 line-subtotal">
+            €0,00
+          </div>
+        </div>
+        <div class="col-span-1 flex items-end">
+          <button
+            type="button"
+            class="remove-line w-full rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-rose-400 transition hover:border-rose-700 hover:text-rose-300"
+          >
+            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+
+    const addLine = () => {
+      const container = document.getElementById('lines-container');
+      const template = createLineTemplate(lineCount);
+      container.insertAdjacentHTML('beforeend', template);
+
+      const newLine = container.lastElementChild;
+      attachLineEvents(newLine);
+      lineCount++;
+    };
+
+    const removeLine = (btn) => {
+      const lineItem = btn.closest('.line-item');
+      lineItem.remove();
+      calculateTotals();
+    };
+
+    const attachLineEvents = (lineItem) => {
+      const priceInput = lineItem.querySelector('.line-price');
+      const quantityInput = lineItem.querySelector('input[name*="[quantity]"]');
+      const subtotalDisplay = lineItem.querySelector('.line-subtotal');
+
+      const updateSubtotal = () => {
+        const price = parseFloat(priceInput.value) || 0;
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const subtotal = price * quantity;
+        subtotalDisplay.textContent = `€${subtotal.toFixed(2)}`;
+        calculateTotals();
+      };
+
+      priceInput.addEventListener('input', updateSubtotal);
+      quantityInput.addEventListener('input', updateSubtotal);
+
+      lineItem.querySelector('.remove-line').addEventListener('click', (e) => {
+        removeLine(e.currentTarget);
+      });
+    };
+
+    const calculateTotals = () => {
+      let subtotal = 0;
+
+      document.querySelectorAll('.line-item').forEach((line) => {
+        const priceInput = line.querySelector('.line-price');
+        const quantityInput = line.querySelector('input[name*="[quantity]"]');
+        const price = parseFloat(priceInput.value) || 0;
+        const quantity = parseFloat(quantityInput.value) || 0;
+        subtotal += price * quantity;
+      });
+
+      const tax = subtotal * 0.21;
+      const total = subtotal + tax;
+
+      document.getElementById('subtotal-display').textContent = `€${subtotal.toFixed(2)}`;
+      document.getElementById('tax-display').textContent = `€${tax.toFixed(2)}`;
+      document.getElementById('total-display').textContent = `€${total.toFixed(2)}`;
+    };
+
+    const loadClients = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/portal/clients`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error('No se pudieron cargar los clientes');
+
+        const data = await res.json();
+        clients = data.clients || [];
+
+        const select = document.getElementById('client-id');
+        select.innerHTML = '<option value="">Selecciona un cliente...</option>';
+
+        clients.forEach((client) => {
+          const option = document.createElement('option');
+          option.value = client.id;
+          option.textContent = `${client.legalName || client.name || client.company} (${client.taxId || 'Sin NIF'})`;
+          option.dataset.taxId = client.taxId || '';
+          option.dataset.legalName = client.legalName || client.name || '';
+          option.dataset.address = client.addressLine1 || '';
+          option.dataset.city = client.city || '';
+          option.dataset.postalCode = client.postalCode || '';
+          option.dataset.email = client.email || '';
+          select.appendChild(option);
+        });
+
+        select.addEventListener('change', (e) => {
+          const option = e.target.selectedOptions[0];
+          const infoEl = document.getElementById('client-fiscal-info');
+
+          if (option.value) {
+            const taxId = option.dataset.taxId || 'Sin NIF';
+            const address = option.dataset.address || 'Sin dirección';
+            const city = option.dataset.city || '';
+            const postalCode = option.dataset.postalCode || '';
+
+            infoEl.innerHTML = `
+              <strong>NIF:</strong> ${taxId}<br>
+              <strong>Dirección:</strong> ${address}, ${postalCode} ${city}
+            `;
+
+            // Warn if missing fiscal data
+            if (!option.dataset.taxId || !option.dataset.legalName || !option.dataset.address) {
+              infoEl.innerHTML += `
+                <p class="mt-2 text-amber-400">
+                  ⚠️ Este cliente no tiene completos los datos fiscales.
+                  <a href="/admin/clients/detail?id=${option.value}" class="underline hover:text-amber-300">
+                    Completar ahora →
+                  </a>
+                </p>
+              `;
+            }
+          } else {
+            infoEl.textContent = '';
+          }
+        });
+      } catch (error) {
+        console.error('Error loading clients:', error);
+      }
+    };
+
+    const collectLineData = () => {
+      const lines = [];
+      document.querySelectorAll('.line-item').forEach((line) => {
+        const descriptionInput = line.querySelector('input[name*="[description]"]');
+        const quantityInput = line.querySelector('input[name*="[quantity]"]');
+        const priceInput = line.querySelector('.line-price');
+
+        lines.push({
+          description: descriptionInput.value,
+          quantity: parseFloat(quantityInput.value) || 1,
+          unitPriceCents: Math.round((parseFloat(priceInput.value) || 0) * 100),
+        });
+      });
+      return lines;
+    };
+
+    const submitInvoice = async (status = 'draft') => {
+      const clientId = document.getElementById('client-id').value;
+      const dueDate = document.getElementById('due-date').value;
+      const paymentMethod = document.getElementById('payment-method').value;
+      const paymentNotes = document.getElementById('payment-notes').value;
+      const description = document.getElementById('description').value;
+      const notes = document.getElementById('notes').value;
+
+      if (!clientId) {
+        alert('Selecciona un cliente');
+        return;
+      }
+
+      const lines = collectLineData();
+      if (lines.length === 0) {
+        alert('Añade al menos una línea');
+        return;
+      }
+
+      const payload = {
+        clientId,
+        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+        paymentMethod,
+        paymentNotes,
+        description: description || undefined,
+        notes: notes || undefined,
+        items: lines,
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/invoices`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Error al crear la factura');
+        }
+
+        // Redirect to detail
+        window.location.href = `/admin/invoices/detail?id=${data.invoice.id}`;
+      } catch (error) {
+        console.error('Error creating invoice:', error);
+        alert(error.message || 'Error al crear la factura');
+      }
+    };
+
+    // Event listeners
+    document.getElementById('add-line-btn').addEventListener('click', addLine);
+    document.getElementById('invoice-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitInvoice('draft');
+    });
+    document.getElementById('save-draft-btn').addEventListener('click', () => {
+      submitInvoice('draft');
+    });
+
+    // Set default due date (30 days from now)
+    const defaultDueDate = new Date();
+    defaultDueDate.setDate(defaultDueDate.getDate() + 30);
+    document.getElementById('due-date').value = defaultDueDate.toISOString().split('T')[0];
+
+    // Initialize
+    loadClients();
+    addLine(); // Add first line by default
+  </script>
+</AdminLayout>

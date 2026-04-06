@@ -11,6 +11,7 @@ import { searchRoutes } from './api/routes/portal/search.js';
 import { publicBriefRoutes } from './api/routes/public/briefs.js';
 import { aiProxyRoutes } from './api/routes/ai-proxy.js';
 import { webhookRoutes } from './api/routes/portal/webhooks.js';
+import { invoiceRoutes } from './api/routes/admin/invoices.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import type { AppBindings, AppContext } from './types/index.js';
 
@@ -60,5 +61,6 @@ app.route('/api/portal/search', searchRoutes);
 app.route('/api/portal/webhooks', webhookRoutes);
 app.route('/api/public/briefs', publicBriefRoutes);
 app.route('/api/ai', aiProxyRoutes);
+app.route('/api/admin/invoices', invoiceRoutes);
 
 export default app;
