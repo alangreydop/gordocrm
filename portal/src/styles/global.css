@@ -101,6 +101,10 @@ textarea {
   color: var(--crm-subtle);
 }
 
+.crm-kicker--accent {
+  color: var(--crm-accent);
+}
+
 .crm-panel {
   border: 1px solid var(--crm-border);
   border-radius: 1.5rem;
@@ -181,6 +185,15 @@ textarea {
   background: var(--gg-zinc-900);
 }
 
+.crm-button-accent {
+  background: var(--crm-accent);
+  color: var(--gg-white);
+}
+
+.crm-button-accent:hover {
+  background: var(--crm-accent-hover);
+}
+
 .crm-table-wrap {
   overflow: hidden;
   border: 1px solid var(--crm-border);
@@ -222,8 +235,8 @@ textarea {
   border: 1px solid var(--crm-border-strong);
   border-radius: 1.75rem;
   background:
-    radial-gradient(circle at top right, rgba(122, 159, 255, 0.14), transparent 28%),
-    radial-gradient(circle at top left, rgba(110, 71, 164, 0.16), transparent 32%),
+    radial-gradient(circle at top right, rgba(196, 22, 90, 0.08), transparent 28%),
+    radial-gradient(circle at top left, rgba(196, 22, 90, 0.06), transparent 32%),
     var(--crm-panel-strong);
   padding: 1.6rem;
   box-shadow: var(--crm-shadow);
@@ -242,6 +255,10 @@ textarea {
   background: var(--crm-panel);
   padding: 1.25rem;
   box-shadow: var(--crm-shadow);
+}
+
+.crm-metric-card:hover {
+  border-color: var(--crm-accent);
 }
 
 .crm-form-section {
