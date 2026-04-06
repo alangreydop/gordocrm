@@ -4,263 +4,287 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 <AdminLayout title="Briefs">
   <div class="space-y-6">
-    <section class="crm-panel-strong p-6 md:p-8">
-      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <!-- Header -->
+    <section class="crm-page-header">
+      <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
-          <p class="crm-kicker">Inbox de contexto</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Briefs</h1>
-          <p class="mt-4 max-w-3xl text-sm leading-relaxed text-slate-300 md:text-base">
-            Bandeja operativa para el contexto que entra desde la web publica y para las
-            siguientes capas de intake del sistema.
+          <p class="crm-kicker">Gestión de briefs</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Briefs Recibidos</h1>
+          <p class="crm-page-header__meta mt-4">
+            Briefs submissions desde la web y formularios. Revisa, crea jobs o archiva según corresponda.
           </p>
         </div>
-        <div class="w-full md:w-80">
-          <label for="briefs-search" class="mb-2 block text-sm font-medium text-slate-200">Buscar</label>
-          <input
-            type="search"
-            id="briefs-search"
-            placeholder="Cliente, email o contenido"
-            class="crm-input"
-          />
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="crm-panel-soft p-5">
+            <p class="crm-kicker">Nuevos</p>
+            <p id="stat-new" class="mt-3 text-3xl font-black text-white">—</p>
+          </div>
+          <div class="crm-panel-soft p-5">
+            <p class="crm-kicker">Pendientes</p>
+            <p id="stat-pending" class="mt-3 text-3xl font-black text-white">—</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Briefs totales</p>
-        <p id="metric-total-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Nuevos</p>
-        <p id="metric-new-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Revisados</p>
-        <p id="metric-reviewed-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Sin cliente enlazado</p>
-        <p id="metric-unlinked-briefs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-      </div>
-    </div>
+    <!-- Filters -->
+    <section class="crm-panel p-4 flex flex-wrap gap-3 items-center">
+      <select id="filter-status" class="crm-input text-sm max-w-xs">
+        <option value="">Todos los estados</option>
+        <option value="new">Nuevos</option>
+        <option value="reviewed">Revisados</option>
+        <option value="archived">Archivados</option>
+      </select>
+      <select id="filter-source" class="crm-input text-sm max-w-xs">
+        <option value="">Todas las fuentes</option>
+        <option value="web_form">Formulario Web</option>
+        <option value="email">Email</option>
+        <option value="manual">Manual</option>
+      </select>
+      <input
+        type="text"
+        id="search-client"
+        class="crm-input text-sm max-w-xs"
+        placeholder="Buscar por cliente o email..."
+      />
+      <button id="clear-filters-btn" class="crm-button crm-button-secondary text-sm">
+        Limpiar
+      </button>
+    </section>
 
-    <div class="crm-table-wrap">
+    <!-- Briefs Table -->
+    <section class="crm-panel overflow-hidden">
       <div class="overflow-x-auto">
         <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
           <thead>
             <tr>
               <th class="px-6 py-3 text-left">Cliente</th>
-              <th class="px-6 py-3 text-left">Entrada</th>
-              <th class="px-6 py-3 text-left">Resumen</th>
+              <th class="px-6 py-3 text-left">Email</th>
+              <th class="px-6 py-3 text-left">Tipo</th>
+              <th class="px-6 py-3 text-left">Descripción</th>
+              <th class="px-6 py-3 text-left">Fuente</th>
               <th class="px-6 py-3 text-left">Estado</th>
-              <th class="px-6 py-3 text-left">Acciones</th>
+              <th class="px-6 py-3 text-left">Creado</th>
+              <th class="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody id="briefs-body" class="divide-y divide-gray-200">
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-slate-400">Cargando briefs...</td>
+              <td colspan="8" class="px-6 py-8 text-center text-slate-400">Cargando briefs...</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   </div>
 
   <script>
     (async () => {
-      const {
-        api,
-        escapeHtml,
-        formatDate,
-      } = await import('../../../lib/api-client');
+      const { api, escapeHtml, formatDate } = await import('../../../lib/api-client');
 
-      const tbody = document.getElementById('briefs-body');
-      const searchInput = document.getElementById('briefs-search');
+      // State
+      let allBriefs = [];
+      let filteredBriefs = [];
 
-      let briefs = [];
+      // DOM Elements
+      const briefsBody = document.getElementById('briefs-body');
+      const filterStatus = document.getElementById('filter-status');
+      const filterSource = document.getElementById('filter-source');
+      const searchClient = document.getElementById('search-client');
+      const clearFiltersBtn = document.getElementById('clear-filters-btn');
+      const statNew = document.getElementById('stat-new');
+      const statPending = document.getElementById('stat-pending');
 
-      const setMetric = (id, value) => {
-        const element = document.getElementById(id);
-        if (element) element.textContent = value;
+      // Status badges
+      const statusLabels = {
+        new: 'Nuevo',
+        reviewed: 'Revisado',
+        archived: 'Archivado',
       };
 
-      const briefStatusClass = (status) => (
-        {
-          new: 'border border-amber-300/20 bg-amber-400/10 text-amber-100',
-          reviewed: 'border border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
-          archived: 'border border-white/10 bg-white/5 text-slate-200',
-        }[status] ?? 'border border-white/10 bg-white/5 text-slate-200'
-      );
-
-      const excerpt = (value) => {
-        const text = String(value ?? '').trim();
-        if (!text) return 'Sin descripcion';
-        return text.length > 180 ? `${text.slice(0, 177)}...` : text;
+      const statusClasses = {
+        new: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+        reviewed: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+        archived: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
       };
 
-      const setBriefStatus = async (briefId, status) => {
-        await api(`/api/portal/briefs/${encodeURIComponent(briefId)}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ status }),
-        });
+      // Source labels
+      const sourceLabels = {
+        web_form: 'Formulario Web',
+        email: 'Email',
+        manual: 'Manual',
       };
 
-      const createJobFromBrief = async (briefId) => (
-        api(`/api/portal/briefs/${encodeURIComponent(briefId)}/create-job`, {
-          method: 'POST',
-        })
-      );
+      // Type labels
+      const typeLabels = {
+        foto: 'Foto',
+        video: 'Video',
+        ambos: 'Foto + Video',
+      };
 
-      const render = () => {
-        if (!tbody) return;
-
-        const query =
-          searchInput instanceof HTMLInputElement
-            ? searchInput.value.trim().toLowerCase()
-            : '';
-
-        const filtered = briefs.filter((brief) => {
-          if (!query) return true;
-          return [
-            brief.clientName,
-            brief.clientCompany,
-            brief.email,
-            brief.description,
-            brief.tipo,
-            brief.status,
-          ]
-            .filter(Boolean)
-            .some((value) => String(value).toLowerCase().includes(query));
-        });
-
-        setMetric('metric-total-briefs', String(briefs.length));
-        setMetric(
-          'metric-new-briefs',
-          String(briefs.filter((brief) => brief.status === 'new').length),
-        );
-        setMetric(
-          'metric-reviewed-briefs',
-          String(briefs.filter((brief) => brief.status === 'reviewed').length),
-        );
-        setMetric(
-          'metric-unlinked-briefs',
-          String(briefs.filter((brief) => !brief.clientId).length),
-        );
-
-        if (filtered.length === 0) {
-          tbody.innerHTML = `
+      // Load briefs
+      async function loadBriefs() {
+        try {
+          const { briefs } = await api('/api/portal/briefs');
+          allBriefs = briefs.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          filteredBriefs = [...allBriefs];
+          renderBriefs();
+          updateStats();
+        } catch (error) {
+          console.error('Error loading briefs:', error);
+          briefsBody.innerHTML = `
             <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-slate-400">No hay briefs para ese filtro.</td>
-            </tr>
-          `;
-          return;
-        }
-
-        tbody.innerHTML = filtered.map((brief) => `
-          <tr class="align-top hover:bg-gray-50">
-            <td class="px-6 py-4">
-              <p class="font-medium text-gray-900">${escapeHtml(brief.clientName ?? 'Sin cliente enlazado')}</p>
-              <p class="text-gray-500 mt-1">${escapeHtml(brief.email)}</p>
-              <p class="text-xs text-gray-500 mt-2">${escapeHtml(brief.clientCompany ?? brief.clientPlan ?? 'Cuenta sin enlazar')}</p>
-            </td>
-            <td class="px-6 py-4 text-gray-600">
-              <p class="font-medium text-gray-900">${escapeHtml(brief.tipo ?? 'brief')}</p>
-              <p class="mt-1">${escapeHtml(formatDate(brief.createdAt))}</p>
-              <p class="text-xs text-gray-500 mt-2">Source: ${escapeHtml(brief.source ?? 'website')}</p>
-            </td>
-            <td class="px-6 py-4 text-gray-600">
-              <p class="max-w-xl leading-relaxed">${escapeHtml(excerpt(brief.description))}</p>
-              ${
-                brief.sourcePage
-                  ? `<a href="${escapeHtml(brief.sourcePage)}" target="_blank" rel="noreferrer" class="mt-3 inline-flex text-xs font-medium text-sky-200 transition hover:text-white">Abrir origen</a>`
-                  : ''
-              }
-            </td>
-            <td class="px-6 py-4">
-              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${briefStatusClass(brief.status)}">
-                ${escapeHtml(brief.status ?? 'new')}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col gap-2 items-start">
-                <button data-brief-id="${escapeHtml(brief.id)}" data-status="reviewed" class="rounded-full border border-white/10 bg-white px-3 py-2 text-xs font-semibold text-slate-950 transition hover:-translate-y-0.5">
-                  Marcar revisado
+              <td colspan="8" class="px-6 py-8 text-center text-rose-200">
+                Error cargando briefs
+                <button onclick="window.location.reload()" class="crm-button crm-button-primary mt-4 ml-2">
+                  Recargar
                 </button>
-                <button data-brief-id="${escapeHtml(brief.id)}" data-status="archived" class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-white/20 hover:bg-white/8">
-                  Archivar
-                </button>
-                ${
-                  brief.clientId
-                    ? `<button data-brief-id="${escapeHtml(brief.id)}" data-action="create-job" class="rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-2 text-xs font-semibold text-sky-100 transition hover:-translate-y-0.5 hover:border-sky-200/30 hover:bg-sky-400/15">
-                        Crear trabajo
-                      </button>`
-                    : ''
-                }
-                ${
-                  brief.clientId
-                    ? `<a href="/admin/clients/detail?id=${encodeURIComponent(brief.clientId)}" class="text-xs font-medium text-sky-200 transition hover:text-white">Abrir cliente</a>`
-                    : '<span class="text-xs text-amber-100">Pendiente de enlazar</span>'
-                }
-              </div>
-            </td>
-          </tr>
-        `).join('');
-      };
-
-      try {
-        const data = await api('/api/portal/briefs');
-        briefs = Array.isArray(data.briefs) ? data.briefs : [];
-        render();
-      } catch {
-        if (tbody) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="5" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los briefs.</td>
+              </td>
             </tr>
           `;
         }
       }
 
-      searchInput?.addEventListener('input', render);
+      // Update stats
+      function updateStats() {
+        const newCount = allBriefs.filter(b => b.status === 'new').length;
+        const pendingCount = allBriefs.filter(b => ['new', 'reviewed'].includes(b.status) && !b.jobId).length;
+        statNew.textContent = newCount;
+        statPending.textContent = pendingCount;
+      }
 
-      tbody?.addEventListener('click', async (event) => {
-        const target = event.target instanceof Element
-          ? event.target.closest('button[data-brief-id]')
-          : null;
-        if (!(target instanceof HTMLButtonElement)) return;
+      // Filter briefs
+      function applyFilters() {
+        const status = filterStatus.value;
+        const source = filterSource.value;
+        const search = searchClient.value.toLowerCase();
 
-        const briefId = target.dataset.briefId;
-        const previousLabel = target.textContent;
-        const action = target.dataset.action ?? 'set-status';
+        filteredBriefs = allBriefs.filter(brief => {
+          if (status && brief.status !== status) return false;
+          if (source && brief.source !== source) return false;
+          if (search) {
+            const clientName = (brief.clientName || '').toLowerCase();
+            const clientCompany = (brief.clientCompany || '').toLowerCase();
+            const email = (brief.email || '').toLowerCase();
+            if (!clientName.includes(search) && !clientCompany.includes(search) && !email.includes(search)) {
+              return false;
+            }
+          }
+          return true;
+        });
 
-        if (!briefId) return;
-        target.disabled = true;
-        target.textContent = action === 'create-job' ? 'Creando...' : 'Guardando...';
+        renderBriefs();
+      }
+
+      // Render briefs
+      function renderBriefs() {
+        if (filteredBriefs.length === 0) {
+          briefsBody.innerHTML = `
+            <tr>
+              <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                No hay briefs que coincidan con los filtros
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        briefsBody.innerHTML = filteredBriefs.map(brief => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">
+              <div class="font-medium text-white">${escapeHtml(brief.clientName || '—')}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(brief.clientCompany || '—')}</div>
+            </td>
+            <td class="px-6 py-4 text-slate-200">${escapeHtml(brief.email)}</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium bg-slate-700 text-slate-200">
+                ${escapeHtml(typeLabels[brief.tipo] || brief.tipo)}
+              </span>
+            </td>
+            <td class="px-6 py-4 max-w-xs truncate text-slate-200" title="${escapeHtml(brief.description)}">
+              ${escapeHtml(brief.description)}
+            </td>
+            <td class="px-6 py-4 text-slate-400">
+              ${escapeHtml(sourceLabels[brief.source] || brief.source || '—')}
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusClasses[brief.status] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}">
+                ${escapeHtml(statusLabels[brief.status] || brief.status)}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-slate-400">${formatDate(brief.createdAt)}</td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                ${brief.status === 'new' || brief.status === 'reviewed' ? `
+                  <button
+                    onclick="createJob('${brief.id}')"
+                    class="text-sm font-medium text-emerald-300 hover:text-emerald-200 transition"
+                    title="Crear job desde brief"
+                  >
+                    Crear job
+                  </button>
+                ` : ''}
+                ${brief.status !== 'archived' ? `
+                  <button
+                    onclick="archiveBrief('${brief.id}')"
+                    class="text-sm font-medium text-slate-400 hover:text-white transition"
+                    title="Archivar brief"
+                  >
+                    Archivar
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Create job from brief
+      window.createJob = async (briefId) => {
+        if (!confirm('¿Crear un nuevo job desde este brief?')) return;
 
         try {
-          if (action === 'create-job') {
-            const data = await createJobFromBrief(briefId);
-            briefs = briefs.map((brief) =>
-              brief.id === briefId ? { ...brief, status: data?.brief?.status ?? 'reviewed' } : brief,
-            );
-            window.location.href = `/admin/jobs/detail?id=${encodeURIComponent(data.job.id)}`;
-            return;
-          }
-
-          const status = target.dataset.status;
-          if (!status) throw new Error('Missing brief status');
-
-          await setBriefStatus(briefId, status);
-          briefs = briefs.map((brief) =>
-            brief.id === briefId ? { ...brief, status } : brief,
-          );
-          render();
-        } catch {
-          target.disabled = false;
-          target.textContent = previousLabel;
+          const { job } = await api(`/api/portal/briefs/${briefId}/create-job`, { method: 'POST' });
+          alert(`Job creado exitosamente: ${job.briefText?.slice(0, 50)}...`);
+          window.location.reload();
+        } catch (error) {
+          console.error('Error creating job:', error);
+          alert('Error creando job. Revisa que el brief esté vinculado a un cliente.');
         }
+      };
+
+      // Archive brief
+      window.archiveBrief = async (briefId) => {
+        if (!confirm('¿Archivar este brief?')) return;
+
+        try {
+          await api(`/api/portal/briefs/${briefId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'archived' }),
+          });
+          alert('Brief archivado exitosamente');
+          window.location.reload();
+        } catch (error) {
+          console.error('Error archiving brief:', error);
+          alert('Error archivando brief');
+        }
+      };
+
+      // Event listeners
+      filterStatus.addEventListener('change', applyFilters);
+      filterSource.addEventListener('change', applyFilters);
+      searchClient.addEventListener('input', applyFilters);
+      clearFiltersBtn.addEventListener('click', () => {
+        filterStatus.value = '';
+        filterSource.value = '';
+        searchClient.value = '';
+        applyFilters();
       });
+
+      // Initialize
+      loadBriefs();
     })();
   </script>
 </AdminLayout>
