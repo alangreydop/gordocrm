@@ -38,7 +38,12 @@ import { siteLinks } from '../../../lib/site-links';
 
     <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
       <section class="crm-panel p-6 md:p-7">
-        <h2 class="text-lg font-semibold text-white mb-4">Assets aprobados</h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-white">Assets aprobados</h2>
+          <button id="download-all-btn" class="crm-button crm-button-secondary text-sm">
+            Descargar todo
+          </button>
+        </div>
         <div id="assets-grid" class="grid gap-4 md:grid-cols-2">
           <p class="text-slate-400">Cargando assets...</p>
         </div>
@@ -48,6 +53,31 @@ import { siteLinks } from '../../../lib/site-links';
         <div id="progress-box" class="hidden rounded-[1.4rem] border border-sky-300/20 bg-sky-400/10 p-6 text-sky-100">
           <h2 class="font-semibold text-white">Trabajo en marcha</h2>
           <p class="mt-2 text-sm leading-relaxed text-sky-100/90">Estamos trabajando en ello. Los assets apareceran aqui en cuanto esten listos y aprobados.</p>
+        </div>
+
+        <div class="crm-panel p-6 md:p-7">
+          <p class="crm-kicker">Timeline del trabajo</p>
+          <h2 class="mt-3 text-xl font-black tracking-tight text-white">Seguimiento paso a paso</h2>
+          <div id="job-timeline" class="mt-5 space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="h-2 w-2 mt-2 rounded-full bg-slate-600"></div>
+              <div>
+                <p class="text-sm font-medium text-slate-300">Cargando timeline...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="crm-panel p-6 md:p-7">
+          <p class="crm-kicker">Feedback del asset</p>
+          <h2 class="mt-3 text-xl font-black tracking-tight text-white">¿Necesitas cambios?</h2>
+          <div class="mt-4 space-y-3">
+            <textarea id="feedback-text" rows="3" class="crm-input text-sm" placeholder="Describe los cambios o ajustes que necesitas..."></textarea>
+            <button id="send-feedback-btn" class="crm-button crm-button-primary w-full text-sm">
+              Enviar feedback
+            </button>
+            <p class="text-xs text-slate-400">Tu feedback llegará directamente al equipo de producción.</p>
+          </div>
         </div>
 
         <div class="crm-panel p-6 md:p-7">
@@ -89,6 +119,20 @@ import { siteLinks } from '../../../lib/site-links';
         return;
       }
 
+      const jobStatusSteps = {
+        pending: { label: 'Pendiente', step: 1 },
+        processing: { label: 'En producción', step: 2 },
+        completed: { label: 'Completado', step: 3 },
+        delivered: { label: 'Entregado', step: 4 },
+      };
+
+      const timelineSteps = [
+        { step: 1, label: 'Brief recibido', description: 'El trabajo fue creado y está en cola' },
+        { step: 2, label: 'En producción', description: 'Estamos creando tus assets' },
+        { step: 3, label: 'QA completado', description: 'Los assets fueron aprobados internamente' },
+        { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga' },
+      ];
+
       try {
         const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
         const job = data.job;
@@ -99,6 +143,10 @@ import { siteLinks } from '../../../lib/site-links';
         const statusPill = document.getElementById('job-status-pill');
         const assetsGrid = document.getElementById('assets-grid');
         const progressBox = document.getElementById('progress-box');
+        const timelineContainer = document.getElementById('job-timeline');
+        const downloadAllBtn = document.getElementById('download-all-btn');
+        const sendFeedbackBtn = document.getElementById('send-feedback-btn');
+        const feedbackText = document.getElementById('feedback-text');
 
         if (title) title.textContent = job.briefText ?? `Trabajo ${job.id.slice(0, 8)}`;
         if (subtitle) {
@@ -119,6 +167,24 @@ import { siteLinks } from '../../../lib/site-links';
         setText('job-due', formatDate(job.dueAt));
         setText('job-units', `${formatNumber(job.unitsConsumed ?? 0)} / ${formatNumber(job.unitsPlanned ?? 0)}`);
 
+        // Build timeline
+        if (timelineContainer) {
+          const currentStep = jobStatusSteps[job.status]?.step ?? 1;
+          timelineContainer.innerHTML = timelineSteps.map((step, idx) => {
+            const isCompleted = step.step <= currentStep;
+            const isCurrent = step.step === currentStep;
+            return `
+              <div class="flex items-start gap-3">
+                <div class="h-2 w-2 mt-2 rounded-full ${isCompleted ? 'bg-emerald-400' : 'bg-slate-600'}"></div>
+                <div class="${isCurrent ? 'opacity-100' : 'opacity-60'}">
+                  <p class="text-sm font-medium ${isCompleted ? 'text-white' : 'text-slate-400'}">${escapeHtml(step.label)}</p>
+                  <p class="text-xs text-slate-400 mt-0.5">${escapeHtml(step.description)}</p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
         if (assetsGrid) {
           assetsGrid.innerHTML = assets.length === 0
             ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
@@ -127,13 +193,73 @@ import { siteLinks } from '../../../lib/site-links';
                 <p class="font-medium text-white">${escapeHtml(asset.label ?? asset.type)}</p>
                 <p class="mt-1 text-xs text-slate-400">${escapeHtml(asset.type ?? 'asset')}</p>
                 <p class="mt-1 text-xs text-slate-400">Aprobado para entrega</p>
-                ${
-                  asset.deliveryUrl
-                    ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary mt-4">Abrir asset</a>`
-                    : '<p class="mt-4 text-sm text-slate-400">Disponible en preparacion de entrega.</p>'
-                }
+                <div class="mt-4 flex gap-2">
+                  ${
+                    asset.deliveryUrl
+                      ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs">Abrir asset</a>`
+                      : '<p class="text-xs text-slate-400">Disponible en preparacion de entrega.</p>'
+                  }
+                  ${
+                    asset.deliveryUrl
+                      ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">Descargar</a>`
+                      : ''
+                  }
+                </div>
               </article>
             `).join('');
+        }
+
+        // Download all functionality
+        if (downloadAllBtn && assets.length > 0) {
+          downloadAllBtn.addEventListener('click', () => {
+            assets.forEach((asset) => {
+              if (asset.deliveryUrl) {
+                const a = document.createElement('a');
+                a.href = asset.deliveryUrl;
+                a.download = '';
+                a.target = '_blank';
+                a.rel = 'noreferrer';
+                a.click();
+              }
+            });
+          });
+        } else if (downloadAllBtn) {
+          downloadAllBtn.disabled = true;
+          downloadAllBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Feedback functionality
+        if (sendFeedbackBtn && feedbackText) {
+          sendFeedbackBtn.addEventListener('click', async () => {
+            const feedback = feedbackText.value.trim();
+            if (!feedback) {
+              feedbackText.focus();
+              return;
+            }
+
+            sendFeedbackBtn.disabled = true;
+            sendFeedbackBtn.textContent = 'Enviando...';
+
+            try {
+              await api(`/api/portal/jobs/${encodeURIComponent(jobId)}/feedback`, {
+                method: 'POST',
+                body: JSON.stringify({ feedback }),
+              });
+
+              feedbackText.value = '';
+              sendFeedbackBtn.textContent = '¡Feedback enviado!';
+              setTimeout(() => {
+                sendFeedbackBtn.textContent = 'Enviar feedback';
+                sendFeedbackBtn.disabled = false;
+              }, 2000);
+            } catch (error) {
+              sendFeedbackBtn.textContent = 'Error al enviar';
+              setTimeout(() => {
+                sendFeedbackBtn.textContent = 'Enviar feedback';
+                sendFeedbackBtn.disabled = false;
+              }, 2000);
+            }
+          });
         }
 
         if (

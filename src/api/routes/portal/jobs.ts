@@ -543,3 +543,60 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
 
   return c.json({ asset });
 });
+
+// Client feedback endpoint
+jobRoutes.post('/:id/feedback', async (c) => {
+  const user = c.get('user');
+  const jobId = c.req.param('id');
+  const db = c.get('db');
+
+  // Verify client owns this job
+  const [clientRecord] = await db
+    .select()
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, user.id))
+    .limit(1);
+
+  if (!clientRecord) {
+    return c.json({ error: 'Client record not found' }, 404);
+  }
+
+  const [job] = await db
+    .select()
+    .from(schema.jobs)
+    .where(
+      and(
+        eq(schema.jobs.id, jobId),
+        eq(schema.jobs.clientId, clientRecord.id),
+      )
+    )
+    .limit(1);
+
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  const payload: unknown = await c.req.json().catch(() => null);
+  if (!payload || typeof payload !== 'object' || !('feedback' in payload)) {
+    return c.json({ error: 'Feedback text required' }, 400);
+  }
+
+  const feedbackText = String(payload.feedback).trim();
+  if (!feedbackText) {
+    return c.json({ error: 'Feedback cannot be empty' }, 400);
+  }
+
+  // Store feedback in internalNotes (append to existing notes)
+  const timestamp = new Date().toLocaleString('es-ES');
+  const newNote = `\n[Feedback ${timestamp}] ${clientRecord.name}: ${feedbackText}`;
+
+  await db
+    .update(schema.jobs)
+    .set({
+      internalNotes: job.internalNotes ? job.internalNotes + newNote : newNote,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.jobs.id, jobId));
+
+  return c.json({ success: true, message: 'Feedback recibido' });
+});
