@@ -5,28 +5,28 @@ import { siteLinks } from '../../lib/site-links';
 
 <ClientLayout title="Resumen">
   <div class="space-y-6">
-    <section class="crm-panel-strong overflow-hidden p-6 md:p-8">
+    <section class="rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden p-6 md:p-8">
       <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
-          <p class="crm-kicker">Resumen cliente</p>
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Resumen cliente</p>
           <h1 id="client-heading" class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">
             Cargando tu portal...
           </h1>
-          <p id="client-subheading" class="mt-4 max-w-3xl text-sm leading-relaxed text-slate-300 md:text-base">
+          <p id="client-subheading" class="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400 md:text-base">
             Estamos cargando tu estado de cuenta y tus trabajos.
           </p>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2">
-          <div class="crm-panel-soft p-5">
-            <p class="crm-kicker">Soporte operativo</p>
-            <div id="client-contact" class="mt-3 text-sm leading-relaxed text-slate-200">
+          <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Soporte operativo</p>
+            <div id="client-contact" class="mt-3 text-sm leading-relaxed text-zinc-300">
               <span class="font-medium text-white">hola@grandeandgordo.com</span>
             </div>
           </div>
-          <div class="crm-panel-soft p-5">
-            <p class="crm-kicker">Capa conectada</p>
-            <p class="mt-3 text-sm leading-relaxed text-slate-300">
+          <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Capa conectada</p>
+            <p class="mt-3 text-sm leading-relaxed text-zinc-400">
               Web y CRM trabajan juntos: brief, onboarding, seguimiento y entregables.
             </p>
           </div>
@@ -35,39 +35,39 @@ import { siteLinks } from '../../lib/site-links';
     </section>
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Trabajos activos</p>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Trabajos activos</p>
         <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Entregados</p>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Entregados</p>
         <p id="metric-delivered-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
       </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Consumo</p>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Consumo</p>
         <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p id="metric-capacity" class="mt-3 text-sm text-slate-400">—</p>
+        <p id="metric-capacity" class="mt-3 text-xs text-zinc-500">—</p>
       </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Estado operativo</p>
-        <p id="metric-plan" class="mt-4 inline-flex rounded-full px-3 py-1 text-sm font-semibold">—</p>
-        <p id="metric-dataset" class="mt-3 inline-flex rounded-full px-3 py-1 text-sm font-medium">—</p>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Estado operativo</p>
+        <p id="metric-plan" class="mt-4 inline-flex rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs font-medium text-white">—</p>
+        <p id="metric-dataset" class="mt-3 inline-flex rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs font-medium text-white">—</p>
       </div>
     </div>
 
     <div class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-      <section class="crm-panel p-6 md:p-7">
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
         <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
-            <p class="crm-kicker">Siguiente paso</p>
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Siguiente paso</p>
             <h2 id="next-step-title" class="mt-3 text-2xl font-black tracking-tight text-white">
               Estamos preparando tu siguiente mejor movimiento.
             </h2>
-            <p id="next-step-description" class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300">
+            <p id="next-step-description" class="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-400">
               Vamos a usar tu estado de cuenta y el momento del proyecto para recomendarte la accion mas util ahora mismo.
             </p>
           </div>
-          <span id="next-step-badge" class="inline-flex rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1 text-xs font-medium text-sky-100">
+          <span id="next-step-badge" class="inline-flex rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs font-medium text-zinc-400">
             Journey conectado
           </span>
         </div>
@@ -77,7 +77,7 @@ import { siteLinks } from '../../lib/site-links';
             href={siteLinks.brief}
             target="_blank"
             rel="noreferrer"
-            class="crm-button crm-button-primary"
+            class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200"
           >
             Abrir siguiente paso
           </a>
@@ -85,62 +85,62 @@ import { siteLinks } from '../../lib/site-links';
             href={siteLinks.portalHub}
             target="_blank"
             rel="noreferrer"
-            class="crm-button crm-button-secondary"
+            class="inline-flex items-center justify-center rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-zinc-500 hover:text-white"
           >
             Ver centro de cliente
           </a>
         </div>
       </section>
 
-      <section class="crm-panel p-6 md:p-7">
-        <p class="crm-kicker">Web + CRM</p>
+      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Web + CRM</p>
         <h2 class="mt-3 text-2xl font-black tracking-tight text-white">Todo el journey, conectado</h2>
-        <div class="crm-panel-soft mt-5 p-4">
-          <p class="crm-kicker">Ultimo brief recibido</p>
+        <div class="mt-5 rounded-2xl border border-zinc-800 bg-black p-4">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Ultimo brief recibido</p>
           <p id="latest-brief-meta" class="mt-3 text-sm font-medium text-white">
             Aun no tenemos un brief reciente en tu cuenta.
           </p>
-          <p id="latest-brief-description" class="mt-3 text-sm leading-relaxed text-slate-300">
+          <p id="latest-brief-description" class="mt-3 text-sm leading-relaxed text-zinc-400">
             Si cambian objetivos, referencias o necesidades, actualiza el brief desde la web y quedará conectado con tu operativa del CRM.
           </p>
         </div>
         <div class="mt-5 grid gap-3">
-          <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-link-tile transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/6">
-            <p class="font-semibold text-white">Brief de proyecto</p>
-            <p class="mt-2 text-sm text-slate-300">Comparte referencias, producto, tono y necesidades nuevas.</p>
+          <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="block rounded-2xl border border-zinc-800 bg-black p-5 transition hover:border-zinc-600">
+            <p class="text-sm font-semibold text-white">Brief de proyecto</p>
+            <p class="mt-2 text-sm text-zinc-400">Comparte referencias, producto, tono y necesidades nuevas.</p>
           </a>
-          <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-link-tile transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/6">
-            <p class="font-semibold text-white">Onboarding y checklist</p>
-            <p class="mt-2 text-sm text-slate-300">Revisa preparacion de sesion, materiales y preguntas frecuentes.</p>
+          <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="block rounded-2xl border border-zinc-800 bg-black p-5 transition hover:border-zinc-600">
+            <p class="text-sm font-semibold text-white">Onboarding y checklist</p>
+            <p class="mt-2 text-sm text-zinc-400">Revisa preparacion de sesion, materiales y preguntas frecuentes.</p>
           </a>
-          <a href={siteLinks.home} target="_blank" rel="noreferrer" class="crm-link-tile transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/6">
-            <p class="font-semibold text-white">Web publica</p>
-            <p class="mt-2 text-sm text-slate-300">Servicios, pricing y referencias de Grande&amp;Gordo cuando necesites contexto mas amplio.</p>
+          <a href={siteLinks.home} target="_blank" rel="noreferrer" class="block rounded-2xl border border-zinc-800 bg-black p-5 transition hover:border-zinc-600">
+            <p class="text-sm font-semibold text-white">Web publica</p>
+            <p class="mt-2 text-sm text-zinc-400">Servicios, pricing y referencias de Grande&amp;Gordo cuando necesites contexto mas amplio.</p>
           </a>
         </div>
       </section>
     </div>
 
-    <div class="crm-table-wrap">
-      <div class="border-b border-white/8 px-6 py-5">
+    <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+      <div class="border-b border-zinc-800 px-6 py-5">
         <h2 class="text-lg font-semibold text-white">Tus trabajos</h2>
-        <p class="mt-2 text-sm text-slate-300">Sigue el estado de entrega y entra al detalle para ver assets aprobados.</p>
+        <p class="mt-2 text-sm text-zinc-400">Sigue el estado de entrega y entra al detalle para ver assets aprobados.</p>
       </div>
       <div class="overflow-x-auto">
-        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
-          <thead>
+        <table class="min-w-full text-sm">
+          <thead class="bg-black">
             <tr>
-              <th class="px-6 py-3 text-left">Brief</th>
-              <th class="px-6 py-3 text-left">Estado</th>
-              <th class="px-6 py-3 text-left">Due</th>
-              <th class="px-6 py-3 text-left">Units</th>
-              <th class="px-6 py-3 text-left">Actualizado</th>
+              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Brief</th>
+              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Estado</th>
+              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Due</th>
+              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Units</th>
+              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Actualizado</th>
               <th class="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody id="jobs-body" class="divide-y divide-gray-200">
+          <tbody id="jobs-body" class="divide-y divide-zinc-800">
             <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-slate-400">Cargando trabajos...</td>
+              <td colspan="6" class="px-6 py-8 text-center text-zinc-500">Cargando trabajos...</td>
             </tr>
           </tbody>
         </table>
@@ -308,21 +308,21 @@ import { siteLinks } from '../../lib/site-links';
         }
 
         tbody.innerHTML = jobs.map((job) => `
-          <tr class="hover:bg-gray-50">
+          <tr class="hover:bg-zinc-900 transition">
             <td class="px-6 py-4">
-              <p class="font-medium text-gray-900">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
-              <p class="text-xs text-gray-500 mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
+              <p class="font-medium text-white">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+              <p class="text-xs text-zinc-500 mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
             </td>
             <td class="px-6 py-4">
               <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
                 ${escapeHtml(job.status ?? 'pending')}
               </span>
             </td>
-            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.dueAt))}</td>
-            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
-            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.updatedAt))}</td>
+            <td class="px-6 py-4 text-zinc-400">${escapeHtml(formatDate(job.dueAt))}</td>
+            <td class="px-6 py-4 text-zinc-400">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
+            <td class="px-6 py-4 text-zinc-400">${escapeHtml(formatDate(job.updatedAt))}</td>
             <td class="px-6 py-4 text-right">
-              <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-sky-200 transition hover:text-white">Ver detalle</a>
+              <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-white underline decoration-zinc-700 underline-offset-4 transition hover:decoration-white">Ver detalle</a>
             </td>
           </tr>
         `).join('');
