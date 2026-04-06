@@ -46,6 +46,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:4321",
         "http://127.0.0.1:8787",  # CRM Cloudflare Workers
         "https://gordocrm-api-production.alangreydop.workers.dev",  # CRM Production
+        "https://grandeandgordo-site.pages.dev",  # Web Production
+        "*.up.railway.app",  # Railway production
     ]
 
     # CRM Integration
