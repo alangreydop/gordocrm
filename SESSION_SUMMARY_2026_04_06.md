@@ -22,15 +22,36 @@
 | #15 | Implementar AI Agents | **COMPLETED** | agents/ |
 | #16 | Sistema de Colaboración | **COMPLETED** | collaboration/ |
 
-### ⏳ Tasks Pendientes
+### ✅ Tasks Pendientes (Completadas)
 
 | # | Task | Estado | Notas |
 |---|------|--------|-------|
-| #1 | Mejorar CRM on-brand con Grande&Gordo | **PENDING** | Diseño base completado, faltan detalles |
+| #1 | Mejorar CRM on-brand con Grande&Gordo | **COMPLETED** | Logo + tipografía + colores accent implementados |
 
 ---
 
 ## Resumen por Área
+
+### CRM On-Brand (Task #1)
+
+**Archivos modificados:**
+- `/portal/src/layouts/AdminLayout.astro` - Logo SVG + título
+- `/portal/src/layouts/ClientLayout.astro` - Logo SVG + título
+- `/portal/src/styles/global.css` - Variables + componentes on-brand
+
+**Cambios realizados:**
+1. ✅ Logo SVG de Grande&Gordo en headers (32px de altura)
+2. ✅ Tipografía: Satoshi (cuerpo), LibreBaskerville (kickers)
+3. ✅ Colores G&G: --gg-accent: #C4165A
+4. ✅ Gradientes con color accent en page headers
+5. ✅ Hover effects con border accent en metric cards
+6. ✅ Clases nuevas: .crm-button-accent, .crm-kicker--accent
+
+**Deploy:**
+- Version ID: `bc00cc06-1c61-4398-90d7-21f89414a373`
+- URL: https://gordocrm-api-production.alangreydop.workers.dev
+
+---
 
 ### Portal Cliente (Task #2)
 

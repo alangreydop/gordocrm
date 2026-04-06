@@ -117,14 +117,25 @@ Se completó la alineación del CRM con la identidad visual de Grande&Gordo, sig
 
 ---
 
+### 4. Detalles de Color Accent
+
+**Cambios en `portal/src/styles/global.css`:**
+
+- Gradientes en page headers con rgba(196, 22, 90, 0.08) en lugar de azul
+- Hover en metric cards con border-color: var(--crm-accent)
+- Nueva clase `.crm-button-accent` para botones con fondo #C4165A
+- Nueva clase `.crm-kicker--accent` para kickers con color de marca
+
+---
+
 ## Metadata
 
 ```json
 {
   "date": "2026-04-06",
-  "files_modified": 2,
+  "files_modified": 3,
   "deploy_status": "success",
-  "version_id": "09186a6b-5d28-44e1-a314-19d8575012aa",
+  "version_id": "bc00cc06-1c61-4398-90d7-21f89414a373",
   "onbrand_status": "complete"
 }
 ```
