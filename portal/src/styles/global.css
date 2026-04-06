@@ -7,24 +7,58 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'LibreBaskerville';
+  src: url('/LibreBaskerville-Italic-VariableFont_wght.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LibreBaskerville';
+  src: url('/LibreBaskerville-Regular.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --crm-bg: #05070b;
-  --crm-bg-elevated: #0b1018;
-  --crm-panel: rgba(9, 14, 22, 0.84);
-  --crm-panel-strong: rgba(12, 18, 28, 0.94);
+  /* Identidad Grande&Gordo — alineada con la web principal */
+  --gg-bg: #ffffff;
+  --gg-hero-start: #0f0f0f;
+  --gg-hero-end: #080808;
+  --gg-text: #1c1018;
+  --gg-text-muted: #7a6068;
+  --gg-text-faint: #c8a0ae;
+  --gg-accent: #C4165A;
+  --gg-accent-hover: #a00f49;
+  --gg-accent-light: #f5709a;
+  --gg-border: #f0e4ea;
+  --gg-border-strong: #e8c8d4;
+  --gg-btn-cream: #fce8ef;
+  --gg-btn-cream-hover: #f9d4e2;
+  --gg-section-alt: #fdf8fa;
+
+  /* CRM tokens — adaptados a la identidad G&G */
+  --crm-bg: var(--gg-hero-end);
+  --crm-bg-elevated: #0a0a0a;
+  --crm-panel: rgba(15, 15, 15, 0.84);
+  --crm-panel-strong: rgba(10, 10, 10, 0.94);
   --crm-panel-soft: rgba(255, 255, 255, 0.035);
-  --crm-border: rgba(255, 255, 255, 0.09);
-  --crm-border-strong: rgba(255, 255, 255, 0.15);
-  --crm-text: #f7f8fb;
-  --crm-muted: #a0abbd;
-  --crm-subtle: #7c889a;
-  --crm-accent: #6e47a4;
-  --crm-accent-2: #7a9fff;
-  --crm-accent-soft: rgba(110, 71, 164, 0.16);
+  --crm-border: rgba(255, 255, 255, 0.08);
+  --crm-border-strong: rgba(255, 255, 255, 0.12);
+  --crm-text: #ffffff;
+  --crm-muted: #9a8a90;
+  --crm-subtle: #7a6068;
+  --crm-accent: var(--gg-accent);
+  --crm-accent-2: var(--gg-accent-hover);
+  --crm-accent-soft: rgba(196, 22, 90, 0.16);
+  --crm-accent-light: var(--gg-accent-light);
   --crm-success: #39d98a;
   --crm-warning: #f2b24c;
   --crm-danger: #f26d7d;
-  --crm-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --crm-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
   color-scheme: dark;
 }
 
@@ -108,8 +142,9 @@ textarea {
 }
 
 .crm-kicker {
+  font-family: 'LibreBaskerville', 'Avenir Next', serif;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--crm-subtle);
