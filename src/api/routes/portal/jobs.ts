@@ -26,15 +26,18 @@ const benchmarkLevels = ['L0', 'L1', 'L2', 'L3'] as const;
 const stackLanes = ['A', 'B', 'C', 'D'] as const;
 const assetQaStatuses = ['pending', 'approved', 'rejected'] as const;
 
-const optionalNullableString = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null) return null;
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    return trimmed === '' ? null : trimmed;
-  }
-  return value;
-}, z.union([z.string(), z.null()]).optional());
+const optionalNullableString = z.preprocess(
+  (value) => {
+    if (value === undefined) return undefined;
+    if (value === null) return null;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      return trimmed === '' ? null : trimmed;
+    }
+    return value;
+  },
+  z.union([z.string(), z.null()]).optional(),
+);
 
 const optionalInteger = z.preprocess((value) => {
   if (value === undefined || value === '') return undefined;
@@ -42,30 +45,39 @@ const optionalInteger = z.preprocess((value) => {
   return Number.isFinite(parsed) ? Math.trunc(parsed) : value;
 }, z.number().int().min(0).optional());
 
-const optionalNullableNumber = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null || value === '') return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : value;
-}, z.union([z.number().min(0), z.null()]).optional());
-
-const optionalNullableDate = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null || value === '') return null;
-  if (value instanceof Date) return value;
-  if (typeof value === 'string' || typeof value === 'number') {
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? value : date;
-  }
-  return value;
-}, z.union([z.date(), z.null()]).optional());
-
-const optionalNullableEnum = <T extends readonly [string, ...string[]]>(values: T) =>
-  z.preprocess((value) => {
+const optionalNullableNumber = z.preprocess(
+  (value) => {
     if (value === undefined) return undefined;
     if (value === null || value === '') return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : value;
+  },
+  z.union([z.number().min(0), z.null()]).optional(),
+);
+
+const optionalNullableDate = z.preprocess(
+  (value) => {
+    if (value === undefined) return undefined;
+    if (value === null || value === '') return null;
+    if (value instanceof Date) return value;
+    if (typeof value === 'string' || typeof value === 'number') {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : date;
+    }
     return value;
-  }, z.union([z.enum(values), z.null()]).optional());
+  },
+  z.union([z.date(), z.null()]).optional(),
+);
+
+const optionalNullableEnum = <T extends readonly [string, ...string[]]>(values: T) =>
+  z.preprocess(
+    (value) => {
+      if (value === undefined) return undefined;
+      if (value === null || value === '') return null;
+      return value;
+    },
+    z.union([z.enum(values), z.null()]).optional(),
+  );
 
 const createJobSchema = z.object({
   clientId: z.string().uuid(),
@@ -290,10 +302,7 @@ jobRoutes.get('/:id', async (c) => {
         ? eq(schema.assets.jobId, id)
         : and(
             eq(schema.assets.jobId, id),
-            or(
-              eq(schema.assets.qaStatus, 'approved'),
-              isNull(schema.assets.qaStatus),
-            ),
+            or(eq(schema.assets.qaStatus, 'approved'), isNull(schema.assets.qaStatus)),
           ),
     )
     .orderBy(desc(schema.assets.createdAt));
@@ -380,11 +389,7 @@ jobRoutes.post('/', async (c) => {
     updatedAt: now,
   });
 
-  const [job] = await db
-    .select()
-    .from(schema.jobs)
-    .where(eq(schema.jobs.id, id))
-    .limit(1);
+  const [job] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
 
   return c.json({ job }, 201);
 });
@@ -428,11 +433,7 @@ jobRoutes.patch('/:id', async (c) => {
     })
     .where(eq(schema.jobs.id, id));
 
-  const [job] = await db
-    .select()
-    .from(schema.jobs)
-    .where(eq(schema.jobs.id, id))
-    .limit(1);
+  const [job] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
 
   if (!job) {
     return c.json({ error: 'Job not found' }, 404);
@@ -511,12 +512,7 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
   const [existingAsset] = await db
     .select()
     .from(schema.assets)
-    .where(
-      and(
-        eq(schema.assets.id, assetId),
-        eq(schema.assets.jobId, jobId),
-      ),
-    )
+    .where(and(eq(schema.assets.id, assetId), eq(schema.assets.jobId, jobId)))
     .limit(1);
 
   if (!existingAsset) {
@@ -564,12 +560,7 @@ jobRoutes.post('/:id/feedback', async (c) => {
   const [job] = await db
     .select()
     .from(schema.jobs)
-    .where(
-      and(
-        eq(schema.jobs.id, jobId),
-        eq(schema.jobs.clientId, clientRecord.id),
-      )
-    )
+    .where(and(eq(schema.jobs.id, jobId), eq(schema.jobs.clientId, clientRecord.id)))
     .limit(1);
 
   if (!job) {

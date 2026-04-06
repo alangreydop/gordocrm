@@ -18,40 +18,66 @@ dashboardRoutes.get('/stats', async (c) => {
     [headline],
     [marginAndUnits],
     [reviewSummary],
+    [capacitySummary],
+    [alerts],
+    laneDistribution,
+    statusBreakdown,
     recentJobs,
     upcomingReviews,
   ] = await Promise.all([
     db
       .select({
-        activeJobs:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
-        urgentJobs:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.turnaround} = 'urgente' and ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
-        completedThisMonth:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'completed' and ${schema.jobs.updatedAt} >= ${monthStart} then 1 else 0 end), 0) as integer)`,
-        deliveredThisMonth:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'delivered' and ${schema.jobs.updatedAt} >= ${monthStart} then 1 else 0 end), 0) as integer)`,
+        activeJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
+        urgentJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.turnaround} = 'urgente' and ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
+        completedThisMonth: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'completed' and ${schema.jobs.updatedAt} >= ${monthStart} then 1 else 0 end), 0) as integer)`,
+        deliveredThisMonth: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'delivered' and ${schema.jobs.updatedAt} >= ${monthStart} then 1 else 0 end), 0) as integer)`,
         totalClients: sql<number>`cast((select count(*) from ${schema.clients}) as integer)`,
       })
       .from(schema.jobs),
     db
       .select({
-        unitsPlannedThisMonth:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.createdAt} >= ${monthStart} then ${schema.jobs.unitsPlanned} else 0 end), 0) as integer)`,
-        unitsConsumedThisMonth:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.createdAt} >= ${monthStart} then ${schema.jobs.unitsConsumed} else 0 end), 0) as integer)`,
-        avgEstimatedMargin:
-          sql<number>`coalesce(avg(${schema.jobs.grossMarginEstimated}), 0)`,
-        lowMarginJobs:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.grossMarginEstimated} is not null and ${schema.jobs.grossMarginEstimated} < 65 then 1 else 0 end), 0) as integer)`,
+        unitsPlannedThisMonth: sql<number>`cast(coalesce(sum(case when ${schema.jobs.createdAt} >= ${monthStart} then ${schema.jobs.unitsPlanned} else 0 end), 0) as integer)`,
+        unitsConsumedThisMonth: sql<number>`cast(coalesce(sum(case when ${schema.jobs.createdAt} >= ${monthStart} then ${schema.jobs.unitsConsumed} else 0 end), 0) as integer)`,
+        avgEstimatedMargin: sql<number>`coalesce(avg(${schema.jobs.grossMarginEstimated}), 0)`,
+        lowMarginJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.grossMarginEstimated} is not null and ${schema.jobs.grossMarginEstimated} < 65 then 1 else 0 end), 0) as integer)`,
       })
       .from(schema.jobs),
     db
       .select({
-        reviewsDueSoon:
-          sql<number>`cast(coalesce(sum(case when ${schema.clients.nextReviewAt} >= ${now} and ${schema.clients.nextReviewAt} <= ${reviewWindowEnd} then 1 else 0 end), 0) as integer)`,
+        reviewsDueSoon: sql<number>`cast(coalesce(sum(case when ${schema.clients.nextReviewAt} >= ${now} and ${schema.clients.nextReviewAt} <= ${reviewWindowEnd} then 1 else 0 end), 0) as integer)`,
       })
       .from(schema.clients),
+    // Capacity summary
+    db
+      .select({
+        totalMonthlyCapacity: sql<number>`cast(coalesce(sum(${schema.clients.monthlyUnitCapacity}), 0) as integer)`,
+        activeClients: sql<number>`cast(coalesce(sum(case when ${schema.clients.subscriptionStatus} = 'active' then 1 else 0 end), 0) as integer)`,
+        avgUtilization: sql<number>`coalesce(avg(case when ${schema.clients.monthlyUnitCapacity} > 0 then cast(${schema.clients.monthlyUnitCapacity} as real) else null end), 0)`,
+      })
+      .from(schema.clients),
+    // Alerts: jobs past due, low capacity clients
+    db
+      .select({
+        pastDueJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.dueAt} < ${now} and ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
+        clientsLowCapacity: sql<number>`cast(coalesce(sum(case when ${schema.clients.monthlyUnitCapacity} > 0 and ${schema.clients.monthlyUnitCapacity} - (select coalesce(sum(${schema.jobs.unitsConsumed}), 0) from ${schema.jobs} where ${schema.jobs.clientId} = ${schema.clients.id}) < 5 then 1 else 0 end), 0) as integer)`,
+      })
+      .from(schema.clients),
+    // Lane distribution
+    db
+      .select({
+        lane: schema.jobs.stackLane,
+        count: sql<number>`cast(count(*) as integer)`,
+      })
+      .from(schema.jobs)
+      .groupBy(schema.jobs.stackLane),
+    // Status breakdown
+    db
+      .select({
+        status: schema.jobs.status,
+        count: sql<number>`cast(count(*) as integer)`,
+      })
+      .from(schema.jobs)
+      .groupBy(schema.jobs.status),
     db
       .select({
         id: schema.jobs.id,
@@ -102,6 +128,13 @@ dashboardRoutes.get('/stats', async (c) => {
     avgEstimatedMargin: marginAndUnits?.avgEstimatedMargin ?? 0,
     lowMarginJobs: marginAndUnits?.lowMarginJobs ?? 0,
     reviewsDueSoon: reviewSummary?.reviewsDueSoon ?? 0,
+    totalMonthlyCapacity: capacitySummary?.totalMonthlyCapacity ?? 0,
+    activeClients: capacitySummary?.activeClients ?? 0,
+    avgUtilization: capacitySummary?.avgUtilization ?? 0,
+    pastDueJobs: alerts?.pastDueJobs ?? 0,
+    clientsLowCapacity: alerts?.clientsLowCapacity ?? 0,
+    laneDistribution: laneDistribution || [],
+    statusBreakdown: statusBreakdown || [],
     recentJobs,
     upcomingReviews,
   });

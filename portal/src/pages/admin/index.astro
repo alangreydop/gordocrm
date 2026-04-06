@@ -36,11 +36,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <p class="crm-kicker">Trabajos activos</p>
         <p id="active-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
         <p id="urgent-jobs" class="text-sm text-red-600 mt-2">—</p>
+        <p id="past-due-jobs" class="text-sm text-red-400 mt-1">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Capacidad del mes</p>
         <p id="units-planned" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
         <p id="units-consumed" class="text-sm text-gray-500 mt-2">—</p>
+        <p id="capacity-utilization" class="text-sm text-slate-400 mt-1">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Margen estimado medio</p>
@@ -51,8 +53,45 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         <p class="crm-kicker">Clientes y revisiones</p>
         <p id="total-clients" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
         <p id="reviews-due" class="text-sm text-blue-700 mt-2">—</p>
+        <p id="active-clients" class="text-sm text-slate-400 mt-1">—</p>
       </div>
     </div>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <section class="crm-panel overflow-hidden">
+        <div class="border-b border-white/8 px-6 py-5">
+          <h2 class="text-lg font-semibold text-white">Distribucion por lane</h2>
+          <p class="mt-2 text-sm text-slate-300">Como estan repartidos los trabajos entre los lanes del stack.</p>
+        </div>
+        <div id="lane-chart" class="p-6">
+          <div class="space-y-3">
+            <div class="text-sm text-slate-400">Cargando distribucion...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="crm-panel overflow-hidden">
+        <div class="border-b border-white/8 px-6 py-5">
+          <h2 class="text-lg font-semibold text-white">Estado de trabajos</h2>
+          <p class="mt-2 text-sm text-slate-300">Breakdown por estado del pipeline.</p>
+        </div>
+        <div id="status-chart" class="p-6">
+          <div class="space-y-3">
+            <div class="text-sm text-slate-400">Cargando estados...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="crm-panel overflow-hidden">
+      <div class="border-b border-white/8 px-6 py-5">
+        <h2 class="text-lg font-semibold text-white">Alertas operativas</h2>
+        <p class="mt-2 text-sm text-slate-300">Trabajos vencidos y clientes con capacidad baja.</p>
+      </div>
+      <div id="alerts-list" class="divide-y divide-gray-200">
+        <div class="px-6 py-4 text-sm text-slate-400">Verificando alertas...</div>
+      </div>
+    </section>
 
     <div class="grid gap-6 xl:grid-cols-[1.35fr_.95fr]">
       <section class="crm-table-wrap">
@@ -104,12 +143,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       escapeHtml,
       formatDate,
       formatPercent,
+      formatNumber,
       jobStatusClass,
       stackLaneClass,
     } = await import('../../lib/api-client');
 
     const recentJobsBody = document.getElementById('recent-jobs-body');
     const reviewsList = document.getElementById('reviews-list');
+    const laneChart = document.getElementById('lane-chart');
+    const statusChart = document.getElementById('status-chart');
+    const alertsList = document.getElementById('alerts-list');
 
     try {
       const stats = await api('/api/portal/dashboard/stats');
@@ -121,12 +164,121 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       setText('active-jobs', String(stats.activeJobs ?? 0));
       setText('urgent-jobs', `${stats.urgentJobs ?? 0} urgentes`);
+      setText('past-due-jobs', stats.pastDueJobs > 0 ? `${stats.pastDueJobs} vencidos` : '');
       setText('units-planned', String(stats.unitsPlannedThisMonth ?? 0));
       setText('units-consumed', `${stats.unitsConsumedThisMonth ?? 0} unidades consumidas`);
+
+      const utilizationPct = stats.totalMonthlyCapacity > 0
+        ? Math.round((stats.unitsConsumedThisMonth / stats.totalMonthlyCapacity) * 100)
+        : 0;
+      setText('capacity-utilization', `${utilizationPct}% capacidad total utilizada`);
+
       setText('avg-margin', formatPercent(stats.avgEstimatedMargin ?? 0));
       setText('low-margin-jobs', `${stats.lowMarginJobs ?? 0} trabajos por debajo del 65%`);
       setText('total-clients', String(stats.totalClients ?? 0));
       setText('reviews-due', `${stats.reviewsDueSoon ?? 0} revisiones próximas`);
+      setText('active-clients', `${stats.activeClients ?? 0} clientes activos`);
+
+      // Render lane distribution chart
+      if (laneChart) {
+        const lanes = stats.laneDistribution || [];
+        const totalLanes = lanes.reduce((sum, l) => sum + (l.count ?? 0), 0);
+        if (lanes.length === 0 || totalLanes === 0) {
+          laneChart.innerHTML = '<div class="text-sm text-slate-400">Sin datos de lanes aun.</div>';
+        } else {
+          laneChart.innerHTML = lanes.map((lane) => {
+            const pct = totalLanes > 0 ? Math.round((lane.count / totalLanes) * 100) : 0;
+            const laneColors = {
+              A: 'bg-emerald-500',
+              B: 'bg-sky-500',
+              C: 'bg-fuchsia-500',
+              D: 'bg-amber-500',
+            };
+            const colorClass = laneColors[lane.lane] ?? 'bg-slate-500';
+            return `
+              <div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <span class="font-medium text-white">Lane ${escapeHtml(lane.lane ?? '—')}</span>
+                  <span class="text-slate-400">${escapeHtml(lane.count ?? 0)} trabajos (${pct}%)</span>
+                </div>
+                <div class="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
+                  <div class="${colorClass} h-full rounded-full" style="width: ${pct}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render status breakdown chart
+      if (statusChart) {
+        const statuses = stats.statusBreakdown || [];
+        const totalStatus = statuses.reduce((sum, s) => sum + (s.count ?? 0), 0);
+        if (statuses.length === 0 || totalStatus === 0) {
+          statusChart.innerHTML = '<div class="text-sm text-slate-400">Sin datos de estados.</div>';
+        } else {
+          statusChart.innerHTML = statuses.map((status) => {
+            const pct = totalStatus > 0 ? Math.round((status.count / totalStatus) * 100) : 0;
+            const statusColors = {
+              pending: 'bg-amber-500',
+              processing: 'bg-sky-500',
+              completed: 'bg-emerald-500',
+              delivered: 'bg-fuchsia-500',
+              failed: 'bg-rose-500',
+            };
+            const colorClass = statusColors[status.status] ?? 'bg-slate-500';
+            return `
+              <div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                  <span class="font-medium text-white capitalize">${escapeHtml(status.status ?? '—')}</span>
+                  <span class="text-slate-400">${escapeHtml(status.count ?? 0)} trabajos (${pct}%)</span>
+                </div>
+                <div class="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
+                  <div class="${colorClass} h-full rounded-full" style="width: ${pct}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render alerts list
+      if (alertsList) {
+        const alerts = [];
+        if (stats.pastDueJobs > 0) {
+          alerts.push({
+            type: 'danger',
+            title: 'Trabajos vencidos',
+            description: `${stats.pastDueJobs} trabajos estan past due y necesitan atencion inmediata.`,
+          });
+        }
+        if (stats.clientsLowCapacity > 0) {
+          alerts.push({
+            type: 'warning',
+            title: 'Capacidad baja',
+            description: `${stats.clientsLowCapacity} clientes tienen menos de 5 unidades de capacidad restante.`,
+          });
+        }
+        if (stats.lowMarginJobs > 0) {
+          alerts.push({
+            type: 'warning',
+            title: 'Margen estrecho',
+            description: `${stats.lowMarginJobs} trabajos tienen margen estimado por debajo del 65%.`,
+          });
+        }
+        if (alerts.length === 0) {
+          alertsList.innerHTML = '<div class="px-6 py-4 text-sm text-emerald-400">No hay alertas operativas. Todo en orden.</div>';
+        } else {
+          alertsList.innerHTML = alerts.map((alert) => `
+            <div class="px-6 py-4 flex items-start gap-4 ${alert.type === 'danger' ? 'bg-rose-500/5' : 'bg-amber-500/5'}">
+              <div class="flex-1">
+                <p class="font-medium ${alert.type === 'danger' ? 'text-rose-200' : 'text-amber-200'}">${escapeHtml(alert.title)}</p>
+                <p class="text-sm text-slate-400 mt-1">${escapeHtml(alert.description)}</p>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
 
       const recentJobs = Array.isArray(stats.recentJobs) ? stats.recentJobs : [];
       if (recentJobsBody) {
