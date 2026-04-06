@@ -1,0 +1,222 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Mis Assets">
+  <div class="space-y-6">
+    <!-- Header -->
+    <section class="crm-panel-strong p-6 md:p-8">
+      <p class="crm-kicker">Biblioteca de assets</p>
+      <h1 class="mt-3 text-3xl font-black text-white md:text-5xl">Assets Aprobados</h1>
+      <p class="mt-2 text-sm text-slate-300">Todos tus assets aprobados listos para descarga</p>
+    </section>
+
+    <!-- Filters -->
+    <section class="crm-panel p-4 flex flex-wrap gap-3 items-center">
+      <select id="filter-project" class="crm-input text-sm max-w-xs">
+        <option value="">Todos los proyectos</option>
+      </select>
+      <select id="filter-type" class="crm-input text-sm max-w-xs">
+        <option value="">Todos los tipos</option>
+        <option value="image">Imagen</option>
+        <option value="video">Video</option>
+      </select>
+      <input
+        type="date"
+        id="filter-from"
+        class="crm-input text-sm"
+        placeholder="Desde"
+      />
+      <input
+        type="date"
+        id="filter-to"
+        class="crm-input text-sm"
+        placeholder="Hasta"
+      />
+      <button id="clear-filters-btn" class="crm-button crm-button-secondary text-sm">
+        Limpiar
+      </button>
+    </section>
+
+    <!-- Assets Grid -->
+    <section class="crm-panel p-6 md:p-7">
+      <div id="assets-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div class="col-span-full text-center py-12 text-slate-400">
+          Cargando assets...
+        </div>
+      </div>
+      <div id="pagination" class="mt-6 flex justify-center gap-2"></div>
+    </section>
+  </div>
+
+  <script>
+    (async () => {
+      const { api, escapeHtml, formatDate } = await import('../../lib/api-client');
+
+      // State
+      let allAssets = [];
+      let filteredAssets = [];
+      const PAGE_SIZE = 12;
+      let currentPage = 1;
+
+      // DOM Elements
+      const assetsGrid = document.getElementById('assets-grid');
+      const filterProject = document.getElementById('filter-project');
+      const filterType = document.getElementById('filter-type');
+      const filterFrom = document.getElementById('filter-from');
+      const filterTo = document.getElementById('filter-to');
+      const clearFiltersBtn = document.getElementById('clear-filters-btn');
+      const pagination = document.getElementById('pagination');
+
+      // Load all assets from all jobs
+      async function loadAssets() {
+        try {
+          const { jobs } = await api('/api/portal/jobs');
+
+          // Collect assets from all completed/delivered jobs
+          const assetsPromises = jobs
+            .filter(job => job.status === 'completed' || job.status === 'delivered')
+            .map(async job => {
+              const jobData = await api(`/api/portal/jobs/${job.id}`);
+              return jobData.assets
+                .filter(asset => asset.qaStatus === 'approved' || !asset.qaStatus)
+                .map(asset => ({
+                  ...asset,
+                  jobName: job.briefText || `Trabajo ${job.id.slice(0, 8)}`,
+                  jobId: job.id,
+                  jobPlatform: job.platform || '—',
+                  jobCreatedAt: job.createdAt,
+                }));
+            });
+
+          const assetsArrays = await Promise.all(assetsPromises);
+          allAssets = assetsArrays.flat().sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
+          filteredAssets = [...allAssets];
+          renderAssets();
+          populateProjectFilter();
+        } catch (error) {
+          console.error('Error loading assets:', error);
+          assetsGrid.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <p class="text-slate-400">Error cargando assets</p>
+              <button onclick="window.location.reload()" class="crm-button crm-button-primary mt-4">
+                Recargar
+              </button>
+            </div>
+          `;
+        }
+      }
+
+      // Populate project filter
+      function populateProjectFilter() {
+        const projects = [...new Set(allAssets.map(a => a.jobName))];
+        filterProject.innerHTML = `
+          <option value="">Todos los proyectos</option>
+          ${projects.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')}
+        `;
+      }
+
+      // Filter assets
+      function applyFilters() {
+        const project = filterProject.value;
+        const type = filterType.value;
+        const from = filterFrom.value ? new Date(filterFrom.value) : null;
+        const to = filterTo.value ? new Date(filterTo.value + 'T23:59:59') : null;
+
+        filteredAssets = allAssets.filter(asset => {
+          if (project && asset.jobName !== project) return false;
+          if (type && asset.type !== type) return false;
+          if (from && new Date(asset.createdAt) < from) return false;
+          if (to && new Date(asset.createdAt) > to) return false;
+          return true;
+        });
+
+        currentPage = 1;
+        renderAssets();
+      }
+
+      // Render assets with pagination
+      function renderAssets() {
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const pageAssets = filteredAssets.slice(start, end);
+
+        if (pageAssets.length === 0) {
+          assetsGrid.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <p class="text-slate-400">No hay assets que coincidan con los filtros</p>
+            </div>
+          `;
+        } else {
+          assetsGrid.innerHTML = pageAssets.map(asset => `
+            <article class="crm-panel-soft p-4 group">
+              <div class="aspect-square rounded-xl bg-slate-800 overflow-hidden mb-3 relative">
+                ${asset.type === 'video'
+                  ? `<video src="${asset.deliveryUrl || ''}" class="w-full h-full object-cover" muted loop playsinline></video>`
+                  : `<img src="${asset.deliveryUrl || ''}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-full object-cover" />`
+                }
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                  ${asset.deliveryUrl
+                    ? `<a href="${asset.deliveryUrl}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs">Ver</a>`
+                    : ''
+                  }
+                  ${asset.deliveryUrl
+                    ? `<a href="${asset.deliveryUrl}" download class="crm-button crm-button-secondary text-xs">Descargar</a>`
+                    : ''
+                  }
+                </div>
+              </div>
+              <p class="font-medium text-white text-sm truncate">${escapeHtml(asset.label || asset.type)}</p>
+              <p class="text-xs text-slate-400 truncate">${escapeHtml(asset.jobName)}</p>
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-xs text-slate-500">${formatDate(asset.createdAt)}</span>
+                <span class="text-xs px-2 py-0.5 rounded-full ${asset.type === 'video' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'}">
+                  ${asset.type}
+                </span>
+              </div>
+            </article>
+          `).join('');
+        }
+
+        // Render pagination
+        const totalPages = Math.ceil(filteredAssets.length / PAGE_SIZE);
+        if (totalPages > 1) {
+          pagination.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1)
+            .map(page => `
+              <button
+                onclick="currentPage = ${page}; renderAssets();"
+                class="w-8 h-8 rounded-full text-sm font-medium transition ${
+                  currentPage === page
+                    ? 'bg-white text-black'
+                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                }"
+              >
+                ${page}
+              </button>
+            `).join('');
+        } else {
+          pagination.innerHTML = '';
+        }
+      }
+
+      // Event listeners
+      filterProject.addEventListener('change', applyFilters);
+      filterType.addEventListener('change', applyFilters);
+      filterFrom.addEventListener('change', applyFilters);
+      filterTo.addEventListener('change', applyFilters);
+      clearFiltersBtn.addEventListener('click', () => {
+        filterProject.value = '';
+        filterType.value = '';
+        filterFrom.value = '';
+        filterTo.value = '';
+        applyFilters();
+      });
+
+      // Initialize
+      loadAssets();
+    })();
+  </script>
+</ClientLayout>

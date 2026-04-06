@@ -1,0 +1,1 @@
+# Wrappers para APIs externas
