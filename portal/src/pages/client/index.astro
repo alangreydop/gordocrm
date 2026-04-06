@@ -6,6 +6,19 @@ import { siteLinks } from '../../lib/site-links';
 <ClientLayout title="Resumen">
   <div class="space-y-6">
     <section class="rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden p-6 md:p-8">
+      <!-- Review Due Alert -->
+      <div id="review-alert" class="hidden mb-6 rounded-xl border border-amber-700/50 bg-amber-900/20 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-400">Review pendiente</h3>
+            <p id="review-alert-text" class="text-xs text-amber-300/80 mt-1">Tu revisión trimestral está próxima. Contacta con tu account manager.</p>
+          </div>
+        </div>
+      </div>
+
       <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
           <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Resumen cliente</p>
@@ -261,6 +274,28 @@ import { siteLinks } from '../../lib/site-links';
           }
 
           setText('metric-capacity', `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)} unidades`);
+
+          // Review due alert - mostrar si review está en los próximos 30 días
+          const reviewAlert = document.getElementById('review-alert');
+          const reviewAlertText = document.getElementById('review-alert-text');
+          if (reviewAlert && reviewAlertText && client.nextReviewAt) {
+            const reviewDate = new Date(client.nextReviewAt);
+            const now = new Date();
+            const daysUntilReview = Math.ceil((reviewDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+            if (daysUntilReview <= 30 && daysUntilReview >= -7) {
+              reviewAlert.classList.remove('hidden');
+              if (daysUntilReview < 0) {
+                reviewAlertText.textContent = `Tu revisión trimestral está vencida desde hace ${Math.abs(daysUntilReview)} días. Contacta con tu account manager.`;
+              } else if (daysUntilReview === 0) {
+                reviewAlertText.textContent = `Tu revisión trimestral es hoy. Contacta con tu account manager.`;
+              } else if (daysUntilReview <= 7) {
+                reviewAlertText.textContent = `Tu revisión trimestral es en ${daysUntilReview} días. Contacta con tu account manager.`;
+              } else {
+                reviewAlertText.textContent = `Tu revisión trimestral es en ${daysUntilReview} días. Contacta con tu account manager.`;
+              }
+            }
+          }
         }
 
         const nextStep = nextStepForClient(client, jobs);

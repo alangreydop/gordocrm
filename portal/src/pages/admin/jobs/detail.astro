@@ -87,6 +87,14 @@ const qaOptions = [
           <span id="job-status-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">—</span>
           <span id="job-lane-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">—</span>
         </div>
+        <div class="flex gap-2">
+          <button id="execute-ai-btn" class="inline-flex items-center gap-2 rounded-full bg-violet-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Ejecutar en AI Engine
+          </button>
+        </div>
       </div>
     </section>
 
@@ -382,6 +390,7 @@ const qaOptions = [
       const jobForm = document.getElementById('job-form');
       const jobError = document.getElementById('job-save-error');
       const jobSuccess = document.getElementById('job-save-success');
+      const executeAiBtn = document.getElementById('execute-ai-btn');
       const assetForm = document.getElementById('asset-form');
       const assetCreateError = document.getElementById('asset-create-error');
       const assetCreateSuccess = document.getElementById('asset-create-success');
@@ -569,6 +578,46 @@ const qaOptions = [
         window.location.href = '/admin/jobs';
         return;
       }
+
+      executeAiBtn?.addEventListener('click', async () => {
+        if (!confirm('¿Enviar este job a AI Engine para ejecución?')) return;
+
+        executeAiBtn.disabled = true;
+        executeAiBtn.innerHTML = `
+          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+          Enviando...
+        `;
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}/execute-ai`, {
+            method: 'POST',
+            credentials: 'include',
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
+            throw new Error(data.error || 'Error al ejecutar job');
+          }
+
+          const result = await res.json();
+          alert(`Job enviado a AI Engine correctamente.\nAI Job ID: ${result.ai_job_id}`);
+          await load(); // Recargar para ver estado actualizado
+        } catch (error) {
+          console.error('Execute AI error:', error);
+          alert(error instanceof Error ? error.message : 'No se pudo ejecutar el job en AI Engine');
+        } finally {
+          executeAiBtn.disabled = false;
+          executeAiBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Ejecutar en AI Engine
+          `;
+        }
+      });
 
       jobForm?.addEventListener('submit', async (event) => {
         event.preventDefault();

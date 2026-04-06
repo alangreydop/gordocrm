@@ -1,12 +1,5 @@
 import { sql } from 'drizzle-orm';
-import {
-  check,
-  index,
-  integer,
-  real,
-  sqliteTable,
-  text,
-} from 'drizzle-orm/sqlite-core';
+import { check, index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 const timestampNow = () => new Date();
 const randomId = () => crypto.randomUUID();
@@ -46,6 +39,9 @@ export const clients = sqliteTable(
     notes: text('notes'),
     nextReviewAt: integer('next_review_at', { mode: 'timestamp_ms' }),
     lastContactedAt: integer('last_contacted_at', { mode: 'timestamp_ms' }),
+    onboardingCompletedAt: integer('onboarding_completed_at', { mode: 'timestamp_ms' }),
+    firstSessionAt: integer('first_session_at', { mode: 'timestamp_ms' }),
+    externalClientId: text('external_client_id'), // ID en otros sistemas
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
@@ -62,6 +58,7 @@ export const jobs = sqliteTable(
     clientId: text('client_id')
       .notNull()
       .references(() => clients.id),
+    externalJobId: text('external_job_id'), // ID en AI Engine
     status: text('status').notNull().default('pending'),
     briefText: text('brief_text'),
     platform: text('platform'),
@@ -102,10 +99,7 @@ export const jobs = sqliteTable(
       'jobs_platform_check',
       sql`${table.platform} IS NULL OR ${table.platform} IN ('instagram', 'tiktok', 'amazon_pdp', 'paid_ads')`,
     ),
-    check(
-      'jobs_type_check',
-      sql`${table.type} IS NULL OR ${table.type} IN ('image', 'video')`,
-    ),
+    check('jobs_type_check', sql`${table.type} IS NULL OR ${table.type} IN ('image', 'video')`),
     index('idx_jobs_client_id').on(table.clientId),
     index('idx_jobs_status').on(table.status),
     index('idx_jobs_due_at').on(table.dueAt),
@@ -124,9 +118,10 @@ export const assets = sqliteTable(
     type: text('type').notNull(),
     r2Key: text('r2_key').notNull(),
     deliveryUrl: text('delivery_url'),
-    qaStatus: text('qa_status'),
-    qaNotes: text('qa_notes'),
+    status: text('status').notNull().default('pending'), // pending, approved, rejected
+    metadata: text('metadata'), // JSON string con metadata del asset
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
   },
   (table) => [
     check('assets_type_check', sql`${table.type} IN ('image', 'video')`),

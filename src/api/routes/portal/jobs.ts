@@ -5,6 +5,48 @@ import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
 import type { AppContext } from '../../../types/index.js';
 
+// Helper para crear JWT compatible con AI Engine
+async function createAIFngineJWT(user: {
+  id: string;
+  email: string;
+  role: string;
+}): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode('gordo-ai-engine-secret-key-2026'),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+
+  const payload = {
+    sub: user.id,
+    email: user.email,
+    role: user.role,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hora
+  };
+
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    keyData,
+    encoder.encode(JSON.stringify(payload)),
+  );
+
+  const base64Url = (data: ArrayBuffer) =>
+    btoa(String.fromCharCode(...new Uint8Array(data)))
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+
+  const header = base64Url(encoder.encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
+  const payloadB64 = base64Url(encoder.encode(JSON.stringify(payload)));
+  const signatureB64 = base64Url(signature);
+
+  return `${header}.${payloadB64}.${signatureB64}`;
+}
+
 const jobStatuses = ['pending', 'processing', 'completed', 'failed', 'delivered'] as const;
 const jobPlatforms = ['instagram', 'tiktok', 'amazon_pdp', 'paid_ads'] as const;
 const jobTypes = ['image', 'video'] as const;
@@ -81,6 +123,7 @@ const optionalNullableEnum = <T extends readonly [string, ...string[]]>(values: 
 
 const createJobSchema = z.object({
   clientId: z.string().uuid(),
+  externalJobId: optionalNullableString, // ID en AI Engine
   briefText: optionalNullableString,
   platform: z.enum(jobPlatforms).optional(),
   type: z.enum(jobTypes).optional(),
@@ -110,6 +153,12 @@ const createJobSchema = z.object({
 
 const updateJobSchema = z.object({
   status: z.enum(jobStatuses).optional(),
+  externalJobId: optionalNullableString,
+  deliveryUrl: optionalNullableString,
+  startedAt: optionalNullableDate,
+  completedAt: optionalNullableDate,
+  failedAt: optionalNullableDate,
+  failureReason: optionalNullableString,
   briefText: optionalNullableString,
   platform: optionalNullableEnum(jobPlatforms),
   type: optionalNullableEnum(jobTypes),
@@ -142,8 +191,8 @@ const createAssetSchema = z.object({
   type: z.enum(jobTypes),
   r2Key: z.string().trim().min(1),
   deliveryUrl: optionalNullableString,
-  qaStatus: z.enum(assetQaStatuses).optional(),
-  qaNotes: optionalNullableString,
+  status: z.enum(['pending', 'approved', 'rejected']).optional(),
+  metadata: optionalNullableString,
 });
 
 const updateAssetSchema = z.object({
@@ -151,8 +200,8 @@ const updateAssetSchema = z.object({
   type: optionalNullableEnum(jobTypes),
   r2Key: optionalNullableString,
   deliveryUrl: optionalNullableString,
-  qaStatus: optionalNullableEnum(assetQaStatuses),
-  qaNotes: optionalNullableString,
+  status: optionalNullableEnum(['pending', 'approved', 'rejected']),
+  metadata: optionalNullableString,
 });
 
 export const jobRoutes = new Hono<AppContext>();
@@ -394,6 +443,87 @@ jobRoutes.post('/', async (c) => {
   return c.json({ job }, 201);
 });
 
+// Endpoint para crear job en AI Engine desde CRM
+jobRoutes.post('/:id/execute-ai', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  const id = c.req.param('id');
+  const db = c.get('db');
+
+  // Obtener job con detalles del pipeline
+  const [job] = await db
+    .select({
+      id: schema.jobs.id,
+      clientId: schema.jobs.clientId,
+      stackWinner: schema.jobs.stackWinner,
+      briefText: schema.jobs.briefText,
+      type: schema.jobs.type,
+    })
+    .from(schema.jobs)
+    .where(eq(schema.jobs.id, id))
+    .limit(1);
+
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  // TODO: Obtener pipeline_id desde AI Engine basado en stackWinner
+  // Por ahora, usamos un pipeline por defecto
+  const pipelineId = 1; // Esto debería venir de una tabla de mapeo stack -> pipeline
+
+  // Crear job en AI Engine
+  const aiEngineUrl = 'http://localhost:8000/api/v1/jobs';
+
+  // Obtener token JWT del CRM
+  const token = await createAIFngineJWT(user);
+
+  const response = await fetch(aiEngineUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      pipeline_id: pipelineId,
+      name: `Job ${id} - ${job.briefText?.slice(0, 50) || 'Sin brief'}`,
+      description: job.briefText || null,
+      input_data: {
+        crm_job_id: job.id,
+        client_id: job.clientId,
+        job_type: job.type,
+      },
+      external_job_id: job.id, // Referencia al CRM
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Error desconocido' }));
+    return c.json({ error: `AI Engine error: ${error.error}` }, 500);
+  }
+
+  const aiJob = await response.json();
+
+  // Actualizar job en CRM con external_job_id
+  await db
+    .update(schema.jobs)
+    .set({
+      externalJobId: String(aiJob.id),
+      status: 'processing',
+      startedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.jobs.id, id));
+
+  return c.json({
+    ok: true,
+    ai_job_id: aiJob.id,
+    message: 'Job enviado a AI Engine para ejecución',
+  });
+});
+
 jobRoutes.patch('/:id', async (c) => {
   const user = c.get('user');
   if (user.role !== 'admin') {
@@ -414,24 +544,27 @@ jobRoutes.patch('/:id', async (c) => {
 
   const db = c.get('db');
 
-  await db
-    .update(schema.jobs)
-    .set({
-      ...body.data,
-      status: body.data.status,
-      platform: body.data.platform,
-      clientSegment: body.data.clientSegment,
-      marginProfile: body.data.marginProfile,
-      assetDominant: body.data.assetDominant,
-      legalRisk: body.data.legalRisk,
-      turnaround: body.data.turnaround,
-      portabilityRequired: body.data.portabilityRequired,
-      structuralDemand: body.data.structuralDemand,
-      benchmarkLevel: body.data.benchmarkLevel,
-      stackLane: body.data.stackLane,
-      updatedAt: new Date(),
-    })
-    .where(eq(schema.jobs.id, id));
+  const updates: Record<string, unknown> = {
+    ...body.data,
+    updatedAt: new Date(),
+  };
+
+  // Asegurar que los campos enum se manejan correctamente
+  if (body.data.status !== undefined) updates.status = body.data.status;
+  if (body.data.platform !== undefined) updates.platform = body.data.platform;
+  if (body.data.clientSegment !== undefined) updates.clientSegment = body.data.clientSegment;
+  if (body.data.marginProfile !== undefined) updates.marginProfile = body.data.marginProfile;
+  if (body.data.assetDominant !== undefined) updates.assetDominant = body.data.assetDominant;
+  if (body.data.legalRisk !== undefined) updates.legalRisk = body.data.legalRisk;
+  if (body.data.turnaround !== undefined) updates.turnaround = body.data.turnaround;
+  if (body.data.portabilityRequired !== undefined)
+    updates.portabilityRequired = body.data.portabilityRequired;
+  if (body.data.structuralDemand !== undefined)
+    updates.structuralDemand = body.data.structuralDemand;
+  if (body.data.benchmarkLevel !== undefined) updates.benchmarkLevel = body.data.benchmarkLevel;
+  if (body.data.stackLane !== undefined) updates.stackLane = body.data.stackLane;
+
+  await db.update(schema.jobs).set(updates).where(eq(schema.jobs.id, id));
 
   const [job] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
 
@@ -468,6 +601,7 @@ jobRoutes.post('/:id/assets', async (c) => {
   }
 
   const assetId = crypto.randomUUID();
+  const now = new Date();
   await db.insert(schema.assets).values({
     id: assetId,
     jobId,
@@ -475,9 +609,10 @@ jobRoutes.post('/:id/assets', async (c) => {
     type: body.data.type,
     r2Key: body.data.r2Key,
     deliveryUrl: body.data.deliveryUrl ?? null,
-    qaStatus: body.data.qaStatus ?? 'pending',
-    qaNotes: body.data.qaNotes ?? null,
-    createdAt: new Date(),
+    status: body.data.status ?? 'pending',
+    metadata: body.data.metadata ?? null,
+    createdAt: now,
+    updatedAt: now,
   });
 
   const [asset] = await db

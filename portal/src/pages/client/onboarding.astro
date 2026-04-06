@@ -1,0 +1,332 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Onboarding | Grande & Gordo">
+  <div class="max-w-4xl space-y-6">
+    <section class="rounded-3xl border border-zinc-800 bg-zinc-950 p-6 md:p-8">
+      <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Bienvenida</p>
+      <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Prepara tu sesión</h1>
+      <p class="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400 md:text-base">
+        Completa esta checklist para que tu sesión sea lo más productiva posible.
+        Cuanto mejor lleguemos a ese día, más sólido quedará el sistema.
+      </p>
+    </section>
+
+    <section id="onboarding-success" class="hidden rounded-3xl border border-green-800/50 bg-green-950/30 p-8 text-center">
+      <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <h2 class="text-2xl font-black text-white mb-2">Onboarding completado</h2>
+      <p class="text-zinc-400 text-sm leading-relaxed max-w-md mx-auto">
+        Gracias por completar la preparación. Tu sesión está lista para comenzar.
+        Te enviaremos un email con los siguientes pasos en las próximas 24 horas.
+      </p>
+    </section>
+
+    <form id="onboarding-form" class="space-y-6">
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <h2 class="text-xl font-bold text-white mb-2">Producto</h2>
+        <p class="text-zinc-400 text-sm mb-6">Lo que necesitamos tener listo para la sesión.</p>
+
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="product_clean" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Unidades limpias (sin polvo, sin huellas)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Producto preparado físicamente para la sesión.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="product_skus" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Versiones de producto según tu pack</span>
+              <p class="text-zinc-500 text-xs mt-0.5">1, 3 o 5+ SKUs listos según lo contratado.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="product_packaging" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Packaging completo (si aplica)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Cajas, etiquetas, bolsas u otros elementos.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="product_variants" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Variantes de color o tamaño</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Si tu producto tiene múltiples versiones.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="product_docs" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Documentación técnica</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Fichas, ingredientes, especificaciones.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <h2 class="text-xl font-bold text-white mb-2">Identidad de marca</h2>
+        <p class="text-zinc-400 text-sm mb-6">Los elementos visuales que definen tu marca.</p>
+
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="brand_logo" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Logo en vectorial (SVG/AI) + PNG transparente</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Archivos de alta calidad para usar en producciones.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="brand_colors" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Paleta de colores (HEX o Pantone)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Códigos exactos de tus colores corporativos.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="brand_fonts" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Tipografías de marca (TTF/OTF)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Archivos de fuentes o enlaces a licencias.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="brand_guidelines" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Brand guidelines (si tienes)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Documento con normas de uso de marca.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="brand_references" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Referencias visuales</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Tablero Pinterest o carpeta con inspiración.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <h2 class="text-xl font-bold text-white mb-2">Contexto y usos</h2>
+        <p class="text-zinc-400 text-sm mb-6">Dónde y cómo se usará el material.</p>
+
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="context_platforms" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Plataformas de publicación</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Instagram, TikTok, Amazon, web, etc.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="context_audience" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Público objetivo definido</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Edad, intereses, estilo de vida.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="context_concepts" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">3-5 conceptos visuales a explorar</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Ideas o direcciones creativas que quieres probar.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="context_backgrounds" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Estilos de fondo preferidos</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Lifestyle, estudio, naturaleza, etc.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="context_calendar" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Calendario de campañas (3 meses)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Fechas clave o lanzamientos previstos.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <h2 class="text-xl font-bold text-white mb-2">Accesos (opcional)</h2>
+        <p class="text-zinc-400 text-sm mb-6">Permisos para colaborar en tus cuentas.</p>
+
+        <div class="space-y-3">
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="access_social" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Acceso colaborador Instagram/TikTok</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Para revisar métricas y publicar directamente.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="access_store" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Acceso a tienda Shopify/WooCommerce</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Para subir assets directamente a listings.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="access_amazon" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Acceso Amazon Seller (si aplica)</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Para gestionar contenido A+ y listings.</p>
+            </div>
+          </label>
+
+          <label class="flex items-start gap-3 p-4 rounded-xl border border-zinc-800 bg-black hover:border-zinc-600 transition cursor-pointer">
+            <input type="checkbox" name="checklist" value="access_drive" class="mt-1 w-5 h-5 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-white focus:ring-offset-0" />
+            <div>
+              <span class="text-white font-medium text-sm">Carpeta compartida Drive/Dropbox</span>
+              <p class="text-zinc-500 text-xs mt-0.5">Para enviar y recibir assets de forma organizada.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+        <h2 class="text-xl font-bold text-white mb-4">Programa tu sesión</h2>
+        <p class="text-zinc-400 text-sm mb-6">Elige cuándo te gustaría hacer la sesión.</p>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label for="session-date" class="block text-sm font-medium text-zinc-300 mb-2">Fecha preferida</label>
+            <input type="date" id="session-date" name="sessionDate" class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none" />
+          </div>
+          <div>
+            <label for="session-time" class="block text-sm font-medium text-zinc-300 mb-2">Horario preferido</label>
+            <select id="session-time" name="sessionTime" class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none">
+              <option value="">Selecciona...</option>
+              <option value="morning">Mañana (9:00 - 13:00)</option>
+              <option value="afternoon">Tarde (15:00 - 19:00)</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky bottom-4 z-10">
+        <button
+          type="submit"
+          id="submit-btn"
+          disabled
+          class="w-full bg-white text-black font-bold px-8 py-4 rounded-full transition hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
+        >
+          <span id="btn-text">Completar onboarding</span>
+          <svg id="btn-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+        </button>
+        <p id="progress-text" class="text-center text-zinc-500 text-xs mt-3">0 / 19 items completados</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const API_BASE = import.meta.env.GG_API_BASE || 'http://127.0.0.1:8787';
+
+    const form = document.getElementById('onboarding-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+    const successBox = document.getElementById('onboarding-success');
+    const progressText = document.getElementById('progress-text');
+    const checkboxes = form.querySelectorAll('input[name="checklist"]');
+
+    // Actualizar progreso
+    function updateProgress() {
+      const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+      progressText.textContent = `${checked} / ${checkboxes.length} items completados`;
+      submitBtn.disabled = checked === 0;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateProgress));
+
+    function setLoading(on) {
+      submitBtn.disabled = on;
+      btnText.textContent = on ? 'Enviando...' : 'Completar onboarding';
+      btnSpinner.classList.toggle('hidden', !on);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const checkedItems = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      const sessionDate = document.getElementById('session-date').value;
+      const sessionTime = document.getElementById('session-time').value;
+
+      setLoading(true);
+
+      try {
+        // Obtener sesión para client_id
+        const sessionRes = await fetch(`${API_BASE}/api/portal/session`, {
+          credentials: 'include',
+        });
+
+        if (!sessionRes.ok) {
+          throw new Error('No se pudo obtener la sesión');
+        }
+
+        const session = await sessionRes.json();
+        const clientId = session.client?.id;
+
+        if (!clientId) {
+          throw new Error('Cliente no encontrado');
+        }
+
+        // Enviar webhook al CRM
+        const webhookRes = await fetch(`${API_BASE}/api/portal/webhooks/web/onboarding`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            clientId,
+            checklistCompleted: true,
+            sessionScheduled: !!sessionDate,
+            sessionDate: sessionDate ? `${sessionDate}T${sessionTime === 'morning' ? '10:00' : sessionTime === 'afternoon' ? '16:00' : ''}` : null,
+          }),
+        });
+
+        if (!webhookRes.ok) {
+          const error = await webhookRes.json().catch(() => ({}));
+          throw new Error(error.error || 'Error al guardar onboarding');
+        }
+
+        // Ocultar formulario y mostrar éxito
+        form.classList.add('hidden');
+        successBox.classList.remove('hidden');
+
+      } catch (err) {
+        console.error('Onboarding error:', err);
+        alert('Hubo un error al completar el onboarding. Por favor, inténtalo de nuevo.');
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+</ClientLayout>

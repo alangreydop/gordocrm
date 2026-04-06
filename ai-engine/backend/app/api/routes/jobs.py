@@ -32,6 +32,7 @@ class JobCreate(BaseModel):
     name: str
     description: Optional[str] = None
     input_data: dict = {}
+    external_job_id: Optional[str] = None  # ID del job en el CRM
 
 
 class JobResponse(BaseModel):
@@ -95,6 +96,7 @@ async def create_job(
         name=job_data.name,
         description=job_data.description,
         input_data=job_data.input_data,
+        external_job_id=job_data.external_job_id,  # ID del CRM
         status=JobStatus.PENDING,
         created_by=user_id,
     )
@@ -105,6 +107,15 @@ async def create_job(
 
     # Encolar para ejecución en Celery
     execute_pipeline_task.delay(job.id)
+
+    # Emitir webhook job.created (opcional, para sync)
+    asyncio.create_task(
+        emit_webhook_event(
+            db,
+            "job.created",
+            {"job_id": job.id, "external_job_id": job.external_job_id},
+        )
+    )
 
     return job
 
