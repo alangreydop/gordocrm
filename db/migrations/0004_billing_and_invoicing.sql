@@ -167,7 +167,17 @@ CREATE INDEX IF NOT EXISTS idx_invoice_logs_invoice_id ON invoice_logs(invoiceId
 CREATE INDEX IF NOT EXISTS idx_invoice_logs_created_at ON invoice_logs(createdAt);
 
 -- ============================================
--- 5. Datos de la empresa emisora (Grande & Gordo)
+-- 5. Tabla config (configuración del sistema)
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS config (
+  key text PRIMARY KEY,
+  value text NOT NULL,
+  updatedAt integer DEFAULT (strftime('%s', 'now') * 1000)
+);
+
+-- ============================================
+-- 6. Datos de la empresa emisora (Grande & Gordo)
 -- ============================================
 
 -- Insertar configuración por defecto del emisor
@@ -185,7 +195,7 @@ INSERT OR REPLACE INTO config (key, value) VALUES
   ('invoice_footer', 'Grande & Gordo S.L. - Todos los derechos reservados.'),
   ('default_payment_method', 'transferencia'),
   ('default_payment_notes', 'Transferencia bancaria a ES00 0000 0000 0000 0000 0000 - Banco XXX')
-ON CONFLICT(key) DO NOTHING;
+ON CONFLICT(key) DO UPDATE SET value = excluded.value;
 
 -- ============================================
 -- 6. Trigger: Validar datos fiscales antes de crear factura
