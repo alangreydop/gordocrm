@@ -1,0 +1,224 @@
+---
+layout: '../../../layouts/AdminLayout.astro'
+title: 'Production Kanban'
+---
+
+<div class="h-screen flex flex-col bg-zinc-950">
+  <!-- Header -->
+  <header class="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Production Kanban</h1>
+      <p class="text-sm text-zinc-400">Gestión visual de producción</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex gap-3 text-sm">
+        <div class="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300">
+          <span id="stat-pending" class="font-bold">0</span> Pendientes
+        </div>
+        <div class="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300">
+          <span id="stat-processing" class="font-bold">0</span> En Progreso
+        </div>
+        <div class="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300">
+          <span id="stat-review" class="font-bold">0</span> En Review
+        </div>
+        <div class="px-3 py-1 rounded-full bg-zinc-800 text-zinc-300">
+          <span id="stat-delivered" class="font-bold">0</span> Entregados
+        </div>
+      </div>
+      <button
+        id="refresh-btn"
+        class="rounded-xl bg-white px-4 py-2 font-bold text-black text-sm transition hover:bg-zinc-200"
+      >
+        ↻ Refresh
+      </button>
+    </div>
+  </header>
+
+  <!-- Kanban Board -->
+  <div class="flex-1 overflow-x-auto overflow-y-hidden">
+    <div class="flex h-full min-w-max p-6 gap-6">
+      <!-- Pending -->
+      <div class="w-80 flex flex-col">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="font-bold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-zinc-500"></span>
+            Pendientes
+          </h2>
+          <span id="count-pending" class="text-xs text-zinc-400">0</span>
+        </div>
+        <div id="col-pending" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+      </div>
+
+      <!-- Processing -->
+      <div class="w-80 flex flex-col">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="font-bold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+            En Progreso
+          </h2>
+          <span id="count-processing" class="text-xs text-zinc-400">0</span>
+        </div>
+        <div id="col-processing" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+      </div>
+
+      <!-- Review -->
+      <div class="w-80 flex flex-col">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="font-bold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+            En Review
+          </h2>
+          <span id="count-review" class="text-xs text-zinc-400">0</span>
+        </div>
+        <div id="col-review" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+      </div>
+
+      <!-- Delivered -->
+      <div class="w-80 flex flex-col">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="font-bold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+            Entregados
+          </h2>
+          <span id="count-delivered" class="text-xs text-zinc-400">0</span>
+        </div>
+        <div id="col-delivered" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+      </div>
+
+      <!-- Completed -->
+      <div class="w-80 flex flex-col">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <h2 class="font-bold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            Completados
+          </h2>
+          <span id="count-completed" class="text-xs text-zinc-400">0</span>
+        </div>
+        <div id="col-completed" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (async () => {
+    const { api } = await import('../../../lib/api-client');
+
+    const refreshBtn = document.getElementById('refresh-btn');
+
+    const loadKanban = async () => {
+      try {
+        const [columnsRes, statsRes] = await Promise.all([
+          api('/api/admin/kanban/columns'),
+          api('/api/admin/kanban/stats'),
+        ]);
+
+        renderColumns(columnsRes.columns);
+        renderStats(statsRes.stats);
+      } catch (e) {
+        console.error('Failed to load kanban:', e);
+      }
+    };
+
+    const renderStats = (stats) => {
+      document.getElementById('stat-pending').textContent = stats.pending || 0;
+      document.getElementById('stat-processing').textContent = stats.processing || 0;
+      document.getElementById('stat-review').textContent = stats.review || 0;
+      document.getElementById('stat-delivered').textContent = stats.delivered || 0;
+
+      document.getElementById('count-pending').textContent = stats.pending || 0;
+      document.getElementById('count-processing').textContent = stats.processing || 0;
+      document.getElementById('count-review').textContent = stats.review || 0;
+      document.getElementById('count-delivered').textContent = stats.delivered || 0;
+      document.getElementById('count-completed').textContent = stats.completed || 0;
+    };
+
+    const renderColumns = (columns) => {
+      const renderCard = (job) => `
+        <div class="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 hover:border-zinc-600 transition cursor-pointer group">
+          <div class="flex items-start justify-between mb-2">
+            <span class="text-xs font-mono text-zinc-500">#${job.id.slice(0, 8)}</span>
+            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+              ${job.status !== 'pending' ? `<button class="move-left text-xs text-zinc-400 hover:text-white" data-id="${job.id}" data-direction="prev">←</button>` : ''}
+              ${job.status !== 'completed' ? `<button class="move-right text-xs text-zinc-400 hover:text-white" data-id="${job.id}" data-direction="next">→</button>` : ''}
+            </div>
+          </div>
+          <h3 class="font-semibold text-white text-sm mb-1 truncate">${job.clientName || 'Sin cliente'}</h3>
+          <p class="text-xs text-zinc-400 line-clamp-2 mb-3">${job.briefText || 'Sin descripción'}</p>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">${job.platform || 'N/A'}</span>
+              <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">${job.type || 'N/A'}</span>
+            </div>
+            <span class="text-zinc-500">${job.assetCount} assets</span>
+          </div>
+          ${job.dueAt ? `<div class="mt-3 pt-3 border-t border-zinc-800 text-xs ${new Date(job.dueAt) < new Date() ? 'text-red-400' : 'text-zinc-500'}">
+            Due: ${new Date(job.dueAt).toLocaleDateString()}
+          </div>` : ''}
+        </div>
+      `;
+
+      document.getElementById('col-pending').innerHTML = (columns.pending || []).map(renderCard).join('');
+      document.getElementById('col-processing').innerHTML = (columns.processing || []).map(renderCard).join('');
+      document.getElementById('col-review').innerHTML = (columns.review || []).map(renderCard).join('');
+      document.getElementById('col-delivered').innerHTML = (columns.delivered || []).map(renderCard).join('');
+      document.getElementById('col-completed').innerHTML = (columns.completed || []).map(renderCard).join('');
+
+      // Add event listeners for move buttons
+      document.querySelectorAll('.move-right').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = (e.target as HTMLElement).dataset.id;
+          await moveJob(id, 'next');
+        });
+      });
+
+      document.querySelectorAll('.move-left').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = (e.target as HTMLElement).dataset.id;
+          await moveJob(id, 'prev');
+        });
+      });
+    };
+
+    const moveJob = async (id: string, direction: 'next' | 'prev') => {
+      const statusOrder = ['pending', 'processing', 'review', 'delivered', 'completed'];
+
+      // Need to fetch current status first
+      const columnsRes = await api('/api/admin/kanban/columns');
+      let currentStatus = '';
+
+      for (const [status, jobs] of Object.entries(columnsRes.columns)) {
+        if ((jobs as any[]).some((j) => j.id === id)) {
+          currentStatus = status;
+          break;
+        }
+      }
+
+      const currentIndex = statusOrder.indexOf(currentStatus);
+      const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+
+      if (newIndex >= 0 && newIndex < statusOrder.length) {
+        const newStatus = statusOrder[newIndex];
+        try {
+          await api(`/api/admin/kanban/jobs/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus }),
+          });
+          await loadKanban();
+        } catch (e) {
+          console.error('Failed to move job:', e);
+        }
+      }
+    };
+
+    refreshBtn?.addEventListener('click', loadKanban);
+
+    // Initial load
+    await loadKanban();
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadKanban, 30000);
+  })();
+</script>

@@ -2,12 +2,7 @@ import { desc, eq, sql } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
-import {
-  clearSessionsForUser,
-  createUser,
-  hashPassword,
-  requireAdmin,
-} from '../../../lib/auth.js';
+import { clearSessionsForUser, createUser, hashPassword, requireAdmin } from '../../../lib/auth.js';
 import type { AppContext } from '../../../types/index.js';
 
 const clientSubscriptionStatuses = ['active', 'inactive', 'cancelled'] as const;
@@ -21,40 +16,52 @@ const clientDatasetStatuses = [
 const clientSegments = ['rentable', 'growth', 'premium', 'enterprise'] as const;
 const marginProfiles = ['estrecho', 'medio', 'alto'] as const;
 
-const optionalNullableString = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null) return null;
-  if (typeof value === 'string') {
-    const trimmed = value.trim();
-    return trimmed === '' ? null : trimmed;
-  }
-  return value;
-}, z.union([z.string(), z.null()]).optional());
+const optionalNullableString = z.preprocess(
+  (value) => {
+    if (value === undefined) return undefined;
+    if (value === null) return null;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      return trimmed === '' ? null : trimmed;
+    }
+    return value;
+  },
+  z.union([z.string(), z.null()]).optional(),
+);
 
-const optionalNullableNumber = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null || value === '') return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : value;
-}, z.union([z.number().int().min(0), z.null()]).optional());
-
-const optionalNullableDate = z.preprocess((value) => {
-  if (value === undefined) return undefined;
-  if (value === null || value === '') return null;
-  if (value instanceof Date) return value;
-  if (typeof value === 'string' || typeof value === 'number') {
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? value : date;
-  }
-  return value;
-}, z.union([z.date(), z.null()]).optional());
-
-const optionalNullableEnum = <T extends readonly [string, ...string[]]>(values: T) =>
-  z.preprocess((value) => {
+const optionalNullableNumber = z.preprocess(
+  (value) => {
     if (value === undefined) return undefined;
     if (value === null || value === '') return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : value;
+  },
+  z.union([z.number().int().min(0), z.null()]).optional(),
+);
+
+const optionalNullableDate = z.preprocess(
+  (value) => {
+    if (value === undefined) return undefined;
+    if (value === null || value === '') return null;
+    if (value instanceof Date) return value;
+    if (typeof value === 'string' || typeof value === 'number') {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : date;
+    }
     return value;
-  }, z.union([z.enum(values), z.null()]).optional());
+  },
+  z.union([z.date(), z.null()]).optional(),
+);
+
+const optionalNullableEnum = <T extends readonly [string, ...string[]]>(values: T) =>
+  z.preprocess(
+    (value) => {
+      if (value === undefined) return undefined;
+      if (value === null || value === '') return null;
+      return value;
+    },
+    z.union([z.enum(values), z.null()]).optional(),
+  );
 
 const createClientSchema = z.object({
   name: z.string().trim().min(1),
@@ -151,10 +158,8 @@ clientRoutes.get('/', async (c) => {
       postalCode: schema.clients.postalCode,
       country: schema.clients.country,
       jobCount: sql<number>`cast(count(${schema.jobs.id}) as integer)`,
-      activeJobs:
-        sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
-      plannedUnits:
-        sql<number>`cast(coalesce(sum(${schema.jobs.unitsPlanned}), 0) as integer)`,
+      activeJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
+      plannedUnits: sql<number>`cast(coalesce(sum(${schema.jobs.unitsPlanned}), 0) as integer)`,
     })
     .from(schema.clients)
     .leftJoin(schema.jobs, eq(schema.jobs.clientId, schema.clients.id))
@@ -189,11 +194,7 @@ clientRoutes.get('/:id', async (c) => {
   const id = c.req.param('id');
   const db = c.get('db');
 
-  const [client] = await db
-    .select()
-    .from(schema.clients)
-    .where(eq(schema.clients.id, id))
-    .limit(1);
+  const [client] = await db.select().from(schema.clients).where(eq(schema.clients.id, id)).limit(1);
 
   if (!client) {
     return c.json({ error: 'Client not found' }, 404);
@@ -217,24 +218,23 @@ clientRoutes.get('/:id', async (c) => {
     db
       .select({
         totalJobs: sql<number>`cast(count(*) as integer)`,
-        activeJobs:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
-        deliveredJobs:
-          sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'delivered' then 1 else 0 end), 0) as integer)`,
-        unitsPlanned:
-          sql<number>`cast(coalesce(sum(${schema.jobs.unitsPlanned}), 0) as integer)`,
-        unitsConsumed:
-          sql<number>`cast(coalesce(sum(${schema.jobs.unitsConsumed}), 0) as integer)`,
+        activeJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} in ('pending', 'processing') then 1 else 0 end), 0) as integer)`,
+        deliveredJobs: sql<number>`cast(coalesce(sum(case when ${schema.jobs.status} = 'delivered' then 1 else 0 end), 0) as integer)`,
+        unitsPlanned: sql<number>`cast(coalesce(sum(${schema.jobs.unitsPlanned}), 0) as integer)`,
+        unitsConsumed: sql<number>`cast(coalesce(sum(${schema.jobs.unitsConsumed}), 0) as integer)`,
       })
       .from(schema.jobs)
       .where(eq(schema.jobs.clientId, id))
-      .then((rows) => rows[0] ?? {
-        totalJobs: 0,
-        activeJobs: 0,
-        deliveredJobs: 0,
-        unitsPlanned: 0,
-        unitsConsumed: 0,
-      }),
+      .then(
+        (rows) =>
+          rows[0] ?? {
+            totalJobs: 0,
+            activeJobs: 0,
+            deliveredJobs: 0,
+            unitsPlanned: 0,
+            unitsConsumed: 0,
+          },
+      ),
     db
       .select({
         id: schema.jobs.id,
@@ -274,7 +274,7 @@ clientRoutes.get('/:id', async (c) => {
     },
     portalUser,
     summary,
-    jobs
+    jobs,
   });
 });
 
@@ -354,11 +354,7 @@ clientRoutes.post('/', async (c) => {
     }
   }
 
-  const [client] = await db
-    .select()
-    .from(schema.clients)
-    .where(eq(schema.clients.id, id))
-    .limit(1);
+  const [client] = await db.select().from(schema.clients).where(eq(schema.clients.id, id)).limit(1);
 
   return c.json({ client }, 201);
 });
@@ -441,11 +437,7 @@ clientRoutes.patch('/:id', async (c) => {
     }
   }
 
-  const [client] = await db
-    .select()
-    .from(schema.clients)
-    .where(eq(schema.clients.id, id))
-    .limit(1);
+  const [client] = await db.select().from(schema.clients).where(eq(schema.clients.id, id)).limit(1);
 
   return c.json({ client });
 });

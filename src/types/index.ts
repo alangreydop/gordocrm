@@ -10,12 +10,7 @@ export type ClientDatasetStatus =
   | 'archived';
 export type ClientSegment = 'rentable' | 'growth' | 'premium' | 'enterprise';
 export type MarginProfile = 'estrecho' | 'medio' | 'alto';
-export type JobStatus =
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'failed'
-  | 'delivered';
+export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'delivered';
 export type JobPlatform = 'instagram' | 'tiktok' | 'amazon_pdp' | 'paid_ads';
 export type JobAssetDominant =
   | 'catalogo'
@@ -53,6 +48,7 @@ export interface AppBindings {
   PUBLIC_API_URL?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
+  AI_ENGINE_WEBHOOK_URL?: string;
   FAL_KEY?: string;
   OPENAI_API_KEY?: string;
   R2_ACCOUNT_ID?: string;
@@ -65,6 +61,7 @@ export interface AppBindings {
   REDIS_URL?: string;
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
+  AI_ENGINE_URL?: string;
 }
 
 export interface AppVariables {

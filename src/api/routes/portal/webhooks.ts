@@ -106,7 +106,6 @@ webhookRoutes.post('/ai-engine', async (c) => {
       .update(schema.jobs)
       .set({
         status: 'processing',
-        startedAt: new Date(),
         updatedAt: new Date(),
       })
       .where(eq(schema.jobs.id, job.id));
@@ -117,9 +116,7 @@ webhookRoutes.post('/ai-engine', async (c) => {
       .update(schema.jobs)
       .set({
         status: 'completed',
-        completedAt: new Date(),
         updatedAt: new Date(),
-        ...(data.delivery_url && { deliveryUrl: data.delivery_url }),
       })
       .where(eq(schema.jobs.id, job.id));
 
@@ -128,10 +125,11 @@ webhookRoutes.post('/ai-engine', async (c) => {
       for (const output of data.outputs) {
         await db.insert(schema.assets).values({
           jobId: job.id,
-          url: output.url,
-          assetType: output.output_type,
+          r2Key: output.url,
+          type: output.output_type,
           metadata: output.metadata ? JSON.stringify(output.metadata) : null,
-          status: 'approved', // Ya pasó QA en AI Engine
+          status: 'approved',
+          deliveryUrl: output.url,
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -144,9 +142,8 @@ webhookRoutes.post('/ai-engine', async (c) => {
       .update(schema.jobs)
       .set({
         status: 'failed',
-        failedAt: new Date(),
         updatedAt: new Date(),
-        failureReason: data.status || 'Unknown error',
+        internalNotes: `Falló: ${data.status || 'Unknown error'}`,
       })
       .where(eq(schema.jobs.id, job.id));
   }
@@ -160,95 +157,86 @@ webhookRoutes.post('/ai-engine', async (c) => {
   return c.json({ ok: true });
 });
 
-// Webhook desde Stripe
-webhookRoutes.post('/stripe', async (c) => {
+// Webhook desde sistema de facturación (pago confirmado)
+webhookRoutes.post('/invoice/paid', async (c) => {
   const body: unknown = await c.req.json();
 
-  const stripeSchema = z.object({
-    type: z.enum([
-      'checkout.session.completed',
-      'customer.subscription.created',
-      'customer.subscription.updated',
-    ]),
-    data: z.object({
-      object: z.object({
-        id: z.string(),
-        customer: z.string(),
-        customer_email: z.string().email().optional(),
-        metadata: z.record(z.string()).optional(),
-        items: z
-          .array(
-            z.object({
-              price: z.object({
-                id: z.string(),
-                unit_amount: z.number().nullable(),
-              }),
-              quantity: z.number(),
-            }),
-          )
-          .optional(),
-      }),
-    }),
+  const invoicePaidSchema = z.object({
+    invoiceId: z.string(),
+    paymentMethod: z.enum(['bank_transfer', 'manual']),
+    paidAt: z.string(),
   });
 
-  const parsed = stripeSchema.safeParse(body);
+  const parsed = invoicePaidSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: 'Invalid Stripe webhook payload' }, 400);
+    return c.json({ error: 'Invalid invoice paid payload' }, 400);
   }
 
-  const { type, data } = parsed.data;
+  const { invoiceId, paymentMethod, paidAt } = parsed.data;
   const db = c.get('db');
 
-  if (type === 'checkout.session.completed') {
-    const session = data.object;
-    const clientId = session.metadata?.client_id;
-    const packId = session.metadata?.pack_id;
+  try {
+    // Actualizar factura a pagada
+    await db
+      .update(schema.invoices)
+      .set({
+        status: 'paid',
+        paidAt: new Date(paidAt),
+        paymentMethod,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.invoices.id, invoiceId));
 
-    if (clientId) {
-      // Actualizar cliente existente
-      await db
-        .update(schema.clients)
-        .set({
-          subscriptionStatus: 'active',
-          plan: packId || 'starter',
-          updatedAt: new Date(),
-        })
-        .where(eq(schema.clients.id, clientId));
-    } else if (session.customer_email) {
-      // Crear nuevo cliente
-      const [newClient] = await db
-        .insert(schema.clients)
-        .values({
-          email: session.customer_email,
-          name: session.metadata?.client_name || 'Cliente Nuevo',
-          company: session.metadata?.company || null,
-          subscriptionStatus: 'active',
-          plan: packId || 'starter',
-          monthlyUnitCapacity: 10,
-          segment: 'new',
-          marginProfile: 'standard',
-          datasetStatus: 'pending_capture',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning({ id: schema.clients.id });
+    // Obtener factura para crear jobs
+    const [invoice] = await db
+      .select()
+      .from(schema.invoices)
+      .where(eq(schema.invoices.id, invoiceId))
+      .limit(1);
 
-      // Crear job inicial
-      if (newClient) {
-        await db.insert(schema.jobs).values({
-          clientId: newClient.id,
-          status: 'pending',
-          type: 'image',
-          briefText: `Job inicial - Pack ${packId || 'starter'}`,
-          unitsPlanned: 10,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
+    if (invoice && invoice.relatedJobIds) {
+      const jobIds = JSON.parse(invoice.relatedJobIds) as string[];
+
+      // Trigger automático de producción para cada job
+      for (const jobId of jobIds) {
+        await db
+          .update(schema.jobs)
+          .set({
+            status: 'pending',
+            updatedAt: new Date(),
+            internalNotes: `Producción iniciada - Factura ${invoice.invoiceNumber} pagada`,
+          })
+          .where(eq(schema.jobs.id, jobId));
+
+        // Notificar AI Engine
+        const aiEngineUrl =
+          c.env.AI_ENGINE_WEBHOOK_URL || 'http://localhost:4000/webhooks/job-created';
+
+        try {
+          await fetch(aiEngineUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              event: 'job.created',
+              data: {
+                job_id: jobId,
+                client_id: invoice.clientId,
+                invoice_id: invoiceId,
+              },
+              timestamp: new Date().toISOString(),
+            }),
+          });
+        } catch (e) {
+          console.error('[Webhook] Failed to notify AI Engine:', e);
+        }
       }
     }
-  }
 
-  return c.json({ ok: true });
+    return c.json({ ok: true });
+  } catch (error) {
+    console.error('[Webhook] Error processing invoice paid:', error);
+    return c.json({ error: 'Failed to process invoice paid' }, 500);
+  }
 });
 
 // Webhook desde Web (brief submit)
@@ -285,10 +273,10 @@ webhookRoutes.post('/web/brief', async (c) => {
       .insert(schema.clients)
       .values({
         email,
-        name: name || null,
-        company: company || null,
+        name: name || 'Cliente',
+        company: company || undefined,
         subscriptionStatus: 'inactive',
-        plan: null,
+        plan: undefined,
         monthlyUnitCapacity: 0,
         segment: 'lead',
         marginProfile: 'unknown',
@@ -298,7 +286,11 @@ webhookRoutes.post('/web/brief', async (c) => {
       })
       .returning({ id: schema.clients.id });
 
-    clientId = newClient.id;
+    if (newClient) {
+      clientId = newClient.id;
+    } else {
+      return c.json({ error: 'Failed to create client' }, 500);
+    }
   }
 
   // Crear brief submission (schema usa briefSubmissions con contentType)

@@ -1,8 +1,9 @@
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import { sendFeedbackConfirmationEmail, sendJobCompletionEmail } from '../../../lib/email.js';
 import type { AppContext } from '../../../types/index.js';
 
 // Helper para crear JWT compatible con AI Engine
@@ -269,7 +270,26 @@ jobRoutes.get('/', async (c) => {
     .where(eq(schema.jobs.clientId, clientRecord.id))
     .orderBy(desc(schema.jobs.createdAt));
 
-  return c.json({ jobs: rows });
+  // Get asset counts for each job (approved assets only)
+  const jobIds = rows.map((row) => row.id);
+  let assetCounts: { jobId: string; count: number }[] = [];
+  if (jobIds.length > 0) {
+    assetCounts = await db
+      .select({
+        jobId: schema.assets.jobId,
+        count: count(schema.assets.id),
+      })
+      .from(schema.assets)
+      .where(and(eq(schema.assets.status, 'approved'), inArray(schema.assets.jobId, jobIds)))
+      .groupBy(schema.assets.jobId);
+  }
+
+  const jobsWithAssets = rows.map((job) => ({
+    ...job,
+    assetsCount: assetCounts.find((ac) => ac.jobId === job.id)?.count ?? 0,
+  }));
+
+  return c.json({ jobs: jobsWithAssets });
 });
 
 jobRoutes.get('/:id', async (c) => {
@@ -475,7 +495,10 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
   const pipelineId = 1; // Esto debería venir de una tabla de mapeo stack -> pipeline
 
   // Crear job en AI Engine
-  const aiEngineUrl = 'http://localhost:8000/api/v1/jobs';
+  const aiEngineUrlBase =
+    (c.env && 'AI_ENGINE_URL' in c.env ? c.env.AI_ENGINE_URL : undefined) ??
+    'http://localhost:8000';
+  const aiEngineUrl = `${aiEngineUrlBase}/api/v1/jobs`;
 
   // Obtener token JWT del CRM
   const token = await createAIFngineJWT(user);
@@ -564,12 +587,59 @@ jobRoutes.patch('/:id', async (c) => {
   if (body.data.benchmarkLevel !== undefined) updates.benchmarkLevel = body.data.benchmarkLevel;
   if (body.data.stackLane !== undefined) updates.stackLane = body.data.stackLane;
 
+  // Get old job to check status change
+  const [oldJob] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
+  const oldStatus = oldJob?.status;
+
   await db.update(schema.jobs).set(updates).where(eq(schema.jobs.id, id));
 
   const [job] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
 
   if (!job) {
     return c.json({ error: 'Job not found' }, 404);
+  }
+
+  // Send email and notification if status changed to completed or delivered
+  const env = c.env;
+  if (
+    body.data.status &&
+    ['completed', 'delivered'].includes(body.data.status) &&
+    oldStatus !== body.data.status
+  ) {
+    const [client] = await db
+      .select()
+      .from(schema.clients)
+      .where(eq(schema.clients.id, job.clientId))
+      .limit(1);
+
+    if (client && client.email) {
+      // Send email in background (don't await)
+      sendJobCompletionEmail(env, {
+        clientEmail: client.email,
+        clientName: client.name || 'Cliente',
+        jobBrief: job.briefText || 'Trabajo',
+        jobId: job.id,
+        jobPlatform: job.platform,
+        jobType: job.type,
+        portalUrl: 'https://crm.grandeandgordo.com',
+      }).catch((err) => console.error('Failed to send job completion email:', err));
+
+      // Create in-app notification
+      const now = new Date();
+      await db
+        .insert(schema.notifications)
+        .values({
+          id: crypto.randomUUID(),
+          userId: client.userId,
+          type: 'job_completed',
+          title: '¡Trabajo completado!',
+          message: `Tu trabajo "${job.briefText?.slice(0, 40) || 'Trabajo'}" está listo para descargar.`,
+          relatedJobId: job.id,
+          read: 0,
+          createdAt: now,
+        })
+        .catch((err) => console.error('Failed to create notification:', err));
+    }
   }
 
   return c.json({ job });
@@ -723,6 +793,19 @@ jobRoutes.post('/:id/feedback', async (c) => {
       updatedAt: new Date(),
     })
     .where(eq(schema.jobs.id, jobId));
+
+  // Send feedback confirmation email
+  const env = c.env;
+  if (clientRecord.email) {
+    sendFeedbackConfirmationEmail(env, {
+      clientEmail: clientRecord.email,
+      clientName: clientRecord.name || 'Cliente',
+      jobBrief: job.briefText || 'Trabajo',
+      jobId: job.id,
+      feedbackText,
+      portalUrl: 'https://crm.grandeandgordo.com',
+    }).catch((err) => console.error('Failed to send feedback confirmation email:', err));
+  }
 
   return c.json({ success: true, message: 'Feedback recibido' });
 });

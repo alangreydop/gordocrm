@@ -24,6 +24,33 @@ interface BriefNotificationInput {
   sourcePage?: string | null;
 }
 
+interface JobCompletionInput {
+  clientEmail: string;
+  clientName: string;
+  jobBrief: string;
+  jobId: string;
+  jobPlatform?: string | null;
+  jobType?: string | null;
+  portalUrl: string;
+}
+
+interface FeedbackConfirmationInput {
+  clientEmail: string;
+  clientName: string;
+  jobBrief: string;
+  jobId: string;
+  feedbackText: string;
+  portalUrl: string;
+}
+
+interface QuarterlyReviewReminderInput {
+  clientEmail: string;
+  clientName: string;
+  clientCompany?: string | null;
+  portalUrl: string;
+  reviewDate: string;
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
@@ -58,16 +85,20 @@ export async function sendEmail(
     }),
   });
 
-  const payload = (await response.json().catch(() => null)) as
-    | { id?: string; error?: unknown }
-    | null;
+  const payload = (await response.json().catch(() => null)) as {
+    id?: string;
+    error?: unknown;
+  } | null;
 
   if (!response.ok || typeof payload?.id !== 'string') {
-    console.error('EMAIL_SEND_FAILED', JSON.stringify({
-      status: response.status,
-      body: payload,
-      subject: input.subject,
-    }));
+    console.error(
+      'EMAIL_SEND_FAILED',
+      JSON.stringify({
+        status: response.status,
+        body: payload,
+        subject: input.subject,
+      }),
+    );
     return { ok: false };
   }
 
@@ -82,9 +113,7 @@ export async function sendBriefNotifications(
     return;
   }
 
-  const clientLabel = input.clientCompany?.trim()
-    || input.clientName?.trim()
-    || input.email;
+  const clientLabel = input.clientCompany?.trim() || input.clientName?.trim() || input.email;
   const briefTypeLabel = input.tipo === 'ambos' ? 'foto + video' : input.tipo;
   const safeDescription = escapeHtml(input.description.trim());
   const safeClientLabel = escapeHtml(clientLabel);
@@ -139,4 +168,146 @@ export async function sendBriefNotifications(
       text: `Hemos recibido tu brief de ${briefTypeLabel}. Lo revisaremos en 24-48h laborables. Puedes revisar onboarding en ${onboardingUrl} o entrar al centro de cliente en ${portalUrl}.`,
     }),
   ]);
+}
+
+export async function sendJobCompletionEmail(
+  env: AppBindings,
+  input: JobCompletionInput,
+): Promise<{ ok: boolean; skipped?: boolean }> {
+  if (!env.RESEND_API_KEY) {
+    return { ok: false, skipped: true };
+  }
+
+  const safeClientName = escapeHtml(input.clientName);
+  const safeBrief = escapeHtml(input.jobBrief?.slice(0, 100) || 'Trabajo');
+  const jobDetailUrl = `${input.portalUrl}/client/jobs/detail?id=${input.jobId}`;
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
+      <p style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Trabajo completado</p>
+      <h1 style="font-size:24px;line-height:1.2;margin:12px 0 16px">Tus assets estan listos</h1>
+      <p style="margin:0 0 12px">
+        Hola ${safeClientName},
+      </p>
+      <p style="margin:0 0 12px">
+        Hemos completado tu trabajo "${safeBrief}" y los assets ya estan disponibles para su descarga.
+      </p>
+      <p style="margin:16px 0">
+        <a href="${jobDetailUrl}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Ver assets y descargar</a>
+      </p>
+      <p style="margin:0 0 12px">
+        Si necesitas algun ajuste o cambio, puedes enviarnos feedback directamente desde la pagina del trabajo.
+      </p>
+      <p style="margin:16px 0 8px;font-size:13px;color:#6b7280">
+        Grande & Gordo · hola@grandeandgordo.com
+      </p>
+    </div>
+  `.trim();
+
+  const result = await sendEmail(env, {
+    to: input.clientEmail,
+    subject: `Trabajo completado: ${safeBrief}`,
+    html,
+    text: `Hola ${input.clientName},\n\nHemos completado tu trabajo "${input.jobBrief?.slice(0, 100) || 'Trabajo'}" y los assets ya estan disponibles.\n\nVer y descargar: ${jobDetailUrl}\n\nSi necesitas algun ajuste, puedes enviarnos feedback desde la pagina del trabajo.\n\nGrande & Gordo · hola@grandeandgordo.com`,
+  });
+
+  return { ok: result.ok ?? false, skipped: result.skipped ?? false };
+}
+
+export async function sendFeedbackConfirmationEmail(
+  env: AppBindings,
+  input: FeedbackConfirmationInput,
+): Promise<{ ok: boolean; skipped?: boolean }> {
+  if (!env.RESEND_API_KEY) {
+    return { ok: false, skipped: true };
+  }
+
+  const safeClientName = escapeHtml(input.clientName);
+  const safeBrief = escapeHtml(input.jobBrief?.slice(0, 100) || 'Trabajo');
+  const safeFeedback = escapeHtml(input.feedbackText);
+  const jobDetailUrl = `${input.portalUrl}/client/jobs/detail?id=${input.jobId}`;
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
+      <p style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Feedback recibido</p>
+      <h1 style="font-size:24px;line-height:1.2;margin:12px 0 16px">Tu feedback ha llegado al equipo</h1>
+      <p style="margin:0 0 12px">
+        Hola ${safeClientName},
+      </p>
+      <p style="margin:0 0 12px">
+        Hemos recibido tu feedback sobre "${safeBrief}". Nuestro equipo de producción lo revisará y se pondrá en contacto si necesita más información.
+      </p>
+      <div style="margin:16px 0;padding:16px;border-radius:12px;background:#f3f4f6;white-space:pre-wrap;font-size:14px">${safeFeedback}</div>
+      <p style="margin:16px 0">
+        Puedes ver el estado de tu trabajo y cualquier actualización en la página del proyecto.
+      </p>
+      <p style="margin:16px 0">
+        <a href="${jobDetailUrl}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Ver trabajo</a>
+      </p>
+      <p style="margin:0 0 12px;font-size:13px;color:#6b7280">
+        Grande & Gordo · hola@grandeandgordo.com
+      </p>
+    </div>
+  `.trim();
+
+  const result = await sendEmail(env, {
+    to: input.clientEmail,
+    subject: `Feedback recibido: ${safeBrief}`,
+    html,
+    text: `Hola ${input.clientName},\n\nHemos recibido tu feedback sobre "${input.jobBrief?.slice(0, 100) || 'Trabajo'}". Nuestro equipo lo revisará pronto.\n\nVer trabajo: ${jobDetailUrl}\n\nGrande & Gordo · hola@grandeandgordo.com`,
+  });
+
+  return { ok: result.ok ?? false, skipped: result.skipped ?? false };
+}
+
+export async function sendQuarterlyReviewReminderEmail(
+  env: AppBindings,
+  input: QuarterlyReviewReminderInput,
+): Promise<{ ok: boolean; skipped?: boolean }> {
+  if (!env.RESEND_API_KEY) {
+    return { ok: false, skipped: true };
+  }
+
+  const safeClientName = escapeHtml(input.clientName);
+  const safeCompany = escapeHtml(input.clientCompany?.trim() || '');
+  const safeReviewDate = escapeHtml(input.reviewDate);
+  const portalUrl = input.portalUrl;
+  const hubUrl = `${portalUrl}/client/hub`;
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
+      <p style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Recordatorio trimestral</p>
+      <h1 style="font-size:24px;line-height:1.2;margin:12px 0 16px">Es hora de tu review trimestral</h1>
+      <p style="margin:0 0 12px">
+        Hola ${safeClientName}${safeCompany ? ` de ${safeCompany}` : ''},
+      </p>
+      <p style="margin:0 0 12px">
+        Ha llegado el momento de hacer tu review trimestral de cuenta. En esta sesión repasaremos:
+      </p>
+      <ul style="margin:0 0 16px;padding-left:20px">
+        <li>Rendimiento de assets producidos</li>
+        <li>Nuevos objetivos y necesidades</li>
+        <li>Optimización de presupuesto</li>
+        <li>Planificación del próximo trimestre</li>
+      </ul>
+      <p style="margin:16px 0">
+        Puedes agendar tu sesión directamente desde tu portal de cliente o respondiendo a este email.
+      </p>
+      <p style="margin:16px 0">
+        <a href="${hubUrl}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Ir al portal</a>
+      </p>
+      <p style="margin:0 0 12px;font-size:13px;color:#6b7280">
+        Grande & Gordo · hola@grandeandgordo.com
+      </p>
+    </div>
+  `.trim();
+
+  const result = await sendEmail(env, {
+    to: input.clientEmail,
+    subject: 'Recordatorio: Review trimestral de cuenta',
+    html,
+    text: `Hola ${input.clientName},\n\nHa llegado el momento de hacer tu review trimestral de cuenta. Repasaremos rendimiento de assets, nuevos objetivos y planificación del próximo trimestre.\n\nPuedes agendar desde tu portal: ${hubUrl}\n\nGrande & Gordo · hola@grandeandgordo.com`,
+  });
+
+  return { ok: result.ok ?? false, skipped: result.skipped ?? false };
 }

@@ -121,6 +121,14 @@ const qaOptions = [
       </div>
     </div>
 
+    <!-- Timeline visual del job -->
+    <section class="crm-panel p-6">
+      <h2 class="text-lg font-semibold text-white mb-4">Timeline del trabajo</h2>
+      <div id="job-timeline" class="relative">
+        <!-- Se renderiza dinámicamente -->
+      </div>
+    </section>
+
     <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
       <section class="crm-form-section">
         <div class="flex items-center justify-between gap-4 mb-4">
@@ -501,6 +509,44 @@ const qaOptions = [
         `).join('');
       };
 
+      const jobStatusSteps = {
+        pending: { label: 'Pendiente', step: 1 },
+        processing: { label: 'En producción', step: 2 },
+        completed: { label: 'Completado', step: 3 },
+        delivered: { label: 'Entregado', step: 4 },
+      };
+
+      const renderTimeline = (job) => {
+        const timelineEl = document.getElementById('job-timeline');
+        if (!timelineEl) return;
+
+        const currentStep = jobStatusSteps[job.status]?.step ?? 1;
+        const steps = [
+          { step: 1, label: 'Brief recibido', description: 'El trabajo fue creado y está en cola', date: job.createdAt },
+          { step: 2, label: 'En producción', description: 'Estamos creando tus assets', date: job.startedAt },
+          { step: 3, label: 'QA completado', description: 'Los assets fueron aprobados internamente', date: job.completedAt },
+          { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga', date: job.deliveredAt },
+        ];
+
+        timelineEl.innerHTML = `<div class="relative pl-8 border-l-2 border-gray-700 space-y-6">${
+          steps.map((s, idx) => {
+            const isCompleted = s.step <= currentStep;
+            const isCurrent = s.step === currentStep;
+            const dateStr = s.date ? formatDate(s.date) : '—';
+            return `
+              <div class="relative">
+                <div class="absolute -left-[41px] h-5 w-5 rounded-full ${isCompleted ? 'bg-emerald-500' : 'bg-gray-600'} ${isCurrent ? 'ring-4 ring-emerald-500/30' : ''}"></div>
+                <div class="${isCurrent ? 'opacity-100' : 'opacity-60'}">
+                  <p class="text-sm font-medium ${isCompleted ? 'text-white' : 'text-gray-400'}">${escapeHtml(s.label)}</p>
+                  <p class="text-xs text-gray-400 mt-0.5">${escapeHtml(s.description)}</p>
+                  <p class="text-xs text-gray-500 mt-1">${dateStr}</p>
+                </div>
+              </div>
+            `;
+          }).join('')
+        }</div>`;
+      };
+
       const render = (payload) => {
         const { job, assets } = payload;
         currentJob = job;
@@ -565,6 +611,7 @@ const qaOptions = [
         setInputValue('internalNotes', job.internalNotes ?? '');
 
         renderAssets();
+        renderTimeline(job);
       };
 
       const load = async () => {

@@ -136,16 +136,29 @@ export const assets = sqliteTable(
     deliveryUrl: text('delivery_url'),
     status: text('status').notNull().default('pending'), // pending, approved, rejected
     metadata: text('metadata'), // JSON string con metadata del asset
+
+    // The Vault - Semantic search fields
+    description: text('description'), // AI-generated description
+    tags: text('tags'), // JSON array of tags
+    embedding: text('embedding'), // AI embedding vector (JSON array)
+    dominantColors: text('dominant_colors'), // JSON array of dominant colors
+    visualStyle: text('visual_style'), // e.g., "cinematic", "minimal", "hormozi"
+    emotionalTone: text('emotional_tone'), // e.g., "energetic", "calm", "urgent"
+    clientVisible: integer('client_visible', { mode: 'boolean' }).default(true), // Show in Vault
+
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
   },
   (table) => [
     check('assets_type_check', sql`${table.type} IN ('image', 'video')`),
     check(
-      'assets_qa_status_check',
-      sql`${table.qaStatus} IS NULL OR ${table.qaStatus} IN ('pending', 'approved', 'rejected')`,
+      'assets_status_check',
+      sql`${table.status} IS NULL OR ${table.status} IN ('pending', 'approved', 'rejected')`,
     ),
     index('idx_assets_job_id').on(table.jobId),
+    index('idx_assets_status').on(table.status),
+    index('idx_assets_client_visible').on(table.clientVisible),
+    index('idx_assets_created_at').on(table.createdAt),
   ],
 );
 
@@ -155,8 +168,20 @@ export const briefSubmissions = sqliteTable(
     id: text('id').primaryKey().$defaultFn(randomId),
     clientId: text('client_id').references(() => clients.id),
     email: text('email').notNull(),
-    contentType: text('content_type').notNull(),
-    description: text('description').notNull(),
+
+    // Legacy field for backward compatibility
+    contentType: text('content_type'),
+    description: text('description'),
+
+    // New conversational fields
+    objective: text('objective'),
+    hook: text('hook'),
+    style: text('style'),
+    audience: text('audience'),
+    cta: text('cta'),
+    optimizedBrief: text('optimized_brief'), // JSON string with AI-optimized brief
+    chatHistory: text('chat_history'), // JSON string with full conversation
+
     status: text('status').notNull().default('new'),
     source: text('source').notNull().default('website'),
     sourcePage: text('source_page'),
@@ -166,15 +191,16 @@ export const briefSubmissions = sqliteTable(
   (table) => [
     check(
       'brief_submissions_content_type_check',
-      sql`${table.contentType} IN ('foto', 'video', 'ambos')`,
+      sql`${table.contentType} IS NULL OR ${table.contentType} IN ('foto', 'video', 'ambos')`,
     ),
     check(
       'brief_submissions_status_check',
-      sql`${table.status} IN ('new', 'reviewed', 'archived')`,
+      sql`${table.status} IN ('new', 'reviewed', 'archived', 'in_progress')`,
     ),
     index('idx_brief_submissions_client_id').on(table.clientId),
     index('idx_brief_submissions_email').on(table.email),
     index('idx_brief_submissions_created_at').on(table.createdAt),
+    index('idx_brief_submissions_status').on(table.status),
   ],
 );
 
@@ -202,12 +228,13 @@ export const sessions = sqliteTable(
 
 export const invoices = sqliteTable('invoices', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceNumber: text('invoice_number').notNull().unique(), // F2026-001
+  invoiceNumber: text('invoice_number').notNull().unique(),
   series: text('series').notNull().default('F'),
   fiscalYear: integer('fiscal_year').notNull(),
 
-  // Cliente (snapshot en momento de emisión)
-  clientId: text('client_id').notNull().references(() => clients.id),
+  clientId: text('client_id')
+    .notNull()
+    .references(() => clients.id),
   clientTaxId: text('client_tax_id').notNull(),
   clientLegalName: text('client_legal_name').notNull(),
   clientAddressLine1: text('client_address_line_1').notNull(),
@@ -218,7 +245,6 @@ export const invoices = sqliteTable('invoices', {
   clientCountry: text('client_country').default('ES'),
   clientEmail: text('client_email').notNull(),
 
-  // Emisor (Grande & Gordo)
   issuerTaxId: text('issuer_tax_id').notNull(),
   issuerLegalName: text('issuer_legal_name').notNull(),
   issuerAddressLine1: text('issuer_address_line_1').notNull(),
@@ -227,47 +253,42 @@ export const invoices = sqliteTable('invoices', {
   issuerCountry: text('issuer_country').default('ES'),
   issuerEmail: text('issuer_email').notNull(),
 
-  // Fechas
   issueDate: integer('issue_date', { mode: 'timestamp_ms' }).notNull(),
   dueDate: integer('due_date', { mode: 'timestamp_ms' }).notNull(),
   paidAt: integer('paid_at', { mode: 'timestamp_ms' }),
 
-  // Conceptos
   description: text('description'),
 
-  // Importes (en céntimos)
   subtotalCents: integer('subtotal_cents').notNull().default(0),
-  taxRate: real('tax_rate').notNull().default(0.21), // 21% IVA
+  taxRate: real('tax_rate').notNull().default(0.21),
   taxAmountCents: integer('tax_amount_cents').notNull().default(0),
   irpfRate: real('irpf_rate'),
   irpfAmountCents: integer('irpf_amount_cents'),
   totalCents: integer('total_cents').notNull().default(0),
 
-  // Estado
-  status: text('status').notNull().default('draft'), // draft, issued, sent, paid, cancelled, overdue
+  status: text('status').notNull().default('draft'),
   paymentMethod: text('payment_method'),
   paymentNotes: text('payment_notes'),
 
-  // Rectificativa
-  isRectificative: integer('is_rectificative').default(0),
+  isRectificative: integer('is_rectificative', { mode: 'boolean' }).default(false),
   rectificativeReason: text('rectificative_reason'),
   originalInvoiceId: text('original_invoice_id').references(() => invoices.id),
 
-  // Jobs relacionados
-  relatedJobIds: text('related_job_ids'), // JSON array
+  relatedJobIds: text('related_job_ids'),
 
-  // Metadata
   notes: text('notes'),
   terms: text('terms'),
   footer: text('footer'),
 
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 });
 
 export const invoiceItems = sqliteTable('invoice_items', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceId: text('invoice_id').notNull().references(() => invoices.id, { onDelete: 'cascade' }),
+  invoiceId: text('invoice_id')
+    .notNull()
+    .references(() => invoices.id, { onDelete: 'cascade' }),
 
   // Concepto
   description: text('description').notNull(),
@@ -294,7 +315,9 @@ export const invoiceItems = sqliteTable('invoice_items', {
 
 export const invoiceLogs = sqliteTable('invoice_logs', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceId: text('invoice_id').notNull().references(() => invoices.id, { onDelete: 'cascade' }),
+  invoiceId: text('invoice_id')
+    .notNull()
+    .references(() => invoices.id, { onDelete: 'cascade' }),
   action: text('action').notNull(), // created, issued, sent, paid, cancelled, modified, emailed
   userId: text('user_id'),
   details: text('details'), // JSON
@@ -307,3 +330,30 @@ export const config = sqliteTable('config', {
   value: text('value').notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
 });
+
+// ============================================
+// Sistema de Notificaciones
+// ============================================
+
+export const notifications = sqliteTable(
+  'notifications',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    type: text('type').notNull(), // job_completed, job_updated, feedback_received, message, reminder
+    title: text('title').notNull(),
+    message: text('message').notNull(),
+    read: integer('read').notNull().default(0),
+    relatedJobId: text('related_job_id').references(() => jobs.id),
+    relatedInvoiceId: text('related_invoice_id').references(() => invoices.id),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_notifications_user_id').on(table.userId),
+    index('idx_notifications_read').on(table.read),
+    index('idx_notifications_created_at').on(table.createdAt),
+  ],
+);

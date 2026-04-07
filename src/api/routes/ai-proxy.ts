@@ -74,7 +74,7 @@ async function createAIFngineJWT(user: {
 
 // Proxy para pipelines
 aiProxyRoutes.get('/pipelines', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const res = await fetch(`${AI_ENGINE_BASE}/pipelines`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ aiProxyRoutes.get('/pipelines', requireAuth, async (c) => {
 });
 
 aiProxyRoutes.post('/pipelines', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const body = await c.req.json();
 
   const res = await fetch(`${AI_ENGINE_BASE}/pipelines`, {
@@ -102,7 +102,7 @@ aiProxyRoutes.post('/pipelines', requireAuth, async (c) => {
 });
 
 aiProxyRoutes.get('/pipelines/:id', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const id = c.req.param('id');
 
   const res = await fetch(`${AI_ENGINE_BASE}/pipelines/${id}`, {
@@ -117,7 +117,7 @@ aiProxyRoutes.get('/pipelines/:id', requireAuth, async (c) => {
 
 // Proxy para jobs
 aiProxyRoutes.get('/jobs', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const status = c.req.query('status');
 
   const url = new URL(`${AI_ENGINE_BASE}/jobs`);
@@ -134,7 +134,7 @@ aiProxyRoutes.get('/jobs', requireAuth, async (c) => {
 });
 
 aiProxyRoutes.post('/jobs', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const body = await c.req.json();
 
   const res = await fetch(`${AI_ENGINE_BASE}/jobs`, {
@@ -150,7 +150,7 @@ aiProxyRoutes.post('/jobs', requireAuth, async (c) => {
 });
 
 aiProxyRoutes.get('/jobs/:id', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const id = c.req.param('id');
 
   const res = await fetch(`${AI_ENGINE_BASE}/jobs/${id}`, {
@@ -165,7 +165,7 @@ aiProxyRoutes.get('/jobs/:id', requireAuth, async (c) => {
 
 // Proxy para approvals
 aiProxyRoutes.post('/approvals/:id/decide', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const id = c.req.param('id');
   const body = await c.req.json();
 
@@ -183,7 +183,7 @@ aiProxyRoutes.post('/approvals/:id/decide', requireAuth, async (c) => {
 
 // Proxy para nodes
 aiProxyRoutes.get('/nodes', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
 
   const res = await fetch(`${AI_ENGINE_BASE}/nodes`, {
     headers: {
@@ -196,7 +196,7 @@ aiProxyRoutes.get('/nodes', requireAuth, async (c) => {
 });
 
 aiProxyRoutes.get('/nodes/categories/:category', requireAuth, async (c) => {
-  const token = c.get('aiEngineToken');
+  const token = c.get('aiEngineToken') as string;
   const category = c.req.param('category');
 
   const res = await fetch(`${AI_ENGINE_BASE}/nodes/categories/${category}`, {

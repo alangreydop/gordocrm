@@ -69,8 +69,8 @@ async function generateInvoiceNumber(db: AppContext['db'], year: number): Promis
     .where(
       and(
         eq(schema.invoices.fiscalYear, year),
-        gt(schema.invoices.invoiceNumber, `${prefix}${year}-`)
-      )
+        gt(schema.invoices.invoiceNumber, `${prefix}${year}-`),
+      ),
     )
     .orderBy(desc(schema.invoices.invoiceNumber))
     .limit(1);
@@ -106,12 +106,14 @@ function calculateItemAmounts(
 /**
  * Calcula totales de una factura
  */
-function calculateInvoiceTotals(items: Array<{
-  subtotalCents: number;
-  taxAmountCents: number;
-  irpfAmountCents: number;
-  totalCents: number;
-}>): { subtotalCents: number; taxAmountCents: number; irpfAmountCents: number; totalCents: number } {
+function calculateInvoiceTotals(
+  items: Array<{
+    subtotalCents: number;
+    taxAmountCents: number;
+    irpfAmountCents: number;
+    totalCents: number;
+  }>,
+): { subtotalCents: number; taxAmountCents: number; irpfAmountCents: number; totalCents: number } {
   return items.reduce(
     (acc, item) => ({
       subtotalCents: acc.subtotalCents + item.subtotalCents,
@@ -119,7 +121,7 @@ function calculateInvoiceTotals(items: Array<{
       irpfAmountCents: acc.irpfAmountCents + (item.irpfAmountCents || 0),
       totalCents: acc.totalCents + item.totalCents,
     }),
-    { subtotalCents: 0, taxAmountCents: 0, irpfAmountCents: 0, totalCents: 0 }
+    { subtotalCents: 0, taxAmountCents: 0, irpfAmountCents: 0, totalCents: 0 },
   );
 }
 
@@ -141,11 +143,9 @@ async function getIssuerData(db: AppContext['db']): Promise<{
   const configRows = await db
     .select({ key: schema.config.key, value: schema.config.value })
     .from(schema.config)
-    .where(
-      gt(schema.config.key, 'issuer_')
-    );
+    .where(gt(schema.config.key, 'issuer_'));
 
-  const configMap = Object.fromEntries(configRows.map(r => [r.key, r.value]));
+  const configMap = Object.fromEntries(configRows.map((r) => [r.key, r.value]));
 
   return {
     taxId: configMap['issuer_tax_id'] || 'B00000000',
@@ -265,7 +265,16 @@ invoiceRoutes.post('/', async (c) => {
     return c.json({ error: 'Datos inválidos', details: body.error.issues }, 400);
   }
 
-  const { clientId, items, dueDate, description, paymentMethod, paymentNotes, notes, relatedJobIds } = body.data;
+  const {
+    clientId,
+    items,
+    dueDate,
+    description,
+    paymentMethod,
+    paymentNotes,
+    notes,
+    relatedJobIds,
+  } = body.data;
 
   // Obtener datos del cliente
   const [client] = await db
@@ -287,10 +296,13 @@ invoiceRoutes.post('/', async (c) => {
   if (!client.postalCode) missingFields.push('postalCode (Código postal)');
 
   if (missingFields.length > 0) {
-    return c.json({
-      error: `El cliente no tiene completos los datos fiscales: ${missingFields.join(', ')}`,
-      hint: 'Actualiza la ficha del cliente antes de crear la factura',
-    }, 400);
+    return c.json(
+      {
+        error: `El cliente no tiene completos los datos fiscales: ${missingFields.join(', ')}`,
+        hint: 'Actualiza la ficha del cliente antes de crear la factura',
+      },
+      400,
+    );
   }
 
   // Obtener datos del emisor
@@ -426,9 +438,8 @@ invoiceRoutes.post('/:id/items', async (c) => {
     .from(schema.invoiceItems)
     .where(eq(schema.invoiceItems.invoiceId, id));
 
-  const maxSortOrder = existingItems.length > 0
-    ? Math.max(...existingItems.map(i => i.sortOrder))
-    : -1;
+  const maxSortOrder =
+    existingItems.length > 0 ? Math.max(...existingItems.map((i) => i.sortOrder)) : -1;
 
   // Añadir nuevas líneas
   const newItems = body.data.items.map((item, index) => {
@@ -471,7 +482,10 @@ invoiceRoutes.post('/:id/items', async (c) => {
     })
     .where(eq(schema.invoices.id, id));
 
-  await logInvoiceAction(db, id, 'modified', user.id, { action: 'added_items', count: newItems.length });
+  await logInvoiceAction(db, id, 'modified', user.id, {
+    action: 'added_items',
+    count: newItems.length,
+  });
 
   const [updatedInvoice] = await db
     .select()
@@ -569,10 +583,13 @@ invoiceRoutes.post('/:id/send', async (c) => {
   });
 
   if (!emailResult.ok) {
-    return c.json({
-      error: 'No se pudo enviar el email',
-      skipped: emailResult.skipped,
-    }, 500);
+    return c.json(
+      {
+        error: 'No se pudo enviar el email',
+        skipped: emailResult.skipped,
+      },
+      500,
+    );
   }
 
   // Actualizar estado a "sent" si estaba en "issued"
@@ -586,7 +603,10 @@ invoiceRoutes.post('/:id/send', async (c) => {
       .where(eq(schema.invoices.id, id));
   }
 
-  await logInvoiceAction(db, id, 'emailed', user.id, { email: invoice.clientEmail, emailId: emailResult.id });
+  await logInvoiceAction(db, id, 'emailed', user.id, {
+    email: invoice.clientEmail,
+    emailId: emailResult.id,
+  });
 
   const [updatedInvoice] = await db
     .select()
@@ -595,6 +615,37 @@ invoiceRoutes.post('/:id/send', async (c) => {
     .limit(1);
 
   return c.json({ invoice: updatedInvoice, emailId: emailResult.id });
+});
+
+// GENERAR PDF de factura
+invoiceRoutes.get('/:id/pdf', async (c) => {
+  const id = c.req.param('id');
+  const db = c.get('db');
+
+  const [invoice] = await db
+    .select()
+    .from(schema.invoices)
+    .where(eq(schema.invoices.id, id))
+    .limit(1);
+
+  if (!invoice) {
+    return c.json({ error: 'Factura no encontrada' }, 404);
+  }
+
+  // Obtener líneas para incluir en el PDF
+  const items = await db
+    .select()
+    .from(schema.invoiceItems)
+    .where(eq(schema.invoiceItems.invoiceId, id))
+    .orderBy(schema.invoiceItems.sortOrder);
+
+  const pdfBase64 = generateInvoicePdfBase64(invoice);
+
+  return c.json({
+    pdf: pdfBase64,
+    invoiceNumber: invoice.invoiceNumber,
+    generatedAt: new Date().toISOString(),
+  });
 });
 
 // MARCAR como pagada
@@ -681,10 +732,13 @@ invoiceRoutes.post('/:id/cancel', async (c) => {
   }
 
   if (invoice.status === 'paid') {
-    return c.json({
-      error: 'No se puede cancelar una factura pagada. Usa una factura rectificativa.',
-      hint: 'Crea una nueva factura con isRectificative=true referenciando esta',
-    }, 400);
+    return c.json(
+      {
+        error: 'No se puede cancelar una factura pagada. Usa una factura rectificativa.',
+        hint: 'Crea una nueva factura con isRectificative=true referenciando esta',
+      },
+      400,
+    );
   }
 
   if (invoice.status === 'cancelled') {
@@ -777,12 +831,16 @@ function generateInvoiceEmailHtml(invoice: typeof schema.invoices.$inferSelect):
     </div>
   </div>
 
-  ${invoice.description ? `
+  ${
+    invoice.description
+      ? `
   <div class="section">
     <div class="section-title">Descripción</div>
     <p>${invoice.description}</p>
   </div>
-  ` : ''}
+  `
+      : ''
+  }
 
   <div class="footer">
     <p>Para cualquier duda sobre esta factura, por favor contacta con nosotros en ${invoice.issuerEmail}</p>
@@ -809,4 +867,34 @@ Total: €${(invoice.totalCents! / 100).toFixed(2)}
 
 Para cualquier duda, contacta en ${invoice.issuerEmail}
   `.trim();
+}
+
+/**
+ * Genera PDF de factura (base64 para descarga)
+ */
+function generateInvoicePdfBase64(invoice: typeof schema.invoices.$inferSelect): string {
+  // En producción, usar una librería como @react-pdf/renderer o pdfmake
+  // Por ahora, retornamos un placeholder que el frontend puede convertir
+  // La implementación real requiere bundling de librerías PDF
+
+  const svgContent = `
+    <svg width="800" height="1000" xmlns="http://www.w3.org/2000/svg">
+      <rect width="800" height="1000" fill="white"/>
+      <text x="50" y="50" font-family="Arial" font-size="24" fill="#111827">${invoice.issuerLegalName}</text>
+      <text x="50" y="80" font-family="Arial" font-size="14" fill="#6b7280">NIF: ${invoice.issuerTaxId}</text>
+      <text x="50" y="120" font-family="Arial" font-size="18" fill="#111827">FACTURA ${invoice.invoiceNumber}</text>
+      <text x="50" y="150" font-family="Arial" font-size="14" fill="#6b7280">Fecha: ${new Date(invoice.issueDate!).toLocaleDateString('es-ES')}</text>
+      <text x="50" y="190" font-family="Arial" font-size="16" fill="#111827">Facturar a:</text>
+      <text x="50" y="210" font-family="Arial" font-size="14" fill="#111827">${invoice.clientLegalName}</text>
+      <text x="50" y="230" font-family="Arial" font-size="14" fill="#6b7280">NIF: ${invoice.clientTaxId}</text>
+      <text x="50" y="250" font-family="Arial" font-size="14" fill="#6b7280">${invoice.clientAddressLine1}</text>
+      <text x="50" y="270" font-family="Arial" font-size="14" fill="#6b7280">${invoice.clientPostalCode} ${invoice.clientCity}</text>
+      <text x="50" y="320" font-family="Arial" font-size="18" fill="#111827">Total: €${(invoice.totalCents! / 100).toFixed(2)}</text>
+      <text x="50" y="360" font-family="Arial" font-size="14" fill="#6b7280">Vencimiento: ${new Date(invoice.dueDate!).toLocaleDateString('es-ES')}</text>
+      <text x="50" y="380" font-family="Arial" font-size="14" fill="#6b7280">Método de pago: ${invoice.paymentMethod || 'Transferencia bancaria'}</text>
+      ${invoice.description ? `<text x="50" y="420" font-family="Arial" font-size="14" fill="#111827">${invoice.description}</text>` : ''}
+    </svg>
+  `;
+
+  return btoa(svgContent);
 }

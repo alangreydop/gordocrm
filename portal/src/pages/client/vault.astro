@@ -1,0 +1,203 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="The Vault - Tu Biblioteca de Activos">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <section class="text-center space-y-4">
+      <h1 class="text-4xl font-black tracking-tight text-white">The Vault</h1>
+      <p class="text-zinc-400">Tu biblioteca semántica de activos. Encuentra inspiración en tu contenido aprobado.</p>
+    </section>
+
+    <!-- Search & Filters -->
+    <div class="flex flex-col md:flex-row gap-4">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Buscar por descripción, tags..."
+        class="flex-1 rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+      />
+      <select
+        id="style-filter"
+        class="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+      >
+        <option value="">Todos los estilos</option>
+      </select>
+      <select
+        id="tone-filter"
+        class="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+      >
+        <option value="">Todos los tonos</option>
+      </select>
+      <select
+        id="type-filter"
+        class="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+      >
+        <option value="">Todos los tipos</option>
+        <option value="image">Imágenes</option>
+        <option value="video">Videos</option>
+      </select>
+    </div>
+
+    <!-- Results count -->
+    <div class="text-zinc-400 text-sm" id="results-count">Cargando activos...</div>
+
+    <!-- Assets Grid -->
+    <div
+      id="vault-grid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    ></div>
+  </div>
+
+  <script>
+    (async () => {
+      const { api } = await import('../../../lib/api-client');
+
+      const gridEl = document.getElementById('vault-grid');
+      const searchInput = document.getElementById('search-input');
+      const styleFilter = document.getElementById('style-filter');
+      const toneFilter = document.getElementById('tone-filter');
+      const typeFilter = document.getElementById('type-filter');
+      const countEl = document.getElementById('results-count');
+
+      let allAssets = [];
+      let styles = [];
+      let tones = [];
+
+      // Load filters
+      const loadFilters = async () => {
+        try {
+          const [stylesRes, tonesRes] = await Promise.all([
+            api('/api/portal/vault/styles'),
+            api('/api/portal/vault/tones'),
+          ]);
+
+          styles = stylesRes.styles || [];
+          tones = tonesRes.tones || [];
+
+          styles.forEach((s) => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            styleFilter?.appendChild(opt);
+          });
+
+          tones.forEach((t) => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            toneFilter?.appendChild(opt);
+          });
+        } catch (e) {
+          console.error('Failed to load filters:', e);
+        }
+      };
+
+      // Load assets
+      const loadAssets = async () => {
+        try {
+          const response = await api('/api/portal/vault');
+          allAssets = response.assets || [];
+          renderAssets(allAssets);
+        } catch (e) {
+          console.error('Failed to load assets:', e);
+          gridEl!.innerHTML = `
+            <div class="col-span-full text-center py-12 text-zinc-500">
+              Error cargando activos. Intenta de nuevo.
+            </div>
+          `;
+        }
+      };
+
+      // Render assets
+      const renderAssets = (assets) => {
+        if (!assets.length) {
+          gridEl!.innerHTML = `
+            <div class="col-span-full text-center py-12 text-zinc-500">
+              No hay activos en tu vault todavía.
+            </div>
+          `;
+          countEl!.textContent = '0 activos';
+          return;
+        }
+
+        countEl!.textContent = `${assets.length} activo${assets.length !== 1 ? 's' : ''}`;
+
+        gridEl!.innerHTML = assets
+          .map(
+            (asset) => `
+          <div class="group rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden hover:border-zinc-600 transition">
+            <div class="aspect-video bg-zinc-950 relative">
+              ${
+                asset.type === 'video'
+                  ? `<video src="${asset.deliveryUrl}" class="w-full h-full object-cover" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>`
+                  : `<img src="${asset.deliveryUrl}" alt="${asset.label || 'Asset'}" class="w-full h-full object-cover" />`
+              }
+              <div class="absolute top-3 right-3">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-black/80 text-white backdrop-blur">
+                  ${asset.type === 'video' ? '🎬 Video' : '📷 Imagen'}
+                </span>
+              </div>
+            </div>
+            <div class="p-4 space-y-3">
+              <h3 class="font-semibold text-white truncate">${asset.label || 'Sin título'}</h3>
+              ${
+                asset.description
+                  ? `<p class="text-sm text-zinc-400 line-clamp-2">${asset.description}</p>`
+                  : ''
+              }
+              <div class="flex flex-wrap gap-2">
+                ${asset.visualStyle ? `<span class="px-2 py-1 rounded-lg text-xs bg-sky-500/20 text-sky-400">${asset.visualStyle}</span>` : ''}
+                ${asset.emotionalTone ? `<span class="px-2 py-1 rounded-lg text-xs bg-purple-500/20 text-purple-400">${asset.emotionalTone}</span>` : ''}
+              </div>
+              <div class="pt-3 border-t border-zinc-800 flex justify-between items-center">
+                <span class="text-xs text-zinc-500">${new Date(asset.createdAt).toLocaleDateString()}</span>
+                <a
+                  href="${asset.deliveryUrl}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-xs font-medium text-white hover:text-sky-400 transition"
+                >
+                  Ver en grande →
+                </a>
+              </div>
+            </div>
+          </div>
+        `,
+          )
+          .join('');
+      };
+
+      // Filter assets
+      const filterAssets = () => {
+        const q = searchInput?.value.toLowerCase() || '';
+        const style = styleFilter?.value || '';
+        const tone = toneFilter?.value || '';
+        const type = typeFilter?.value || '';
+
+        const filtered = allAssets.filter((asset) => {
+          if (q) {
+            const searchStr = `${asset.label} ${asset.description} ${asset.tags}`.toLowerCase();
+            if (!searchStr.includes(q)) return false;
+          }
+          if (style && asset.visualStyle !== style) return false;
+          if (tone && asset.emotionalTone !== tone) return false;
+          if (type && asset.type !== type) return false;
+          return true;
+        });
+
+        renderAssets(filtered);
+      };
+
+      // Event listeners
+      searchInput?.addEventListener('input', filterAssets);
+      styleFilter?.addEventListener('change', filterAssets);
+      toneFilter?.addEventListener('change', filterAssets);
+      typeFilter?.addEventListener('change', filterAssets);
+
+      // Init
+      await loadFilters();
+      await loadAssets();
+    })();
+  </script>
+</ClientLayout>

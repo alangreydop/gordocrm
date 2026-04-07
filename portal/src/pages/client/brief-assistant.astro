@@ -1,0 +1,107 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+import { siteLinks } from '../../../lib/site-links';
+---
+
+<ClientLayout title="AI Briefing Assistant">
+  <div class="max-w-3xl mx-auto space-y-8">
+    <section class="text-center space-y-4">
+      <h1 class="text-4xl font-black tracking-tight text-white">Conceptualizador de Contenido</h1>
+      <p class="text-zinc-400">Diseñemos juntos la estrategia de tu próximo video. No es un formulario, es una conversación.</p>
+    </section>
+
+    <div id="chat-container" class="flex flex-col gap-4 h-[600px] overflow-y-auto p-4 rounded-3xl border border-zinc-800 bg-zinc-950 shadow-2xl">
+      <div class="flex flex-col gap-4" id="messages">
+        <!-- Messages will be injected here -->
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <input
+        type="text"
+        id="chat-input"
+        placeholder="Escribe tu idea aquí..."
+        class="flex-1 rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+      />
+      <button
+        id="send-btn"
+        class="rounded-2xl bg-white px-8 py-4 font-bold text-black transition hover:bg-zinc-200"
+      >
+        Enviar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const { api } = await import('../../../lib/api-client');
+      const messagesEl = document.getElementById('messages');
+      const inputEl = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      let history = [];
+      let currentStage = 'OBJECTIVE';
+
+      const addMessage = (text, isUser = false) => {
+        const msg = document.createElement('div');
+        msg.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+        msg.innerHTML = `
+          <div class="max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+            isUser
+            ? 'bg-white text-black font-medium'
+            : 'bg-zinc-800 text-zinc-200 border border-zinc-700'
+          }">
+            ${text}
+          </div>
+        `;
+        messagesEl?.appendChild(msg);
+        messagesEl?.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+      };
+
+      const sendMessage = async () => {
+        const text = inputEl?.value.trim();
+        if (!text) return;
+
+        inputEl!.value = '';
+        addMessage(text, true);
+
+        try {
+          const response = await api('/api/portal/brief/assistant/chat', {
+            method: 'POST',
+            body: JSON.stringify({
+              message: text,
+              history: history,
+              stage: currentStage,
+            }),
+          });
+
+          if (response.stage) {
+            currentStage = response.stage;
+          }
+
+          if (response.isComplete) {
+            addMessage(response.message);
+            inputEl!.disabled = true;
+            sendBtn!.disabled = true;
+            sendBtn!.textContent = '¡Completado!';
+            return;
+          }
+
+          history.push({ stage: response.stage, answer: text });
+          addMessage(response.message);
+        } catch (e) {
+          console.error(e);
+          addMessage('Lo siento, hubo un error en la conexión. Intenta de nuevo.');
+        }
+      };
+
+      sendBtn?.addEventListener('click', sendMessage);
+      inputEl?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      // Init conversation
+      addMessage('¡Hola! Soy tu asistente de conceptualización. Para empezar, ¿cuál es el objetivo principal de tu video? (Ej: Ventas, Awareness, Tutorial)');
+    })();
+  </script>
+</ClientLayout>

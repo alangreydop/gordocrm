@@ -134,29 +134,45 @@ import { siteLinks } from '../../lib/site-links';
       </section>
     </div>
 
-    <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
-      <div class="border-b border-zinc-800 px-6 py-5">
-        <h2 class="text-lg font-semibold text-white">Tus trabajos</h2>
-        <p class="mt-2 text-sm text-zinc-400">Sigue el estado de entrega y entra al detalle para ver assets aprobados.</p>
+    <!-- Activity Feed -->
+    <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+        <div class="border-b border-zinc-800 px-6 py-5">
+          <h2 class="text-lg font-semibold text-white">Tus trabajos</h2>
+          <p class="mt-2 text-sm text-zinc-400">Sigue el estado de entrega y entra al detalle para ver assets aprobados.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-black">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Brief</th>
+                <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Estado</th>
+                <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Due</th>
+                <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Units</th>
+                <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Actualizado</th>
+                <th class="px-6 py-3"></th>
+              </tr>
+            </thead>
+            <tbody id="jobs-body" class="divide-y divide-zinc-800">
+              <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-zinc-500">Cargando trabajos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead class="bg-black">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Brief</th>
-              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Estado</th>
-              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Due</th>
-              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Units</th>
-              <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Actualizado</th>
-              <th class="px-6 py-3"></th>
-            </tr>
-          </thead>
-          <tbody id="jobs-body" class="divide-y divide-zinc-800">
-            <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-zinc-500">Cargando trabajos...</td>
-            </tr>
-          </tbody>
-        </table>
+
+      <!-- Activity Feed Sidebar -->
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500 mb-4">Actividad reciente</p>
+        <div id="activity-feed" class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 mt-2 rounded-full bg-zinc-700"></div>
+            <div>
+              <p class="text-sm text-zinc-400">Cargando actividad...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -361,6 +377,53 @@ import { siteLinks } from '../../lib/site-links';
             </td>
           </tr>
         `).join('');
+
+        // Activity feed - generate from jobs data
+        const activityFeed = document.getElementById('activity-feed');
+        if (activityFeed && jobs.length > 0) {
+          const activities = [];
+
+          // Add job status changes as activities
+          jobs.forEach((job) => {
+            if (job.status === 'completed' || job.status === 'delivered') {
+              activities.push({
+                type: 'job_completed',
+                title: `Trabajo "${job.briefText?.slice(0, 40) || 'Job'}" completado`,
+                time: job.updatedAt,
+                icon: '✅',
+                href: `/client/jobs/detail?id=${job.id}`,
+              });
+            } else if (job.status === 'processing') {
+              activities.push({
+                type: 'job_processing',
+                title: `Trabajo "${job.briefText?.slice(0, 40) || 'Job'}" en producción`,
+                time: job.updatedAt,
+                icon: '🟢',
+                href: `/client/jobs/detail?id=${job.id}`,
+              });
+            }
+          });
+
+          // Sort by most recent
+          activities.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+
+          // Show last 5 activities
+          const recentActivities = activities.slice(0, 5);
+
+          if (recentActivities.length === 0) {
+            activityFeed.innerHTML = '<p class="text-sm text-zinc-400">Sin actividad reciente</p>';
+          } else {
+            activityFeed.innerHTML = recentActivities.map((activity) => `
+              <a href="${activity.href}" class="flex items-start gap-3 group">
+                <div class="w-2 h-2 mt-2 rounded-full ${activity.type === 'job_completed' ? 'bg-emerald-500' : 'bg-sky-500'}"></div>
+                <div>
+                  <p class="text-sm text-zinc-300 group-hover:text-white transition">${escapeHtml(activity.title)}</p>
+                  <p class="text-xs text-zinc-500 mt-0.5">${formatDate(activity.time)}</p>
+                </div>
+              </a>
+            `).join('');
+          }
+        }
       } catch {
         if (tbody) {
           tbody.innerHTML = `
