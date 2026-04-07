@@ -79,7 +79,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             .map(async job => {
               const jobData = await api(`/api/portal/jobs/${job.id}`);
               return jobData.assets
-                .filter(asset => asset.qaStatus === 'approved' || !asset.qaStatus)
+                .filter(asset => asset.status === 'approved' || !asset.status)
                 .map(asset => ({
                   ...asset,
                   jobName: job.briefText || `Trabajo ${job.id.slice(0, 8)}`,
