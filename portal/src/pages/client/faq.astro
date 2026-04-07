@@ -1,0 +1,306 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Preguntas Frecuentes">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <section class="text-center space-y-4">
+      <h1 class="text-4xl font-black tracking-tight text-white">Preguntas Frecuentes</h1>
+      <p class="text-zinc-400">Todo lo que necesitas saber sobre el proceso de producción.</p>
+    </section>
+
+    <!-- Proceso -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">📋</span>
+        Proceso de producción
+      </h2>
+      <div class="space-y-6">
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cómo funciona el proceso de producción?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400 space-y-3">
+            <ol class="list-decimal list-inside space-y-2">
+              <li><strong>Brief:</strong> Completas el brief con objetivos, referencias y necesidades</li>
+              <li><strong>Onboarding:</strong> Preparas materiales y agendamos sesión</li>
+              <li><strong>Sesión:</strong> Capturamos contenido (producto, brand, conceptos)</li>
+              <li><strong>Producción:</strong> Generamos assets con IA siguiendo tu brief</li>
+              <li><strong>QA:</strong> Revisión interna de calidad</li>
+              <li><strong>Entrega:</strong> Assets aprobados disponibles en tu portal</li>
+              <li><strong>Feedback:</strong> Si necesitas ajustes, los implementamos</li>
+            </ol>
+            <p class="text-sm mt-3">Plazo típico: 3-5 días laborables desde la sesión hasta la entrega.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Qué necesito preparar antes de empezar?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p class="mb-3">Consulta nuestra <a href="/client/onboarding" class="text-white underline hover:text-zinc-200">checklist de onboarding</a> completa. Lo esencial:</p>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+              <li>Producto limpio y preparado (sin polvo, huellas)</li>
+              <li>Logo en vector (SVG/AI) y PNG transparente</li>
+              <li>Colores de marca (HEX/Pantone)</li>
+              <li>Referencias visuales (Pinterest, moodboard)</li>
+              <li>Definición de plataformas objetivo (Instagram, TikTok, Amazon, etc.)</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Puedo pedir cambios después de la entrega?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p class="mb-2"><strong>Sí, revisiones ilimitadas</strong> mientras estén dentro del scope del brief aprobado.</p>
+            <p class="text-sm">Si el feedback requiere cambios sustanciales no contemplados en el brief original (ej: cambiar concepto, tono, o plataformas), se consumirá como nuevo trabajo.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cuánto tiempo tengo para dar feedback?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Recomendamos feedback dentro de <strong>48-72 horas</strong> desde la entrega para mantener el flujo de producción. Si no recibimos feedback en 7 días, el trabajo se marca como "aprobado por silencio".</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Unidades y consumo -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">⚡</span>
+        Unidades y consumo
+      </h2>
+      <div class="space-y-6">
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cómo se consumen las unidades?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p class="mb-2">Cada trabajo consume unidades según su complejidad:</p>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+              <li>Imagen estática: 1 unidad</li>
+              <li>Video corto (&lt;15s): 2-3 unidades</li>
+              <li>Video medio (15-60s): 4-6 unidades</li>
+              <li>Video largo (+60s): 7+ unidades</li>
+            </ul>
+            <p class="text-sm mt-3">El consumo exacto se confirma antes de iniciar producción.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Qué pasa si me quedo sin unidades?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Puedes contratar unidades adicionales o esperar al reseteo mensual según tu plan. Contacta con tu account manager en <a href="mailto:hola@grandeandgordo.com" class="text-white underline hover:text-zinc-200">hola@grandeandgordo.com</a>.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Las unidades caducan?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Las unidades no consumidas dentro de tu plan mensual <strong>no se acumulan</strong> al mes siguiente. Cada mes comienza con tu capacidad renovada.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Assets y entregables -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">📦</span>
+        Assets y entregables
+      </h2>
+      <div class="space-y-6">
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿En qué formatos recibo los assets?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p class="mb-2">Depende de la plataforma objetivo:</p>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+              <li><strong>Instagram/TikTok:</strong> 9:16 vertical, MP4/H.264, 1080x1920</li>
+              <li><strong>Amazon PDP:</strong> 1:1 cuadrado, JPG/PNG, 2000x2000px mínimo</li>
+              <li><strong>Paid Ads:</strong> Múltiples ratios según plataforma (1:1, 4:5, 16:9)</li>
+            </ul>
+            <p class="text-sm mt-3">Todos los assets incluyen versiones optimizadas para cada canal.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Puedo descargar todos los assets de una vez?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Sí, desde la página de cada trabajo puedes usar el botón <strong>"Descargar todo (ZIP)"</strong> para bajar todos los assets aprobados en un solo archivo comprimido.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cuánto tiempo están disponibles los assets?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Los assets están disponibles <strong>indefinidamente</strong> en tu portal. Recomendamos descargar y hacer backup local periódicamente.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Tengo derechos comerciales sobre los assets?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p><strong>Sí.</strong> Una vez abonada la factura, adquieres derechos de uso comercial ilimitados para los assets entregados. Puedes usarlos en campañas paid, orgánico, web, retail, etc.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Facturación y pagos -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">💳</span>
+        Facturación y pagos
+      </h2>
+      <div class="space-y-6">
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cuál es el método de pago?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>El pago se realiza por <strong>transferencia bancaria</strong> a la cuenta indicada en cada factura. También aceptamos pago con tarjeta bajo petición.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cuándo se emite la factura?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>La factura se emite al completar el trabajo. El plazo de pago es de <strong>7 días</strong> desde la fecha de emisión.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Ofrecéis factura con IVA deducible?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Sí, todas nuestras facturas incluyen IVA (21%) deducible para empresas. Si eres cliente intra-UE con VIES, el IVA no se aplica (inversión del sujeto pasivo).</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Soporte y contacto -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">💬</span>
+        Soporte y contacto
+      </h2>
+      <div class="space-y-6">
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cómo contacto con mi account manager?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Tu account manager aparece en el sidebar y en tu perfil. El canal principal es email: <a href="mailto:hola@grandeandgordo.com" class="text-white underline hover:text-zinc-200">hola@grandeandgordo.com</a></p>
+            <p class="text-sm mt-2">Tiempo de respuesta típico: 24-48 horas laborables.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Ofrecéis soporte técnico?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Sí, ayudamos con cualquier incidencia técnica: acceso al portal, problemas de descarga, errores en assets, etc. Usa el formulario de feedback en cada trabajo o contacta directamente.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
+          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+            ¿Cuál es el horario de atención?
+            <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 text-zinc-400">
+            <p>Atendemos de <strong>lunes a viernes, 9:00-18:00 CET</strong>. Fuera de ese horario, respondemos en el siguiente día laborable.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- CTA final -->
+    <div class="rounded-3xl border border-zinc-800 bg-black p-6 md:p-8 text-center">
+      <h2 class="text-2xl font-black text-white mb-4">¿No encuentras lo que buscas?</h2>
+      <p class="text-zinc-400 mb-6">
+        Si tu pregunta no está en esta lista, contacta directamente y te responderemos encantados.
+      </p>
+      <a
+        href="mailto:hola@grandeandgordo.com"
+        class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200"
+      >
+        Contactar soporte
+      </a>
+    </div>
+  </div>
+</ClientLayout>

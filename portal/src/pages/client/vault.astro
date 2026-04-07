@@ -1,5 +1,5 @@
 ---
-import ClientLayout from '../../../layouts/ClientLayout.astro';
+import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="The Vault - Tu Biblioteca de Activos">
@@ -51,7 +51,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
   <script>
     (async () => {
-      const { api } = await import('../../../lib/api-client');
+      const { api } = await import('../../lib/api-client');
 
       const gridEl = document.getElementById('vault-grid');
       const searchInput = document.getElementById('search-input');

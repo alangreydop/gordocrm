@@ -361,8 +361,7 @@ jobRoutes.get('/:id', async (c) => {
       type: schema.assets.type,
       r2Key: schema.assets.r2Key,
       deliveryUrl: schema.assets.deliveryUrl,
-      qaStatus: schema.assets.qaStatus,
-      qaNotes: schema.assets.qaNotes,
+      status: schema.assets.status,
       createdAt: schema.assets.createdAt,
     })
     .from(schema.assets)
@@ -371,7 +370,7 @@ jobRoutes.get('/:id', async (c) => {
         ? eq(schema.assets.jobId, id)
         : and(
             eq(schema.assets.jobId, id),
-            or(eq(schema.assets.qaStatus, 'approved'), isNull(schema.assets.qaStatus)),
+            or(eq(schema.assets.status, 'approved'), isNull(schema.assets.status)),
           ),
     )
     .orderBy(desc(schema.assets.createdAt));
@@ -527,7 +526,7 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
     return c.json({ error: `AI Engine error: ${error.error}` }, 500);
   }
 
-  const aiJob = await response.json();
+  const aiJob: any = await response.json();
 
   // Actualizar job en CRM con external_job_id
   await db
@@ -535,7 +534,6 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
     .set({
       externalJobId: String(aiJob.id),
       status: 'processing',
-      startedAt: new Date(),
       updatedAt: new Date(),
     })
     .where(eq(schema.jobs.id, id));
@@ -630,7 +628,7 @@ jobRoutes.patch('/:id', async (c) => {
         .insert(schema.notifications)
         .values({
           id: crypto.randomUUID(),
-          userId: client.userId,
+          userId: client.userId!,
           type: 'job_completed',
           title: '¡Trabajo completado!',
           message: `Tu trabajo "${job.briefText?.slice(0, 40) || 'Trabajo'}" está listo para descargar.`,
@@ -727,12 +725,11 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
   await db
     .update(schema.assets)
     .set({
-      label: body.data.label,
+      label: body.data.label ?? undefined,
       type: body.data.type ?? undefined,
       r2Key: body.data.r2Key ?? undefined,
-      deliveryUrl: body.data.deliveryUrl,
-      qaStatus: body.data.qaStatus,
-      qaNotes: body.data.qaNotes,
+      deliveryUrl: body.data.deliveryUrl ?? undefined,
+      status: body.data.status ?? undefined,
     })
     .where(eq(schema.assets.id, assetId));
 

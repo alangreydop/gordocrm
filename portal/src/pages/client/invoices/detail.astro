@@ -14,9 +14,11 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
     </div>
   </div>
 
+  <script hoist>
+    import { api } from '../../../lib/api-client';
+  </script>
   <script>
     (async () => {
-      const { api } = await import('../../../lib/api-client');
       const detailEl = document.getElementById('invoice-detail');
       const titleEl = document.getElementById('invoice-number');
 
@@ -42,8 +44,13 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         return `<span class="px-3 py-1 rounded-full text-xs font-bold ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
       };
 
-      const pathParts = window.location.pathname.split('/');
-      const invoiceId = pathParts[pathParts.length - 1];
+      const urlParams = new URLSearchParams(window.location.search);
+      const invoiceId = urlParams.get('id');
+
+      if (!invoiceId) {
+        detailEl!.innerHTML = '<div class="text-red-400 py-12 text-center">ID de factura no proporcionado</div>';
+        return;
+      }
 
       const loadInvoice = async () => {
         try {

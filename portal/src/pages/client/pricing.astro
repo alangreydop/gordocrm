@@ -1,0 +1,363 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Planes y Precios">
+  <div class="max-w-6xl mx-auto space-y-8">
+    <section class="text-center space-y-4">
+      <h1 class="text-4xl font-black tracking-tight text-white">Planes y Precios</h1>
+      <p class="text-zinc-400">Elige el plan que mejor se adapta a tu producción de contenido.</p>
+    </section>
+
+    <!-- Pricing Tiers -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Starter -->
+      <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8 flex flex-col">
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-white">Starter</h3>
+          <p class="text-sm text-zinc-400 mt-1">Para marcas que empiezan</p>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1">
+            <span class="text-4xl font-black text-white">€490</span>
+            <span class="text-zinc-500">/mes</span>
+          </div>
+          <p class="text-xs text-zinc-500 mt-2">o €5.400/año (2 meses gratis)</p>
+        </div>
+
+        <ul class="space-y-3 mb-8 flex-1">
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">10 unidades/mes</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">1 sesión de captura inicial</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Instagram + TikTok</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Revisión y feedback ilimitados</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Account manager dedicado</span>
+          </li>
+        </ul>
+
+        <a href="mailto:hola@grandeandgordo.com?subject=Interesado%20en%20plan%20Starter" class="w-full inline-flex items-center justify-center rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-zinc-500 hover:text-white text-center">
+          Contactar
+        </a>
+      </div>
+
+      <!-- Growth (Most Popular) -->
+      <div class="rounded-3xl border border-emerald-500/50 bg-gradient-to-b from-emerald-950/30 to-zinc-900/50 p-6 md:p-8 flex flex-col relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span class="px-3 py-1 rounded-full bg-emerald-500 text-black text-xs font-bold uppercase tracking-wide">Más popular</span>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-white">Growth</h3>
+          <p class="text-sm text-zinc-400 mt-1">Para marcas en expansión</p>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1">
+            <span class="text-4xl font-black text-white">€990</span>
+            <span class="text-zinc-500">/mes</span>
+          </div>
+          <p class="text-xs text-zinc-500 mt-2">o €10.900/año (2 meses gratis)</p>
+        </div>
+
+        <ul class="space-y-3 mb-8 flex-1">
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">25 unidades/mes</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">2 sesiones de captura/trimestre</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Multi-plataforma (IG, TikTok, Amazon)</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">The Vault: librería de inspiración</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Review trimestral de estrategia</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Prioridad en producción</span>
+          </li>
+        </ul>
+
+        <a href="mailto:hola@grandeandgordo.com?subject=Interesado%20en%20plan%20Growth" class="w-full inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200 text-center">
+          Contactar
+        </a>
+      </div>
+
+      <!-- Scale -->
+      <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8 flex flex-col">
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-white">Scale</h3>
+          <p class="text-sm text-zinc-400 mt-1">Para operación continua</p>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1">
+            <span class="text-4xl font-black text-white">€1.990</span>
+            <span class="text-zinc-500">/mes</span>
+          </div>
+          <p class="text-xs text-zinc-500 mt-2">o €21.900/año (2 meses gratis)</p>
+        </div>
+
+        <ul class="space-y-3 mb-8 flex-1">
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">60 unidades/mes</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Sesiones mensuales de captura</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Todas las plataformas + Paid Ads</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Unidades extra rollover (10%)</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Slack channel dedicado</span>
+          </li>
+          <li class="flex items-start gap-3 text-sm">
+            <svg class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-zinc-300">Reporting mensual de ROI</span>
+          </li>
+        </ul>
+
+        <a href="mailto:hola@grandeandgordo.com?subject=Interesado%20en%20plan%20Scale" class="w-full inline-flex items-center justify-center rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-zinc-500 hover:text-white text-center">
+          Contactar
+        </a>
+      </div>
+    </div>
+
+    <!-- Unit breakdown -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6">¿Cómo funcionan las unidades?</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">
+              <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <p class="font-semibold text-white">Imagen estática</p>
+          </div>
+          <p class="text-2xl font-black text-white">1 unidad</p>
+          <p class="text-xs text-zinc-500 mt-1">Por variación</p>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">
+              <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <p class="font-semibold text-white">Video corto</p>
+          </div>
+          <p class="text-2xl font-black text-white">2-3 unidades</p>
+          <p class="text-xs text-zinc-500 mt-1">&lt;15 segundos</p>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">
+              <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <p class="font-semibold text-white">Video medio</p>
+          </div>
+          <p class="text-2xl font-black text-white">4-6 unidades</p>
+          <p class="text-xs text-zinc-500 mt-1">15-60 segundos</p>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-800 bg-black p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center">
+              <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <p class="font-semibold text-white">Video largo</p>
+          </div>
+          <p class="text-2xl font-black text-white">7+ unidades</p>
+          <p class="text-xs text-zinc-500 mt-1">+60 segundos</p>
+        </div>
+      </div>
+
+      <p class="text-sm text-zinc-400 mt-6">
+        <strong class="text-white">Nota:</strong> El consumo exacto se confirma antes de iniciar producción.
+        Unidades no consumidas no se acumulan al mes siguiente.
+      </p>
+    </div>
+
+    <!-- What's included -->
+    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-white mb-6">Lo que incluye cada plan</h2>
+      <div class="space-y-4">
+        <div class="flex items-start gap-4 py-4 border-b border-zinc-800">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Brief y estrategia</h3>
+            <p class="text-sm text-zinc-400 mt-1">Asistente AI para conceptualización + revisión humana del equipo</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 py-4 border-b border-zinc-800">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Producción con IA</h3>
+            <p class="text-sm text-zinc-400 mt-1">Generación de assets con modelos propietarios + control de calidad</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 py-4 border-b border-zinc-800">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Assets multi-formato</h3>
+            <p class="text-sm text-zinc-400 mt-1">Versiones optimizadas para cada plataforma (9:16, 1:1, 16:9, etc.)</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 py-4 border-b border-zinc-800">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Revisiones ilimitadas</h3>
+            <p class="text-sm text-zinc-400 mt-1">Feedback dentro del scope del brief hasta tu satisfacción</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 py-4 border-b border-zinc-800">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Descarga ilimitada</h3>
+            <p class="text-sm text-zinc-400 mt-1">Acceso permanente a tus assets + descarga bulk en ZIP</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 py-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white">Derechos comerciales</h3>
+            <p class="text-sm text-zinc-400 mt-1">Uso comercial ilimitado una vez abonada la factura</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guarantee -->
+    <div class="rounded-3xl border border-emerald-800/50 bg-emerald-950/20 p-6 md:p-8">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-bold text-white text-lg">Garantía de satisfacción</h3>
+          <p class="text-sm text-zinc-400 mt-2">
+            Si el entregable final no cumple con el brief aprobado, ofrecemos revisión gratuita o <strong>reembolso del 50%</strong>.
+            Tienes 7 días desde la entrega para solicitarlo. Para cancelar antes de la entrega, reembolsamos el % no consumido de unidades.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ teaser -->
+    <div class="rounded-3xl border border-zinc-800 bg-black p-6 md:p-8 text-center">
+      <h2 class="text-2xl font-black text-white mb-4">¿Tienes dudas?</h2>
+      <p class="text-zinc-400 mb-6">
+        Consulta nuestras <a href="/client/faq" class="text-white underline hover:text-zinc-200">preguntas frecuentes</a> o contacta directamente.
+      </p>
+      <a
+        href="mailto:hola@grandeandgordo.com"
+        class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200"
+      >
+        Hablar con el equipo
+      </a>
+    </div>
+  </div>
+</ClientLayout>

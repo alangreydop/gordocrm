@@ -18,7 +18,7 @@ import { webhookRoutes } from './api/routes/portal/webhooks.js';
 import { assistantRoutes } from './api/routes/portal/brief-assistant.js';
 import { invoiceRoutes } from './api/routes/admin/invoices.js';
 import { vaultRoutes } from './api/routes/portal/vault.js';
-import { clientInvoiceRoutes } from './api/routes/portal/invoices.js';
+import { invoiceRoutes as clientInvoiceRoutes } from './api/routes/portal/invoices.js';
 import { kanbanRoutes } from './api/routes/admin/kanban.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import { sendQuarterlyReviewReminderEmail } from './lib/email.js';

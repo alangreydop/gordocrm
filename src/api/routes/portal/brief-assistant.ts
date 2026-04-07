@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
-import { briefSubmissions } from '../../../db/schema.js';
+import { schema } from '../../../../db/index.js';
+const { briefSubmissions } = schema;
 import type { AppContext } from '../../../types/index.js';
 
 const assistant = new Hono<AppContext>();

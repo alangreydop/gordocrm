@@ -1,5 +1,5 @@
 ---
-import ClientLayout from '../../../layouts/ClientLayout.astro';
+import ClientLayout from '../../layouts/ClientLayout.astro';
 import { siteLinks } from '../../../lib/site-links';
 ---
 
@@ -34,7 +34,7 @@ import { siteLinks } from '../../../lib/site-links';
 
   <script>
     (async () => {
-      const { api } = await import('../../../lib/api-client');
+      const { api } = await import('../../lib/api-client');
       const messagesEl = document.getElementById('messages');
       const inputEl = document.getElementById('chat-input');
       const sendBtn = document.getElementById('send-btn');
