@@ -9,223 +9,96 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
       <p class="text-zinc-400">Resultados reales de clientes que confiaron en Grande & Gordo.</p>
     </section>
 
+    <!-- Featured Case: Conservas Lalín -->
+    <a href="/client/cases/conservas-lalin" class="block group">
+      <div class="relative rounded-3xl border border-crm-border overflow-hidden bg-crm-panel">
+        <div class="absolute inset-0 bg-gradient-to-r from-crm-panel to-transparent z-10"></div>
+        <div
+          class="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition duration-500"
+          style="background-image: url('https://assets.grandeandgordo.com/001/Screenshot%202026-04-08%20at%2003.30.40.avif');"
+        ></div>
+        <div class="relative z-20 p-8 md:p-12">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase">Conservas</span>
+            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold uppercase">Exportación</span>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-black text-white mb-4 group-hover:text-crm-accent transition">
+            Conservas Lalín
+          </h2>
+          <p class="text-lg text-zinc-400 mb-6 max-w-2xl">
+            De vender solo en Galicia a exportar el 60%
+          </p>
+          <div class="flex items-center gap-2 text-sm font-medium text-crm-accent">
+            Ver caso completo
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
     <!-- Metrics summary -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 text-center">
-        <p class="text-4xl font-black text-white">150+</p>
-        <p class="text-xs text-zinc-500 mt-1 uppercase tracking-wide">Clientes servidos</p>
+      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
+        <p class="text-4xl font-black text-crm-text">150+</p>
+        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Clientes servidos</p>
       </div>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 text-center">
-        <p class="text-4xl font-black text-white">12.000+</p>
-        <p class="text-xs text-zinc-500 mt-1 uppercase tracking-wide">Assets producidos</p>
+      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
+        <p class="text-4xl font-black text-crm-text">12.000+</p>
+        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Assets producidos</p>
       </div>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 text-center">
-        <p class="text-4xl font-black text-white">98%</p>
-        <p class="text-xs text-zinc-500 mt-1 uppercase tracking-wide">Satisfacción</p>
+      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
+        <p class="text-4xl font-black text-crm-text">98%</p>
+        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Satisfacción</p>
       </div>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 text-center">
-        <p class="text-4xl font-black text-white">3x</p>
-        <p class="text-xs text-zinc-500 mt-1 uppercase tracking-wide">ROI promedio</p>
-      </div>
-    </div>
-
-    <!-- Case Study 1: E-commerce Fashion -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
-      <div class="grid md:grid-cols-2">
-        <div class="p-6 md:p-8">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase">E-commerce</span>
-            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold uppercase">Moda</span>
-          </div>
-          <h2 class="text-2xl font-black text-white mb-2">TechBrand OS</h2>
-          <p class="text-zinc-400 text-sm mb-6">Producción continua de contenido para Instagram y TikTok</p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Desafío</span>
-              <span class="text-white text-sm text-right">Escalar producción de 10 a 100+ piezas/mes</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Solución</span>
-              <span class="text-white text-sm text-right">Pipeline automatizado con IA + revisión humana</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Resultado</span>
-              <span class="text-emerald-400 text-sm font-bold">142 piezas en 3 meses</span>
-            </div>
-          </div>
-
-          <blockquote class="border-l-2 border-emerald-500 pl-4 py-2 mb-6">
-            <p class="text-zinc-300 italic">"Grande & Gordo transformó nuestro flujo de contenido. Pasamos de semanas a días para tener assets listos."</p>
-            <footer class="mt-3 text-sm text-zinc-500">— CEO, TechBrand OS</footer>
-          </blockquote>
-
-          <div class="grid grid-cols-3 gap-4">
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">142</p>
-              <p class="text-xs text-zinc-500">Piezas</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">-60%</p>
-              <p class="text-xs text-zinc-500">Coste/pieza</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">+45%</p>
-              <p class="text-xs text-zinc-500">Engagement</p>
-            </div>
-          </div>
-        </div>
-        <div class="bg-zinc-950 flex items-center justify-center min-h-[300px] p-6">
-          <div class="text-center space-y-4">
-            <div class="w-32 h-32 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-zinc-800 flex items-center justify-center">
-              <svg class="w-16 h-16 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <p class="text-zinc-500 text-sm">Portfolio visual disponible bajo petición</p>
-          </div>
-        </div>
+      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
+        <p class="text-4xl font-black text-crm-text">3x</p>
+        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">ROI promedio</p>
       </div>
     </div>
 
-    <!-- Case Study 2: Beauty & Cosmetics -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
-      <div class="grid md:grid-cols-2">
-        <div class="bg-zinc-950 flex items-center justify-center min-h-[300px] p-6 order-2 md:order-1">
-          <div class="text-center space-y-4">
-            <div class="w-32 h-32 mx-auto rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-zinc-800 flex items-center justify-center">
-              <svg class="w-16 h-16 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a4 4 0 004-4v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-              </svg>
-            </div>
-            <p class="text-zinc-500 text-sm">Portfolio visual disponible bajo petición</p>
-          </div>
+    <!-- More Cases Coming Soon -->
+    <section class="rounded-3xl border border-crm-border bg-crm-panel-soft p-8 text-center">
+      <div class="max-w-2xl mx-auto">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-crm-panel flex items-center justify-center">
+          <svg class="w-8 h-8 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
         </div>
-        <div class="p-6 md:p-8 order-1 md:order-2">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-xs font-bold uppercase">Beauty</span>
-            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-xs font-bold uppercase">Cosmetics</span>
-          </div>
-          <h2 class="text-2xl font-black text-white mb-2">Signal Labs</h2>
-          <p class="text-zinc-400 text-sm mb-6">Content engine para lanzamientos de producto</p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Desafío</span>
-              <span class="text-white text-sm text-right">Lanzar 3 líneas nuevas en 6 semanas</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Solución</span>
-              <span class="text-white text-sm text-right">Producción paralela multi-SKU con brand consistency</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Resultado</span>
-              <span class="text-emerald-400 text-sm font-bold">89 entregas on-time</span>
-            </div>
-          </div>
-
-          <blockquote class="border-l-2 border-pink-500 pl-4 py-2 mb-6">
-            <p class="text-zinc-300 italic">"Necesitábamos velocidad sin sacrificar calidad. El equipo entendió nuestra estética desde día uno."</p>
-            <footer class="mt-3 text-sm text-zinc-500">— CMO, Signal Labs</footer>
-          </blockquote>
-
-          <div class="grid grid-cols-3 gap-4">
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">89</p>
-              <p class="text-xs text-zinc-500">Entregas</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">6</p>
-              <p class="text-xs text-zinc-500">Semanas</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">100%</p>
-              <p class="text-xs text-zinc-500">On-time</p>
-            </div>
-          </div>
-        </div>
+        <h3 class="text-xl font-black text-crm-text mb-2">Más casos próximamente</h3>
+        <p class="text-sm text-crm-muted mb-6">
+          Estamos preparando casos de éxito de textil, panadería, astilleros y cosmética.
+        </p>
+        <a
+          href="/client/brief-assistant"
+          class="inline-flex items-center justify-center rounded-full bg-crm-text px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+        >
+          Contar mi historia
+        </a>
       </div>
-    </div>
-
-    <!-- Case Study 3: Tech SaaS -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
-      <div class="grid md:grid-cols-2">
-        <div class="p-6 md:p-8">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase">SaaS</span>
-            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold uppercase">Tech</span>
-          </div>
-          <h2 class="text-2xl font-black text-white mb-2">Mixed Systems</h2>
-          <p class="text-zinc-400 text-sm mb-6">Assets para paid ads y landing pages</p>
-
-          <div class="space-y-4 mb-6">
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Desafío</span>
-              <span class="text-white text-sm text-right">Reducir CAC mediante creativos más efectivos</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Solución</span>
-              <span class="text-white text-sm text-right">Testing masivo de variaciones con IA</span>
-            </div>
-            <div class="flex justify-between items-center py-3 border-b border-zinc-800">
-              <span class="text-zinc-500 text-sm">Resultado</span>
-              <span class="text-emerald-400 text-sm font-bold">-35% CAC en 2 meses</span>
-            </div>
-          </div>
-
-          <blockquote class="border-l-2 border-indigo-500 pl-4 py-2 mb-6">
-            <p class="text-zinc-300 italic">"El testing a escala nos permitió encontrar ganadores que nunca hubiéramos imaginado."</p>
-            <footer class="mt-3 text-sm text-zinc-500">— Head of Growth, Mixed Systems</footer>
-          </blockquote>
-
-          <div class="grid grid-cols-3 gap-4">
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">64</p>
-              <p class="text-xs text-zinc-500">Flujos</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">-35%</p>
-              <p class="text-xs text-zinc-500">CAC</p>
-            </div>
-            <div class="text-center">
-              <p class="text-2xl font-black text-white">+2.1x</p>
-              <p class="text-xs text-zinc-500">ROAS</p>
-            </div>
-          </div>
-        </div>
-        <div class="bg-zinc-950 flex items-center justify-center min-h-[300px] p-6">
-          <div class="text-center space-y-4">
-            <div class="w-32 h-32 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-zinc-800 flex items-center justify-center">
-              <svg class="w-16 h-16 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-            </div>
-            <p class="text-zinc-500 text-sm">Portfolio visual disponible bajo petición</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
 
     <!-- CTA -->
-    <div class="rounded-3xl border border-zinc-800 bg-black p-6 md:p-8 text-center">
-      <h2 class="text-2xl font-black text-white mb-4">¿Quieres ser el próximo caso de éxito?</h2>
-      <p class="text-zinc-400 mb-6 max-w-2xl mx-auto">
-        Únete a los 150+ clientes que ya producen contenido a escala con Grande & Gordo.
+    <section class="rounded-3xl border border-crm-border bg-crm-panel p-8 text-center">
+      <h2 class="text-2xl font-black text-crm-text mb-4">¿Quieres ser el próximo caso de éxito?</h2>
+      <p class="text-sm text-crm-muted mb-6 max-w-2xl mx-auto">
+        Únete a Conservas Lalín y otros clientes que ya están transformando su negocio con Grande & Gordo.
       </p>
       <div class="flex flex-wrap gap-3 justify-center">
         <a
           href="/client/brief-assistant"
-          class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200"
+          class="inline-flex items-center justify-center rounded-full bg-crm-text px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
         >
           Empezar ahora
         </a>
         <a
           href="mailto:hola@grandeandgordo.com"
-          class="inline-flex items-center justify-center rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-zinc-500 hover:text-white"
+          class="inline-flex items-center justify-center rounded-full border border-crm-border px-6 py-3 text-sm font-semibold text-crm-text transition hover:bg-crm-panel-soft"
         >
           Hablar con el equipo
         </a>
       </div>
-    </div>
+    </section>
   </div>
 </ClientLayout>
