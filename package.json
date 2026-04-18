@@ -12,6 +12,7 @@
     "dev": "wrangler dev",
     "build": "tsc --project tsconfig.build.json",
     "build:portal": "npm --prefix portal run build",
+    "check:portal": "npm --prefix portal run check",
     "deploy": "npm run build:portal && wrangler deploy --env production",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
