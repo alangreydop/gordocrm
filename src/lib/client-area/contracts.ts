@@ -45,6 +45,12 @@ export interface ClientAreaInvoiceSnapshot {
   id: string;
 }
 
+export interface ClientAreaTimelineItemSnapshot {
+  id: string;
+  kind: string;
+  label: string;
+}
+
 export interface ClientAreaBillingSnapshot {
   invoices: ClientAreaInvoiceSnapshot[];
 }
@@ -56,7 +62,7 @@ export interface ClientAreaSnapshot {
   files: ClientAreaFileSnapshot[];
   messages: ClientAreaMessageSnapshot[];
   billing: ClientAreaBillingSnapshot;
-  timeline: unknown[];
+  timeline: ClientAreaTimelineItemSnapshot[];
 }
 
 export function createEmptyClientAreaSnapshot(): ClientAreaSnapshot {
