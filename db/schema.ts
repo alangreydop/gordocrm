@@ -357,3 +357,76 @@ export const notifications = sqliteTable(
     index('idx_notifications_created_at').on(table.createdAt),
   ],
 );
+
+export const clientReviews = sqliteTable(
+  'client_reviews',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    jobId: text('job_id').references(() => jobs.id),
+    assetId: text('asset_id').references(() => assets.id),
+    title: text('title').notNull(),
+    summary: text('summary'),
+    status: text('status').notNull().default('needs_review'),
+    requestedAt: integer('requested_at', { mode: 'timestamp_ms' }).notNull(),
+    dueAt: integer('due_at', { mode: 'timestamp_ms' }),
+    decisionNote: text('decision_note'),
+    decidedByUserId: text('decided_by_user_id').references(() => users.id),
+    decidedAt: integer('decided_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    check(
+      'client_reviews_status_check',
+      sql`${table.status} IN ('needs_review', 'approved', 'changes_requested')`,
+    ),
+    index('idx_client_reviews_client_id').on(table.clientId),
+    index('idx_client_reviews_job_id').on(table.jobId),
+    index('idx_client_reviews_status').on(table.status),
+  ],
+);
+
+export const clientThreads = sqliteTable(
+  'client_threads',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    jobId: text('job_id').references(() => jobs.id),
+    subject: text('subject').notNull(),
+    status: text('status').notNull().default('active'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    check('client_threads_status_check', sql`${table.status} IN ('active', 'closed')`),
+    index('idx_client_threads_client_id').on(table.clientId),
+    index('idx_client_threads_job_id').on(table.jobId),
+    index('idx_client_threads_updated_at').on(table.updatedAt),
+  ],
+);
+
+export const clientMessages = sqliteTable(
+  'client_messages',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    threadId: text('thread_id')
+      .notNull()
+      .references(() => clientThreads.id, { onDelete: 'cascade' }),
+    authorUserId: text('author_user_id').references(() => users.id),
+    authorRole: text('author_role').notNull(),
+    body: text('body').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    readAt: integer('read_at', { mode: 'timestamp_ms' }),
+  },
+  (table) => [
+    check('client_messages_author_role_check', sql`${table.authorRole} IN ('client', 'studio')`),
+    index('idx_client_messages_thread_id').on(table.threadId),
+    index('idx_client_messages_author_user_id').on(table.authorUserId),
+    index('idx_client_messages_created_at').on(table.createdAt),
+  ],
+);
