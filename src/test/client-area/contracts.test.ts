@@ -26,7 +26,12 @@ describe('client area contracts', () => {
     expect(snapshot.billing.invoices).toEqual([]);
     expect(snapshot.timeline).toEqual([]);
 
-    snapshot.projects.push({ id: 'project-1' });
+    snapshot.projects.push({
+      id: 'project-1',
+      title: 'Proyecto de prueba',
+      status: 'active',
+      dueAt: null,
+    });
     snapshot.timeline.push({ id: 'timeline-1', kind: 'event', label: 'Timeline item' });
 
     expect(nextSnapshot.projects).toEqual([]);

@@ -63,7 +63,7 @@ function toIsoString(value: Date | null): string | null {
 }
 
 function getProjectTitle(job: ClientAreaSourceJob): string {
-  return job.briefText?.trim() || [job.platform, job.type].filter(Boolean).join(' ') || `Proyecto ${job.id}`;
+  return job.briefText?.trim() || [job.platform, job.type].filter(Boolean).join(' ') || 'Proyecto sin título';
 }
 
 export function buildClientAreaSnapshot({

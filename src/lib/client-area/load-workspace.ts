@@ -32,6 +32,7 @@ export async function loadClientAreaWorkspace({
     })
     .from(schema.clients)
     .where(eq(schema.clients.userId, userId))
+    .orderBy(desc(schema.clients.updatedAt), desc(schema.clients.createdAt))
     .limit(1);
 
   if (!client) {

@@ -27,6 +27,9 @@ export interface ClientAreaAccountSnapshot {
 
 export interface ClientAreaProjectSnapshot {
   id: string;
+  title: string;
+  status: string;
+  dueAt: string | null;
 }
 
 export interface ClientAreaReviewSnapshot {
@@ -43,6 +46,11 @@ export interface ClientAreaMessageSnapshot {
 
 export interface ClientAreaInvoiceSnapshot {
   id: string;
+  invoiceNumber: string;
+  status: string;
+  totalCents: number;
+  issueDate: string;
+  dueDate: string;
 }
 
 export interface ClientAreaTimelineItemSnapshot {
