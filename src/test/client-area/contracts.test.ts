@@ -27,7 +27,7 @@ describe('client area contracts', () => {
     expect(snapshot.timeline).toEqual([]);
 
     snapshot.projects.push({ id: 'project-1' });
-    snapshot.timeline.push({ id: 'timeline-1' });
+    snapshot.timeline.push({ id: 'timeline-1', kind: 'event', label: 'Timeline item' });
 
     expect(nextSnapshot.projects).toEqual([]);
     expect(nextSnapshot.timeline).toEqual([]);
