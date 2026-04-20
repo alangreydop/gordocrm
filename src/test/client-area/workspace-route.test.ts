@@ -137,6 +137,54 @@ describe('buildClientAreaSnapshot', () => {
           updatedAt: new Date('2026-04-16T10:00:00.000Z'),
         },
       ],
+      assets: [
+        {
+          id: 'asset-1',
+          jobId: 'job-1',
+          label: 'Pack final',
+          type: 'image',
+          deliveryUrl: 'https://cdn.grandeandgordo.com/asset-1.jpg',
+          status: 'approved',
+          createdAt: new Date('2026-04-16T12:00:00.000Z'),
+          updatedAt: new Date('2026-04-16T12:30:00.000Z'),
+        },
+      ],
+      reviews: [
+        {
+          id: 'review-1',
+          clientId: 'client-1',
+          jobId: 'job-1',
+          assetId: 'asset-1',
+          title: 'Hero v3',
+          summary: 'Revisa el encuadre final.',
+          status: 'needs_review',
+          requestedAt: new Date('2026-04-16T11:00:00.000Z'),
+          dueAt: new Date('2026-04-18T12:00:00.000Z'),
+          decisionNote: null,
+          updatedAt: new Date('2026-04-16T11:00:00.000Z'),
+        },
+      ],
+      threads: [
+        {
+          id: 'thread-1',
+          clientId: 'client-1',
+          jobId: 'job-1',
+          subject: 'Entrega semanal',
+          status: 'active',
+          createdAt: new Date('2026-04-15T09:00:00.000Z'),
+          updatedAt: new Date('2026-04-16T09:30:00.000Z'),
+        },
+      ],
+      messages: [
+        {
+          id: 'message-1',
+          threadId: 'thread-1',
+          authorRole: 'studio',
+          body: 'Te dejamos la entrega semanal lista para revisar.',
+          createdAt: new Date('2026-04-16T09:30:00.000Z'),
+          readAt: null,
+        },
+      ],
     });
 
     expect(snapshot.projects).toEqual([
@@ -165,8 +213,33 @@ describe('buildClientAreaSnapshot', () => {
           id: 'notification-1',
           kind: 'notification',
         }),
+        expect.objectContaining({
+          id: 'review-1',
+          kind: 'review',
+        }),
       ]),
     );
+    expect(snapshot.files).toEqual([
+      expect.objectContaining({
+        id: 'asset-1',
+        title: 'Pack final',
+        category: 'deliverable',
+      }),
+    ]);
+    expect(snapshot.reviews).toEqual([
+      expect.objectContaining({
+        id: 'review-1',
+        title: 'Hero v3',
+        status: 'needs_review',
+      }),
+    ]);
+    expect(snapshot.messages).toEqual([
+      expect.objectContaining({
+        id: 'thread-1',
+        subject: 'Entrega semanal',
+        unreadCount: 1,
+      }),
+    ]);
   });
 
   it('uses a calm fallback title when a job has no brief or media hints', () => {
@@ -199,6 +272,10 @@ describe('buildClientAreaSnapshot', () => {
       ],
       invoices: [],
       notifications: [],
+      assets: [],
+      reviews: [],
+      threads: [],
+      messages: [],
     });
 
     expect(snapshot.projects).toEqual([
@@ -230,10 +307,13 @@ describe('loadClientAreaWorkspace', () => {
     const jobsQuery: { whereArgs?: unknown[]; orderByArgs?: unknown[] } = {};
     const invoicesQuery: { whereArgs?: unknown[]; orderByArgs?: unknown[] } = {};
     const notificationsQuery: { whereArgs?: unknown[]; orderByArgs?: unknown[] } = {};
+    const reviewsQuery: { whereArgs?: unknown[]; orderByArgs?: unknown[] } = {};
+    const threadsQuery: { whereArgs?: unknown[]; orderByArgs?: unknown[] } = {};
 
     const db = {
       select: vi
         .fn()
+        // 1. client lookup
         .mockImplementationOnce(
           () =>
             createLimitedSelectChain(
@@ -253,6 +333,7 @@ describe('loadClientAreaWorkspace', () => {
               clientQuery,
             ),
         )
+        // 2. jobs
         .mockImplementationOnce(
           () =>
             createOrderedSelectChain(
@@ -274,6 +355,7 @@ describe('loadClientAreaWorkspace', () => {
               jobsQuery,
             ),
         )
+        // 3. invoices
         .mockImplementationOnce(
           () =>
             createOrderedSelectChain(
@@ -293,6 +375,7 @@ describe('loadClientAreaWorkspace', () => {
               invoicesQuery,
             ),
         )
+        // 4. notifications
         .mockImplementationOnce(
           () =>
             createOrderedSelectChain(
@@ -312,6 +395,76 @@ describe('loadClientAreaWorkspace', () => {
               ],
               notificationsQuery,
             ),
+        )
+        // 5. reviews
+        .mockImplementationOnce(
+          () =>
+            createOrderedSelectChain(
+              [
+                {
+                  id: 'review-1',
+                  clientId: 'client-1',
+                  jobId: 'job-1',
+                  assetId: 'asset-1',
+                  title: 'Hero v3',
+                  summary: 'Revisa el encuadre final.',
+                  status: 'needs_review',
+                  requestedAt: new Date('2026-04-16T11:00:00.000Z'),
+                  dueAt: new Date('2026-04-18T12:00:00.000Z'),
+                  decisionNote: null,
+                  updatedAt: new Date('2026-04-16T11:00:00.000Z'),
+                },
+              ],
+              reviewsQuery,
+            ),
+        )
+        // 6. threads
+        .mockImplementationOnce(
+          () =>
+            createOrderedSelectChain(
+              [
+                {
+                  id: 'thread-1',
+                  clientId: 'client-1',
+                  jobId: 'job-1',
+                  subject: 'Entrega semanal',
+                  status: 'active',
+                  createdAt: new Date('2026-04-15T09:00:00.000Z'),
+                  updatedAt: new Date('2026-04-16T09:30:00.000Z'),
+                },
+              ],
+              threadsQuery,
+            ),
+        )
+        // 7. assets (depends on jobIds being non-empty)
+        .mockImplementationOnce(
+          () =>
+            createOrderedSelectChain([
+              {
+                id: 'asset-1',
+                jobId: 'job-1',
+                label: 'Pack final',
+                type: 'image',
+                deliveryUrl: 'https://cdn.grandeandgordo.com/asset-1.jpg',
+                status: 'approved',
+                createdAt: new Date('2026-04-16T12:00:00.000Z'),
+                updatedAt: new Date('2026-04-16T12:30:00.000Z'),
+              },
+            ]),
+        )
+        // 8. messages (depends on threadIds being non-empty)
+        .mockImplementationOnce(
+          () =>
+            createOrderedSelectChain([
+              {
+                id: 'message-1',
+                threadId: 'thread-1',
+                authorRole: 'studio',
+                body: 'Te dejamos la entrega semanal lista para revisar.',
+                createdAt: new Date('2026-04-16T09:30:00.000Z'),
+                readAt: null,
+              },
+            ]),
         ),
     } as unknown as AppContext['Variables']['db'];
 
@@ -336,11 +489,34 @@ describe('loadClientAreaWorkspace', () => {
         status: 'issued',
       }),
     ]);
+    expect(workspace?.reviews).toEqual([
+      expect.objectContaining({
+        id: 'review-1',
+        title: 'Hero v3',
+        status: 'needs_review',
+      }),
+    ]);
+    expect(workspace?.files).toEqual([
+      expect.objectContaining({
+        id: 'asset-1',
+        title: 'Pack final',
+        category: 'deliverable',
+      }),
+    ]);
+    expect(workspace?.messages).toEqual([
+      expect.objectContaining({
+        id: 'thread-1',
+        subject: 'Entrega semanal',
+        unreadCount: 1,
+      }),
+    ]);
     expect(clientQuery.orderByArgs).toHaveLength(2);
     expect(clientQuery.limitArg).toBe(1);
     expect(jobsQuery.orderByArgs).toHaveLength(1);
     expect(invoicesQuery.orderByArgs).toHaveLength(1);
     expect(notificationsQuery.orderByArgs).toHaveLength(1);
+    expect(reviewsQuery.orderByArgs).toHaveLength(1);
+    expect(threadsQuery.orderByArgs).toHaveLength(1);
   });
 });
 
