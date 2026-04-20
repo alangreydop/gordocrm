@@ -148,7 +148,7 @@ import { siteLinks } from '../lib/site-links';
 
     const existingUser = await getSessionUser();
     if (existingUser) {
-      window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
+      window.location.href = existingUser.role === 'admin' ? '/admin' : '/inicio';
     }
 
     const form = document.getElementById('login-form');
@@ -178,7 +178,7 @@ import { siteLinks } from '../lib/site-links';
         }
 
         const data = await res.json();
-        window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
+        window.location.href = data.user.role === 'admin' ? '/admin' : '/inicio';
       } catch (error) {
         if (errorDiv instanceof HTMLDivElement) {
           errorDiv.textContent = error instanceof Error ? error.message : 'Login failed';

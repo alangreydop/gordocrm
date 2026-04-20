@@ -1,0 +1,39 @@
+---
+import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
+---
+
+<ClientAreaLayout title="Inicio" section="inicio">
+  <div id="client-area-root" class="space-y-6">
+    <section class="rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden p-6 md:p-8">
+      <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Resumen</p>
+      <h1 id="account-label" class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">
+        Cargando...
+      </h1>
+      <p id="account-summary" class="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400 md:text-base">
+        Cargando tu estado de cuenta.
+      </p>
+    </section>
+
+    <div class="grid gap-4 md:grid-cols-3">
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Proyectos activos</p>
+        <p id="metric-active-projects" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Revisiones pendientes</p>
+        <p id="metric-pending-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Mensajes sin leer</p>
+        <p id="metric-unread-messages" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+    </div>
+
+    <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
+      <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Actividad reciente</p>
+      <div id="timeline-feed" class="mt-5 space-y-3">
+        <p class="text-sm text-zinc-400">Cargando actividad...</p>
+      </div>
+    </section>
+  </div>
+</ClientAreaLayout>

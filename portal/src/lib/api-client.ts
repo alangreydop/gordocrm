@@ -97,7 +97,7 @@ export async function requireRole(
   }
 
   if (user.role !== role) {
-    window.location.href = user.role === 'admin' ? '/admin' : '/client';
+    window.location.href = user.role === 'admin' ? '/admin' : '/inicio';
     return null;
   }
 
