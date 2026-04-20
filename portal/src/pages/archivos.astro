@@ -3,30 +3,28 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Archivos" section="archivos">
-  <div id="client-area-root" class="space-y-6">
-    <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
-      <div class="border-b border-zinc-800 px-6 py-5">
-        <h2 class="text-lg font-semibold text-white">Archivos</h2>
-        <p class="mt-1 text-sm text-zinc-400">Descarga tus entregables y referencias.</p>
-      </div>
-      <div id="files-list" class="p-6">
-        <div class="space-y-4">
-          {[1,2,3].map(() => `
-            <div class="rounded-xl border border-zinc-800 bg-black p-5 animate-pulse">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex items-center gap-3 flex-1">
-                  <div class="w-10 h-10 rounded-lg bg-zinc-800"></div>
-                  <div>
-                    <div class="h-5 w-32 rounded bg-zinc-800"></div>
-                    <div class="h-3 w-20 rounded bg-zinc-800/60 mt-2"></div>
-                  </div>
-                </div>
-                <div class="h-8 w-20 rounded-full bg-zinc-800"></div>
+  <div id="client-area-root" class="space-y-8">
+    <section class="crm-page-header p-6 md:p-7">
+      <p class="crm-kicker">Entregables</p>
+      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Tus archivos</h2>
+      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Descarga las piezas finales y las referencias de tus encargos.</p>
+    </section>
+
+    <div id="files-list" class="ca-stagger">
+      {[1,2,3].map(() => `
+        <div class="crm-panel-soft p-4 mb-2 animate-pulse">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-1">
+              <div class="w-10 h-10 rounded-lg" style="background: var(--gg-surface-elevated);"></div>
+              <div>
+                <div class="h-5 w-28 rounded" style="background: var(--gg-surface-elevated);"></div>
+                <div class="h-3 w-20 rounded mt-1.5" style="background: var(--gg-surface);"></div>
               </div>
             </div>
-          `).join('')}
+            <div class="h-8 w-20 rounded-full" style="background: var(--gg-surface-elevated);"></div>
+          </div>
         </div>
-      </div>
+      `).join('')}
     </div>
   </div>
 
@@ -43,38 +41,34 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (files.length === 0) {
         list.innerHTML = `
-          <div class="flex flex-col items-center justify-center py-16 text-center">
-            <svg class="w-12 h-12 text-zinc-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/></svg>
-            <p class="text-sm text-zinc-400">No hay archivos disponibles todavía.</p>
-            <p class="text-xs text-zinc-600 mt-1">Los archivos aparecerán cuando tu equipo suba entregas.</p>
+          <div class="crm-empty">
+            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin archivos</p>
+            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Los archivos aparecerán cuando tu equipo suba entregas.</p>
           </div>`;
         return;
       }
 
-      const kindIcon = (kind: string, category: string) => {
-        if (kind === 'video') return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>`;
-        return `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`;
-      };
-
-      list.innerHTML = `<div class="space-y-3">${files.map((f) => `
-        <div class="rounded-xl border border-zinc-800 bg-black p-4 transition-all duration-200 hover:border-zinc-700 hover:translate-y-[-1px]">
+      list.innerHTML = files.map((f, i) => `
+        <div class="crm-panel-soft p-4 mb-2 ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" style="animation-delay: ${i * 40}ms;">
           <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 flex-1 min-w-0">
-              <div class="w-10 h-10 rounded-lg ${f.category === 'deliverable' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-zinc-800 text-zinc-400'} flex items-center justify-center flex-shrink-0">
-                ${kindIcon(f.kind, f.category)}
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ${f.category === 'deliverable' ? 'var(--gg-accent-soft)' : 'var(--gg-surface)'}; color: ${f.category === 'deliverable' ? 'var(--gg-accent-bright)' : 'var(--gg-text-subtle)'};">
+                ${f.kind === 'video'
+                  ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>'
+                  : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'}
               </div>
               <div class="min-w-0">
                 <h3 class="font-semibold text-white truncate">${f.title}</h3>
-                <p class="text-xs text-zinc-500 mt-0.5">${f.category === 'deliverable' ? 'Entregable' : 'Referencia'} · ${f.kind === 'video' ? 'Vídeo' : 'Imagen'}</p>
+                <p class="text-xs mt-0.5" style="color: var(--gg-text-subtle);">${f.category === 'deliverable' ? 'Entregable' : 'Referencia'} · ${f.kind === 'video' ? 'Vídeo' : 'Imagen'}</p>
               </div>
             </div>
-            ${f.href ? `<a href="${f.href}" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-black transition-all duration-200 hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] flex-shrink-0">
+            ${f.href ? `<a href="${f.href}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary" style="padding: 0.5rem 1rem; font-size: 0.78rem; background: var(--gg-accent); box-shadow: 0 10px 24px rgba(196,22,90,0.16);">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"/></svg>
               Descargar
-            </a>` : `<span class="text-xs text-zinc-600 flex-shrink-0">No disponible</span>`}
+            </a>` : `<span class="text-xs flex-shrink-0" style="color: var(--gg-text-faint);">No disponible</span>`}
           </div>
         </div>
-      `).join('')}</div>`;
+      `).join('');
     })();
   </script>
 </ClientAreaLayout>

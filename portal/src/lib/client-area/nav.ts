@@ -9,9 +9,9 @@ export interface ClientAreaNavItem {
 
 export const CLIENT_AREA_NAV: ClientAreaNavItem[] = [
   { slug: 'inicio', href: '/inicio', label: 'Inicio', icon: 'home' },
-  { slug: 'proyectos', href: '/proyectos', label: 'Proyectos', icon: 'folder' },
+  { slug: 'proyectos', href: '/proyectos', label: 'Producción', icon: 'folder' },
   { slug: 'revisiones', href: '/revisiones', label: 'Revisiones', icon: 'eye' },
-  { slug: 'archivos', href: '/archivos', label: 'Archivos', icon: 'download' },
+  { slug: 'archivos', href: '/archivos', label: 'Entregas', icon: 'download' },
   { slug: 'mensajes', href: '/mensajes', label: 'Mensajes', icon: 'message' },
   { slug: 'facturacion', href: '/facturacion', label: 'Facturación', icon: 'receipt' },
 ];

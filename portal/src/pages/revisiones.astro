@@ -3,28 +3,26 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Revisiones" section="revisiones">
-  <div id="client-area-root" class="space-y-6">
-    <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
-      <div class="border-b border-zinc-800 px-6 py-5">
-        <h2 class="text-lg font-semibold text-white">Revisiones</h2>
-        <p class="mt-1 text-sm text-zinc-400">Revisa y aprueba entregas pendientes.</p>
-      </div>
-      <div id="reviews-list" class="p-6">
-        <div class="space-y-4" id="skeleton-reviews">
-          {[1,2,3].map(() => `
-            <div class="rounded-xl border border-zinc-800 bg-black p-5 animate-pulse">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
-                  <div class="h-5 w-48 rounded bg-zinc-800"></div>
-                  <div class="h-4 w-32 rounded bg-zinc-800/60 mt-2"></div>
-                </div>
-                <div class="h-6 w-24 rounded-full bg-zinc-800"></div>
-              </div>
-              <div class="h-3 w-28 rounded bg-zinc-800/40 mt-3"></div>
+  <div id="client-area-root" class="space-y-8">
+    <section class="crm-page-header p-6 md:p-7">
+      <p class="crm-kicker">Revisiones</p>
+      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Aprueba tus entregas</h2>
+      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Revisa y aprueba las entregas pendientes antes de cierre.</p>
+    </section>
+
+    <div id="reviews-list" class="ca-stagger">
+      {[1,2,3].map(() => `
+        <div class="crm-panel-soft p-5 mb-3 animate-pulse">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1">
+              <div class="h-5 w-44 rounded" style="background: var(--gg-surface-elevated);"></div>
+              <div class="h-3 w-28 rounded mt-2" style="background: var(--gg-surface);"></div>
             </div>
-          `).join('')}
+            <div class="h-6 w-24 rounded-full" style="background: var(--gg-surface-elevated);"></div>
+          </div>
+          <div class="h-3 w-24 rounded mt-3" style="background: var(--gg-surface);"></div>
         </div>
-      </div>
+      `).join('')}
     </div>
   </div>
 
@@ -43,55 +41,55 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (reviews.length === 0) {
         list.innerHTML = `
-          <div class="flex flex-col items-center justify-center py-16 text-center">
-            <svg class="w-12 h-12 text-zinc-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <p class="text-sm text-zinc-400">No hay revisiones pendientes.</p>
-            <p class="text-xs text-zinc-600 mt-1">Las revisiones aparecerán cuando tu equipo suba entregas.</p>
+          <div class="crm-empty">
+            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin revisiones</p>
+            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Las revisiones aparecerán cuando tu equipo suba entregas.</p>
           </div>`;
         return;
       }
 
-      const statusBadgeClass = (status: string): string => {
+      const statusBadge = (status: string): { style: string; label: string } => {
         switch (status) {
-          case 'needs_review': return 'border-amber-300/20 bg-amber-400/10 text-amber-100';
-          case 'approved': return 'border-emerald-300/20 bg-emerald-400/10 text-emerald-100';
-          case 'changes_requested': return 'border-rose-300/20 bg-rose-400/10 text-rose-100';
-          default: return 'border-zinc-700 bg-zinc-900 text-white';
+          case 'needs_review': return { style: 'color: var(--gg-warning); background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.2);', label: 'Pendiente' };
+          case 'approved': return { style: 'color: var(--gg-success); background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);', label: 'Aprobado' };
+          case 'changes_requested': return { style: 'color: var(--gg-danger); background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);', label: 'Cambios solicitados' };
+          default: return { style: 'color: var(--gg-text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--gg-border);', label: status };
         }
       };
 
-      list.innerHTML = `<div class="space-y-4">${reviews.map((r) => {
+      list.innerHTML = reviews.map((r, i) => {
         const needsAction = r.status === 'needs_review';
+        const badge = statusBadge(r.status);
         return `
-        <div class="rounded-xl border border-zinc-800 bg-black p-5 transition-all duration-200 hover:border-zinc-700" data-review-id="${r.id}">
+        <div class="crm-panel-soft p-5 mb-3 ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" data-review-id="${r.id}" style="animation-delay: ${i * 60}ms;">
           <div class="flex items-start justify-between gap-4">
             <div class="flex-1">
               <h3 class="font-semibold text-white">${r.title}</h3>
-              ${r.summary ? `<p class="text-sm text-zinc-400 mt-1">${r.summary}</p>` : ''}
+              ${r.summary ? `<p class="text-sm mt-1" style="color: var(--gg-text-muted);">${r.summary}</p>` : ''}
             </div>
-            <span class="inline-flex rounded-full border ${statusBadgeClass(r.status)} px-3 py-1 text-xs font-medium flex-shrink-0">${r.statusLabel}</span>
+            <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium flex-shrink-0 whitespace-nowrap" style="${badge.style}">${badge.label}</span>
           </div>
-          <div class="mt-3 text-xs text-zinc-400 flex items-center gap-3">
+          <div class="mt-3 text-xs flex items-center gap-3" style="color: var(--gg-text-subtle);">
             ${r.dueAt ? `<span>Vence: ${new Date(r.dueAt).toLocaleDateString('es-ES')}</span>` : ''}
           </div>
-          ${r.decisionNote ? `<div class="mt-3 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-300"><span class="text-xs font-bold uppercase tracking-wider text-zinc-500">Nota</span><p class="mt-1">${r.decisionNote}</p></div>` : ''}
+          ${r.decisionNote ? `<div class="mt-3 rounded-lg border px-4 py-3 text-sm" style="border-color: var(--gg-border); background: var(--gg-dark); color: var(--gg-text-muted);"><p class="crm-kicker" style="font-size: 0.68rem; color: var(--gg-text-subtle);">Nota</p><p class="mt-1" style="color: var(--gg-text);">${r.decisionNote}</p></div>` : ''}
           ${needsAction ? `
-          <div class="mt-4 border-t border-zinc-800 pt-4" data-action-area="${r.id}">
-            <textarea id="note-${r.id}" rows="2" class="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-white placeholder-zinc-600 focus:border-white/30 focus:outline-none transition resize-none" placeholder="Nota opcional sobre tu decisión..."></textarea>
+          <div class="mt-4 pt-4" data-action-area="${r.id}" style="border-top: 1px solid var(--gg-border);">
+            <textarea id="note-${r.id}" rows="2" class="crm-input" placeholder="Nota opcional sobre tu decisión..."></textarea>
             <div class="mt-3 flex items-center gap-3">
-              <button data-action="approve" data-review-id="${r.id}" class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-400/20 px-5 py-2.5 text-sm font-semibold text-emerald-300 transition-all duration-200 hover:bg-emerald-500/20 hover:border-emerald-400/30 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <button data-action="approve" data-review-id="${r.id}" class="crm-button crm-button-primary" style="background: var(--gg-success); box-shadow: 0 14px 30px rgba(34,197,94,0.18);">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 Aprobar
               </button>
-              <button data-action="reject" data-review-id="${r.id}" class="inline-flex items-center gap-2 rounded-full bg-rose-500/10 border border-rose-400/20 px-5 py-2.5 text-sm font-semibold text-rose-300 transition-all duration-200 hover:bg-rose-500/20 hover:border-rose-400/30 hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+              <button data-action="reject" data-review-id="${r.id}" class="crm-button crm-button-ghost">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 Solicitar cambios
               </button>
             </div>
           </div>
           ` : ''}
-        </div>
-      `}).join('')}</div>`;
+        </div>`;
+      }).join('');
 
       const handleDecision = async (reviewId: string, status: 'approved' | 'changes_requested') => {
         const noteEl = document.getElementById(`note-${reviewId}`) as HTMLTextAreaElement | null;
@@ -99,7 +97,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         const actionArea = document.querySelector(`[data-action-area="${reviewId}"]`);
 
         if (actionArea) {
-          actionArea.innerHTML = '<p class="text-sm text-zinc-400 animate-pulse">Enviando decisión...</p>';
+          actionArea.innerHTML = '<p class="text-sm animate-pulse" style="color: var(--gg-text-muted);">Enviando decisión...</p>';
         }
 
         try {
@@ -117,16 +115,16 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
             setTimeout(() => {
               card.innerHTML = `
                 <div class="flex items-center gap-3 py-2">
-                  <svg class="w-5 h-5 ${status === 'approved' ? 'text-emerald-400' : 'text-rose-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${status === 'approved' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg>
-                  <span class="text-sm font-medium ${status === 'approved' ? 'text-emerald-300' : 'text-rose-300'}">${status === 'approved' ? 'Aprobado' : 'Cambios solicitados'}</span>
+                  <svg class="w-5 h-5" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent-bright)'};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${status === 'approved' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg>
+                  <span class="text-sm font-medium" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent-bright)'};">${status === 'approved' ? 'Aprobado' : 'Cambios solicitados'}</span>
                 </div>`;
               card.style.opacity = '1';
               card.style.transform = 'none';
             }, 300);
           }
-        } catch (err) {
+        } catch {
           if (actionArea) {
-            actionArea.innerHTML = '<p class="text-sm text-rose-400">Error al enviar. Inténtalo de nuevo.</p>';
+            actionArea.innerHTML = '<p class="text-sm" style="color: var(--gg-danger);">Error al enviar. Inténtalo de nuevo.</p>';
           }
         }
       };

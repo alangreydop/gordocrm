@@ -3,47 +3,47 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Inicio" section="inicio">
-  <div id="client-area-root" class="space-y-6">
-    <section class="rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden p-6 md:p-8">
-      <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Resumen</p>
-      <h1 id="account-label" class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">
-        <span class="inline-block w-64 h-10 rounded bg-zinc-800 animate-pulse"></span>
+  <div id="client-area-root" class="space-y-8 ca-stagger">
+    <section class="crm-page-header p-6 md:p-8 ca-metric-enter">
+      <p class="crm-kicker">Tu producción</p>
+      <h1 id="account-label" class="mt-4 text-3xl md:text-5xl font-black tracking-tight text-white" style="line-height: 1.04;">
+        <span class="inline-block w-56 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
       </h1>
-      <p id="account-summary" class="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400 md:text-base">
-        Cargando tu estado de cuenta.
+      <p id="account-summary" class="mt-5 max-w-xl text-sm leading-relaxed md:text-base" style="color: var(--gg-text-muted);">
+        Cargando tu estado de producción.
       </p>
     </section>
 
-    <div class="grid gap-4 md:grid-cols-3" id="metrics-grid">
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Proyectos activos</p>
-        <p id="metric-active-projects" class="mt-4 text-4xl font-black tracking-tight text-white">
-          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+    <div class="grid gap-4 md:grid-cols-3 ca-stagger" id="metrics-grid">
+      <div class="crm-metric-card ca-metric-enter">
+        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">En producción</p>
+        <p id="metric-active-projects" class="crm-metric-value mt-4">
+          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
         </p>
       </div>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Revisiones pendientes</p>
-        <p id="metric-pending-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">
-          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+      <div class="crm-metric-card ca-metric-enter">
+        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Pendiente de revisión</p>
+        <p id="metric-pending-reviews" class="crm-metric-value mt-4">
+          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
         </p>
       </div>
-      <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Mensajes sin leer</p>
-        <p id="metric-unread-messages" class="mt-4 text-4xl font-black tracking-tight text-white">
-          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+      <div class="crm-metric-card ca-metric-enter">
+        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Mensajes nuevos</p>
+        <p id="metric-unread-messages" class="crm-metric-value mt-4">
+          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
         </p>
       </div>
     </div>
 
-    <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
-      <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Actividad reciente</p>
-      <div id="timeline-feed" class="mt-5 space-y-3">
+    <section class="crm-panel p-6 md:p-7 ca-card-enter">
+      <p class="crm-kicker">Actividad reciente</p>
+      <div id="timeline-feed" class="mt-6 space-y-0">
         {[1,2,3,4].map(() => `
-          <div class="flex items-start gap-3">
-            <div class="w-2 h-2 mt-2 rounded-full bg-zinc-800 animate-pulse flex-shrink-0"></div>
+          <div class="flex items-start gap-3 py-3" style="border-bottom: 1px solid var(--gg-border);">
+            <div class="w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0" style="background: var(--gg-text-faint);"></div>
             <div class="flex-1">
-              <div class="h-4 w-48 rounded bg-zinc-800 animate-pulse"></div>
-              <div class="h-3 w-24 rounded bg-zinc-800/60 animate-pulse mt-1.5"></div>
+              <div class="h-4 w-44 rounded animate-pulse" style="background: var(--gg-surface);"></div>
+              <div class="h-3 w-20 rounded animate-pulse mt-1.5" style="background: var(--gg-surface-elevated);"></div>
             </div>
           </div>
         `).join('')}
@@ -65,8 +65,8 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       const summary = document.getElementById('account-summary');
       if (summary) {
         const parts: string[] = [];
-        if (vm.activeProjectCount > 0) parts.push(`${vm.activeProjectCount} proyecto${vm.activeProjectCount > 1 ? 's' : ''} activo${vm.activeProjectCount > 1 ? 's' : ''}`);
-        if (vm.pendingReviewCount > 0) parts.push(`${vm.pendingReviewCount} revisión${vm.pendingReviewCount > 1 ? 'es' : ''} pendiente${vm.pendingReviewCount > 1 ? 's' : ''}`);
+        if (vm.activeProjectCount > 0) parts.push(`${vm.activeProjectCount} proyecto${vm.activeProjectCount > 1 ? 's' : ''} en curso`);
+        if (vm.pendingReviewCount > 0) parts.push(`${vm.pendingReviewCount} revisión${vm.pendingReviewCount > 1 ? 'es' : ''} por aprobar`);
         if (vm.unreadMessageCount > 0) parts.push(`${vm.unreadMessageCount} mensaje${vm.unreadMessageCount > 1 ? 's' : ''} sin leer`);
         summary.textContent = parts.length > 0 ? parts.join(' · ') : 'Todo al día.';
       }
@@ -81,20 +81,20 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       const timelineFeed = document.getElementById('timeline-feed');
       if (timelineFeed && vm.timeline.length > 0) {
-        timelineFeed.innerHTML = vm.timeline.slice(0, 10).map((item) => `
-          <div class="flex items-start gap-3 transition-opacity duration-200">
-            <div class="w-2 h-2 mt-2 rounded-full bg-zinc-700 flex-shrink-0"></div>
+        timelineFeed.innerHTML = vm.timeline.slice(0, 10).map((item, i) => `
+          <div class="flex items-start gap-3 py-3 transition-opacity duration-200" style="border-bottom: 1px solid var(--gg-border); animation: clientCardIn 280ms cubic-bezier(0.22, 1, 0.36, 1) ${i * 60}ms both;">
+            <div class="w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0" style="background: var(--gg-accent-bright); opacity: 0.5;"></div>
             <div>
-              <p class="text-sm text-zinc-300">${item.label}</p>
-              <p class="text-xs text-zinc-500 mt-0.5">${item.occurredAt ? new Date(item.occurredAt).toLocaleDateString('es-ES') : ''}</p>
+              <p class="text-sm" style="color: var(--gg-text);">${item.label}</p>
+              <p class="text-xs mt-0.5" style="color: var(--gg-text-subtle);">${item.occurredAt ? new Date(item.occurredAt).toLocaleDateString('es-ES') : ''}</p>
             </div>
           </div>
         `).join('');
       } else if (timelineFeed) {
         timelineFeed.innerHTML = `
-          <div class="flex flex-col items-center py-8 text-center">
-            <svg class="w-8 h-8 text-zinc-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <p class="text-sm text-zinc-400">Sin actividad reciente.</p>
+          <div class="flex flex-col items-center py-10 text-center">
+            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin actividad</p>
+            <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Aquí aparecerá el historial de tu producción.</p>
           </div>`;
       }
     })();
