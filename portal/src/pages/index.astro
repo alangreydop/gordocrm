@@ -12,7 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const { getSessionUser } = await import('../lib/api-client');
 
     const user = await getSessionUser();
-    window.location.href = user ? (user.role === 'admin' ? '/admin' : '/client') : '/login';
+    window.location.href = user ? (user.role === 'admin' ? '/admin' : '/inicio') : '/login';
     })();
   </script>
 </BaseLayout>

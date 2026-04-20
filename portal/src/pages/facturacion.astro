@@ -10,7 +10,22 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         <p class="mt-1 text-sm text-zinc-400">Facturas emitidas y estado de pago.</p>
       </div>
       <div id="billing-list" class="p-6">
-        <p class="text-sm text-zinc-400">Cargando facturación...</p>
+        <div class="space-y-4">
+          {[1,2].map(() => `
+            <div class="rounded-xl border border-zinc-800 bg-black p-5 animate-pulse">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <div class="h-5 w-28 rounded bg-zinc-800"></div>
+                  <div class="h-3 w-48 rounded bg-zinc-800/60 mt-2"></div>
+                </div>
+                <div class="text-right">
+                  <div class="h-5 w-20 rounded bg-zinc-800 ml-auto"></div>
+                  <div class="h-5 w-16 rounded-full bg-zinc-800 mt-2 ml-auto"></div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
       </div>
     </div>
   </div>
@@ -27,12 +42,27 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       if (!list) return;
 
       if (invoices.length === 0) {
-        list.innerHTML = '<p class="text-sm text-zinc-400">No hay facturas todavía.</p>';
+        list.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <svg class="w-12 h-12 text-zinc-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            <p class="text-sm text-zinc-400">No hay facturas todavía.</p>
+            <p class="text-xs text-zinc-600 mt-1">Las facturas aparecerán cuando se emitan.</p>
+          </div>`;
         return;
       }
 
+      const statusBadgeClass = (status: string): string => {
+        switch (status) {
+          case 'paid': return 'border-emerald-300/20 bg-emerald-400/10 text-emerald-100';
+          case 'issued': return 'border-sky-300/20 bg-sky-400/10 text-sky-100';
+          case 'overdue': return 'border-rose-300/20 bg-rose-400/10 text-rose-100';
+          case 'draft': return 'border-zinc-700 bg-zinc-900 text-white';
+          default: return 'border-zinc-700 bg-zinc-900 text-white';
+        }
+      };
+
       list.innerHTML = `<div class="space-y-4">${invoices.map((i) => `
-        <div class="rounded-xl border border-zinc-800 bg-black p-5">
+        <div class="rounded-xl border border-zinc-800 bg-black p-5 transition-all duration-200 hover:border-zinc-700 hover:translate-y-[-1px]">
           <div class="flex items-start justify-between gap-4">
             <div>
               <h3 class="font-semibold text-white">${i.invoiceNumber}</h3>
@@ -40,7 +70,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
             </div>
             <div class="text-right flex-shrink-0">
               <p class="font-semibold text-white">${i.totalEur}</p>
-              <span class="inline-flex rounded-full border border-zinc-700 bg-zinc-900 px-2 py-0.5 text-xs font-medium text-white mt-1">${i.statusLabel}</span>
+              <span class="inline-flex rounded-full border ${statusBadgeClass(i.status)} px-2 py-0.5 text-xs font-medium mt-1">${i.statusLabel}</span>
             </div>
           </div>
         </div>

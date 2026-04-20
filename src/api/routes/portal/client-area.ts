@@ -63,6 +63,10 @@ export function createClientAreaRoutes(deps: ClientAreaRouteDeps = {}) {
       note: payload.note ?? null,
     });
 
+    if (!result) {
+      return c.json({ error: 'No autorizado' }, 403);
+    }
+
     return c.json(result);
   });
 
@@ -75,6 +79,10 @@ export function createClientAreaRoutes(deps: ClientAreaRouteDeps = {}) {
       userId: c.get('user').id,
       body: payload.body,
     });
+
+    if (!result) {
+      return c.json({ error: 'No autorizado' }, 403);
+    }
 
     return c.json(result);
   });

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import { schema, type Database } from '../../../db/index.js';
 
@@ -17,6 +17,26 @@ export async function saveReviewDecision({
   status,
   note,
 }: SaveReviewDecisionInput) {
+  const [client] = await db
+    .select({ id: schema.clients.id })
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, userId))
+    .limit(1);
+
+  if (!client) {
+    return null;
+  }
+
+  const [review] = await db
+    .select({ clientId: schema.clientReviews.clientId })
+    .from(schema.clientReviews)
+    .where(eq(schema.clientReviews.id, reviewId))
+    .limit(1);
+
+  if (!review || review.clientId !== client.id) {
+    return null;
+  }
+
   await db
     .update(schema.clientReviews)
     .set({
@@ -26,7 +46,12 @@ export async function saveReviewDecision({
       decidedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(schema.clientReviews.id, reviewId));
+    .where(
+      and(
+        eq(schema.clientReviews.id, reviewId),
+        eq(schema.clientReviews.clientId, client.id),
+      ),
+    );
 
   return {
     id: reviewId,

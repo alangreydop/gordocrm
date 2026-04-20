@@ -449,6 +449,61 @@ textarea {
   border-color: rgba(255, 255, 255, 0.24) !important;
 }
 
+/* Client area entrance animations */
+@keyframes clientCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes clientMetricIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.ca-card-enter {
+  animation: clientCardIn 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ca-metric-enter {
+  animation: clientMetricIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ca-skeleton-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.04) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* Stagger delays for child elements */
+.ca-stagger > :nth-child(1) { animation-delay: 0ms; }
+.ca-stagger > :nth-child(2) { animation-delay: 60ms; }
+.ca-stagger > :nth-child(3) { animation-delay: 120ms; }
+.ca-stagger > :nth-child(4) { animation-delay: 180ms; }
+.ca-stagger > :nth-child(5) { animation-delay: 240ms; }
+.ca-stagger > :nth-child(6) { animation-delay: 300ms; }
+
+/* Sidebar accent indicator */
+.ca-nav-active {
+  position: relative;
+}
+
+.ca-nav-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 2px;
+  background: var(--crm-accent);
+}
+
 @media (max-width: 1023px) {
   .crm-sidebar {
     border-right: 0;

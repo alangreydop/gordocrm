@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import { schema, type Database } from '../../../db/index.js';
 
@@ -15,6 +15,26 @@ export async function postThreadMessage({
   userId,
   body,
 }: PostThreadMessageInput) {
+  const [client] = await db
+    .select({ id: schema.clients.id })
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, userId))
+    .limit(1);
+
+  if (!client) {
+    return null;
+  }
+
+  const [thread] = await db
+    .select({ clientId: schema.clientThreads.clientId })
+    .from(schema.clientThreads)
+    .where(eq(schema.clientThreads.id, threadId))
+    .limit(1);
+
+  if (!thread || thread.clientId !== client.id) {
+    return null;
+  }
+
   const id = crypto.randomUUID();
   const now = new Date();
 
@@ -32,7 +52,12 @@ export async function postThreadMessage({
     .set({
       updatedAt: now,
     })
-    .where(eq(schema.clientThreads.id, threadId));
+    .where(
+      and(
+        eq(schema.clientThreads.id, threadId),
+        eq(schema.clientThreads.clientId, client.id),
+      ),
+    );
 
   return {
     id,

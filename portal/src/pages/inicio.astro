@@ -7,32 +7,46 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
     <section class="rounded-3xl border border-zinc-800 bg-zinc-950 overflow-hidden p-6 md:p-8">
       <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Resumen</p>
       <h1 id="account-label" class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">
-        Cargando...
+        <span class="inline-block w-64 h-10 rounded bg-zinc-800 animate-pulse"></span>
       </h1>
       <p id="account-summary" class="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-400 md:text-base">
         Cargando tu estado de cuenta.
       </p>
     </section>
 
-    <div class="grid gap-4 md:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-3" id="metrics-grid">
       <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
         <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Proyectos activos</p>
-        <p id="metric-active-projects" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-active-projects" class="mt-4 text-4xl font-black tracking-tight text-white">
+          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+        </p>
       </div>
       <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
         <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Revisiones pendientes</p>
-        <p id="metric-pending-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-pending-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">
+          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+        </p>
       </div>
       <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
         <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Mensajes sin leer</p>
-        <p id="metric-unread-messages" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-unread-messages" class="mt-4 text-4xl font-black tracking-tight text-white">
+          <span class="inline-block w-8 h-10 rounded bg-zinc-800 animate-pulse"></span>
+        </p>
       </div>
     </div>
 
     <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 md:p-7">
       <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Actividad reciente</p>
       <div id="timeline-feed" class="mt-5 space-y-3">
-        <p class="text-sm text-zinc-400">Cargando actividad...</p>
+        {[1,2,3,4].map(() => `
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 mt-2 rounded-full bg-zinc-800 animate-pulse flex-shrink-0"></div>
+            <div class="flex-1">
+              <div class="h-4 w-48 rounded bg-zinc-800 animate-pulse"></div>
+              <div class="h-3 w-24 rounded bg-zinc-800/60 animate-pulse mt-1.5"></div>
+            </div>
+          </div>
+        `).join('')}
       </div>
     </section>
   </div>
@@ -68,7 +82,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       const timelineFeed = document.getElementById('timeline-feed');
       if (timelineFeed && vm.timeline.length > 0) {
         timelineFeed.innerHTML = vm.timeline.slice(0, 10).map((item) => `
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-3 transition-opacity duration-200">
             <div class="w-2 h-2 mt-2 rounded-full bg-zinc-700 flex-shrink-0"></div>
             <div>
               <p class="text-sm text-zinc-300">${item.label}</p>
@@ -77,7 +91,11 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           </div>
         `).join('');
       } else if (timelineFeed) {
-        timelineFeed.innerHTML = '<p class="text-sm text-zinc-400">Sin actividad reciente.</p>';
+        timelineFeed.innerHTML = `
+          <div class="flex flex-col items-center py-8 text-center">
+            <svg class="w-8 h-8 text-zinc-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="text-sm text-zinc-400">Sin actividad reciente.</p>
+          </div>`;
       }
     })();
   </script>
