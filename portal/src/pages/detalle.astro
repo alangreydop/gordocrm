@@ -1,0 +1,193 @@
+---
+import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
+---
+
+<ClientAreaLayout title="Proyecto" section="proyectos">
+  <div id="client-area-root">
+    <a href="/proyectos" class="inline-flex items-center gap-1.5 text-sm mb-4" style="color: var(--gg-accent);">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Producción
+    </a>
+
+    <div class="crm-masthead">
+      <p class="crm-kicker" id="project-kicker">Cargando...</p>
+      <h1 class="crm-masthead-title" id="project-title">—</h1>
+      <p class="crm-masthead-deck" id="project-meta"></p>
+    </div>
+
+    <div id="project-stats" class="crm-stats-row mt-4">
+      <div class="crm-stat">
+        <p class="crm-kicker">Estado</p>
+        <p id="project-status" class="mt-2"></p>
+      </div>
+      <div class="crm-stat">
+        <p class="crm-kicker">Piezas</p>
+        <p id="project-units" class="crm-stat-num mt-2">—</p>
+      </div>
+      <div class="crm-stat">
+        <p class="crm-kicker">Entrega</p>
+        <p id="project-due" class="mt-2 text-sm" style="color: var(--gg-text);">—</p>
+      </div>
+    </div>
+
+    <div id="project-progress" class="mt-6">
+      <p class="crm-section-header">Progreso</p>
+      <div id="progress-bar-container" style="border-bottom: 1px solid oklch(92% 0.005 355); padding-bottom: 1rem;"></div>
+    </div>
+
+    <div id="project-detail-loading" class="mt-6">
+      {[1,2,3].map(() => (
+        <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
+          <div class="flex-1">
+            <div class="h-4 w-36 rounded" style="background: var(--gg-border-light);"></div>
+            <div class="h-3 w-24 rounded mt-2" style="background: oklch(94% 0.005 355);"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div id="project-content" class="hidden">
+      <div id="project-reviews-section" class="crm-section hidden">
+        <p class="crm-section-header">Revisiones</p>
+        <div id="project-reviews"></div>
+      </div>
+
+      <div id="project-files-section" class="crm-section hidden">
+        <p class="crm-section-header">Archivos</p>
+        <div id="project-files"></div>
+      </div>
+
+      <div id="project-messages-section" class="crm-section hidden">
+        <p class="crm-section-header">Mensajes</p>
+        <div id="project-messages"></div>
+      </div>
+
+      <div id="project-empty-section" class="hidden py-6 text-center">
+        <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin actividad</p>
+        <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Aún no hay revisiones, archivos ni mensajes para este proyecto.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const projectId = params.get('id');
+      if (!projectId) { window.location.href = '/proyectos'; return; }
+
+      const { bootstrapClientArea } = await import('../lib/client-area/bootstrap');
+      const { toProjectsViewModel, toReviewsViewModel, toFilesViewModel, toMessagesViewModel } = await import('../lib/client-area/view-models');
+
+      const snapshot = await bootstrapClientArea();
+      const projects = toProjectsViewModel(snapshot);
+      const project = projects.find(p => p.id === projectId);
+
+      if (!project) { window.location.href = '/proyectos'; return; }
+
+      const statusBadge = (status: string): { cls: string; label: string } => {
+        switch (status) {
+          case 'pending': return { cls: 'crm-badge crm-badge--warning', label: 'Pendiente' };
+          case 'processing': return { cls: 'crm-badge crm-badge--accent', label: 'En producción' };
+          case 'delivered': return { cls: 'crm-badge crm-badge--muted', label: 'Entregado' };
+          case 'completed': return { cls: 'crm-badge crm-badge--success', label: 'Completado' };
+          case 'failed': return { cls: 'crm-badge crm-badge--danger', label: 'Fallido' };
+          default: return { cls: 'crm-badge crm-badge--muted', label: status };
+        }
+      };
+
+      document.getElementById('project-kicker')!.textContent = project.brief || 'Proyecto';
+      document.getElementById('project-title')!.textContent = project.title;
+
+      const meta: string[] = [];
+      if (project.platform) meta.push(project.platform === 'image' ? 'Imagen' : project.platform.charAt(0).toUpperCase() + project.platform.slice(1));
+      if (project.type) meta.push(project.type === 'video' ? 'Vídeo' : project.type.charAt(0).toUpperCase() + project.type.slice(1));
+      document.getElementById('project-meta')!.textContent = meta.join(' · ');
+
+      const badge = statusBadge(project.status);
+      document.getElementById('project-status')!.innerHTML = `<span class="${badge.cls}">${badge.label}</span>`;
+      document.getElementById('project-units')!.textContent = `${project.unitsConsumed}/${project.unitsPlanned}`;
+      document.getElementById('project-due')!.textContent = project.dueAt ? new Date(project.dueAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sin fecha';
+
+      const progressContainer = document.getElementById('progress-bar-container');
+      if (progressContainer && project.unitsPlanned > 0) {
+        const pct = Math.min(100, (project.unitsConsumed / project.unitsPlanned) * 100);
+        progressContainer.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="crm-score-track flex-1">
+              <div class="crm-score-fill" style="width: ${pct}%; background: ${project.unitsConsumed >= project.unitsPlanned ? 'var(--gg-success)' : project.unitsConsumed > 0 ? 'var(--gg-accent)' : 'oklch(72% 0.008 355)'};"></div>
+            </div>
+            <span class="text-xs" style="color: oklch(55% 0.008 355);">${project.unitsConsumed} de ${project.unitsPlanned}</span>
+          </div>`;
+      }
+
+      // Reviews
+      const reviews = toReviewsViewModel(snapshot).filter(r => r.projectId === projectId);
+      const reviewsSection = document.getElementById('project-reviews-section');
+      const reviewsList = document.getElementById('project-reviews');
+      if (reviews.length > 0 && reviewsSection && reviewsList) {
+        reviewsSection.classList.remove('hidden');
+        reviewsList.innerHTML = reviews.map(r => {
+          const b = statusBadge(r.status);
+          return `
+          <div class="crm-row" style="border-bottom-color: oklch(92% 0.005 355);">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold" style="color: var(--gg-text);">${r.title}</h3>
+              ${r.dueAt ? `<p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">Vence: ${new Date(r.dueAt).toLocaleDateString('es-ES')}</p>` : ''}
+            </div>
+            <span class="${b.cls}">${b.label}</span>
+          </div>`;
+        }).join('');
+      }
+
+      // Files
+      const files = toFilesViewModel(snapshot).filter(f => f.projectId === projectId);
+      const filesSection = document.getElementById('project-files-section');
+      const filesList = document.getElementById('project-files');
+      if (files.length > 0 && filesSection && filesList) {
+        filesSection.classList.remove('hidden');
+        filesList.innerHTML = files.map(f => `
+          <div class="crm-row" style="border-bottom-color: oklch(92% 0.005 355);">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <div class="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0" style="background: ${f.category === 'deliverable' ? 'var(--gg-accent-light)' : 'var(--gg-surface-hover)'}; color: ${f.category === 'deliverable' ? 'var(--gg-accent)' : 'oklch(55% 0.008 355)'};">
+                ${f.kind === 'video'
+                  ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>'
+                  : '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'}
+              </div>
+              <div class="min-w-0">
+                <h3 class="font-semibold truncate text-sm" style="color: var(--gg-text);">${f.title}</h3>
+                <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${f.category === 'deliverable' ? 'Entregable' : 'Referencia'} · ${f.createdAt ? new Date(f.createdAt).toLocaleDateString('es-ES') : ''}</p>
+              </div>
+            </div>
+            ${f.href ? `<a href="${f.href}" target="_blank" rel="noreferrer" class="crm-button crm-button-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;">Descargar</a>` : `<span class="text-xs" style="color: oklch(72% 0.008 355);">No disponible</span>`}
+          </div>
+        `).join('');
+      }
+
+      // Messages
+      const messages = toMessagesViewModel(snapshot).filter(m => m.projectId === projectId);
+      const messagesSection = document.getElementById('project-messages-section');
+      const messagesList = document.getElementById('project-messages');
+      if (messages.length > 0 && messagesSection && messagesList) {
+        messagesSection.classList.remove('hidden');
+        messagesList.innerHTML = messages.map(m => `
+          <div class="crm-row" style="border-bottom-color: oklch(92% 0.005 355);">
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold truncate" style="color: var(--gg-text);">${m.subject}</h3>
+              <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${m.lastMessagePreview}</p>
+            </div>
+            ${m.unreadCount > 0 ? `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold text-white flex-shrink-0" style="background: var(--gg-accent);">${m.unreadCount}</span>` : ''}
+          </div>
+        `).join('');
+      }
+
+      // Show empty state if no sections have content
+      if (reviews.length === 0 && files.length === 0 && messages.length === 0) {
+        document.getElementById('project-empty-section')?.classList.remove('hidden');
+      }
+
+      // Hide loading, show content
+      document.getElementById('project-detail-loading')?.classList.add('hidden');
+      document.getElementById('project-content')?.classList.remove('hidden');
+    })();
+  </script>
+</ClientAreaLayout>

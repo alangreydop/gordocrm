@@ -11,7 +11,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
     </div>
 
     <div id="files-list">
-      {[1,2,3].map(() => `
+      {[1,2,3].map(() => (
         <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
           <div class="flex items-center gap-3 flex-1">
             <div class="w-9 h-9 rounded-sm" style="background: var(--gg-border-light);"></div>
@@ -22,7 +22,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           </div>
           <div class="h-7 w-20 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
-      `).join('')}
+      ))}
     </div>
   </div>
 

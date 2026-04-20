@@ -27,6 +27,11 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(8),
 });
 
+const changeEmailSchema = z.object({
+  currentPassword: z.string().min(1),
+  newEmail: z.string().email(),
+});
+
 export const authRoutes = new Hono<AppContext>();
 
 authRoutes.post('/login', async (c) => {
@@ -148,4 +153,50 @@ authRoutes.post('/change-password', requireAuth, async (c) => {
   }
 
   return c.json({ ok: true });
+});
+
+authRoutes.post('/change-email', requireAuth, async (c) => {
+  const payload: unknown = await c.req.json().catch(() => null);
+  const body = changeEmailSchema.safeParse(payload);
+
+  if (!body.success) {
+    return c.json({ error: 'Invalid payload', details: body.error.issues }, 400);
+  }
+
+  const user = c.get('user');
+  const db = c.get('db');
+  const userRecord = await getUserRecordById(db, user.id);
+
+  if (!userRecord) {
+    return c.json({ error: 'User not found' }, 404);
+  }
+
+  const currentPasswordOk = await checkPassword(
+    body.data.currentPassword,
+    userRecord.passwordHash,
+  );
+
+  if (!currentPasswordOk) {
+    return c.json({ error: 'Current password is incorrect' }, 400);
+  }
+
+  await db
+    .update(schema.users)
+    .set({
+      email: body.data.newEmail,
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.users.id, user.id));
+
+  if (user.role === 'client') {
+    await db
+      .update(schema.clients)
+      .set({
+        email: body.data.newEmail,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.clients.userId, user.id));
+  }
+
+  return c.json({ ok: true, email: body.data.newEmail });
 });

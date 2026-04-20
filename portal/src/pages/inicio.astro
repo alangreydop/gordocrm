@@ -36,14 +36,14 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
     <div class="crm-section mt-8">
       <p class="crm-section-header">Actividad reciente</p>
       <div id="timeline-feed">
-        {[1,2,3,4].map(() => `
+        {[1,2,3,4].map(() => (
           <div class="crm-row" style="border-bottom-color: oklch(92% 0.005 355);">
             <div class="flex-1">
               <div class="h-4 w-44 rounded animate-pulse" style="background: var(--gg-border-light);"></div>
               <div class="h-3 w-20 rounded animate-pulse mt-1.5" style="background: oklch(94% 0.005 355);"></div>
             </div>
           </div>
-        `).join('')}
+        ))}
       </div>
     </div>
   </div>

@@ -11,7 +11,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
     </div>
 
     <div id="projects-list">
-      {[1,2,3].map(() => `
+      {[1,2,3].map(() => (
         <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
           <div class="flex-1">
             <div class="h-4 w-36 rounded" style="background: var(--gg-border-light);"></div>
@@ -19,7 +19,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           </div>
           <div class="h-5 w-16 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
-      `).join('')}
+      ))}
     </div>
   </div>
 
@@ -57,7 +57,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       list.innerHTML = projects.map((p, i) => {
         const badge = statusBadge(p.status);
         return `
-        <div class="crm-row crm-row--interactive ca-card-enter" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+        <a href="/detalle?id=${p.id}" class="crm-row crm-row--interactive ca-card-enter block no-underline" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms; color: inherit;">
           <div class="flex-1 min-w-0">
             <h3 class="font-semibold" style="color: var(--gg-text);">${p.title}</h3>
             <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${[p.platform, p.type].filter(Boolean).map(v => v === 'image' ? 'Imagen' : v === 'video' ? 'Vídeo' : v?.charAt(0).toUpperCase() + v?.slice(1)).join(' · ') || ''}</p>
@@ -66,7 +66,7 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
             <span class="${badge.cls}">${badge.label}</span>
             ${p.dueAt ? `<p class="text-xs mt-1" style="color: oklch(55% 0.008 355);">Entrega: ${new Date(p.dueAt).toLocaleDateString('es-ES')}</p>` : ''}
           </div>
-        </div>
+        </a>
         ${p.unitsPlanned > 0 ? `
         <div class="px-0 pb-2" style="margin-top: -4px;">
           <div class="flex items-center gap-3">

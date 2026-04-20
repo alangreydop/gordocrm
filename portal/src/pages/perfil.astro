@@ -19,10 +19,6 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           <p id="profile-name" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
         </div>
         <div style="border-top: 1px solid oklch(92% 0.005 355);">
-          <label class="crm-label mt-4 block">Correo electrónico</label>
-          <p id="profile-email" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
-        </div>
-        <div style="border-top: 1px solid oklch(92% 0.005 355);">
           <label class="crm-label mt-4 block">Empresa</label>
           <p id="profile-company" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
         </div>
@@ -43,10 +39,50 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       </div>
     </div>
 
+    <div class="crm-section">
+      <p class="crm-section-header">Correo electrónico</p>
+      <form id="email-form" class="space-y-3">
+        <div>
+          <label class="crm-label" for="current-email">Correo actual</label>
+          <p id="current-email" class="text-sm mt-0.5" style="color: var(--gg-text);">—</p>
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355); padding-top: 0.75rem;">
+          <label class="crm-label" for="new-email">Nuevo correo</label>
+          <input id="new-email" type="email" class="crm-input" placeholder="nuevo@correo.com" autocomplete="off" />
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355); padding-top: 0.75rem;">
+          <label class="crm-label" for="email-password">Contraseña actual</label>
+          <input id="email-password" type="password" class="crm-input" placeholder="Confirma tu contraseña" autocomplete="current-password" />
+        </div>
+        <div class="flex items-center gap-3 pt-1">
+          <button type="submit" class="crm-button crm-button-primary" style="padding: 0.45rem 1.1rem; font-size: 0.82rem;">Guardar correo</button>
+          <span id="email-status" class="text-xs" style="color: oklch(55% 0.008 355);"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="crm-section">
+      <p class="crm-section-header">Contraseña</p>
+      <form id="password-form" class="space-y-3">
+        <div>
+          <label class="crm-label" for="current-password">Contraseña actual</label>
+          <input id="current-password" type="password" class="crm-input" placeholder="Contraseña actual" autocomplete="current-password" />
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355); padding-top: 0.75rem;">
+          <label class="crm-label" for="new-password">Nueva contraseña</label>
+          <input id="new-password" type="password" class="crm-input" placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+        </div>
+        <div class="flex items-center gap-3 pt-1">
+          <button type="submit" class="crm-button crm-button-primary" style="padding: 0.45rem 1.1rem; font-size: 0.82rem;">Cambiar contraseña</button>
+          <span id="password-status" class="text-xs" style="color: oklch(55% 0.008 355);"></span>
+        </div>
+      </form>
+    </div>
+
     <div class="crm-section" id="contact-section">
       <p class="crm-section-header">Soporte</p>
       <div>
-        <p class="text-sm" style="color: oklch(50% 0.008 355);">Si necesitas cambiar datos de tu cuenta, contacta a tu equipo:</p>
+        <p class="text-sm" style="color: oklch(50% 0.008 355);">Para cambiar datos que no puedes editar aquí (nombre, empresa), contacta a tu equipo:</p>
         <a href="mailto:hola@grandeandgordo.com" class="crm-button crm-button-secondary mt-3" style="font-size: 0.82rem; padding: 0.45rem 1.1rem;">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           hola@grandeandgordo.com
@@ -65,11 +101,12 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
   <script>
     (async () => {
       const { logout, requireRole } = await import('../lib/api-client');
+      const { api } = await import('../lib/api-client');
       const user = await requireRole('client');
 
       if (user) {
         const nameEl = document.getElementById('profile-name');
-        const emailEl = document.getElementById('profile-email');
+        const emailEl = document.getElementById('current-email');
         if (nameEl) nameEl.textContent = user.name || '—';
         if (emailEl) emailEl.textContent = user.email || '—';
       }
@@ -98,6 +135,78 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         if (planEl) planEl.textContent = client.plan || '—';
       }
 
+      // Email form
+      const emailForm = document.getElementById('email-form');
+      emailForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('email-status');
+        const newEmail = (document.getElementById('new-email') as HTMLInputElement).value.trim();
+        const password = (document.getElementById('email-password') as HTMLInputElement).value;
+
+        if (!newEmail || !password) {
+          if (status) { status.textContent = 'Rellena todos los campos'; status.style.color = 'var(--gg-danger)'; }
+          return;
+        }
+
+        if (status) { status.textContent = 'Guardando...'; status.style.color = 'oklch(55% 0.008 355)'; }
+
+        try {
+          const res = await api('/api/portal/auth/change-email', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword: password, newEmail }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Error');
+
+          const currentEl = document.getElementById('current-email');
+          if (currentEl) currentEl.textContent = data.email || newEmail;
+          (document.getElementById('new-email') as HTMLInputElement).value = '';
+          (document.getElementById('email-password') as HTMLInputElement).value = '';
+          if (status) { status.textContent = 'Correo actualizado'; status.style.color = 'var(--gg-success)'; }
+          setTimeout(() => { if (status) { status.textContent = ''; status.style.color = ''; } }, 3000);
+        } catch (err: any) {
+          if (status) { status.textContent = err.message || 'Error al guardar'; status.style.color = 'var(--gg-danger)'; }
+        }
+      });
+
+      // Password form
+      const passwordForm = document.getElementById('password-form');
+      passwordForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('password-status');
+        const currentPassword = (document.getElementById('current-password') as HTMLInputElement).value;
+        const newPassword = (document.getElementById('new-password') as HTMLInputElement).value;
+
+        if (!currentPassword || !newPassword) {
+          if (status) { status.textContent = 'Rellena todos los campos'; status.style.color = 'var(--gg-danger)'; }
+          return;
+        }
+
+        if (newPassword.length < 8) {
+          if (status) { status.textContent = 'Mínimo 8 caracteres'; status.style.color = 'var(--gg-danger)'; }
+          return;
+        }
+
+        if (status) { status.textContent = 'Cambiando...'; status.style.color = 'oklch(55% 0.008 355)'; }
+
+        try {
+          const res = await api('/api/portal/auth/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword, newPassword }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Error');
+
+          (document.getElementById('current-password') as HTMLInputElement).value = '';
+          (document.getElementById('new-password') as HTMLInputElement).value = '';
+          if (status) { status.textContent = 'Contraseña actualizada'; status.style.color = 'var(--gg-success)'; }
+          setTimeout(() => { if (status) { status.textContent = ''; status.style.color = ''; } }, 3000);
+        } catch (err: any) {
+          if (status) { status.textContent = err.message || 'Error al cambiar'; status.style.color = 'var(--gg-danger)'; }
+        }
+      });
+
+      // Logout
       document.getElementById('logout-button-profile')?.addEventListener('click', async () => {
         await logout();
         window.location.href = '/login';
