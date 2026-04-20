@@ -228,89 +228,85 @@ export const sessions = sqliteTable(
 
 export const invoices = sqliteTable('invoices', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceNumber: text('invoice_number').notNull().unique(),
+  invoiceNumber: text('invoiceNumber').notNull().unique(),
   series: text('series').notNull().default('F'),
-  fiscalYear: integer('fiscal_year').notNull(),
+  fiscalYear: integer('fiscalYear').notNull(),
 
-  clientId: text('client_id')
+  clientId: text('clientId')
     .notNull()
     .references(() => clients.id),
-  clientTaxId: text('client_tax_id').notNull(),
-  clientLegalName: text('client_legal_name').notNull(),
-  clientAddressLine1: text('client_address_line_1').notNull(),
-  clientAddressLine2: text('client_address_line_2'),
-  clientCity: text('client_city').notNull(),
-  clientRegion: text('client_region'),
-  clientPostalCode: text('client_postal_code').notNull(),
-  clientCountry: text('client_country').default('ES'),
-  clientEmail: text('client_email').notNull(),
+  clientTaxId: text('clientTaxId').notNull(),
+  clientLegalName: text('clientLegalName').notNull(),
+  clientAddressLine1: text('clientAddressLine1').notNull(),
+  clientAddressLine2: text('clientAddressLine2'),
+  clientCity: text('clientCity').notNull(),
+  clientRegion: text('clientRegion'),
+  clientPostalCode: text('clientPostalCode').notNull(),
+  clientCountry: text('clientCountry').default('ES'),
+  clientEmail: text('clientEmail').notNull(),
 
-  issuerTaxId: text('issuer_tax_id').notNull(),
-  issuerLegalName: text('issuer_legal_name').notNull(),
-  issuerAddressLine1: text('issuer_address_line_1').notNull(),
-  issuerCity: text('issuer_city').notNull(),
-  issuerPostalCode: text('issuer_postal_code').notNull(),
-  issuerCountry: text('issuer_country').default('ES'),
-  issuerEmail: text('issuer_email').notNull(),
+  issuerTaxId: text('issuerTaxId').notNull(),
+  issuerLegalName: text('issuerLegalName').notNull(),
+  issuerAddressLine1: text('issuerAddressLine1').notNull(),
+  issuerCity: text('issuerCity').notNull(),
+  issuerPostalCode: text('issuerPostalCode').notNull(),
+  issuerCountry: text('issuerCountry').default('ES'),
+  issuerEmail: text('issuerEmail').notNull(),
 
-  issueDate: integer('issue_date', { mode: 'timestamp_ms' }).notNull(),
-  dueDate: integer('due_date', { mode: 'timestamp_ms' }).notNull(),
-  paidAt: integer('paid_at', { mode: 'timestamp_ms' }),
+  issueDate: integer('issueDate', { mode: 'timestamp_ms' }).notNull(),
+  dueDate: integer('dueDate', { mode: 'timestamp_ms' }).notNull(),
+  paidAt: integer('paidAt', { mode: 'timestamp_ms' }),
 
   description: text('description'),
 
-  subtotalCents: integer('subtotal_cents').notNull().default(0),
-  taxRate: real('tax_rate').notNull().default(0.21),
-  taxAmountCents: integer('tax_amount_cents').notNull().default(0),
-  irpfRate: real('irpf_rate'),
-  irpfAmountCents: integer('irpf_amount_cents'),
-  totalCents: integer('total_cents').notNull().default(0),
+  subtotalCents: integer('subtotalCents').notNull().default(0),
+  taxRate: real('taxRate').notNull().default(0.21),
+  taxAmountCents: integer('taxAmountCents').notNull().default(0),
+  irpfRate: real('irpfRate'),
+  irpfAmountCents: integer('irpfAmountCents'),
+  totalCents: integer('totalCents').notNull().default(0),
 
   status: text('status').notNull().default('draft'),
-  paymentMethod: text('payment_method'),
-  paymentNotes: text('payment_notes'),
+  paymentMethod: text('paymentMethod'),
+  paymentNotes: text('paymentNotes'),
 
-  isRectificative: integer('is_rectificative', { mode: 'boolean' }).default(false),
-  rectificativeReason: text('rectificative_reason'),
-  originalInvoiceId: text('original_invoice_id').references(() => invoices.id),
+  isRectificative: integer('isRectificative', { mode: 'boolean' }).default(false),
+  rectificativeReason: text('rectificativeReason'),
+  originalInvoiceId: text('originalInvoiceId').references(() => invoices.id),
 
-  relatedJobIds: text('related_job_ids'),
+  relatedJobIds: text('relatedJobIds'),
 
   notes: text('notes'),
   terms: text('terms'),
   footer: text('footer'),
 
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  updatedAt: integer('updatedAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 });
 
 export const invoiceItems = sqliteTable('invoice_items', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceId: text('invoice_id')
+  invoiceId: text('invoiceId')
     .notNull()
     .references(() => invoices.id, { onDelete: 'cascade' }),
 
-  // Concepto
   description: text('description').notNull(),
   quantity: real('quantity').notNull().default(1),
-  unitPriceCents: integer('unit_price_cents').notNull(),
+  unitPriceCents: integer('unitPriceCents').notNull(),
 
-  // Importes
-  subtotalCents: integer('subtotal_cents').notNull(),
-  taxRate: real('tax_rate').notNull().default(0.21),
-  taxAmountCents: integer('tax_amount_cents').notNull(),
-  irpfRate: real('irpf_rate'),
-  irpfAmountCents: integer('irpf_amount_cents'),
-  totalCents: integer('total_cents').notNull(),
+  subtotalCents: integer('subtotalCents').notNull(),
+  taxRate: real('taxRate').notNull().default(0.21),
+  taxAmountCents: integer('taxAmountCents').notNull(),
+  irpfRate: real('irpfRate'),
+  irpfAmountCents: integer('irpfAmountCents'),
+  totalCents: integer('totalCents').notNull(),
 
-  // Orden
-  sortOrder: integer('sort_order').notNull().default(0),
+  sortOrder: integer('sortOrder').notNull().default(0),
 
-  // Metadata
-  jobId: text('job_id').references(() => jobs.id),
-  metadata: text('metadata'), // JSON
+  jobId: text('jobId').references(() => jobs.id),
+  metadata: text('metadata'),
 
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 });
 
 export const invoiceLogs = sqliteTable('invoice_logs', {
