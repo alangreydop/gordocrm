@@ -36,4 +36,49 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       </div>
     </section>
   </div>
+
+  <script>
+    (async () => {
+      const { bootstrapClientArea } = await import('../lib/client-area/bootstrap');
+      const { toInicioViewModel } = await import('../lib/client-area/view-models');
+
+      const snapshot = await bootstrapClientArea();
+      const vm = toInicioViewModel(snapshot);
+
+      const label = document.getElementById('account-label');
+      if (label) label.textContent = vm.accountLabel;
+
+      const summary = document.getElementById('account-summary');
+      if (summary) {
+        const parts: string[] = [];
+        if (vm.activeProjectCount > 0) parts.push(`${vm.activeProjectCount} proyecto${vm.activeProjectCount > 1 ? 's' : ''} activo${vm.activeProjectCount > 1 ? 's' : ''}`);
+        if (vm.pendingReviewCount > 0) parts.push(`${vm.pendingReviewCount} revisión${vm.pendingReviewCount > 1 ? 'es' : ''} pendiente${vm.pendingReviewCount > 1 ? 's' : ''}`);
+        if (vm.unreadMessageCount > 0) parts.push(`${vm.unreadMessageCount} mensaje${vm.unreadMessageCount > 1 ? 's' : ''} sin leer`);
+        summary.textContent = parts.length > 0 ? parts.join(' · ') : 'Todo al día.';
+      }
+
+      const setMetric = (id: string, value: number) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(value);
+      };
+      setMetric('metric-active-projects', vm.activeProjectCount);
+      setMetric('metric-pending-reviews', vm.pendingReviewCount);
+      setMetric('metric-unread-messages', vm.unreadMessageCount);
+
+      const timelineFeed = document.getElementById('timeline-feed');
+      if (timelineFeed && vm.timeline.length > 0) {
+        timelineFeed.innerHTML = vm.timeline.slice(0, 10).map((item) => `
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 mt-2 rounded-full bg-zinc-700 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-zinc-300">${item.label}</p>
+              <p class="text-xs text-zinc-500 mt-0.5">${item.occurredAt ? new Date(item.occurredAt).toLocaleDateString('es-ES') : ''}</p>
+            </div>
+          </div>
+        `).join('');
+      } else if (timelineFeed) {
+        timelineFeed.innerHTML = '<p class="text-sm text-zinc-400">Sin actividad reciente.</p>';
+      }
+    })();
+  </script>
 </ClientAreaLayout>
