@@ -4,7 +4,8 @@ export type ClientAreaSectionSlug =
   | 'revisiones'
   | 'archivos'
   | 'mensajes'
-  | 'facturacion';
+  | 'facturacion'
+  | 'perfil';
 
 export interface ClientAreaSection {
   slug: ClientAreaSectionSlug;
@@ -18,6 +19,7 @@ export const CLIENT_AREA_SECTIONS = [
   { slug: 'archivos', label: 'Archivos' },
   { slug: 'mensajes', label: 'Mensajes' },
   { slug: 'facturacion', label: 'Facturación' },
+  { slug: 'perfil', label: 'Perfil' },
 ] as const satisfies ReadonlyArray<ClientAreaSection>;
 
 export interface ClientAreaAccountSnapshot {

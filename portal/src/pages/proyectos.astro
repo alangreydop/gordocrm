@@ -2,25 +2,22 @@
 import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
-<ClientAreaLayout title="Proyectos" section="proyectos">
-  <div id="client-area-root" class="space-y-8">
-    <section class="crm-page-header p-6 md:p-7">
+<ClientAreaLayout title="Producción" section="proyectos">
+  <div id="client-area-root">
+    <div class="crm-masthead">
       <p class="crm-kicker">Tus encargos</p>
-      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Estado de producción</h2>
-      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Seguimiento de cada encargo, de briefing a entrega.</p>
-    </section>
+      <h1 class="crm-masthead-title">Estado de producción</h1>
+      <p class="crm-masthead-deck">Seguimiento de cada encargo, de briefing a entrega.</p>
+    </div>
 
-    <div id="projects-list" class="ca-stagger">
+    <div id="projects-list">
       {[1,2,3].map(() => `
-        <div class="crm-panel-soft p-5 mb-3 animate-pulse">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1">
-              <div class="h-5 w-36 rounded" style="background: var(--gg-surface-elevated);"></div>
-              <div class="h-3 w-20 rounded mt-2" style="background: var(--gg-surface-elevated);"></div>
-            </div>
-            <div class="h-6 w-20 rounded-full" style="background: var(--gg-surface-elevated);"></div>
+        <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
+          <div class="flex-1">
+            <div class="h-4 w-36 rounded" style="background: var(--gg-border-light);"></div>
+            <div class="h-3 w-20 rounded mt-2" style="background: oklch(94% 0.005 355);"></div>
           </div>
-          <div class="h-3 w-40 rounded mt-3" style="background: var(--gg-surface);"></div>
+          <div class="h-5 w-16 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
       `).join('')}
     </div>
@@ -39,45 +36,47 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (projects.length === 0) {
         list.innerHTML = `
-          <div class="crm-empty">
-            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin proyectos</p>
-            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Los proyectos aparecerán cuando se inicien encargos.</p>
+          <div class="py-10 text-center">
+            <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin proyectos</p>
+            <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Los proyectos aparecerán cuando se inicien encargos.</p>
           </div>`;
         return;
       }
 
-      const statusBadge = (status: string): { class: string; label: string } => {
+      const statusBadge = (status: string): { cls: string; label: string } => {
         switch (status) {
-          case 'pending': return { class: 'color: var(--gg-warning); background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.2);', label: 'Pendiente' };
-          case 'processing': return { class: 'color: var(--gg-accent-bright); background: var(--gg-accent-soft); border: 1px solid rgba(196,22,90,0.25);', label: 'En producción' };
-          case 'delivered': return { class: 'color: #c084fc; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2);', label: 'Entregado' };
-          case 'completed': return { class: 'color: var(--gg-success); background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);', label: 'Completado' };
-          case 'failed': return { class: 'color: var(--gg-danger); background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);', label: 'Fallido' };
-          default: return { class: 'color: var(--gg-text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--gg-border);', label: status };
+          case 'pending': return { cls: 'crm-badge crm-badge--warning', label: 'Pendiente' };
+          case 'processing': return { cls: 'crm-badge crm-badge--accent', label: 'En producción' };
+          case 'delivered': return { cls: 'crm-badge crm-badge--muted', label: 'Entregado' };
+          case 'completed': return { cls: 'crm-badge crm-badge--success', label: 'Completado' };
+          case 'failed': return { cls: 'crm-badge crm-badge--danger', label: 'Fallido' };
+          default: return { cls: 'crm-badge crm-badge--muted', label: status };
         }
       };
 
       list.innerHTML = projects.map((p, i) => {
         const badge = statusBadge(p.status);
         return `
-        <div class="crm-panel-soft p-5 mb-3 ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" style="border-color: var(--gg-border); animation-delay: ${i * 60}ms;">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h3 class="font-semibold text-white">${p.title}</h3>
-              <p class="text-xs mt-1" style="color: var(--gg-text-subtle);">${[p.platform, p.type].filter(Boolean).map(v => v === 'image' ? 'Imagen' : v === 'video' ? 'Vídeo' : v?.charAt(0).toUpperCase() + v?.slice(1)).join(' · ') || ''}</p>
+        <div class="crm-row crm-row--interactive ca-card-enter" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+          <div class="flex-1 min-w-0">
+            <h3 class="font-semibold" style="color: var(--gg-text);">${p.title}</h3>
+            <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${[p.platform, p.type].filter(Boolean).map(v => v === 'image' ? 'Imagen' : v === 'video' ? 'Vídeo' : v?.charAt(0).toUpperCase() + v?.slice(1)).join(' · ') || ''}</p>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <span class="${badge.cls}">${badge.label}</span>
+            ${p.dueAt ? `<p class="text-xs mt-1" style="color: oklch(55% 0.008 355);">Entrega: ${new Date(p.dueAt).toLocaleDateString('es-ES')}</p>` : ''}
+          </div>
+        </div>
+        ${p.unitsPlanned > 0 ? `
+        <div class="px-0 pb-2" style="margin-top: -4px;">
+          <div class="flex items-center gap-3">
+            <div class="crm-score-track flex-1">
+              <div class="crm-score-fill" style="width: ${Math.min(100, (p.unitsConsumed / p.unitsPlanned) * 100)}%; background: ${p.unitsConsumed >= p.unitsPlanned ? 'var(--gg-success)' : p.unitsConsumed > 0 ? 'var(--gg-accent)' : 'oklch(72% 0.008 355)'};"></div>
             </div>
-            <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium flex-shrink-0 whitespace-nowrap" style="${badge.class}">${badge.label}</span>
+            <span class="text-xs" style="color: oklch(55% 0.008 355);">${p.unitsConsumed}/${p.unitsPlanned}</span>
           </div>
-          <div class="mt-3 flex items-center gap-4 text-xs" style="color: var(--gg-text-muted);">
-            ${p.dueAt ? `<span>Entrega: ${new Date(p.dueAt).toLocaleDateString('es-ES')}</span>` : ''}
-            <span>Piezas: ${p.unitsConsumed}/${p.unitsPlanned}</span>
-          </div>
-          ${p.unitsPlanned > 0 ? `
-          <div class="mt-3 w-full rounded-full h-1 overflow-hidden" style="background: var(--gg-surface);">
-            <div class="h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, (p.unitsConsumed / p.unitsPlanned) * 100)}%; background: ${p.unitsConsumed >= p.unitsPlanned ? 'var(--gg-success)' : p.unitsConsumed > 0 ? 'var(--gg-accent-bright)' : 'var(--gg-text-faint)'}"></div>
-          </div>
-          ` : ''}
-        </div>`;
+        </div>
+        ` : ''}`;
       }).join('');
     })();
   </script>

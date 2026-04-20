@@ -2,27 +2,25 @@
 import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
-<ClientAreaLayout title="Archivos" section="archivos">
-  <div id="client-area-root" class="space-y-8">
-    <section class="crm-page-header p-6 md:p-7">
+<ClientAreaLayout title="Entregas" section="archivos">
+  <div id="client-area-root">
+    <div class="crm-masthead">
       <p class="crm-kicker">Entregables</p>
-      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Tus archivos</h2>
-      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Descarga las piezas finales y las referencias de tus encargos.</p>
-    </section>
+      <h1 class="crm-masthead-title">Tus archivos</h1>
+      <p class="crm-masthead-deck">Descarga las piezas finales y las referencias de tus encargos.</p>
+    </div>
 
-    <div id="files-list" class="ca-stagger">
+    <div id="files-list">
       {[1,2,3].map(() => `
-        <div class="crm-panel-soft p-4 mb-2 animate-pulse">
-          <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3 flex-1">
-              <div class="w-10 h-10 rounded-lg" style="background: var(--gg-surface-elevated);"></div>
-              <div>
-                <div class="h-5 w-28 rounded" style="background: var(--gg-surface-elevated);"></div>
-                <div class="h-3 w-20 rounded mt-1.5" style="background: var(--gg-surface);"></div>
-              </div>
+        <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
+          <div class="flex items-center gap-3 flex-1">
+            <div class="w-9 h-9 rounded-sm" style="background: var(--gg-border-light);"></div>
+            <div>
+              <div class="h-4 w-28 rounded" style="background: var(--gg-border-light);"></div>
+              <div class="h-3 w-20 rounded mt-1" style="background: oklch(94% 0.005 355);"></div>
             </div>
-            <div class="h-8 w-20 rounded-full" style="background: var(--gg-surface-elevated);"></div>
           </div>
+          <div class="h-7 w-20 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
       `).join('')}
     </div>
@@ -41,32 +39,30 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (files.length === 0) {
         list.innerHTML = `
-          <div class="crm-empty">
-            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin archivos</p>
-            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Los archivos aparecerán cuando tu equipo suba entregas.</p>
+          <div class="py-10 text-center">
+            <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin archivos</p>
+            <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Los archivos aparecerán cuando tu equipo suba entregas.</p>
           </div>`;
         return;
       }
 
       list.innerHTML = files.map((f, i) => `
-        <div class="crm-panel-soft p-4 mb-2 ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" style="animation-delay: ${i * 40}ms;">
-          <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3 flex-1 min-w-0">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ${f.category === 'deliverable' ? 'var(--gg-accent-soft)' : 'var(--gg-surface)'}; color: ${f.category === 'deliverable' ? 'var(--gg-accent-bright)' : 'var(--gg-text-subtle)'};">
-                ${f.kind === 'video'
-                  ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>'
-                  : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'}
-              </div>
-              <div class="min-w-0">
-                <h3 class="font-semibold text-white truncate">${f.title}</h3>
-                <p class="text-xs mt-0.5" style="color: var(--gg-text-subtle);">${f.category === 'deliverable' ? 'Entregable' : 'Referencia'} · ${f.kind === 'video' ? 'Vídeo' : 'Imagen'}</p>
-              </div>
+        <div class="crm-row ca-card-enter" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div class="w-9 h-9 rounded-sm flex items-center justify-center flex-shrink-0" style="background: ${f.category === 'deliverable' ? 'var(--gg-accent-light)' : 'var(--gg-surface-hover)'}; color: ${f.category === 'deliverable' ? 'var(--gg-accent)' : 'oklch(55% 0.008 355)'};">
+              ${f.kind === 'video'
+                ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>'
+                : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>'}
             </div>
-            ${f.href ? `<a href="${f.href}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary" style="padding: 0.5rem 1rem; font-size: 0.78rem; background: var(--gg-accent); box-shadow: 0 10px 24px rgba(196,22,90,0.16);">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"/></svg>
-              Descargar
-            </a>` : `<span class="text-xs flex-shrink-0" style="color: var(--gg-text-faint);">No disponible</span>`}
+            <div class="min-w-0">
+              <h3 class="font-semibold truncate" style="color: var(--gg-text);">${f.title}</h3>
+              <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${f.category === 'deliverable' ? 'Entregable' : 'Referencia'} · ${f.kind === 'video' ? 'Vídeo' : 'Imagen'}</p>
+            </div>
           </div>
+          ${f.href ? `<a href="${f.href}" target="_blank" rel="noreferrer" class="crm-button crm-button-secondary" style="padding: 0.35rem 0.9rem; font-size: 0.78rem;">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3"/></svg>
+            Descargar
+          </a>` : `<span class="text-xs flex-shrink-0" style="color: oklch(72% 0.008 355);">No disponible</span>`}
         </div>
       `).join('');
     })();

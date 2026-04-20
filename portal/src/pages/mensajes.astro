@@ -3,24 +3,21 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Mensajes" section="mensajes">
-  <div id="client-area-root" class="space-y-8">
-    <section class="crm-page-header p-6 md:p-7">
+  <div id="client-area-root">
+    <div class="crm-masthead">
       <p class="crm-kicker">Conversaciones</p>
-      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Habla con tu equipo</h2>
-      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Hilos abiertos con el estudio sobre tus encargos.</p>
-    </section>
+      <h1 class="crm-masthead-title">Habla con tu equipo</h1>
+      <p class="crm-masthead-deck">Hilos abiertos con el estudio sobre tus encargos.</p>
+    </div>
 
-    <div id="messages-list" class="ca-stagger">
+    <div id="messages-list">
       {[1,2].map(() => `
-        <div class="crm-panel-soft p-5 mb-3 animate-pulse">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1">
-              <div class="h-5 w-40 rounded" style="background: var(--gg-surface-elevated);"></div>
-              <div class="h-3 w-64 rounded mt-2" style="background: var(--gg-surface);"></div>
-              <div class="h-3 w-48 rounded mt-2" style="background: var(--gg-surface);"></div>
-            </div>
-            <div class="w-6 h-6 rounded-full" style="background: var(--gg-surface-elevated);"></div>
+        <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
+          <div class="flex-1">
+            <div class="h-4 w-40 rounded" style="background: var(--gg-border-light);"></div>
+            <div class="h-3 w-64 rounded mt-2" style="background: oklch(94% 0.005 355);"></div>
           </div>
+          <div class="w-5 h-5 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
       `).join('')}
     </div>
@@ -41,40 +38,39 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (threads.length === 0) {
         list.innerHTML = `
-          <div class="crm-empty">
-            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin conversaciones</p>
-            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Los mensajes aparecerán cuando inicies una conversación.</p>
+          <div class="py-10 text-center">
+            <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin conversaciones</p>
+            <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Los mensajes aparecerán cuando inicies una conversación.</p>
           </div>`;
         return;
       }
 
       list.innerHTML = threads.map((t, i) => `
-        <div class="crm-panel-soft mb-3 overflow-hidden ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" data-thread-id="${t.id}" data-thread-status="${t.status}" style="animation-delay: ${i * 60}ms;">
-          <button class="w-full text-left p-5 cursor-pointer flex items-start justify-between gap-4" data-thread-toggle="${t.id}">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-3">
-                <h3 class="font-semibold text-white truncate">${t.subject}</h3>
-                ${t.unreadCount > 0 ? `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold text-white flex-shrink-0" style="background: var(--gg-accent); box-shadow: 0 4px 12px rgba(196,22,90,0.3);">${t.unreadCount}</span>` : ''}
-              </div>
-              <p class="text-sm mt-1 truncate" style="color: var(--gg-text-muted);">${t.lastMessagePreview}</p>
-              <p class="text-xs mt-2" style="color: var(--gg-text-subtle);">${t.participants.join(' · ')} · ${new Date(t.lastMessageAt).toLocaleDateString('es-ES')}</p>
+        <div class="crm-row crm-row--interactive" data-thread-id="${t.id}" data-thread-status="${t.status}" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="font-semibold truncate" style="color: var(--gg-text);">${t.subject}</h3>
+              ${t.unreadCount > 0 ? `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold text-white flex-shrink-0" style="background: var(--gg-accent); font-family: 'Satoshi', sans-serif;">${t.unreadCount}</span>` : ''}
             </div>
-            <svg class="w-5 h-5 flex-shrink-0 mt-1 transition-transform duration-200" data-chevron="${t.id}" style="color: var(--gg-text-subtle);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div data-thread-detail="${t.id}" class="hidden" style="border-top: 1px solid var(--gg-border);">
-            <div class="p-5 space-y-4">
-              <div data-messages-history="${t.id}" class="space-y-3">
-                <p class="text-sm animate-pulse" style="color: var(--gg-text-muted);">Cargando mensajes...</p>
-              </div>
-              <div data-reply-area="${t.id}" class="pt-4" style="border-top: 1px solid var(--gg-border);">
-                <textarea id="reply-${t.id}" rows="2" class="crm-input" placeholder="Escribe tu respuesta..."></textarea>
-                <div class="mt-3 flex items-center gap-3">
-                  <button data-reply-btn="${t.id}" class="crm-button crm-button-primary" style="padding: 0.5rem 1rem; font-size: 0.78rem; background: var(--gg-accent); box-shadow: 0 10px 24px rgba(196,22,90,0.16);">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                    Enviar
-                  </button>
-                  <span data-reply-status="${t.id}" class="text-xs" style="color: var(--gg-text-subtle);"></span>
-                </div>
+            <p class="text-sm mt-0.5 truncate" style="color: oklch(50% 0.008 355);">${t.lastMessagePreview}</p>
+            <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${t.participants.join(' · ')} · ${new Date(t.lastMessageAt).toLocaleDateString('es-ES')}</p>
+          </div>
+          <svg class="w-4 h-4 flex-shrink-0 transition-transform duration-200" data-chevron="${t.id}" style="color: oklch(55% 0.008 355);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+        <div data-thread-detail="${t.id}" class="hidden" style="border-bottom: 1px solid oklch(92% 0.005 355);">
+          <div class="py-4 px-0">
+            <div data-messages-history="${t.id}" class="space-y-3">
+              <p class="text-sm animate-pulse" style="color: var(--gg-text-muted);">Cargando mensajes...</p>
+            </div>
+            <div data-reply-area="${t.id}" class="mt-4 pt-4" style="border-top: 1px solid oklch(88% 0.005 355);">
+              <label class="crm-label" for="reply-${t.id}">Respuesta</label>
+              <textarea id="reply-${t.id}" rows="2" class="crm-input-boxed" placeholder="Escribe tu respuesta..."></textarea>
+              <div class="mt-3 flex items-center gap-3">
+                <button data-reply-btn="${t.id}" class="crm-button crm-button-primary" style="padding: 0.45rem 1.1rem; font-size: 0.82rem;">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                  Enviar
+                </button>
+                <span data-reply-status="${t.id}" class="text-xs" style="color: oklch(55% 0.008 355);"></span>
               </div>
             </div>
           </div>
@@ -122,8 +118,8 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         if (!history) return;
 
         history.innerHTML = `
-          <div class="flex items-center gap-3 py-2 px-3 rounded-lg" style="background: var(--gg-surface);">
-            <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--gg-accent-soft); color: var(--gg-accent-bright);">
+          <div class="flex items-start gap-3 py-2 px-3 rounded-sm" style="background: var(--gg-surface);">
+            <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style="background: var(--gg-accent-light); color: var(--gg-accent);">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
             <p class="text-sm" style="color: var(--gg-text);">${_threadData.lastMessagePreview || 'Sin mensajes previos'}</p>
@@ -156,15 +152,15 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           const history = document.querySelector(`[data-messages-history="${threadId}"]`);
           if (history) {
             const msgEl = document.createElement('div');
-            msgEl.className = 'flex items-center gap-3 py-2 px-3 rounded-lg';
+            msgEl.className = 'flex items-start gap-3 py-2 px-3 rounded-sm';
             msgEl.style.cssText = 'background: var(--gg-surface); animation: fadeSlideIn 200ms ease-out;';
             msgEl.innerHTML = `
-              <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(255,255,255,0.08); color: var(--gg-text);">
+              <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style="background: oklch(94% 0.005 355); color: oklch(55% 0.008 355);">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               </div>
               <div>
-                <p class="text-sm text-white">${body}</p>
-                <p class="text-xs mt-0.5" style="color: var(--gg-text-subtle);">Tú · ahora</p>
+                <p class="text-sm" style="color: var(--gg-text);">${body}</p>
+                <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">Tú · ahora</p>
               </div>
             `;
             history.appendChild(msgEl);
@@ -184,6 +180,13 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         const toggleBtn = target.closest('[data-thread-toggle]');
         if (toggleBtn) {
           const threadId = toggleBtn.getAttribute('data-thread-toggle');
+          if (threadId) toggleThread(threadId);
+          return;
+        }
+
+        const row = target.closest('[data-thread-id]');
+        if (row && !target.closest('[data-thread-detail]')) {
+          const threadId = row.getAttribute('data-thread-id');
           if (threadId) toggleThread(threadId);
           return;
         }

@@ -3,52 +3,49 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Inicio" section="inicio">
-  <div id="client-area-root" class="space-y-8 ca-stagger">
-    <section class="crm-page-header p-6 md:p-8 ca-metric-enter">
+  <div id="client-area-root">
+    <div class="crm-masthead">
       <p class="crm-kicker">Tu producción</p>
-      <h1 id="account-label" class="mt-4 text-3xl md:text-5xl font-black tracking-tight text-white" style="line-height: 1.04;">
-        <span class="inline-block w-56 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
+      <h1 id="account-label" class="crm-masthead-title">
+        <span class="inline-block w-48 h-9 rounded animate-pulse" style="background: var(--gg-border-light);"></span>
       </h1>
-      <p id="account-summary" class="mt-5 max-w-xl text-sm leading-relaxed md:text-base" style="color: var(--gg-text-muted);">
-        Cargando tu estado de producción.
-      </p>
-    </section>
+      <p id="account-summary" class="crm-masthead-deck">Cargando tu estado de producción.</p>
+    </div>
 
-    <div class="grid gap-4 md:grid-cols-3 ca-stagger" id="metrics-grid">
-      <div class="crm-metric-card ca-metric-enter">
-        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">En producción</p>
-        <p id="metric-active-projects" class="crm-metric-value mt-4">
-          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
+    <div class="crm-stats-row ca-stagger" id="metrics-grid">
+      <div class="crm-stat ca-metric-enter">
+        <p class="crm-kicker">En producción</p>
+        <p id="metric-active-projects" class="crm-stat-num mt-3">
+          <span class="inline-block w-5 h-9 rounded animate-pulse" style="background: var(--gg-border-light);"></span>
         </p>
       </div>
-      <div class="crm-metric-card ca-metric-enter">
-        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Pendiente de revisión</p>
-        <p id="metric-pending-reviews" class="crm-metric-value mt-4">
-          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
+      <div class="crm-stat ca-metric-enter">
+        <p class="crm-kicker">Pendiente de revisión</p>
+        <p id="metric-pending-reviews" class="crm-stat-num mt-3">
+          <span class="inline-block w-5 h-9 rounded animate-pulse" style="background: var(--gg-border-light);"></span>
         </p>
       </div>
-      <div class="crm-metric-card ca-metric-enter">
-        <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Mensajes nuevos</p>
-        <p id="metric-unread-messages" class="crm-metric-value mt-4">
-          <span class="inline-block w-6 h-10 rounded animate-pulse" style="background: var(--gg-surface);"></span>
+      <div class="crm-stat ca-metric-enter">
+        <p class="crm-kicker">Mensajes nuevos</p>
+        <p id="metric-unread-messages" class="crm-stat-num mt-3">
+          <span class="inline-block w-5 h-9 rounded animate-pulse" style="background: var(--gg-border-light);"></span>
         </p>
       </div>
     </div>
 
-    <section class="crm-panel p-6 md:p-7 ca-card-enter">
-      <p class="crm-kicker">Actividad reciente</p>
-      <div id="timeline-feed" class="mt-6 space-y-0">
+    <div class="crm-section mt-8">
+      <p class="crm-section-header">Actividad reciente</p>
+      <div id="timeline-feed">
         {[1,2,3,4].map(() => `
-          <div class="flex items-start gap-3 py-3" style="border-bottom: 1px solid var(--gg-border);">
-            <div class="w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0" style="background: var(--gg-text-faint);"></div>
+          <div class="crm-row" style="border-bottom-color: oklch(92% 0.005 355);">
             <div class="flex-1">
-              <div class="h-4 w-44 rounded animate-pulse" style="background: var(--gg-surface);"></div>
-              <div class="h-3 w-20 rounded animate-pulse mt-1.5" style="background: var(--gg-surface-elevated);"></div>
+              <div class="h-4 w-44 rounded animate-pulse" style="background: var(--gg-border-light);"></div>
+              <div class="h-3 w-20 rounded animate-pulse mt-1.5" style="background: oklch(94% 0.005 355);"></div>
             </div>
           </div>
         `).join('')}
       </div>
-    </section>
+    </div>
   </div>
 
   <script>
@@ -82,18 +79,17 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
       const timelineFeed = document.getElementById('timeline-feed');
       if (timelineFeed && vm.timeline.length > 0) {
         timelineFeed.innerHTML = vm.timeline.slice(0, 10).map((item, i) => `
-          <div class="flex items-start gap-3 py-3 transition-opacity duration-200" style="border-bottom: 1px solid var(--gg-border); animation: clientCardIn 280ms cubic-bezier(0.22, 1, 0.36, 1) ${i * 60}ms both;">
-            <div class="w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0" style="background: var(--gg-accent-bright); opacity: 0.5;"></div>
-            <div>
+          <div class="crm-row ca-card-enter" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+            <div class="flex-1">
               <p class="text-sm" style="color: var(--gg-text);">${item.label}</p>
-              <p class="text-xs mt-0.5" style="color: var(--gg-text-subtle);">${item.occurredAt ? new Date(item.occurredAt).toLocaleDateString('es-ES') : ''}</p>
+              <p class="text-xs mt-0.5" style="color: oklch(55% 0.008 355);">${item.occurredAt ? new Date(item.occurredAt).toLocaleDateString('es-ES') : ''}</p>
             </div>
           </div>
         `).join('');
       } else if (timelineFeed) {
         timelineFeed.innerHTML = `
-          <div class="flex flex-col items-center py-10 text-center">
-            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin actividad</p>
+          <div class="py-10 text-center">
+            <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin actividad</p>
             <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Aquí aparecerá el historial de tu producción.</p>
           </div>`;
       }

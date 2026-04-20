@@ -11,6 +11,7 @@ describe('client area contracts', () => {
       'archivos',
       'mensajes',
       'facturacion',
+      'perfil',
     ]);
   });
 

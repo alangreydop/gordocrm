@@ -3,24 +3,21 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 ---
 
 <ClientAreaLayout title="Revisiones" section="revisiones">
-  <div id="client-area-root" class="space-y-8">
-    <section class="crm-page-header p-6 md:p-7">
+  <div id="client-area-root">
+    <div class="crm-masthead">
       <p class="crm-kicker">Revisiones</p>
-      <h2 class="mt-4 text-2xl font-bold tracking-tight text-white">Aprueba tus entregas</h2>
-      <p class="mt-2 text-sm" style="color: var(--gg-text-muted);">Revisa y aprueba las entregas pendientes antes de cierre.</p>
-    </section>
+      <h1 class="crm-masthead-title">Aprueba tus entregas</h1>
+      <p class="crm-masthead-deck">Revisa y aprueba las entregas pendientes antes de cierre.</p>
+    </div>
 
-    <div id="reviews-list" class="ca-stagger">
+    <div id="reviews-list">
       {[1,2,3].map(() => `
-        <div class="crm-panel-soft p-5 mb-3 animate-pulse">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1">
-              <div class="h-5 w-44 rounded" style="background: var(--gg-surface-elevated);"></div>
-              <div class="h-3 w-28 rounded mt-2" style="background: var(--gg-surface);"></div>
-            </div>
-            <div class="h-6 w-24 rounded-full" style="background: var(--gg-surface-elevated);"></div>
+        <div class="crm-row animate-pulse" style="border-bottom-color: oklch(92% 0.005 355);">
+          <div class="flex-1">
+            <div class="h-4 w-44 rounded" style="background: var(--gg-border-light);"></div>
+            <div class="h-3 w-28 rounded mt-2" style="background: oklch(94% 0.005 355);"></div>
           </div>
-          <div class="h-3 w-24 rounded mt-3" style="background: var(--gg-surface);"></div>
+          <div class="h-5 w-24 rounded-full" style="background: var(--gg-border-light);"></div>
         </div>
       `).join('')}
     </div>
@@ -41,19 +38,19 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
 
       if (reviews.length === 0) {
         list.innerHTML = `
-          <div class="crm-empty">
-            <p class="crm-kicker" style="font-size: 0.72rem; color: var(--gg-text-subtle);">Sin revisiones</p>
-            <p class="text-sm mt-3" style="color: var(--gg-text-muted);">Las revisiones aparecerán cuando tu equipo suba entregas.</p>
+          <div class="py-10 text-center">
+            <p class="crm-kicker" style="color: oklch(55% 0.008 355);">Sin revisiones</p>
+            <p class="text-sm mt-2" style="color: var(--gg-text-muted);">Las revisiones aparecerán cuando tu equipo suba entregas.</p>
           </div>`;
         return;
       }
 
-      const statusBadge = (status: string): { style: string; label: string } => {
+      const statusBadge = (status: string): { cls: string; label: string } => {
         switch (status) {
-          case 'needs_review': return { style: 'color: var(--gg-warning); background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.2);', label: 'Pendiente' };
-          case 'approved': return { style: 'color: var(--gg-success); background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);', label: 'Aprobado' };
-          case 'changes_requested': return { style: 'color: var(--gg-danger); background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);', label: 'Cambios solicitados' };
-          default: return { style: 'color: var(--gg-text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--gg-border);', label: status };
+          case 'needs_review': return { cls: 'crm-badge crm-badge--warning', label: 'Pendiente' };
+          case 'approved': return { cls: 'crm-badge crm-badge--success', label: 'Aprobado' };
+          case 'changes_requested': return { cls: 'crm-badge crm-badge--danger', label: 'Cambios solicitados' };
+          default: return { cls: 'crm-badge crm-badge--muted', label: status };
         }
       };
 
@@ -61,33 +58,35 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
         const needsAction = r.status === 'needs_review';
         const badge = statusBadge(r.status);
         return `
-        <div class="crm-panel-soft p-5 mb-3 ca-card-enter transition-all duration-200 hover:translate-y-[-1px]" data-review-id="${r.id}" style="animation-delay: ${i * 60}ms;">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1">
-              <h3 class="font-semibold text-white">${r.title}</h3>
-              ${r.summary ? `<p class="text-sm mt-1" style="color: var(--gg-text-muted);">${r.summary}</p>` : ''}
+        <div class="crm-row ca-card-enter" data-review-id="${r.id}" style="border-bottom-color: oklch(92% 0.005 355); animation-delay: ${i * 40}ms;">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="font-semibold" style="color: var(--gg-text);">${r.title}</h3>
+                ${r.summary ? `<p class="text-sm mt-0.5" style="color: oklch(50% 0.008 355);">${r.summary}</p>` : ''}
+              </div>
+              <span class="${badge.cls} flex-shrink-0">${badge.label}</span>
             </div>
-            <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium flex-shrink-0 whitespace-nowrap" style="${badge.style}">${badge.label}</span>
+            ${r.dueAt ? `<p class="text-xs mt-1" style="color: oklch(55% 0.008 355);">Vence: ${new Date(r.dueAt).toLocaleDateString('es-ES')}</p>` : ''}
+            ${r.decisionNote ? `
+            <div class="mt-2 px-3 py-2" style="border-top: 1px solid oklch(92% 0.005 355);">
+              <p class="crm-kicker" style="font-size: 0.68rem;">Nota</p>
+              <p class="text-sm mt-0.5" style="color: var(--gg-text-secondary);">${r.decisionNote}</p>
+            </div>` : ''}
+            ${needsAction ? `
+            <div data-action-area="${r.id}" class="mt-3 pt-3" style="border-top: 1px solid oklch(92% 0.005 355);">
+              <textarea id="note-${r.id}" rows="2" class="crm-input-boxed" placeholder="Nota opcional sobre tu decisión..."></textarea>
+              <div class="mt-3 flex items-center gap-3">
+                <button data-action="approve" data-review-id="${r.id}" class="crm-button crm-button-primary" style="padding: 0.45rem 1.1rem; font-size: 0.82rem;">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Aprobar
+                </button>
+                <button data-action="reject" data-review-id="${r.id}" class="crm-button crm-button-ghost" style="padding: 0.45rem 1.1rem; font-size: 0.82rem;">
+                  Solicitar cambios
+                </button>
+              </div>
+            </div>` : ''}
           </div>
-          <div class="mt-3 text-xs flex items-center gap-3" style="color: var(--gg-text-subtle);">
-            ${r.dueAt ? `<span>Vence: ${new Date(r.dueAt).toLocaleDateString('es-ES')}</span>` : ''}
-          </div>
-          ${r.decisionNote ? `<div class="mt-3 rounded-lg border px-4 py-3 text-sm" style="border-color: var(--gg-border); background: var(--gg-dark); color: var(--gg-text-muted);"><p class="crm-kicker" style="font-size: 0.68rem; color: var(--gg-text-subtle);">Nota</p><p class="mt-1" style="color: var(--gg-text);">${r.decisionNote}</p></div>` : ''}
-          ${needsAction ? `
-          <div class="mt-4 pt-4" data-action-area="${r.id}" style="border-top: 1px solid var(--gg-border);">
-            <textarea id="note-${r.id}" rows="2" class="crm-input" placeholder="Nota opcional sobre tu decisión..."></textarea>
-            <div class="mt-3 flex items-center gap-3">
-              <button data-action="approve" data-review-id="${r.id}" class="crm-button crm-button-primary" style="background: var(--gg-success); box-shadow: 0 14px 30px rgba(34,197,94,0.18);">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                Aprobar
-              </button>
-              <button data-action="reject" data-review-id="${r.id}" class="crm-button crm-button-ghost">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                Solicitar cambios
-              </button>
-            </div>
-          </div>
-          ` : ''}
         </div>`;
       }).join('');
 
@@ -111,12 +110,12 @@ import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
           if (card) {
             card.style.transition = 'opacity 300ms, transform 300ms';
             card.style.opacity = '0';
-            card.style.transform = 'translateY(-8px)';
+            card.style.transform = 'translateY(-4px)';
             setTimeout(() => {
               card.innerHTML = `
-                <div class="flex items-center gap-3 py-2">
-                  <svg class="w-5 h-5" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent-bright)'};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${status === 'approved' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg>
-                  <span class="text-sm font-medium" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent-bright)'};">${status === 'approved' ? 'Aprobado' : 'Cambios solicitados'}</span>
+                <div class="flex items-center gap-2 py-1">
+                  <svg class="w-4 h-4" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent)'};" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${status === 'approved' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg>
+                  <span class="text-sm font-medium" style="color: ${status === 'approved' ? 'var(--gg-success)' : 'var(--gg-accent)'};">${status === 'approved' ? 'Aprobado' : 'Cambios solicitados'}</span>
                 </div>`;
               card.style.opacity = '1';
               card.style.transform = 'none';

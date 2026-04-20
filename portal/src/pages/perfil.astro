@@ -1,0 +1,107 @@
+---
+import ClientAreaLayout from '../layouts/ClientAreaLayout.astro';
+---
+
+<ClientAreaLayout title="Perfil" section="perfil">
+  <div id="client-area-root">
+    <div class="crm-masthead">
+      <p class="crm-kicker">Cuenta</p>
+      <h1 class="crm-masthead-title">Tu perfil</h1>
+      <p class="crm-masthead-deck">Datos de tu cuenta y configuración.</p>
+    </div>
+
+    <div class="crm-section mt-6" style="border-top: none; padding-top: 0;">
+      <p class="crm-section-header">Datos personales</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="crm-label">Nombre</label>
+          <p id="profile-name" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355);">
+          <label class="crm-label mt-4 block">Correo electrónico</label>
+          <p id="profile-email" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355);">
+          <label class="crm-label mt-4 block">Empresa</label>
+          <p id="profile-company" class="text-sm mt-0.5" style="color: var(--gg-text); min-height: 1.5rem;">—</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="crm-section" id="plan-section">
+      <p class="crm-section-header">Plan</p>
+      <div class="space-y-4">
+        <div>
+          <label class="crm-label">Estado de suscripción</label>
+          <p id="profile-subscription" class="text-sm mt-0.5" style="min-height: 1.5rem;">—</p>
+        </div>
+        <div style="border-top: 1px solid oklch(92% 0.005 355);">
+          <label class="crm-label mt-4 block">Plan</label>
+          <p id="profile-plan" class="text-sm mt-0.5" style="min-height: 1.5rem;">—</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="crm-section" id="contact-section">
+      <p class="crm-section-header">Soporte</p>
+      <div>
+        <p class="text-sm" style="color: oklch(50% 0.008 355);">Si necesitas cambiar datos de tu cuenta, contacta a tu equipo:</p>
+        <a href="mailto:hola@grandeandgordo.com" class="crm-button crm-button-secondary mt-3" style="font-size: 0.82rem; padding: 0.45rem 1.1rem;">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          hola@grandeandgordo.com
+        </a>
+      </div>
+    </div>
+
+    <div class="crm-section" style="border-bottom: none;">
+      <button type="button" id="logout-button-profile" class="crm-button crm-button-danger" style="font-size: 0.82rem; padding: 0.45rem 1.1rem;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const { logout, requireRole } = await import('../lib/api-client');
+      const user = await requireRole('client');
+
+      if (user) {
+        const nameEl = document.getElementById('profile-name');
+        const emailEl = document.getElementById('profile-email');
+        if (nameEl) nameEl.textContent = user.name || '—';
+        if (emailEl) emailEl.textContent = user.email || '—';
+      }
+
+      const { bootstrapClientArea } = await import('../lib/client-area/bootstrap');
+      const snapshot = await bootstrapClientArea();
+      const client = snapshot?.client;
+
+      if (client) {
+        const companyEl = document.getElementById('profile-company');
+        const subEl = document.getElementById('profile-subscription');
+        const planEl = document.getElementById('profile-plan');
+
+        if (companyEl) companyEl.textContent = client.company || '—';
+
+        const subStatus = client.subscriptionStatus;
+        if (subEl) {
+          if (subStatus === 'active') {
+            subEl.innerHTML = '<span class="crm-badge crm-badge--success">Activa</span>';
+          } else if (subStatus === 'past_due') {
+            subEl.innerHTML = '<span class="crm-badge crm-badge--danger">Atrasada</span>';
+          } else {
+            subEl.textContent = subStatus || '—';
+          }
+        }
+        if (planEl) planEl.textContent = client.plan || '—';
+      }
+
+      document.getElementById('logout-button-profile')?.addEventListener('click', async () => {
+        await logout();
+        window.location.href = '/login';
+      });
+    })();
+  </script>
+</ClientAreaLayout>

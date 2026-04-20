@@ -14,6 +14,7 @@ export const CLIENT_AREA_NAV: ClientAreaNavItem[] = [
   { slug: 'archivos', href: '/archivos', label: 'Entregas', icon: 'download' },
   { slug: 'mensajes', href: '/mensajes', label: 'Mensajes', icon: 'message' },
   { slug: 'facturacion', href: '/facturacion', label: 'Facturación', icon: 'receipt' },
+  { slug: 'perfil', href: '/perfil', label: 'Perfil', icon: 'user' },
 ];
 
 export function isActiveNav(href: string, pathname: string): boolean {
