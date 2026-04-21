@@ -19,8 +19,8 @@ cronRoutes.get('/quarterly-reviews', async (c) => {
   }
 
   const token = authHeader.slice(7);
-  const expectedToken = env.CRON_SECRET || 'gordo-cron-secret';
-  if (token !== expectedToken) {
+  const expectedToken = env.CRON_SECRET;
+  if (!expectedToken || token !== expectedToken) {
     return c.json({ error: 'Invalid token' }, 401);
   }
 
