@@ -62,6 +62,7 @@ export interface AppBindings {
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
   AI_ENGINE_URL?: string;
+  LEAD_TRANSFER_SECRET?: string;
 }
 
 export interface AppVariables {

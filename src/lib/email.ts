@@ -51,6 +51,14 @@ interface QuarterlyReviewReminderInput {
   reviewDate: string;
 }
 
+interface WelcomeEmailInput {
+  to: string;
+  clientName: string;
+  companyName: string;
+  tempPassword: string;
+  portalUrl: string;
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
@@ -307,6 +315,57 @@ export async function sendQuarterlyReviewReminderEmail(
     subject: 'Recordatorio: Review trimestral de cuenta',
     html,
     text: `Hola ${input.clientName},\n\nHa llegado el momento de hacer tu review trimestral de cuenta. Repasaremos rendimiento de assets, nuevos objetivos y planificación del próximo trimestre.\n\nPuedes agendar desde tu portal: ${hubUrl}\n\nGrande & Gordo · hola@grandeandgordo.com`,
+  });
+
+  return { ok: result.ok ?? false, skipped: result.skipped ?? false };
+}
+
+export async function sendWelcomeEmail(
+  env: AppBindings,
+  input: WelcomeEmailInput,
+): Promise<{ ok: boolean; skipped?: boolean }> {
+  if (!env.RESEND_API_KEY) {
+    return { ok: false, skipped: true };
+  }
+
+  const safeName = escapeHtml(input.clientName);
+  const safePortal = escapeHtml(input.portalUrl);
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
+      <p style="font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Tu espacio de trabajo está listo</p>
+      <h1 style="font-size:24px;line-height:1.2;margin:12px 0 16px">Hola ${safeName},</h1>
+      <p style="margin:0 0 12px">
+        Ya tenemos todo preparado en tu portal de cliente.
+      </p>
+      <p style="margin:0 0 12px">
+        Aquí es donde pasará la producción: verás briefs, aprobaciones, assets terminados y el historial de todo lo que hagamos juntos.
+      </p>
+      <div style="margin:16px 0;padding:16px;border-radius:12px;background:#f3f4f6">
+        <p style="margin:0 0 8px;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#6b7280">Credenciales de acceso</p>
+        <p style="margin:0 0 4px"><strong>Email:</strong> ${escapeHtml(input.to)}</p>
+        <p style="margin:0"><strong>Contraseña temporal:</strong> ${escapeHtml(input.tempPassword)}</p>
+      </div>
+      <p style="margin:16px 0">
+        <a href="${safePortal}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Entrar al portal</a>
+      </p>
+      <p style="margin:0 0 12px">
+        Te pedirá cambiar la contraseña nada más entrar. Tardarás menos de un minuto.
+      </p>
+      <p style="margin:0 0 12px;font-size:13px;color:#6b7280">
+        Si tienes cualquier problema, escribe a hola@grandeandgordo.com o responde directamente a este email.
+      </p>
+      <p style="margin:16px 0 8px;font-size:13px;color:#6b7280">
+        — El equipo de Grande & Gordo
+      </p>
+    </div>
+  `.trim();
+
+  const result = await sendEmail(env, {
+    to: input.to,
+    subject: 'Tu espacio de trabajo con Grande & Gordo está listo',
+    html,
+    text: `Hola ${input.clientName},\n\nYa tenemos todo preparado en tu portal de cliente.\n\nEmail: ${input.to}\nContraseña temporal: ${input.tempPassword}\n\nEntrar al portal: ${input.portalUrl}\n\nTe pedirá cambiar la contraseña nada más entrar. Tardarás menos de un minuto.\n\nSi tienes cualquier problema, escribe a hola@grandeandgordo.com.\n\n— El equipo de Grande & Gordo`,
   });
 
   return { ok: result.ok ?? false, skipped: result.skipped ?? false };

@@ -43,6 +43,10 @@ export const clients = sqliteTable(
     firstSessionAt: integer('first_session_at', { mode: 'timestamp_ms' }),
     externalClientId: text('external_client_id'), // ID en otros sistemas
 
+    leadTier: text('lead_tier'),
+    leadSource: text('lead_source'),
+    websiteUrl: text('website_url'),
+
     // Campos fiscales (B2B)
     taxId: text('tax_id'), // CIF/NIF
     taxIdType: text('tax_id_type').default('NIF'), // NIF, CIF, NIE, VIES
@@ -64,6 +68,24 @@ export const clients = sqliteTable(
     index('idx_clients_next_review_at').on(table.nextReviewAt),
     index('idx_clients_tax_id').on(table.taxId),
     index('idx_clients_country').on(table.country),
+  ],
+);
+
+export const clientActivities = sqliteTable(
+  'client_activities',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    type: text('type').notNull(),
+    content: text('content'),
+    metadata: text('metadata'), // JSON string
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_client_activities_client_created').on(table.clientId, table.createdAt),
+    index('idx_client_activities_type').on(table.type),
   ],
 );
 
