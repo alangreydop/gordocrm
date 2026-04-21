@@ -22,6 +22,7 @@ import { invoiceRoutes as clientInvoiceRoutes } from './api/routes/portal/invoic
 import { kanbanRoutes } from './api/routes/admin/kanban.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import { sendQuarterlyReviewReminderEmail } from './lib/email.js';
+import { leadWonWebhook } from './api/routes/webhooks/lead-won.js';
 import type { AppBindings, AppContext } from './types/index.js';
 
 const app = new Hono<AppContext>();
@@ -29,6 +30,44 @@ const app = new Hono<AppContext>();
 app.onError((error, c) => {
   console.error(error);
   return c.json({ error: 'Internal server error' }, 500);
+});
+
+// SECURITY: Security headers middleware
+app.use('*', async (c, next) => {
+  const isProd = c.env.APP_ENV === 'production';
+
+  if (isProd) {
+    // Content Security Policy
+    c.header(
+      'Content-Security-Policy',
+      [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' https: data:",
+        "font-src 'self' https:",
+        "connect-src 'self' https://ai-engine.grandeandgordo.com https://resend.com",
+        "frame-ancestors 'none'",
+      ].join('; '),
+    );
+
+    // Clickjacking protection
+    c.header('X-Frame-Options', 'DENY');
+
+    // MIME sniffing protection
+    c.header('X-Content-Type-Options', 'nosniff');
+
+    // HSTS
+    c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+    // Referrer policy
+    c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+    // Permissions policy
+    c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  }
+
+  await next();
 });
 
 app.use('*', async (c, next) => {
@@ -77,6 +116,7 @@ app.route('/api/public/briefs', publicBriefRoutes);
 app.route('/api/ai', aiProxyRoutes);
 app.route('/api/admin/invoices', invoiceRoutes);
 app.route('/api/admin/kanban', kanbanRoutes);
+app.route('/api/webhooks', leadWonWebhook);
 
 // Cron handler for quarterly review reminders
 app.get('/__scheduled', async (c) => {
