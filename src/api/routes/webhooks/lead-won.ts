@@ -1,16 +1,36 @@
 import { Hono } from 'hono';
-import { eq } from 'drizzle-orm';
+import { eq, like, and } from 'drizzle-orm';
 import { clients, users, briefSubmissions, clientActivities } from '../../../../db/schema';
 import { verifyWebhookSignature } from '../../../lib/webhook-signature';
 import { createUser } from '../../../lib/auth';
 import type { AppContext } from '../../../types';
 
+// Simple in-memory rate limiter: max 10 requests per IP per minute
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + 60_000 });
+    return false;
+  }
+  entry.count++;
+  return entry.count > 10;
+}
+
 export const leadWonWebhook = new Hono<AppContext>();
 
 leadWonWebhook.post('/lead-won', async (c) => {
+  const clientIp = c.req.header('CF-Connecting-IP') ?? 'unknown';
+  if (isRateLimited(clientIp)) {
+    return c.json({ error: 'Rate limit exceeded' }, 429);
+  }
+
   const signature = c.req.header('X-Webhook-Signature');
   const timestamp = c.req.header('X-Webhook-Timestamp');
   const secret = c.env.LEAD_TRANSFER_SECRET;
+  const traceId = c.req.header('X-Request-Id') ?? 'no-trace';
 
   if (!signature || !timestamp || !secret) {
     return c.json({ error: 'Missing auth headers' }, 401);
@@ -35,7 +55,34 @@ leadWonWebhook.post('/lead-won', async (c) => {
   const leadId = body.leadId;
 
   try {
-    // Upsert logic
+    // 1. Create or find portal user FIRST to avoid orphan clients
+    const tempPassword = generateTempPassword(data.companyName);
+    let userId: string;
+    const [existingUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, data.contactEmail))
+      .limit(1);
+
+    if (existingUser) {
+      userId = existingUser.id;
+    } else {
+      const newUser = await createUser(
+        db,
+        data.contactEmail,
+        tempPassword,
+        'client',
+        data.contactName ?? data.companyName,
+        data.companyName,
+      );
+      if (!newUser) {
+        console.error(`[Lead Won Webhook] [${traceId}] Failed to create portal user for`, data.contactEmail);
+        return c.json({ error: 'Failed to create portal user' }, 500);
+      }
+      userId = newUser.id;
+    }
+
+    // 2. Upsert client (now with userId known upfront)
     const [existingByExternal] = await db
       .select()
       .from(clients)
@@ -61,6 +108,7 @@ leadWonWebhook.post('/lead-won', async (c) => {
         leadTier: data.tier,
         leadSource: data.source,
         websiteUrl: data.websiteUrl,
+        userId,
         notes: buildNotes(data),
         updatedAt: new Date(),
       }).where(eq(clients.id, clientId));
@@ -75,6 +123,7 @@ leadWonWebhook.post('/lead-won', async (c) => {
         leadSource: data.source,
         websiteUrl: data.websiteUrl,
         externalClientId: leadId,
+        userId,
         notes: buildNotes(data),
         updatedAt: new Date(),
       }).where(eq(clients.id, clientId));
@@ -92,6 +141,7 @@ leadWonWebhook.post('/lead-won', async (c) => {
         leadSource: data.source,
         websiteUrl: data.websiteUrl,
         externalClientId: leadId,
+        userId,
         notes: buildNotes(data),
         datasetStatus: 'pending_capture',
         createdAt: new Date(),
@@ -101,77 +151,68 @@ leadWonWebhook.post('/lead-won', async (c) => {
       clientId = newClient.id;
     }
 
-    // Create portal user
-    const tempPassword = generateTempPassword(data.companyName);
-    const userResult = await createUser(db, {
-      email: data.contactEmail,
-      password: tempPassword,
-      name: data.contactName ?? data.companyName,
-      role: 'client',
-    });
-
-    if (!userResult.success || !userResult.userId) {
-      return c.json({ error: 'Failed to create portal user' }, 500);
-    }
-
-    await db.update(clients)
-      .set({ userId: userResult.userId })
-      .where(eq(clients.id, clientId));
-
-    // Seed brief
+    // 3. Seed brief
     const briefId = crypto.randomUUID();
     await db.insert(briefSubmissions).values({
       id: briefId,
       clientId,
+      email: data.contactEmail,
       description: data.briefDescription ?? `Brief inicial para ${data.companyName}`,
       objective: buildObjective(data),
       audience: data.sector ? `${data.sector}${data.subsector ? ` / ${data.subsector}` : ''}` : null,
       style: data.uspVerified,
       cta: data.recommendedPlan,
-      contentType: data.productionType,
+      contentType: data.productionType ?? 'ambos',
       sourcePage: data.websiteUrl,
       status: 'new',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    // Migrate activities in batches
-    const batchSize = 50;
-    for (let i = 0; i < data.activities.length; i += batchSize) {
-      const batch = data.activities.slice(i, i + batchSize);
-      await db.insert(clientActivities).values(
-        batch.map((a: { type: string; content: string | null; performedBy: string | null; createdAt: number }) => ({
-          id: crypto.randomUUID(),
-          clientId,
-          type: a.type,
-          content: a.content,
-          metadata: JSON.stringify({ leadId, originalCreatedAt: a.createdAt, originalPerformedBy: a.performedBy }),
-          createdAt: new Date(a.createdAt),
-        })),
-      );
+    // 4. Migrate activities with idempotency check
+    const [existingActivity] = await db
+      .select()
+      .from(clientActivities)
+      .where(and(
+        eq(clientActivities.clientId, clientId),
+        like(clientActivities.metadata, `%"leadId":"${leadId}"%`),
+      ))
+      .limit(1);
+
+    if (!existingActivity && data.activities && data.activities.length > 0) {
+      const batchSize = 50;
+      for (let i = 0; i < data.activities.length; i += batchSize) {
+        const batch = data.activities.slice(i, i + batchSize);
+        await db.insert(clientActivities).values(
+          batch.map((a: { type: string; content: string | null; performedBy: string | null; createdAt: number }) => ({
+            id: crypto.randomUUID(),
+            clientId,
+            type: a.type,
+            content: a.content,
+            metadata: JSON.stringify({ leadId, originalCreatedAt: a.createdAt, originalPerformedBy: a.performedBy }),
+            createdAt: new Date(a.createdAt),
+          })),
+        );
+      }
     }
 
-    // Send welcome email (async, non-blocking)
-    c.executionCtx?.waitUntil(
-      (async () => {
-        try {
-          const { sendWelcomeEmail } = await import('../../../lib/email.js');
-          await sendWelcomeEmail(c.env, {
-            to: data.contactEmail,
-            clientName: data.contactName ?? data.companyName,
-            companyName: data.companyName,
-            tempPassword,
-            portalUrl: 'https://grandeandgordo.com/portal',
-          });
-        } catch (e) {
-          console.error('[Welcome Email] Failed:', e);
-        }
-      })(),
-    );
+    // 5. Send welcome email
+    try {
+      const { sendWelcomeEmail } = await import('../../../lib/email.js');
+      await sendWelcomeEmail(c.env, {
+        to: data.contactEmail,
+        clientName: data.contactName ?? data.companyName,
+        companyName: data.companyName,
+        tempPassword,
+        portalUrl: c.env.PORTAL_URL || 'https://grandeandgordo.com/portal',
+      });
+    } catch (e) {
+      console.error(`[Welcome Email] [${traceId}] Failed:`, e);
+    }
 
-    return c.json({ clientId, userId: userResult.userId, briefId }, 201);
+    return c.json({ clientId, userId, briefId }, 201);
   } catch (err) {
-    console.error('[Lead Won Webhook] Error:', err);
+    console.error(`[Lead Won Webhook] [${traceId}] Error:`, err);
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
