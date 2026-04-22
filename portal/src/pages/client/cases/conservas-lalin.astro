@@ -1,0 +1,222 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Conservas Lalín - Caso de Éxito">
+  <!-- Hero Section - Full Screen with Background Image -->
+  <section class="relative w-full h-screen overflow-hidden">
+    <!-- Background Image with Gaussian Blur -->
+    <div
+      class="absolute inset-0 bg-cover bg-center"
+      style="background-image: url('https://assets.grandeandgordo.com/001/Screenshot%202026-04-08%20at%2003.30.40.avif');"
+    >
+      <!-- Gaussian Blur Overlay -->
+      <div class="absolute inset-0 backdrop-blur-sm"></div>
+      <!-- Dark Overlay for Text Contrast -->
+      <div class="absolute inset-0 bg-black/30"></div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+      <div class="max-w-4xl">
+        <p class="text-sm font-bold uppercase tracking-[0.28em] text-white/80 mb-4">Caso de Éxito · Conservas</p>
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight">
+          De vender solo en Galicia a exportar el 60%
+        </h1>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Content Section - Below Hero -->
+  <div class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+    <!-- Visual Proof & Key Metrics -->
+    <section class="grid gap-8 md:grid-cols-2">
+      <!-- Visual Proof -->
+      <div class="rounded-3xl border border-crm-border bg-crm-panel overflow-hidden">
+        <div class="aspect-video bg-gradient-to-br from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
+          <div class="text-center space-y-4 p-8">
+            <div class="w-24 h-24 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500/30 to-blue-500/30 border border-crm-border flex items-center justify-center">
+              <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <p class="text-sm text-crm-muted">Portfolio visual disponible bajo petición</p>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-lg font-bold text-crm-text">Resultados Visuales</h3>
+          <p class="text-sm text-crm-muted mt-2">Packaging, e-commerce y campañas que comunican la esencia de Conservas Lalín</p>
+        </div>
+      </div>
+
+      <!-- Key Metrics -->
+      <div class="space-y-4">
+        <div class="rounded-3xl border border-crm-border bg-crm-panel p-6">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Exportación</p>
+          <p class="mt-3 text-5xl font-black tracking-tight text-emerald-500">60%</p>
+          <p class="mt-2 text-sm text-crm-muted">De ventas internacionales</p>
+        </div>
+
+        <div class="rounded-3xl border border-crm-border bg-crm-panel p-6">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Crecimiento</p>
+          <p class="mt-3 text-5xl font-black tracking-tight text-blue-500">+240%</p>
+          <p class="mt-2 text-sm text-crm-muted">En facturación anual</p>
+        </div>
+
+        <div class="rounded-3xl border border-crm-border bg-crm-panel p-6">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Mercados</p>
+          <p class="mt-3 text-5xl font-black tracking-tight text-purple-500">12</p>
+          <p class="mt-2 text-sm text-crm-muted">Países nuevos en 18 meses</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Challenge & Solution -->
+    <section class="rounded-3xl border border-crm-border bg-crm-panel overflow-hidden">
+      <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-crm-border">
+        <div class="p-8">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle mb-4">Desafío</p>
+          <h3 class="text-xl font-black text-crm-text mb-4">Marca tradicional sin presencia digital</h3>
+          <ul class="space-y-3 text-sm text-crm-muted">
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-crm-subtle mt-1.5 flex-shrink-0"></span>
+              <span>Solo venta local en Galicia sin canal online</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-crm-subtle mt-1.5 flex-shrink-0"></span>
+              <span>Identidad visual desactualizada para mercados modernos</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-crm-subtle mt-1.5 flex-shrink-0"></span>
+              <span>Competencia agresiva de marcas internacionales</span>
+            </li>
+          </ul>
+        </div>
+        <div class="p-8">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle mb-4">Solución</p>
+          <h3 class="text-xl font-black text-crm-text mb-4">Transformación 360° de marca y canal digital</h3>
+          <ul class="space-y-3 text-sm text-crm-muted">
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+              <span>Rebranding completo manteniendo esencia tradicional</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+              <span>E-commerce premium con storytelling de producto</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+              <span>Campañas paid ads segmentadas por mercado</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="rounded-3xl border border-crm-border bg-gradient-to-br from-crm-panel-soft to-crm-panel p-8">
+      <blockquote class="max-w-3xl mx-auto text-center">
+        <svg class="w-12 h-12 mx-auto text-crm-accent/40 mb-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+        </svg>
+        <p class="text-xl md:text-2xl font-medium text-crm-text leading-relaxed">
+          "Grande & Gordo entendió que nuestra tradición era un activo, no un lastre. Nos ayudaron a contar esa historia de forma moderna sin perder autenticidad."
+        </p>
+        <footer class="mt-6">
+          <p class="text-sm font-bold text-crm-text">María González</p>
+          <p class="text-sm text-crm-muted">CEO, Conservas Lalín</p>
+        </footer>
+      </blockquote>
+    </section>
+
+    <!-- Timeline / Journey -->
+    <section>
+      <h2 class="text-2xl font-black text-crm-text mb-8">Journey de Transformación</h2>
+      <div class="relative">
+        <!-- Timeline Line -->
+        <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-crm-border"></div>
+
+        <!-- Month 1-3 -->
+        <div class="relative flex flex-col md:flex-row gap-6 mb-8">
+          <div class="md:w-1/2 md:text-right md:pr-8 md:ml-auto">
+            <div class="rounded-2xl border border-crm-border bg-crm-panel p-5">
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-accent mb-2">Mes 1-3</p>
+              <h4 class="font-bold text-crm-text">Investigación y Rebranding</h4>
+              <p class="text-sm text-crm-muted mt-2">Análisis de mercado, definición de identidad y diseño de nuevo packaging</p>
+            </div>
+          </div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 -translate-x-1/5 md:-translate-x-1/2 mt-6 rounded-full bg-crm-accent border-4 border-white"></div>
+          <div class="md:w-1/2 md:pl-8"></div>
+        </div>
+
+        <!-- Month 4-6 -->
+        <div class="relative flex flex-col md:flex-row gap-6 mb-8">
+          <div class="md:w-1/2 md:text-right md:pr-8 md:ml-auto order-2 md:order-1"></div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 -translate-x-1/5 md:-translate-x-1/2 mt-6 rounded-full bg-crm-accent border-4 border-white"></div>
+          <div class="md:w-1/2 md:pl-8 order-1 md:order-2">
+            <div class="rounded-2xl border border-crm-border bg-crm-panel p-5">
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-accent mb-2">Mes 4-6</p>
+              <h4 class="font-bold text-crm-text">Lanzamiento E-commerce</h4>
+              <p class="text-sm text-crm-muted mt-2">Tienda online premium con storytelling y fotografía de producto profesional</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Month 7-12 -->
+        <div class="relative flex flex-col md:flex-row gap-6 mb-8">
+          <div class="md:w-1/2 md:text-right md:pr-8 md:ml-auto">
+            <div class="rounded-2xl border border-crm-border bg-crm-panel p-5">
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-accent mb-2">Mes 7-12</p>
+              <h4 class="font-bold text-crm-text">Expansión Internacional</h4>
+              <p class="text-sm text-crm-muted mt-2">Campañas segmentadas en UK, Alemania y países nórdicos</p>
+            </div>
+          </div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 -translate-x-1/5 md:-translate-x-1/2 mt-6 rounded-full bg-crm-accent border-4 border-white"></div>
+          <div class="md:w-1/2 md:pl-8"></div>
+        </div>
+
+        <!-- Month 13-18 -->
+        <div class="relative flex flex-col md:flex-row gap-6">
+          <div class="md:w-1/2 md:text-right md:pr-8 md:ml-auto order-2 md:order-1"></div>
+          <div class="absolute left-4 md:left-1/2 w-3 h-3 -translate-x-1/5 md:-translate-x-1/2 mt-6 rounded-full bg-emerald-500 border-4 border-white"></div>
+          <div class="md:w-1/2 md:pl-8 order-1 md:order-2">
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <p class="text-xs font-bold uppercase tracking-[0.28em] text-emerald-600 mb-2">Mes 13-18</p>
+              <h4 class="font-bold text-emerald-700">Resultados</h4>
+              <p class="text-sm text-emerald-600 mt-2">60% exportación, +240% facturación, 12 mercados nuevos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="rounded-3xl border border-crm-border bg-crm-panel p-8 text-center">
+      <h2 class="text-2xl font-black text-crm-text mb-4">¿Quieres ser el próximo caso de éxito?</h2>
+      <p class="text-sm text-crm-muted mb-6 max-w-2xl mx-auto">
+        Únete a Conservas Lalín y otros clientes que ya están transformando su negocio con Grande & Gordo.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a
+          href="/client/brief-assistant"
+          class="inline-flex items-center justify-center rounded-full bg-crm-text px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+        >
+          Empezar ahora
+        </a>
+        <a
+          href="/client/cases"
+          class="inline-flex items-center justify-center rounded-full border border-crm-border px-6 py-3 text-sm font-semibold text-crm-text transition hover:bg-crm-panel-soft"
+        >
+          Ver más casos
+        </a>
+      </div>
+    </section>
+  </div>
+</ClientLayout>

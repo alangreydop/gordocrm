@@ -3,210 +3,215 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Clientes">
-         <div class="space-y-6" role="region" aria-label="Contenido principal">
-             <section class="crm-page-header">
-                 <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                     <div>
-                         <p class="crm-kicker">Cuentas</p>
-                         <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">clientes</h1>
-                         <p class="crm-page-header__meta mt-4">
-                            control comercial y operativo de cada cuenta: plan, dataset,
-                            capacidad, acceso al portal y seguimiento.
-                         </p>
-                     </div>
-                     <div class="flex gap-3 md:items-end">
-                         <input
-                            type="search"
-                            id="clients-search"
-                            aria-label="Buscar clientes por nombre, email o empresa"
-                            placeholder="Buscar por nombre, email o empresa"
-                            class="crm-input w-full md:w-80"
-                         />
-                         <a href="/admin/clients/new" class="crm-button crm-button-primary whitespace-nowrap">
-                            Nuevo cliente
-                         </a>
-                     </div>
-                 </div>
-             </section>
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
+    <section class="crm-page-header" aria-labelledby="page-title">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">Cuentas</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Clientes</h1>
+          <p class="crm-page-header__meta mt-4">
+            Control comercial y operativo de cada cuenta: plan, dataset,
+            capacidad, acceso al portal y seguimiento.
+          </p>
+        </div>
+        <div class="flex gap-3 md:items-end">
+          <input
+            type="search"
+            id="clients-search"
+            placeholder="Buscar por nombre, email o empresa"
+            class="crm-input w-full md:w-80"
+          />
+          <a href="/admin/clients/new" class="crm-button crm-button-primary whitespace-nowrap">
+            Nuevo cliente
+          </a>
+        </div>
+      </div>
+    </section>
 
-             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                 <div class="crm-metric-card">
-                     <p class="crm-kicker">Clientes totales</p>
-                     <p id="metric-total-clients" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-                 </div>
-                 <div class="crm-metric-card">
-                     <p class="crm-kicker">Suscripciones activas</p>
-                     <p id="metric-active-clients" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-                 </div>
-                 <div class="crm-metric-card">
-                     <p class="crm-kicker">Con acceso al portal</p>
-                     <p id="metric-portal-access" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-                 </div>
-                 <div class="crm-metric-card">
-                     <p class="crm-kicker">Reviews proximas</p>
-                     <p id="metric-reviews" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-                     <p class="mt-2 text-sm text-crm-muted">Ventana de 14 dias</p>
-                 </div>
-             </div>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Clientes totales</p>
+        <p id="metric-total-clients" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Suscripciones activas</p>
+        <p id="metric-active-clients" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Con acceso al portal</p>
+        <p id="metric-portal-access" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Reviews proximas</p>
+        <p id="metric-reviews" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p class="mt-2 text-sm text-slate-400">Ventana de 14 dias</p>
+      </div>
+    </div>
 
-             <div class="crm-table-wrap">
-                 <div class="overflow-x-auto">
-                     <table class="crm-table min-w-full text-sm">
-                         <thead>
-                             <tr>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">cliente</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">plan</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">dataset</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">trabajos</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">capacidad</th>
-                                 <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">review</th>
-                                 <th class="px-6 py-3 text-right text-xs font-medium tracking-[0.02em] text-crm-subtle">acciones</th>
-                             </tr>
-                         </thead>
-                         <tbody id="clients-body">
-                             <tr>
-                                 <td colspan="7" class="px-6 py-8 text-center text-crm-muted">Cargando clientes...</td>
-                             </tr>
-                         </tbody>
-                     </table>
-                 </div>
-             </div>
-         </div>
+    <div class="crm-table-wrap">
+      <div class="overflow-x-auto">
+        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Cliente</th>
+              <th class="px-6 py-3 text-left">Operacion</th>
+              <th class="px-6 py-3 text-left">Pipeline</th>
+              <th class="px-6 py-3 text-left">Seguimiento</th>
+              <th class="px-6 py-3 text-left">Portal</th>
+              <th class="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody id="clients-body" class="divide-y divide-gray-200">
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-400">Cargando clientes...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-         <script>
-             (async () => {
-                const {
-                    api,
-                    escapeHtml,
-                    formatDate,
-                    formatNumber,
-                   } = await import('../../../lib/api-client');
-                const {
-                    datasetStatusClass,
-                    subscriptionClass,
-                   } = await import('../../../lib/ui-helpers');
+  <script>
+    (async () => {
+      const {
+        api,
+        datasetStatusClass,
+        escapeHtml,
+        formatDate,
+        formatNumber,
+        subscriptionClass,
+      } = await import('../../../lib/api-client');
 
-                const tbody = document.getElementById('clients-body');
-                const searchInput = document.getElementById('clients-search');
+      const tbody = document.getElementById('clients-body');
+      const searchInput = document.getElementById('clients-search');
 
-                let clients = [];
+      let clients = [];
 
-                const setMetric = (id, value) => {
-                    const element = document.getElementById(id);
-                    if (element) element.textContent = value;
-                     };
+      const setMetric = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
 
-                const isReviewSoon = (value) => {
-                    if (!value) return false;
-                    const date = new Date(value);
-                    if (Number.isNaN(date.getTime())) return false;
-                    const now = new Date();
-                    const diff = date.getTime() - now.getTime();
-                    return diff >= 0 && diff <= 14 * 24 * 60 * 60 * 1000;
-                     };
+      const isReviewSoon = (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return false;
+        const now = new Date();
+        const diff = date.getTime() - now.getTime();
+        return diff >= 0 && diff <= 14 * 24 * 60 * 60 * 1000;
+      };
 
-                const render = () => {
-                    if (!tbody) return;
+      const render = () => {
+        if (!tbody) return;
 
-                    const query =
-                        searchInput instanceof HTMLInputElement
-                             ? searchInput.value.trim().toLowerCase()
-                             : '';
+        const query =
+          searchInput instanceof HTMLInputElement
+            ? searchInput.value.trim().toLowerCase()
+            : '';
 
-                    const filtered = clients.filter((client) => {
-                        if (!query) return true;
-                        return [
-                            client.name,
-                            client.email,
-                            client.company,
-                            client.plan,
-                            client.accountManager,
-                           ].filter(Boolean)
-                             .some((value) => String(value).toLowerCase().includes(query));
-                         });
+        const filtered = clients.filter((client) => {
+          if (!query) return true;
+          return [
+            client.name,
+            client.email,
+            client.company,
+            client.plan,
+            client.accountManager,
+          ]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(query));
+        });
 
-                    setMetric('metric-total-clients', String(clients.length));
-                    setMetric(
-                           'metric-active-clients',
-                        String(clients.filter((client) => client.subscriptionStatus === 'active').length),
-                        );
-                    setMetric(
-                           'metric-portal-access',
-                        String(clients.filter((client) => Boolean(client.userId)).length),
-                        );
-                    setMetric(
-                           'metric-reviews',
-                        String(clients.filter((client) => isReviewSoon(client.nextReviewAt)).length),
-                        );
+        setMetric('metric-total-clients', String(clients.length));
+        setMetric(
+          'metric-active-clients',
+          String(clients.filter((client) => client.subscriptionStatus === 'active').length),
+        );
+        setMetric(
+          'metric-portal-access',
+          String(clients.filter((client) => Boolean(client.userId)).length),
+        );
+        setMetric(
+          'metric-reviews',
+          String(clients.filter((client) => isReviewSoon(client.nextReviewAt)).length),
+        );
 
-                    if (filtered.length === 0) {
-                        tbody.innerHTML = `
-                             <tr>
-                                 <td colspan="7" class="px-6 py-8 text-center text-crm-muted">No hay clientes para ese filtro.</td>
-                             </tr>
-                           `;
-                        return;
-                         }
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-slate-400">No hay clientes para ese filtro.</td>
+            </tr>
+          `;
+          return;
+        }
 
-                    tbody.innerHTML = filtered.map((client) => `
-                             <tr class="align-top">
-                                 <td class="px-6 py-4">
-                                     <p class="font-medium text-crm-text">${escapeHtml(client.name)}</p>
-                                     <p class="text-xs text-crm-muted mt-1">${escapeHtml(client.company ?? 'Sin empresa')}</p>
-                                 </td>
-                                 <td class="px-6 py-4">
-                                     <div class="flex flex-wrap gap-2">
-                                         <span class="${subscriptionClass(client.subscriptionStatus ?? 'inactive')}">
-                                             ${escapeHtml(client.subscriptionStatus ?? 'inactive')}
-                                         </span>
-                                     </div>
-                                     <p class="text-xs text-crm-muted mt-2">${escapeHtml(client.plan ?? 'Sin plan')}</p>
-                                 </td>
-                                 <td class="px-6 py-4">
-                                     <span class="${datasetStatusClass(client.datasetStatus ?? '')}">
-                                         ${escapeHtml(client.datasetStatus ?? 'pending_capture')}
-                                     </span>
-                                 </td>
-                                 <td class="px-6 py-4 text-crm-text-secondary">
-                                     <p class="font-medium text-crm-text">${escapeHtml(formatNumber(client.activeJobs ?? 0))}</p>
-                                 </td>
-                                 <td class="px-6 py-4 text-crm-text-secondary">
-                                     <p class="font-medium text-crm-text">${escapeHtml(formatNumber(client.monthlyUnitCapacity ?? 0))}</p>
-                                     <p class="text-xs text-crm-muted">unidades/mes</p>
-                                 </td>
-                                 <td class="px-6 py-4">
-                                     <p class="font-medium ${isReviewSoon(client.nextReviewAt) ? 'text-crm-warning' : 'text-crm-text'}">${escapeHtml(formatDate(client.nextReviewAt))}</p>
-                                 </td>
-                                 <td class="px-6 py-4 text-right">
-                                     <div class="flex items-center justify-end gap-3">
-                                         ${client.userId
-                                             ? `<span class="crm-badge crm-badge-success">portal</span>`
-                                             : `<span class="crm-badge crm-badge-warning">sin portal</span>`
-                                             }
-                                         <a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="font-medium text-crm-accent transition hover:text-crm-text">
-                                             Abrir
-                                         </a>
-                                     </div>
-                                 </td>
-                             </tr>
-                           ').join('');
-                         };
+        tbody.innerHTML = filtered.map((client) => `
+          <tr class="hover:bg-gray-50 align-top">
+            <td class="px-6 py-4">
+              <p class="font-medium text-white">${escapeHtml(client.name)}</p>
+              <p class="text-gray-500 mt-1">${escapeHtml(client.email)}</p>
+              <p class="text-xs text-gray-500 mt-2">${escapeHtml(client.company ?? 'Sin empresa')}</p>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-2">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}">
+                  ${escapeHtml(client.subscriptionStatus ?? 'inactive')}
+                </span>
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${datasetStatusClass(client.datasetStatus ?? '')}">
+                  dataset ${escapeHtml(client.datasetStatus ?? 'pending_capture')}
+                </span>
+              </div>
+              <p class="text-xs text-gray-500 mt-3">Plan: ${escapeHtml(client.plan ?? 'Sin definir')}</p>
+              <p class="text-xs text-gray-500 mt-1">Segmento: ${escapeHtml(client.segment ?? 'Sin definir')}</p>
+              <p class="text-xs text-gray-500 mt-1">Margen: ${escapeHtml(client.marginProfile ?? 'Sin definir')}</p>
+            </td>
+            <td class="px-6 py-4 text-gray-600">
+              <p><span class="font-medium text-gray-900">${escapeHtml(formatNumber(client.activeJobs ?? 0))}</span> trabajos activos</p>
+              <p class="mt-1">${escapeHtml(formatNumber(client.plannedUnits ?? 0))} unidades planificadas</p>
+              <p class="mt-1">Capacidad mensual: ${escapeHtml(formatNumber(client.monthlyUnitCapacity ?? 0))}</p>
+            </td>
+            <td class="px-6 py-4 text-gray-600">
+              <p class="font-medium text-gray-900">${escapeHtml(formatDate(client.nextReviewAt))}</p>
+              <p class="mt-1 text-xs text-gray-500">Account manager</p>
+              <p class="text-xs text-gray-600">${escapeHtml(client.accountManager ?? 'hola@grandeandgordo.com')}</p>
+            </td>
+            <td class="px-6 py-4 text-gray-600">
+              ${
+                client.userId
+                  ? `
+                    <span class="inline-flex rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-100">activo</span>
+                    <p class="text-xs text-gray-500 mt-2">Acceso listo</p>
+                  `
+                  : `
+                    <span class="inline-flex rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-100">pendiente</span>
+                    <p class="text-xs text-gray-500 mt-2">Sin acceso portal</p>
+                  `
+              }
+            </td>
+            <td class="px-6 py-4 text-right">
+              <a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="font-medium text-sky-200 transition hover:text-white">
+                Abrir
+              </a>
+            </td>
+          </tr>
+        `).join('');
+      };
 
-                try {
-                    const data = await api('/api/portal/clients');
-                    clients = Array.isArray(data.clients) ? data.clients : [];
-                    render();
-                     } catch {
-                    if (tbody) {
-                        tbody.innerHTML = `
-                             <tr>
-                                 <td colspan="7" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar los clientes.</td>
-                             </tr>
-                           `;
-                         }
-                         }
+      try {
+        const data = await api('/api/portal/clients');
+        clients = Array.isArray(data.clients) ? data.clients : [];
+        render();
+      } catch {
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los clientes.</td>
+            </tr>
+          `;
+        }
+      }
 
-                searchInput?.addEventListener('input', render);
-                 })();
-             </script>
-         </AdminLayout>
+      searchInput?.addEventListener('input', render);
+    })();
+  </script>
+</AdminLayout>
