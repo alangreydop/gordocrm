@@ -1,18 +1,18 @@
 /**
- * Webhook Signature Verification
- *
- * Verifica firmas HMAC-SHA256 de webhooks entrantes.
- * Usado para autenticar webhooks de AI Engine y otros sistemas externos.
- */
+  * Webhook Signature Verification
+  *
+  * Verifica firmas HMAC-SHA256 de webhooks entrantes.
+  * Usado para autenticar webhooks de AI Engine y otros sistemas externos.
+  */
 
 /**
- * Verifica una firma HMAC-SHA256
- *
- * @param payload - El payload completo (JSON stringificado + timestamp)
- * @param signature - La firma recibida en el header X-Webhook-Signature
- * @param secret - El secreto compartido
- * @returns true si la firma es válida
- */
+  * Verifica una firma HMAC-SHA256
+  *
+  * @param payload - El payload completo (JSON stringificado + timestamp)
+  * @param signature - La firma recibida en el header X-Webhook-Signature
+  * @param secret - El secreto compartido
+  * @returns true si la firma es válida
+  */
 export async function verifyWebhookSignature(
   payload: string,
   signature: string,
@@ -20,57 +20,57 @@ export async function verifyWebhookSignature(
 ): Promise<boolean> {
   const encoder = new TextEncoder();
 
-  // Importar clave para HMAC
+   // Importar clave para HMAC
   const keyData = await crypto.subtle.importKey(
-    'raw',
+     'raw',
     encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
+     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign'],
-  );
+     ['sign'],
+   );
 
-  // Firmar el payload
+   // Firmar el payload
   const signatureBuffer = await crypto.subtle.sign('HMAC', keyData, encoder.encode(payload));
 
-  // Convertir a base64url (sin padding)
+   // Convertir a base64url (sin padding)
   const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+     .replace(/=/g, '')
+     .replace(/\+/g, '-')
+     .replace(/\//g, '_');
 
-  // Comparar en tiempo constante para prevenir timing attacks
+   // Comparar en tiempo constante para prevenir timing attacks
   return constantTimeCompare(signature, signatureB64);
 }
 
 /**
- * Genera una firma HMAC-SHA256 para un payload
- *
- * @param payload - El payload a firmar
- * @param secret - El secreto compartido
- * @returns La firma en base64url
- */
+  * Genera una firma HMAC-SHA256 para un payload
+  *
+  * @param payload - El payload a firmar
+  * @param secret - El secreto compartido
+  * @returns La firma en base64url
+  */
 export async function generateWebhookSignature(payload: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
 
   const keyData = await crypto.subtle.importKey(
-    'raw',
+     'raw',
     encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
+     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign'],
-  );
+     ['sign'],
+   );
 
   const signatureBuffer = await crypto.subtle.sign('HMAC', keyData, encoder.encode(payload));
 
   return btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+     .replace(/=/g, '')
+     .replace(/\+/g, '-')
+     .replace(/\//g, '_');
 }
 
 /**
- * Compara dos strings en tiempo constante para prevenir timing attacks
- */
+  * Compara dos strings en tiempo constante para prevenir timing attacks
+  */
 function constantTimeCompare(a: string, b: string): boolean {
   const encoder = new TextEncoder();
   const aBuf = encoder.encode(a);
@@ -82,7 +82,7 @@ function constantTimeCompare(a: string, b: string): boolean {
     const aByte = aBuf[i] ?? 0;
     const bByte = bBuf[i] ?? 0;
     result |= aByte ^ bByte;
-  }
+   }
 
   return result === 0;
 }
