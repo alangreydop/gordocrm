@@ -19,6 +19,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
   </script>
   <script>
     (async () => {
+      const { showToast } = await import('../../../lib/crm-ui');
       const detailEl = document.getElementById('invoice-detail');
       const titleEl = document.getElementById('invoice-number');
 
@@ -216,11 +217,11 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           }),
         })
           .then(() => {
-            alert('Justificante enviado. Verificaremos el pago en breve.');
+            showToast('justificante enviado. verificaremos el pago en breve.', 'success');
             loadInvoice();
           })
           .catch((e) => {
-            alert('Error: ' + e.message);
+            showToast('error: ' + e.message, 'error');
           });
       };
 

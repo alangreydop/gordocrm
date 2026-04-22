@@ -409,6 +409,7 @@ const qaOptions = [
         numberInputValue,
         setText,
         isDueSoon,
+        showToast,
        } = await import('../../../lib/crm-ui');
       const {
         jobStatusClass,
@@ -726,11 +727,11 @@ const qaOptions = [
           }
 
           const result = await res.json();
-          alert(`Job enviado a AI Engine correctamente.\nAI Job ID: ${result.ai_job_id}`);
+          showToast(`trabajo enviado a AI Engine. ID: ${result.ai_job_id}`, 'success');
           await load(); // Recargar para ver estado actualizado
         } catch (error) {
           console.error('Execute AI error:', error);
-          alert(error instanceof Error ? error.message : 'no se pudo ejecutar el job en AI Engine');
+          showToast(error instanceof Error ? error.message : 'no se pudo ejecutar el trabajo', 'error');
         } finally {
           executeAiBtn.disabled = false;
           executeAiBtn.innerHTML = `

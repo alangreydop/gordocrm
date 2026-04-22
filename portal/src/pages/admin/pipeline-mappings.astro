@@ -111,6 +111,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <script>
     (async () => {
       const { api, escapeHtml } = await import('../../lib/api-client');
+      const { showToast } = await import('../../lib/crm-ui');
 
       const tbody = document.getElementById('mappings-body');
       const modal = document.getElementById('modal');
@@ -154,7 +155,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               mappings = mappings.filter((m) => m.id !== id);
               render();
             } catch (err: any) {
-              alert(err.message ?? 'error al eliminar');
+              showToast(err.message ?? 'error al eliminar', 'error');
             }
           });
         });

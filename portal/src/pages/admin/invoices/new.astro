@@ -180,6 +180,10 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
   <script>
     const API_BASE = 'http://127.0.0.1:8787';
+    (async () => {
+      const { showToast } = await import('../../../lib/crm-ui');
+      (window as any).__showToast = showToast;
+    })();
 
     let lineCount = 0;
     let clients = [];
@@ -384,13 +388,13 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       const notes = document.getElementById('notes').value;
 
       if (!clientId) {
-        alert('Selecciona un cliente');
+        (window as any).__showToast?.('selecciona un cliente', 'warning');
         return;
       }
 
       const lines = collectLineData();
       if (lines.length === 0) {
-        alert('Añade al menos una línea');
+        (window as any).__showToast?.('añade al menos una línea', 'warning');
         return;
       }
 
@@ -422,7 +426,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         window.location.href = `/admin/invoices/detail?id=${data.invoice.id}`;
       } catch (error) {
         console.error('Error creating invoice:', error);
-        alert(error.message || 'error al crear la factura');
+        (window as any).__showToast?.(error.message || 'error al crear la factura', 'error');
       }
     };
 

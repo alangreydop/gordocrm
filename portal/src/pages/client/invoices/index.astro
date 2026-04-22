@@ -41,6 +41,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
   <script>
     (async () => {
       const { api } = await import('../../../lib/api-client');
+      const { showToast } = await import('../../../lib/crm-ui');
       const listEl = document.getElementById('invoices-list');
 
       const formatMoney = (cents: number) => `€${(cents / 100).toFixed(2)}`;
@@ -145,11 +146,11 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           }),
         })
           .then(() => {
-            alert('Justificante enviado. Verificaremos el pago pronto.');
+            showToast('justificante enviado. verificaremos el pago pronto.', 'success');
             loadInvoices();
           })
           .catch((e) => {
-            alert('error al subir justificante: ' + e.message);
+            showToast('error al subir justificante: ' + e.message, 'error');
           });
       };
 

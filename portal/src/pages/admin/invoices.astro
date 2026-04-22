@@ -105,6 +105,7 @@ title: 'Facturas'
 <script>
   (async () => {
     const { api } = await import('../../lib/api-client');
+    const { showToast } = await import('../../lib/crm-ui');
 
     let allInvoices = [];
     let clients = [];
@@ -242,7 +243,7 @@ title: 'Facturas'
       const paymentMethod = (document.getElementById('payment-method') as HTMLSelectElement).value;
 
       if (!clientId) {
-        alert('Selecciona un cliente');
+        showToast('selecciona un cliente', 'warning');
         return;
       }
 
@@ -263,7 +264,7 @@ title: 'Facturas'
       });
 
       if (!items.length) {
-        alert('Añade al menos un concepto');
+        showToast('añade al menos un concepto', 'warning');
         return;
       }
 
@@ -279,11 +280,11 @@ title: 'Facturas'
           }),
         });
 
-        alert('Factura creada: ' + response.invoice.invoiceNumber);
+        showToast('factura creada: ' + response.invoice.invoiceNumber, 'success');
         closeCreateModal();
         loadInvoices();
       } catch (e) {
-        alert('Error: ' + e.message);
+        showToast('error: ' + e.message, 'error');
       }
     };
 
@@ -291,10 +292,10 @@ title: 'Facturas'
       if (!confirm('¿Emitir esta factura?')) return;
       try {
         await api(`/api/admin/invoices/${id}/issue`, { method: 'POST' });
-        alert('Factura emitida');
+        showToast('factura emitida', 'success');
         loadInvoices();
       } catch (e) {
-        alert('Error: ' + e.message);
+        showToast('error: ' + e.message, 'error');
       }
     };
 
@@ -305,10 +306,10 @@ title: 'Facturas'
           method: 'POST',
           body: JSON.stringify({ paymentMethod: 'Transferencia bancaria' }),
         });
-        alert('Factura marcada como pagada');
+        showToast('factura marcada como pagada', 'success');
         loadInvoices();
       } catch (e) {
-        alert('Error: ' + e.message);
+        showToast('error: ' + e.message, 'error');
       }
     };
 

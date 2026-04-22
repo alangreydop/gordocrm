@@ -81,6 +81,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
   <script>
     (async () => {
       const { api, escapeHtml, formatDate } = await import('../../../lib/api-client');
+      const { showToast } = await import('../../../lib/crm-ui');
 
       // State
       let allBriefs = [];
@@ -247,11 +248,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
         try {
           const { job } = await api(`/api/portal/briefs/${briefId}/create-job`, { method: 'POST' });
-          alert(`Job creado exitosamente: ${job.briefText?.slice(0, 50)}...`);
+          showToast(`trabajo creado: ${job.briefText?.slice(0, 50)}...`, 'success');
           window.location.reload();
         } catch (error) {
           console.error('Error creating job:', error);
-          alert('Error creando job. Revisa que el brief esté vinculado a un cliente.');
+          showToast('error creando trabajo. revisa que el brief esté vinculado a un cliente.', 'error');
         }
       };
 
@@ -264,11 +265,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             method: 'PATCH',
             body: JSON.stringify({ status: 'archived' }),
           });
-          alert('Brief archivado exitosamente');
+          showToast('brief archivado', 'success');
           window.location.reload();
         } catch (error) {
           console.error('Error archiving brief:', error);
-          alert('Error archivando brief');
+          showToast('error archivando brief', 'error');
         }
       };
 

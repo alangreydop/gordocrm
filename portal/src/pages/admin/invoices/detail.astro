@@ -148,6 +148,10 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
   <script>
     const API_BASE = 'http://127.0.0.1:8787';
+    (async () => {
+      const { showToast } = await import('../../../lib/crm-ui');
+      (window as any).__showToast = showToast;
+    })();
 
     const statusLabels = {
       draft: 'Borrador',
@@ -249,7 +253,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
         window.location.reload();
       } catch (error) {
-        alert(error.message);
+        (window as any).__showToast?.(error.message, 'error');
       }
     };
 
@@ -267,10 +271,10 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           throw new Error(data.error || 'error al enviar');
         }
 
-        alert('Factura enviada correctamente');
+        (window as any).__showToast?.('factura enviada correctamente', 'success');
         window.location.reload();
       } catch (error) {
-        alert(error.message);
+        (window as any).__showToast?.(error.message, 'error');
       }
     };
 
@@ -293,7 +297,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
         window.location.reload();
       } catch (error) {
-        alert(error.message);
+        (window as any).__showToast?.(error.message, 'error');
       }
     };
 
@@ -316,7 +320,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
         window.location.reload();
       } catch (error) {
-        alert(error.message);
+        (window as any).__showToast?.(error.message, 'error');
       }
     };
 
@@ -327,7 +331,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       invoiceId = params.get('id');
 
       if (!invoiceId) {
-        alert('ID de factura no válido');
+        (window as any).__showToast?.('ID de factura no válido', 'warning');
         window.location.href = '/admin/invoices';
         return;
       }
@@ -405,7 +409,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       } catch (error) {
         console.error('Error loading invoice:', error);
-        alert('error al cargar la factura');
+        (window as any).__showToast?.('error al cargar la factura', 'error');
         window.location.href = '/admin/invoices';
       }
     };

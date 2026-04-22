@@ -323,7 +323,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
       } catch (err) {
         console.error('Onboarding error:', err);
-        alert('hubo un error al completar el onboarding. Por favor, inténtalo de nuevo.');
+        (window as any).__showToast?.('hubo un error al completar el onboarding. por favor, inténtalo de nuevo.', 'error');
       } finally {
         setLoading(false);
       }

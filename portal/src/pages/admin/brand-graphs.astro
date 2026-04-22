@@ -113,6 +113,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <script>
     (async () => {
       const { api, escapeHtml } = await import('../../lib/api-client');
+      const { showToast } = await import('../../lib/crm-ui');
 
       const clientList = document.getElementById('client-list');
       const clientSearch = document.getElementById('client-search') as HTMLInputElement | null;
@@ -200,7 +201,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           editorPanel?.classList.remove('hidden');
           editorEmpty?.classList.add('hidden');
         } catch {
-          alert('error al cargar Brand Graph');
+          showToast('error al cargar el brand graph', 'error');
         }
       };
 
@@ -228,7 +229,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           setTimeout(() => saveStatus?.classList.add('hidden'), 2000);
         } catch (err: any) {
           if (saveStatus) { saveStatus.textContent = 'error'; saveStatus.classList.remove('crm-badge-default'); saveStatus.classList.add('crm-badge-danger'); }
-          alert(err.message ?? 'error al guardar');
+          showToast(err.message ?? 'error al guardar', 'error');
         }
       };
 
