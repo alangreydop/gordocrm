@@ -104,7 +104,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          throw new Error(data.error ?? 'No se pudo cambiar la contraseña');
+          throw new Error(data.error ?? 'no se pudo cambiar la contraseña');
         }
 
         if (form instanceof HTMLFormElement) {
@@ -118,7 +118,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       } catch (error) {
         if (errorDiv instanceof HTMLDivElement) {
           errorDiv.textContent =
-            error instanceof Error ? error.message : 'No se pudo cambiar la contraseña';
+            error instanceof Error ? error.message : 'no se pudo cambiar la contraseña';
           errorDiv.classList.remove('hidden');
         }
       }

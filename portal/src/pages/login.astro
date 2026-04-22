@@ -192,7 +192,7 @@ import { siteLinks } from '../lib/site-links';
                    window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
                } catch (error) {
                    const { showToast } = await import('../lib/crm-ui');
-                   const msg = error instanceof Error ? error.message : 'Error al iniciar sesion';
+                   const msg = error instanceof Error ? error.message : 'error al iniciar sesión';
                    showToast(msg, 'error');
                    if (errorDiv instanceof HTMLDivElement) {
                        errorDiv.textContent = msg;

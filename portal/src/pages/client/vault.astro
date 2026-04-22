@@ -89,7 +89,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             toneFilter?.appendChild(opt);
           });
         } catch (e) {
-          console.error('Failed to load filters:', e);
+          console.error('error cargando filtros:', e);
         }
       };
 
@@ -100,10 +100,10 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           allAssets = response.assets || [];
           renderAssets(allAssets);
         } catch (e) {
-          console.error('Failed to load assets:', e);
+          console.error('error cargando assets:', e);
           gridEl!.innerHTML = `
             <div class="col-span-full text-center py-12 text-crm-text-secondary">
-              Error cargando activos. Intenta de nuevo.
+              error cargando activos. Intenta de nuevo.
             </div>
           `;
         }

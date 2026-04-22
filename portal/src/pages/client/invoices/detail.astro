@@ -192,10 +192,10 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
             </div>
           `;
         } catch (e) {
-          console.error('Failed to load invoice:', e);
+          console.error('error cargando factura:', e);
           detailEl!.innerHTML = `
             <div class="text-crm-danger py-12 text-center">
-              Error cargando la factura. Intenta de nuevo.
+              error cargando la factura. Intenta de nuevo.
             </div>
           `;
         }

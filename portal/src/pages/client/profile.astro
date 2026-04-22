@@ -198,7 +198,7 @@ import { siteLinks } from '../../lib/site-links';
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo cambiar la contrasena');
+            throw new Error(data.error ?? 'no se pudo cambiar la contrasena');
           }
 
           if (form instanceof HTMLFormElement) {
@@ -212,7 +212,7 @@ import { siteLinks } from '../../lib/site-links';
         } catch (error) {
           if (errorDiv instanceof HTMLDivElement) {
             errorDiv.textContent =
-              error instanceof Error ? error.message : 'No se pudo cambiar la contrasena';
+              error instanceof Error ? error.message : 'no se pudo cambiar la contrasena';
             errorDiv.classList.remove('hidden');
           }
         }

@@ -722,7 +722,7 @@ const qaOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            throw new Error(data.error || 'Error al ejecutar job');
+            throw new Error(data.error || 'error al ejecutar el trabajo');
           }
 
           const result = await res.json();
@@ -730,7 +730,7 @@ const qaOptions = [
           await load(); // Recargar para ver estado actualizado
         } catch (error) {
           console.error('Execute AI error:', error);
-          alert(error instanceof Error ? error.message : 'No se pudo ejecutar el job en AI Engine');
+          alert(error instanceof Error ? error.message : 'no se pudo ejecutar el job en AI Engine');
         } finally {
           executeAiBtn.disabled = false;
           executeAiBtn.innerHTML = `
@@ -784,7 +784,7 @@ const qaOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo guardar el trabajo');
+            throw new Error(data.error ?? 'no se pudo guardar el trabajo');
           }
 
           await load();
@@ -795,7 +795,7 @@ const qaOptions = [
           }
         } catch (error) {
           if (jobError instanceof HTMLDivElement) {
-            jobError.textContent = error instanceof Error ? error.message : 'No se pudo guardar el trabajo';
+            jobError.textContent = error instanceof Error ? error.message : 'no se pudo guardar el trabajo';
             jobError.classList.remove('hidden');
           }
         }
@@ -823,7 +823,7 @@ const qaOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo crear el asset');
+            throw new Error(data.error ?? 'no se pudo crear el asset');
           }
 
           if (assetForm instanceof HTMLFormElement) {
@@ -840,7 +840,7 @@ const qaOptions = [
           }
         } catch (error) {
           if (assetCreateError instanceof HTMLDivElement) {
-            assetCreateError.textContent = error instanceof Error ? error.message : 'No se pudo crear el asset';
+            assetCreateError.textContent = error instanceof Error ? error.message : 'no se pudo crear el asset';
             assetCreateError.classList.remove('hidden');
           }
         }
@@ -890,7 +890,7 @@ const qaOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo actualizar el asset');
+            throw new Error(data.error ?? 'no se pudo actualizar el asset');
           }
 
           await load();
@@ -901,7 +901,7 @@ const qaOptions = [
           }
         } catch (error) {
           if (assetUpdateError instanceof HTMLDivElement) {
-            assetUpdateError.textContent = error instanceof Error ? error.message : 'No se pudo actualizar el asset';
+            assetUpdateError.textContent = error instanceof Error ? error.message : 'no se pudo actualizar el asset';
             assetUpdateError.classList.remove('hidden');
           }
         }
@@ -961,7 +961,7 @@ const qaOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            throw new Error(data.error || 'Error al subir archivo');
+            throw new Error(data.error || 'error al subir archivo');
           }
 
           uploadFile.value = '';
@@ -984,7 +984,7 @@ const qaOptions = [
           }
           if (uploadStatus) {
             uploadStatus.className = 'text-xs text-crm-danger';
-            uploadStatus.textContent = error instanceof Error ? error.message : 'Error al subir';
+            uploadStatus.textContent = error instanceof Error ? error.message : 'error al subir';
           }
         }
       });

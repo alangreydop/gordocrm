@@ -303,7 +303,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           credentials: 'include',
         });
 
-        if (!res.ok) throw new Error('No se pudieron cargar los clientes');
+        if (!res.ok) throw new Error('no se pudieron cargar los clientes');
 
         const data = await res.json();
         clients = data.clients || [];
@@ -415,14 +415,14 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || 'Error al crear la factura');
+          throw new Error(data.error || 'error al crear la factura');
         }
 
         // Redirect to detail
         window.location.href = `/admin/invoices/detail?id=${data.invoice.id}`;
       } catch (error) {
         console.error('Error creating invoice:', error);
-        alert(error.message || 'Error al crear la factura');
+        alert(error.message || 'error al crear la factura');
       }
     };
 

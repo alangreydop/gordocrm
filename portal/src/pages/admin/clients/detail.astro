@@ -456,7 +456,7 @@ const marginOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo guardar el cliente');
+            throw new Error(data.error ?? 'no se pudo guardar el cliente');
            }
 
           await load();
@@ -468,7 +468,7 @@ const marginOptions = [
          } catch (error) {
           if (clientError instanceof HTMLDivElement) {
             clientError.textContent =
-              error instanceof Error ? error.message : 'No se pudo guardar el cliente';
+              error instanceof Error ? error.message : 'no se pudo guardar el cliente';
             clientError.classList.remove('hidden');
            }
          }
@@ -494,7 +494,7 @@ const marginOptions = [
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'No se pudo actualizar el acceso');
+            throw new Error(data.error ?? 'no se pudo actualizar el acceso');
            }
 
           await load();
@@ -507,7 +507,7 @@ const marginOptions = [
          } catch (error) {
           if (portalError instanceof HTMLDivElement) {
             portalError.textContent =
-              error instanceof Error ? error.message : 'No se pudo actualizar el acceso';
+              error instanceof Error ? error.message : 'no se pudo actualizar el acceso';
             portalError.classList.remove('hidden');
            }
          }

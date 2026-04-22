@@ -363,7 +363,7 @@ import { siteLinks } from '../../../lib/site-links';
                 }, 2000);
               } catch (error) {
               console.error('Bulk download failed:', error);
-              downloadAllBtn.textContent = 'Error al descargar';
+              downloadAllBtn.textContent = 'error al descargar';
               setTimeout(() => {
                 downloadAllBtn.disabled = false;
                 downloadAllBtn.textContent = 'Descargar todo';
@@ -401,7 +401,7 @@ import { siteLinks } from '../../../lib/site-links';
                 sendFeedbackBtn.disabled = false;
                 }, 2000);
               } catch (error) {
-              sendFeedbackBtn.textContent = 'Error al enviar';
+              sendFeedbackBtn.textContent = 'error al enviar';
               setTimeout(() => {
                 sendFeedbackBtn.textContent = 'Enviar feedback';
                 sendFeedbackBtn.disabled = false;
@@ -538,7 +538,7 @@ import { siteLinks } from '../../../lib/site-links';
 
             if (!res.ok) {
               const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
-              throw new Error(data.error || 'Error al subir archivo');
+              throw new Error(data.error || 'error al subir archivo');
               }
 
             uploadFile.value = '';
@@ -591,7 +591,7 @@ import { siteLinks } from '../../../lib/site-links';
               }
             if (uploadStatus) {
               uploadStatus.className = 'text-xs text-crm-danger';
-              uploadStatus.textContent = error instanceof Error ? error.message : 'Error al subir';
+              uploadStatus.textContent = error instanceof Error ? error.message : 'error al subir';
               }
             }
           });

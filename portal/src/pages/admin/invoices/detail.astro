@@ -264,7 +264,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || 'Error al enviar');
+          throw new Error(data.error || 'error al enviar');
         }
 
         alert('Factura enviada correctamente');
@@ -405,7 +405,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       } catch (error) {
         console.error('Error loading invoice:', error);
-        alert('Error al cargar la factura');
+        alert('error al cargar la factura');
         window.location.href = '/admin/invoices';
       }
     };

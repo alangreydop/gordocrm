@@ -1,13 +1,13 @@
 ---
 layout: '../../../layouts/AdminLayout.astro'
-title: 'Gestión de Facturas'
+title: 'Facturas'
 ---
 
 <div class="max-w-7xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-3xl font-bold text-crm-text">Facturas</h1>
-      <p class="text-crm-muted mt-1">Gestión completa de facturación</p>
+      <p class="text-crm-muted mt-1">Todas las facturas de tus clientes</p>
     </div>
     <button
       onclick="openCreateModal()"
@@ -115,7 +115,7 @@ title: 'Gestión de Facturas'
         allInvoices = response.invoices || [];
         renderInvoices(allInvoices);
       } catch (e) {
-        console.error('Failed to load invoices:', e);
+        console.error('error cargando facturas:', e);
       }
     };
 
@@ -125,7 +125,7 @@ title: 'Gestión de Facturas'
         clients = response.clients || [];
         populateClientSelect();
       } catch (e) {
-        console.error('Failed to load clients:', e);
+        console.error('error cargando clientes:', e);
       }
     };
 
@@ -329,6 +329,6 @@ title: 'Gestión de Facturas'
       renderInvoices(filtered);
     });
 
-    await loadInvoices();
+    await Promise.all([loadInvoices(), loadClients()]);
   })();
 </script>

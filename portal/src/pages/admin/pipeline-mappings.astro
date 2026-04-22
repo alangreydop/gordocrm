@@ -154,7 +154,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               mappings = mappings.filter((m) => m.id !== id);
               render();
             } catch (err: any) {
-              alert(err.message ?? 'Error al eliminar');
+              alert(err.message ?? 'error al eliminar');
             }
           });
         });
@@ -205,7 +205,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           closeModal();
         } catch (err: any) {
           if (formError) {
-            formError.textContent = err.message ?? 'Error al guardar';
+            formError.textContent = err.message ?? 'error al guardar';
             formError.classList.remove('hidden');
           }
         }

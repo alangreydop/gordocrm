@@ -289,7 +289,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         });
 
         if (!sessionRes.ok) {
-          throw new Error('No se pudo obtener la sesión');
+          throw new Error('no se pudo obtener la sesión');
         }
 
         const session = await sessionRes.json();
@@ -314,7 +314,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
         if (!webhookRes.ok) {
           const error = await webhookRes.json().catch(() => ({}));
-          throw new Error(error.error || 'Error al guardar onboarding');
+          throw new Error(error.error || 'error al guardar onboarding');
         }
 
         // Ocultar formulario y mostrar éxito
@@ -323,7 +323,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
       } catch (err) {
         console.error('Onboarding error:', err);
-        alert('Hubo un error al completar el onboarding. Por favor, inténtalo de nuevo.');
+        alert('hubo un error al completar el onboarding. Por favor, inténtalo de nuevo.');
       } finally {
         setLoading(false);
       }

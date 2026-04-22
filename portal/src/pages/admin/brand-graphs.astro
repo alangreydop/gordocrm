@@ -200,7 +200,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           editorPanel?.classList.remove('hidden');
           editorEmpty?.classList.add('hidden');
         } catch {
-          alert('Error al cargar Brand Graph');
+          alert('error al cargar Brand Graph');
         }
       };
 
@@ -228,7 +228,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           setTimeout(() => saveStatus?.classList.add('hidden'), 2000);
         } catch (err: any) {
           if (saveStatus) { saveStatus.textContent = 'error'; saveStatus.classList.remove('crm-badge-default'); saveStatus.classList.add('crm-badge-danger'); }
-          alert(err.message ?? 'Error al guardar');
+          alert(err.message ?? 'error al guardar');
         }
       };
 
@@ -241,7 +241,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         clients = Array.isArray(data.clients) ? data.clients : [];
         renderClientList();
       } catch {
-        if (clientList) clientList.innerHTML = `<p class="text-sm text-crm-danger px-2">Error al cargar clientes.</p>`;
+        if (clientList) clientList.innerHTML = `<p class="text-sm text-crm-danger px-2">error al cargar clientes.</p>`;
       }
     })();
   </script>

@@ -124,7 +124,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           console.error('Failed to load invoices:', e);
           listEl!.innerHTML = `
             <div class="text-center text-crm-danger py-12">
-              Error cargando facturas. Intenta de nuevo.
+              error cargando facturas. Intenta de nuevo.
             </div>
           `;
         }
@@ -149,7 +149,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
             loadInvoices();
           })
           .catch((e) => {
-            alert('Error al subir justificante: ' + e.message);
+            alert('error al subir justificante: ' + e.message);
           });
       };
 

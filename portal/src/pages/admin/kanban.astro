@@ -117,7 +117,7 @@ title: 'Production Kanban'
                 renderColumns(columnsRes.columns);
                 renderStats(statsRes.stats);
                 } catch (e) {
-                console.error('Failed to load kanban:', e);
+                console.error('error cargando kanban:', e);
                 }
             };
 
@@ -209,7 +209,7 @@ title: 'Production Kanban'
                         });
                     await loadKanban();
                     } catch (e) {
-                    console.error('Failed to move job:', e);
+                    console.error('error moviendo trabajo:', e);
                     }
                 }
             };

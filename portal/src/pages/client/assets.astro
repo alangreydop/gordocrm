@@ -73,23 +73,33 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         try {
           const { jobs } = await api('/api/portal/jobs');
 
-          // Collect assets from all completed/delivered jobs
-          const assetsPromises = jobs
+          // Limit to latest 30 completed/delivered jobs to avoid N+1 explosion
+          const relevantJobs = jobs
             .filter(job => job.status === 'completed' || job.status === 'delivered')
-            .map(async job => {
-              const jobData = await api(`/api/portal/jobs/${job.id}`);
-              return jobData.assets
-                .filter(asset => asset.status === 'approved' || !asset.status)
-                .map(asset => ({
-                  ...asset,
-                  jobName: job.briefText || `Trabajo ${job.id.slice(0, 8)}`,
-                  jobId: job.id,
-                  jobPlatform: job.platform || '—',
-                  jobCreatedAt: job.createdAt,
-                }));
-            });
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 30);
 
-          const assetsArrays = await Promise.all(assetsPromises);
+          // Batch fetch with concurrency limit of 5 to avoid overwhelming the API
+          const CONCURRENCY = 5;
+          const assetsArrays: any[] = [];
+          for (let i = 0; i < relevantJobs.length; i += CONCURRENCY) {
+            const batch = relevantJobs.slice(i, i + CONCURRENCY);
+            const batchResults = await Promise.all(
+              batch.map(async job => {
+                const jobData = await api(`/api/portal/jobs/${job.id}`);
+                return jobData.assets
+                  .filter(asset => asset.status === 'approved' || !asset.status)
+                  .map(asset => ({
+                    ...asset,
+                    jobName: job.briefText || `Trabajo ${job.id.slice(0, 8)}`,
+                    jobId: job.id,
+                    jobPlatform: job.platform || '—',
+                    jobCreatedAt: job.createdAt,
+                  }));
+              })
+            );
+            assetsArrays.push(...batchResults);
+          }
           allAssets = assetsArrays.flat().sort((a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
@@ -101,7 +111,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           console.error('Error loading assets:', error);
           assetsGrid.innerHTML = `
             <div class="col-span-full text-center py-12">
-              <p class="text-crm-muted">Error cargando assets</p>
+              <p class="text-crm-muted">error cargando assets</p>
               <button onclick="window.location.reload()" class="crm-button crm-button-primary mt-4">
                 Recargar
               </button>
