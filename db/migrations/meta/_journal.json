@@ -15,6 +15,34 @@
       "when": 1775566936002,
       "tag": "0001_sour_tempest",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776762207811,
+      "tag": "0002_nasty_william_stryker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1776782965126,
+      "tag": "0003_peaceful_abomination",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1785262800000,
+      "tag": "0004_assets_client_id",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1785262900000,
+      "tag": "0005_assets_file_size",
+      "breakpoints": true
     }
   ]
 }

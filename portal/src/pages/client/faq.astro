@@ -5,25 +5,25 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 <ClientLayout title="Preguntas Frecuentes">
   <div class="max-w-4xl mx-auto space-y-8">
     <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-white">Preguntas Frecuentes</h1>
-      <p class="text-zinc-400">Todo lo que necesitas saber sobre el proceso de producción.</p>
+      <h1 class="text-4xl font-black tracking-tight text-crm-text">Preguntas Frecuentes</h1>
+      <p class="text-crm-muted">Todo lo que necesitas saber sobre el proceso de producción.</p>
     </section>
 
     <!-- Proceso -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">📋</span>
+    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">📋</span>
         Proceso de producción
       </h2>
-      <div class="space-y-6">
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cómo funciona el proceso de producción?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400 space-y-3">
+          <div class="mt-4 text-crm-muted space-y-3">
             <ol class="list-decimal list-inside space-y-2">
               <li><strong>Brief:</strong> Completas el brief con objetivos, referencias y necesidades</li>
               <li><strong>Onboarding:</strong> Preparas materiales y agendamos sesión</li>
@@ -37,15 +37,15 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Qué necesito preparar antes de empezar?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
-            <p class="mb-3">Consulta nuestra <a href="/client/onboarding" class="text-white underline hover:text-zinc-200">checklist de onboarding</a> completa. Lo esencial:</p>
+          <div class="mt-4 text-crm-muted">
+            <p class="mb-3">Consulta nuestra <a href="/client/onboarding" class="text-crm-text underline hover:text-crm-text-secondary">checklist de onboarding</a> completa. Lo esencial:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
               <li>Producto limpio y preparado (sin polvo, huellas)</li>
               <li>Logo en vector (SVG/AI) y PNG transparente</li>
@@ -56,27 +56,27 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Puedo pedir cambios después de la entrega?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p class="mb-2"><strong>Sí, revisiones ilimitadas</strong> mientras estén dentro del scope del brief aprobado.</p>
             <p class="text-sm">Si el feedback requiere cambios sustanciales no contemplados en el brief original (ej: cambiar concepto, tono, o plataformas), se consumirá como nuevo trabajo.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cuánto tiempo tengo para dar feedback?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Recomendamos feedback dentro de <strong>48-72 horas</strong> desde la entrega para mantener el flujo de producción. Si no recibimos feedback en 7 días, el trabajo se marca como "aprobado por silencio".</p>
           </div>
         </details>
@@ -84,20 +84,20 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Unidades y consumo -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">⚡</span>
+    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">⚡</span>
         Unidades y consumo
       </h2>
-      <div class="space-y-6">
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cómo se consumen las unidades?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p class="mb-2">Cada trabajo consume unidades según su complejidad:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
               <li>Imagen estática: 1 unidad</li>
@@ -109,26 +109,26 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Qué pasa si me quedo sin unidades?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
-            <p>Puedes contratar unidades adicionales o esperar al reseteo mensual según tu plan. Contacta con tu account manager en <a href="mailto:hola@grandeandgordo.com" class="text-white underline hover:text-zinc-200">hola@grandeandgordo.com</a>.</p>
+          <div class="mt-4 text-crm-muted">
+            <p>Puedes contratar unidades adicionales o esperar al reseteo mensual según tu plan. Contacta con tu account manager en <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-text-secondary">hola@grandeandgordo.com</a>.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Las unidades caducan?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Las unidades no consumidas dentro de tu plan mensual <strong>no se acumulan</strong> al mes siguiente. Cada mes comienza con tu capacidad renovada.</p>
           </div>
         </details>
@@ -136,20 +136,20 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Assets y entregables -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">📦</span>
+    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">📦</span>
         Assets y entregables
       </h2>
-      <div class="space-y-6">
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿En qué formatos recibo los assets?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p class="mb-2">Depende de la plataforma objetivo:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
               <li><strong>Instagram/TikTok:</strong> 9:16 vertical, MP4/H.264, 1080x1920</li>
@@ -160,38 +160,38 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Puedo descargar todos los assets de una vez?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Sí, desde la página de cada trabajo puedes usar el botón <strong>"Descargar todo (ZIP)"</strong> para bajar todos los assets aprobados en un solo archivo comprimido.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cuánto tiempo están disponibles los assets?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Los assets están disponibles <strong>indefinidamente</strong> en tu portal. Recomendamos descargar y hacer backup local periódicamente.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Tengo derechos comerciales sobre los assets?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p><strong>Sí.</strong> Una vez abonada la factura, adquieres derechos de uso comercial ilimitados para los assets entregados. Puedes usarlos en campañas paid, orgánico, web, retail, etc.</p>
           </div>
         </details>
@@ -199,44 +199,44 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Facturación y pagos -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">💳</span>
+    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">💳</span>
         Facturación y pagos
       </h2>
-      <div class="space-y-6">
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cuál es el método de pago?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>El pago se realiza por <strong>transferencia bancaria</strong> a la cuenta indicada en cada factura. También aceptamos pago con tarjeta bajo petición.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cuándo se emite la factura?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>La factura se emite al completar el trabajo. El plazo de pago es de <strong>7 días</strong> desde la fecha de emisión.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Ofrecéis factura con IVA deducible?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Sí, todas nuestras facturas incluyen IVA (21%) deducible para empresas. Si eres cliente intra-UE con VIES, el IVA no se aplica (inversión del sujeto pasivo).</p>
           </div>
         </details>
@@ -244,45 +244,45 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Soporte y contacto -->
-    <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sm">💬</span>
+    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
+        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">💬</span>
         Soporte y contacto
       </h2>
-      <div class="space-y-6">
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cómo contacto con mi account manager?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
-            <p>Tu account manager aparece en el sidebar y en tu perfil. El canal principal es email: <a href="mailto:hola@grandeandgordo.com" class="text-white underline hover:text-zinc-200">hola@grandeandgordo.com</a></p>
+          <div class="mt-4 text-crm-muted">
+            <p>Tu account manager aparece en el sidebar y en tu perfil. El canal principal es email: <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-text-secondary">hola@grandeandgordo.com</a></p>
             <p class="text-sm mt-2">Tiempo de respuesta típico: 24-48 horas laborables.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Ofrecéis soporte técnico?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Sí, ayudamos con cualquier incidencia técnica: acceso al portal, problemas de descarga, errores en assets, etc. Usa el formulario de feedback en cada trabajo o contacta directamente.</p>
           </div>
         </details>
 
-        <details class="group rounded-xl border border-zinc-800 bg-black p-4 open:border-zinc-600 transition">
-          <summary class="flex cursor-pointer items-center justify-between text-white font-medium">
+        <details class="group rounded-xl border border-crm-border bg-crm-panel p-4 open:border-crm-border-strong transition">
+          <summary class="flex cursor-pointer items-center justify-between text-crm-text font-medium">
             ¿Cuál es el horario de atención?
             <svg class="w-5 h-5 transition group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </summary>
-          <div class="mt-4 text-zinc-400">
+          <div class="mt-4 text-crm-muted">
             <p>Atendemos de <strong>lunes a viernes, 9:00-18:00 CET</strong>. Fuera de ese horario, respondemos en el siguiente día laborable.</p>
           </div>
         </details>
@@ -290,14 +290,14 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- CTA final -->
-    <div class="rounded-3xl border border-zinc-800 bg-black p-6 md:p-8 text-center">
-      <h2 class="text-2xl font-black text-white mb-4">¿No encuentras lo que buscas?</h2>
-      <p class="text-zinc-400 mb-6">
+    <div class="rounded-3xl border border-crm-border bg-crm-panel p-6 md:p-8 text-center">
+      <h2 class="text-2xl font-black text-crm-text mb-4">¿No encuentras lo que buscas?</h2>
+      <p class="text-crm-muted mb-6">
         Si tu pregunta no está en esta lista, contacta directamente y te responderemos encantados.
       </p>
       <a
         href="mailto:hola@grandeandgordo.com"
-        class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200"
+        class="crm-button crm-button-primary"
       >
         Contactar soporte
       </a>

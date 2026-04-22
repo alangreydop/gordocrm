@@ -4,152 +4,176 @@ import { siteLinks } from '../../../lib/site-links';
 ---
 
 <ClientLayout title="Detalle trabajo">
-  <div class="space-y-6">
-    <section class="crm-panel-strong p-6 md:p-8">
-      <a href="/client" class="inline-block text-sm text-slate-300 transition hover:text-white">&larr; Resumen</a>
-      <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div>
-          <p class="crm-kicker">Detalle de trabajo</p>
-          <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-white md:text-5xl">Cargando trabajo...</h1>
-          <p id="job-subtitle" class="mt-4 text-sm leading-relaxed text-slate-300">Estamos cargando el detalle y los assets aprobados.</p>
-        </div>
-        <span id="job-status-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">—</span>
-      </div>
-    </section>
-
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Plataforma</p>
-        <p id="job-platform" class="mt-4 text-3xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Tipo</p>
-        <p id="job-type" class="mt-4 text-3xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Due</p>
-        <p id="job-due" class="mt-4 text-3xl font-black tracking-tight text-white">—</p>
-      </div>
-      <div class="crm-panel p-5">
-        <p class="crm-kicker">Units</p>
-        <p id="job-units" class="mt-4 text-3xl font-black tracking-tight text-white">—</p>
-      </div>
-    </div>
-
-    <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-      <section class="crm-panel p-6 md:p-7">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-white">Assets aprobados</h2>
-          <button id="download-all-btn" class="crm-button crm-button-secondary text-sm">
-            Descargar todo
-          </button>
-        </div>
-        <div id="assets-grid" class="grid gap-4 md:grid-cols-2">
-          <p class="text-slate-400">Cargando assets...</p>
+   <div class="space-y-6" role="region" aria-label="Detalle del trabajo">
+     <section class="crm-panel-strong p-6 md:p-8">
+       <a href="/client" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Resumen</a>
+       <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+         <div>
+           <p class="crm-kicker">Detalle de trabajo</p>
+           <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Cargando trabajo...</h1>
+           <p id="job-subtitle" class="mt-4 text-sm leading-relaxed text-crm-text-secondary">Estamos cargando el detalle y los assets aprobados.</p>
+          </div>
+          <span id="job-status-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-crm-text-secondary" role="status">—</span>
         </div>
       </section>
 
-      <section class="space-y-6">
-        <div id="progress-box" class="hidden rounded-[1.4rem] border border-sky-300/20 bg-sky-400/10 p-6 text-sky-100">
-          <h2 class="font-semibold text-white">Trabajo en marcha</h2>
-          <p class="mt-2 text-sm leading-relaxed text-sky-100/90">Estamos trabajando en ello. Los assets apareceran aqui en cuanto esten listos y aprobados.</p>
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="crm-panel p-5" role="region" aria-label="Plataforma">
+          <p class="crm-kicker">Plataforma</p>
+          <p id="job-platform" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
         </div>
+        <div class="crm-panel p-5" role="region" aria-label="Tipo">
+          <p class="crm-kicker">Tipo</p>
+          <p id="job-type" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
+        </div>
+        <div class="crm-panel p-5" role="region" aria-label="Due date">
+          <p class="crm-kicker">Due</p>
+          <p id="job-due" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
+        </div>
+        <div class="crm-panel p-5" role="region" aria-label="Unidades">
+          <p class="crm-kicker">Units</p>
+          <p id="job-units" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
+        </div>
+      </div>
 
-        <div class="crm-panel p-6 md:p-7">
-          <p class="crm-kicker">Timeline del trabajo</p>
-          <h2 class="mt-3 text-xl font-black tracking-tight text-white">Seguimiento paso a paso</h2>
-          <div id="job-timeline" class="mt-5 space-y-4">
-            <div class="flex items-start gap-3">
-              <div class="h-2 w-2 mt-2 rounded-full bg-slate-600"></div>
-              <div>
-                <p class="text-sm font-medium text-slate-300">Cargando timeline...</p>
+      <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+        <section class="crm-panel p-6 md:p-7" role="region" aria-label="Assets aprobados">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-crm-text">Assets aprobados</h2>
+            <button id="download-all-btn" class="crm-button crm-button-secondary text-sm">
+            Descargar todo
+            </button>
+          </div>
+          <div id="assets-grid" class="grid gap-4 md:grid-cols-2">
+            <p class="text-crm-muted">Cargando assets...</p>
+          </div>
+
+          <!-- Client Upload -->
+          <div class="mt-6 border-t border-crm-border pt-6">
+            <p class="crm-kicker mb-3">Subir material</p>
+            <div id="quota-info" class="mb-3 text-xs text-crm-muted" aria-live="polite">
+            Cargando quota...
+            </div>
+            <form id="upload-form" class="flex flex-col gap-3">
+              <input
+              type="file"
+              id="upload-file"
+              accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
+              class="crm-input text-sm"
+              />
+              <div class="flex items-center gap-3">
+                <button type="submit" id="upload-btn" class="crm-button crm-button-primary text-sm">
+                Subir archivo
+                </button>
+                <span id="upload-status" class="hidden text-xs" aria-live="polite"></span>
+              </div>
+              <p class="text-xs text-crm-muted">Max 50MB. JPG, PNG, WebP, MP4, MOV.</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="space-y-6">
+          <div id="progress-box" class="hidden rounded-[1.4rem] border p-6" style="border-color: color-mix(in srgb, var(--crm-info) 20%, transparent); background-color: color-mix(in srgb, var(--crm-info) 10%, transparent); color: var(--crm-info);" role="status">
+            <h2 class="font-semibold text-crm-text">Trabajo en marcha</h2>
+            <p class="mt-2 text-sm leading-relaxed">Estamos trabajando en ello. Los assets apareceran aqui en cuanto esten listos y aprobados.</p>
+          </div>
+
+          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Timeline del trabajo">
+            <p class="crm-kicker">Timeline del trabajo</p>
+            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Seguimiento paso a paso</h2>
+            <div id="job-timeline" class="mt-5 space-y-4" aria-live="polite">
+              <div class="flex items-start gap-3">
+                <div class="h-2 w-2 mt-2 rounded-full bg-crm-muted"></div>
+                <div>
+                  <p class="text-sm font-medium text-crm-text-secondary">Cargando timeline...</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="crm-panel p-6 md:p-7">
-          <p class="crm-kicker">Feedback del asset</p>
-          <h2 class="mt-3 text-xl font-black tracking-tight text-white">¿Necesitas cambios?</h2>
-          <div class="mt-4 space-y-3">
-            <textarea id="feedback-text" rows="3" class="crm-input text-sm" placeholder="Describe los cambios o ajustes que necesitas..."></textarea>
-            <button id="send-feedback-btn" class="crm-button crm-button-primary w-full text-sm">
+          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Feedback del asset">
+            <p class="crm-kicker">Feedback del asset</p>
+            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">¿Necesitas cambios?</h2>
+            <div class="mt-4 space-y-3">
+              <textarea id="feedback-text" rows="3" class="crm-input text-sm" placeholder="Describe los cambios o ajustes que necesitas..."></textarea>
+              <button id="send-feedback-btn" class="crm-button crm-button-primary w-full text-sm">
               Enviar feedback
-            </button>
-            <p class="text-xs text-slate-400">Tu feedback llegará directamente al equipo de producción.</p>
+              </button>
+              <p class="text-xs text-crm-muted">Tu feedback llegará directamente al equipo de producción.</p>
+            </div>
           </div>
-        </div>
 
-        <!-- Feedback History -->
-        <div class="crm-panel p-6 md:p-7">
-          <p class="crm-kicker">Historial</p>
-          <h2 class="mt-3 text-xl font-black tracking-tight text-white">Feedback enviado</h2>
-          <div id="feedback-history" class="mt-4 space-y-3">
-            <p class="text-sm text-slate-400">Cargando historial...</p>
+          <!-- Feedback History -->
+          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Historial de feedback">
+            <p class="crm-kicker">Historial</p>
+            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Feedback enviado</h2>
+            <div id="feedback-history" class="mt-4 space-y-3" aria-live="polite">
+              <p class="text-sm text-crm-muted">Cargando historial...</p>
+            </div>
           </div>
-        </div>
 
-        <!-- Team Messages -->
-        <div class="crm-panel p-6 md:p-7">
-          <p class="crm-kicker">Comunicación</p>
-          <h2 class="mt-3 text-xl font-black tracking-tight text-white">Mensajes del equipo</h2>
-          <div id="team-messages" class="mt-4 space-y-3">
-            <p class="text-sm text-slate-400">Cargando mensajes...</p>
+          <!-- Team Messages -->
+          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Mensajes del equipo">
+            <p class="crm-kicker">Comunicación</p>
+            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Mensajes del equipo</h2>
+            <div id="team-messages" class="mt-4 space-y-3" aria-live="polite">
+              <p class="text-sm text-crm-muted">Cargando mensajes...</p>
+            </div>
           </div>
-        </div>
 
-        <div class="crm-panel p-6 md:p-7">
-          <p class="crm-kicker">Soporte y contexto</p>
-          <h2 class="mt-3 text-2xl font-black tracking-tight text-white">Todo alineado alrededor del trabajo</h2>
-          <div class="mt-4 space-y-3 text-sm text-slate-300">
-            <p><span class="font-medium text-white">Contacto:</span> hola@grandeandgordo.com</p>
-            <p><span class="font-medium text-white">Si necesitas algo urgente:</span> responde por email indicando el trabajo y el objetivo del cambio.</p>
-          </div>
-          <div class="mt-5 grid gap-3">
-            <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
+          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Soporte y contexto">
+            <p class="crm-kicker">Soporte y contexto</p>
+            <h2 class="mt-3 text-2xl font-black tracking-tight text-crm-text">Todo alineado alrededor del trabajo</h2>
+            <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
+              <p><span class="font-medium text-crm-text">Contacto:</span> hola@grandeandgordo.com</p>
+              <p><span class="font-medium text-crm-text">Si necesitas algo urgente:</span> responde por email indicando el trabajo y el objetivo del cambio.</p>
+            </div>
+            <div class="mt-5 grid gap-3">
+              <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
               Actualizar brief
-            </a>
-            <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
+              </a>
+              <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
               Ver onboarding
-            </a>
-            <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
+              </a>
+              <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
               Abrir centro de cliente
-            </a>
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
-  </div>
 
-  <script>
-    (async () => {
+    <script>
+      (async () => {
       const {
+        API_BASE,
         api,
         escapeHtml,
         formatDate,
         formatNumber,
-        jobStatusClass,
-      } = await import('../../../lib/api-client');
+        } = await import('../../../lib/api-client');
+      const { jobStatusClass } = await import('../../../lib/ui-helpers');
 
       const jobId = new URLSearchParams(window.location.search).get('id');
       if (!jobId) {
         window.location.href = '/client';
         return;
-      }
+        }
 
       const jobStatusSteps = {
         pending: { label: 'Pendiente', step: 1 },
         processing: { label: 'En producción', step: 2 },
         completed: { label: 'Completado', step: 3 },
         delivered: { label: 'Entregado', step: 4 },
-      };
+        };
 
       const timelineSteps = [
-        { step: 1, label: 'Brief recibido', description: 'El trabajo fue creado y está en cola' },
-        { step: 2, label: 'En producción', description: 'Estamos creando tus assets' },
-        { step: 3, label: 'QA completado', description: 'Los assets fueron aprobados internamente' },
-        { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga' },
-      ];
+          { step: 1, label: 'Brief recibido', description: 'El trabajo fue creado y está en cola' },
+          { step: 2, label: 'En producción', description: 'Estamos creando tus assets' },
+          { step: 3, label: 'QA completado', description: 'Los assets fueron aprobados internamente' },
+          { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga' },
+        ];
 
       try {
         const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
@@ -170,26 +194,26 @@ import { siteLinks } from '../../../lib/site-links';
         if (subtitle) {
           const assetCount = assets.length;
           const assetText = assetCount > 0
-            ? `${assetCount} asset${assetCount !== 1 ? 's' : ''} completado${assetCount !== 1 ? 's' : ''} y disponible${assetCount !== 1 ? 's' : ''} para descarga.`
-            : 'assets visibles solo cuando estan aprobados.';
+              ? `${assetCount} asset${assetCount !== 1 ? 's' : ''} completado${assetCount !== 1 ? 's' : ''} y disponible${assetCount !== 1 ? 's' : ''} para descarga.`
+              : 'assets visibles solo cuando estan aprobados.';
           subtitle.textContent = `Actualizado ${formatDate(job.updatedAt)} · ${assetText}`;
-        }
+          }
         if (statusPill) {
           statusPill.textContent = job.status ?? 'pending';
           statusPill.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}`;
-        }
+          }
 
         const setText = (id, value) => {
           const element = document.getElementById(id);
           if (element) element.textContent = value;
-        };
+          };
 
         setText('job-platform', job.platform ?? '—');
         setText('job-type', job.type ?? '—');
         setText('job-due', formatDate(job.dueAt));
         setText('job-units', `${formatNumber(job.unitsConsumed ?? 0)} / ${formatNumber(job.unitsPlanned ?? 0)}`);
 
-        // Build timeline
+          // Build timeline
         if (timelineContainer) {
           const currentStep = jobStatusSteps[job.status]?.step ?? 1;
           timelineContainer.innerHTML = timelineSteps.map((step, idx) => {
@@ -197,53 +221,53 @@ import { siteLinks } from '../../../lib/site-links';
             const isCurrent = step.step === currentStep;
             return `
               <div class="flex items-start gap-3">
-                <div class="h-2 w-2 mt-2 rounded-full ${isCompleted ? 'bg-emerald-400' : 'bg-slate-600'}"></div>
+                <div class="h-2 w-2 mt-2 rounded-full" style="background: ${isCompleted ? 'var(--crm-success)' : 'var(--crm-muted)'}"></div>
                 <div class="${isCurrent ? 'opacity-100' : 'opacity-60'}">
-                  <p class="text-sm font-medium ${isCompleted ? 'text-white' : 'text-slate-400'}">${escapeHtml(step.label)}</p>
-                  <p class="text-xs text-slate-400 mt-0.5">${escapeHtml(step.description)}</p>
+                  <p class="text-sm font-medium ${isCompleted ? 'text-crm-text' : 'text-crm-muted'}">${escapeHtml(step.label)}</p>
+                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(step.description)}</p>
                 </div>
               </div>
             `;
           }).join('');
-        }
+          }
 
         if (assetsGrid) {
           assetsGrid.innerHTML = assets.length === 0
-            ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
-            : assets.map((asset, idx) => `
-              <article class="crm-panel-soft p-4 group cursor-pointer" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
-                <div class="relative overflow-hidden rounded-lg bg-black mb-4">
-                  ${asset.type === 'video'
-                    ? `<div class="aspect-video flex items-center justify-center bg-zinc-900">
-                         <svg class="w-12 h-12 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                       </div>`
-                    : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
-                       <div class="hidden aspect-video items-center justify-center bg-zinc-900">
-                         <svg class="w-12 h-12 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                       </div>`
-                  }
-                  <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <span class="text-xs font-medium text-white">Ver en grande</span>
-                  </div>
-                </div>
-                <p class="font-medium text-white">${escapeHtml(asset.label ?? `Asset ${idx + 1}`)}</p>
-                <p class="mt-1 text-xs text-slate-400">${escapeHtml(asset.type ?? 'asset')}</p>
-                <div class="mt-3 flex gap-2">
-                  ${
+              ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
+              : assets.map((asset, idx) => `
+                <article class="crm-panel-soft p-4 group cursor-pointer" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
+                  <div class="relative overflow-hidden rounded-lg bg-crm-panel mb-4">
+                    ${asset.type === 'video'
+                      ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
+                           <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                         </div>`
+                      : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+                         <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
+                           <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                         </div>`
+                   }
+                   <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                     <span class="text-xs font-medium text-crm-text">Ver en grande</span>
+                   </div>
+                 </div>
+                 <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? `Asset ${idx + 1}`)}</p>
+                 <p class="mt-1 text-xs text-crm-muted">${escapeHtml(asset.type ?? 'asset')}</p>
+                 <div class="mt-3 flex gap-2">
+                   ${
                     asset.deliveryUrl
-                      ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>`
-                      : '<p class="text-xs text-slate-400">Preparando entrega...</p>'
-                  }
-                  ${
+                        ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>`
+                        : '<p class="text-xs text-crm-muted">Preparando entrega...</p>'
+                   }
+                   ${
                     asset.deliveryUrl
-                      ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">↓</a>`
-                      : ''
-                  }
-                </div>
-              </article>
-            `).join('');
+                        ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">↓</a>`
+                        : ''
+                   }
+                 </div>
+               </article>
+             `).join('');
 
-          // Asset click - lightbox
+            // Asset click - lightbox
           assetsGrid.querySelectorAll('[data-asset-url]').forEach((card) => {
             card.addEventListener('click', (e) => {
               const target = e.target;
@@ -256,7 +280,7 @@ import { siteLinks } from '../../../lib/site-links';
               showLightbox(url, type);
             });
           });
-        }
+          }
 
         // Lightbox for asset preview
         let lightboxEl;
@@ -266,37 +290,37 @@ import { siteLinks } from '../../../lib/site-links';
           lightboxEl = document.createElement('div');
           lightboxEl.className = 'fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4';
           lightboxEl.innerHTML = `
-            <button class="absolute top-4 right-4 text-white/70 hover:text-white z-10">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <div class="max-w-5xl max-h-[85vh]">
-              ${type === 'video'
-                ? `<video src="${url}" controls class="max-w-full max-h-[85vh] rounded-lg"></video>`
-                : `<img src="${url}" alt="Asset preview" class="max-w-full max-h-[85vh] rounded-lg object-contain"/>`
-              }
-              <div class="mt-4 flex justify-center gap-4">
-                <a href="${url}" download class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-black transition hover:bg-zinc-200">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                  Descargar
-                </a>
-                <a href="${url}" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-zinc-500 hover:text-white">
-                  Abrir en nueva pestaña
-                </a>
+              <button class="absolute top-4 right-4 text-crm-text/70 hover:text-crm-text z-10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+              <div class="max-w-5xl max-h-[85vh]">
+                ${type === 'video'
+                  ? `<video src="${url}" controls class="max-w-full max-h-[85vh] rounded-lg"></video>`
+                  : `<img src="${url}" alt="Asset preview" class="max-w-full max-h-[85vh] rounded-lg object-contain"/>`
+                }
+                <div class="mt-4 flex justify-center gap-4">
+                  <a href="${url}" download class="crm-button crm-button-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Descargar
+                  </a>
+                  <a href="${url}" target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
+                    Abrir en nueva pestaña
+                  </a>
+                </div>
               </div>
-            </div>
-          `;
+            `;
 
           const closeBtn = lightboxEl.querySelector('button');
           closeBtn.addEventListener('click', () => lightboxEl.remove());
           lightboxEl.addEventListener('click', (e) => {
             if (e.target === lightboxEl) lightboxEl.remove();
-          });
+            });
           document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') lightboxEl.remove();
-          });
+            });
 
           document.body.appendChild(lightboxEl);
-        };
+          };
 
         // Bulk Download Assets using JSZip
         if (downloadAllBtn && assets.length > 0) {
@@ -316,7 +340,7 @@ import { siteLinks } from '../../../lib/site-links';
                 const blob = await response.blob();
                 const filename = `${asset.label ?? 'asset_' + idx}${asset.type === 'video' ? '.mp4' : '.jpg'}`;
                 folder.file(filename, blob);
-              });
+               });
 
               await Promise.all(downloadPromises);
 
@@ -332,20 +356,20 @@ import { siteLinks } from '../../../lib/site-links';
               setTimeout(() => {
                 downloadAllBtn.disabled = false;
                 downloadAllBtn.textContent = 'Descargar todo';
-              }, 2000);
-            } catch (error) {
+                }, 2000);
+              } catch (error) {
               console.error('Bulk download failed:', error);
               downloadAllBtn.textContent = 'Error al descargar';
               setTimeout(() => {
                 downloadAllBtn.disabled = false;
                 downloadAllBtn.textContent = 'Descargar todo';
-              }, 2000);
-            }
-          });
-        } else if (downloadAllBtn) {
+                }, 2000);
+              }
+            });
+          } else if (downloadAllBtn) {
           downloadAllBtn.disabled = true;
           downloadAllBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+          }
 
         // Feedback functionality
         if (sendFeedbackBtn && feedbackText) {
@@ -354,7 +378,7 @@ import { siteLinks } from '../../../lib/site-links';
             if (!feedback) {
               feedbackText.focus();
               return;
-            }
+             }
 
             sendFeedbackBtn.disabled = true;
             sendFeedbackBtn.textContent = 'Enviando...';
@@ -363,7 +387,7 @@ import { siteLinks } from '../../../lib/site-links';
               await api(`/api/portal/jobs/${encodeURIComponent(jobId)}/feedback`, {
                 method: 'POST',
                 body: JSON.stringify({ feedback }),
-              });
+                });
 
               feedbackText.value = '';
               sendFeedbackBtn.textContent = '¡Feedback enviado!';
@@ -371,16 +395,16 @@ import { siteLinks } from '../../../lib/site-links';
               setTimeout(() => {
                 sendFeedbackBtn.textContent = 'Enviar feedback';
                 sendFeedbackBtn.disabled = false;
-              }, 2000);
-            } catch (error) {
+                }, 2000);
+              } catch (error) {
               sendFeedbackBtn.textContent = 'Error al enviar';
               setTimeout(() => {
                 sendFeedbackBtn.textContent = 'Enviar feedback';
                 sendFeedbackBtn.disabled = false;
-              }, 2000);
-            }
-          });
-        }
+                }, 2000);
+              }
+            });
+          }
 
         // Parse and render feedback history from job.internalNotes
         const feedbackHistoryEl = document.getElementById('feedback-history');
@@ -395,24 +419,24 @@ import { siteLinks } from '../../../lib/site-links';
                 timestamp: match[1],
                 author: match[2],
                 text: match[3].trim(),
-              });
+                });
+              }
             }
-          }
 
           if (feedbacks.length === 0) {
-            feedbackHistoryEl.innerHTML = '<p class="text-sm text-slate-400">Aún no has enviado feedback para este trabajo.</p>';
-          } else {
+            feedbackHistoryEl.innerHTML = '<p class="text-sm text-crm-muted">Aún no has enviado feedback para este trabajo.</p>';
+            } else {
             feedbackHistoryEl.innerHTML = feedbacks.reverse().map((fb) => `
-              <div class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+              <div class="rounded-lg border border-crm-border bg-crm-bg-alt p-4">
                 <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-emerald-400">Enviado</span>
-                  <span class="text-xs text-zinc-500">${escapeHtml(fb.timestamp)}</span>
+                  <span class="text-xs font-medium text-crm-success">Enviado</span>
+                  <span class="text-xs text-crm-text-secondary">${escapeHtml(fb.timestamp)}</span>
                 </div>
-                <p class="text-sm text-zinc-300 whitespace-pre-wrap">${escapeHtml(fb.text)}</p>
+                <p class="text-sm text-crm-text-secondary whitespace-pre-wrap">${escapeHtml(fb.text)}</p>
               </div>
             `).join('');
+            }
           }
-        }
 
         // Parse and render team messages from job.internalNotes
         const teamMessagesEl = document.getElementById('team-messages');
@@ -427,39 +451,149 @@ import { siteLinks } from '../../../lib/site-links';
                 timestamp: match[1],
                 author: match[2],
                 text: match[3].trim(),
-              });
+                });
+              }
             }
-          }
 
           if (teamMessages.length === 0) {
-            teamMessagesEl.innerHTML = '<p class="text-sm text-slate-400">No hay mensajes del equipo todavía. Tu account manager se comunicará aquí si necesita información.</p>';
-          } else {
+            teamMessagesEl.innerHTML = '<p class="text-sm text-crm-muted">No hay mensajes del equipo todavía. Tu account manager se comunicará aquí si necesita información.</p>';
+            } else {
             teamMessagesEl.innerHTML = teamMessages.reverse().map((msg) => `
-              <div class="rounded-lg border border-sky-800/50 bg-sky-900/20 p-4">
+              <div class="rounded-lg border p-4" style="border-color: color-mix(in srgb, var(--crm-info) 50%, transparent); background-color: color-mix(in srgb, var(--crm-info) 20%, transparent);">
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-sky-400">Equipo Grande & Gordo</span>
-                    <span class="text-xs text-sky-400/70">${escapeHtml(msg.author)}</span>
+                    <span class="text-xs font-medium text-crm-info">Equipo Grande & Gordo</span>
+                    <span class="text-xs text-crm-info opacity-70">${escapeHtml(msg.author)}</span>
                   </div>
-                  <span class="text-xs text-zinc-500">${escapeHtml(msg.timestamp)}</span>
+                  <span class="text-xs text-crm-text-secondary">${escapeHtml(msg.timestamp)}</span>
                 </div>
-                <p class="text-sm text-zinc-300 whitespace-pre-wrap">${escapeHtml(msg.text)}</p>
+                <p class="text-sm text-crm-text-secondary whitespace-pre-wrap">${escapeHtml(msg.text)}</p>
               </div>
             `).join('');
+            }
           }
-        }
 
         if (
           progressBox &&
           assets.length === 0 &&
           job.status !== 'completed' &&
           job.status !== 'delivered'
-        ) {
+          ) {
           progressBox.classList.remove('hidden');
-        }
-      } catch {
+          }
+
+        // Load and display quota
+        const quotaInfo = document.getElementById('quota-info');
+        try {
+          const quota = await api('/api/portal/upload/quota');
+          if (quotaInfo) {
+            const usedMB = (quota.storageUsed / (1024 * 1024)).toFixed(1);
+            const maxMB = (quota.storageMax / (1024 * 1024)).toFixed(0);
+            const remainingMB = (quota.storageRemaining / (1024 * 1024)).toFixed(1);
+            quotaInfo.innerHTML = `
+              <span class="text-crm-text-secondary">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB usados · ${remainingMB} MB libres</span>
+            `;
+            }
+          } catch {
+          if (quotaInfo) quotaInfo.textContent = '';
+          }
+
+        // Upload handler
+        const uploadForm = document.getElementById('upload-form');
+        const uploadFile = document.getElementById('upload-file');
+        const uploadBtn = document.getElementById('upload-btn');
+        const uploadStatus = document.getElementById('upload-status');
+
+        uploadForm?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (!(uploadFile instanceof HTMLInputElement) || !uploadFile.files?.length) {
+            uploadFile?.focus();
+            return;
+            }
+
+          const file = uploadFile.files[0];
+          const formData = new FormData();
+          formData.append('file', file);
+
+          if (uploadBtn) {
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Subiendo...';
+            }
+          if (uploadStatus) {
+            uploadStatus.className = 'text-xs text-crm-info';
+            uploadStatus.textContent = 'Subiendo...';
+            uploadStatus.classList.remove('hidden');
+            }
+
+          try {
+            const res = await fetch(`${API_BASE}/api/portal/upload/jobs/${encodeURIComponent(jobId)}/upload`, {
+              method: 'POST',
+              body: formData,
+              credentials: 'include',
+              });
+
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
+              throw new Error(data.error || 'Error al subir archivo');
+              }
+
+            uploadFile.value = '';
+            if (uploadBtn) {
+              uploadBtn.disabled = false;
+              uploadBtn.textContent = 'Subir archivo';
+              }
+            if (uploadStatus) {
+              uploadStatus.className = 'text-xs text-crm-success';
+              uploadStatus.textContent = '¡Subido correctamente!';
+              }
+
+              // Reload assets
+            const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
+            const newAssets = Array.isArray(data.assets) ? data.assets : [];
+              // Trigger re-render of assets grid
+            if (assetsGrid) {
+              assetsGrid.innerHTML = newAssets.length === 0
+                  ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
+                  : newAssets.map((asset, idx) => `
+                    <article class="crm-panel-soft p-4 group cursor-pointer" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
+                      <div class="relative overflow-hidden rounded-lg bg-crm-panel mb-4">
+                        ${asset.type === 'video'
+                          ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
+                               <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                             </div>`
+                          : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+                             <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
+                               <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                             </div>`
+                       }
+                       <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                         <span class="text-xs font-medium text-crm-text">Ver en grande</span>
+                       </div>
+                     </div>
+                     <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? `Asset ${idx + 1}`)}</p>
+                     <p class="mt-1 text-xs text-crm-muted">${escapeHtml(asset.type ?? 'asset')}</p>
+                     <div class="mt-3 flex gap-2">
+                       ${asset.deliveryUrl ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>` : '<p class="text-xs text-crm-muted">Preparando entrega...</p>'}
+                       ${asset.deliveryUrl ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">↓</a>` : ''}
+                     </div>
+                   </article>
+                 `).join('');
+              }
+            } catch (error) {
+            console.error('Upload failed:', error);
+            if (uploadBtn) {
+              uploadBtn.disabled = false;
+              uploadBtn.textContent = 'Subir archivo';
+              }
+            if (uploadStatus) {
+              uploadStatus.className = 'text-xs text-crm-danger';
+              uploadStatus.textContent = error instanceof Error ? error.message : 'Error al subir';
+              }
+            }
+          });
+          } catch {
         window.location.href = '/client';
-      }
-    })();
-  </script>
+          }
+       })();
+    </script>
 </ClientLayout>

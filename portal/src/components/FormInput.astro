@@ -1,0 +1,26 @@
+---
+interface Props {
+  label: string;
+  id: string;
+  type?: string;
+  name?: string;
+  placeholder?: string;
+  required?: boolean;
+  value?: string;
+}
+
+const { label, id, type = 'text', name = id, placeholder = '', required = false, value = '' } = Astro.props;
+---
+
+<div>
+  <label for={id} class="block text-sm font-medium mb-1.5" style="color: var(--crm-text-secondary);">{label}</label>
+  <input
+    type={type}
+    id={id}
+    name={name}
+    placeholder={placeholder}
+    required={required}
+    value={value}
+    class="crm-input"
+  />
+</div>

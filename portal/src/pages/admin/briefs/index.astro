@@ -3,13 +3,13 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Briefs">
-  <div class="space-y-6">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
     <!-- Header -->
     <section class="crm-page-header">
       <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
           <p class="crm-kicker">Gestión de briefs</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Briefs Recibidos</h1>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Briefs Recibidos</h1>
           <p class="crm-page-header__meta mt-4">
             Briefs submissions desde la web y formularios. Revisa, crea jobs o archiva según corresponda.
           </p>
@@ -17,11 +17,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="crm-panel-soft p-5">
             <p class="crm-kicker">Nuevos</p>
-            <p id="stat-new" class="mt-3 text-3xl font-black text-white">—</p>
+            <p id="stat-new" class="mt-3 text-3xl font-black text-crm-text">—</p>
           </div>
           <div class="crm-panel-soft p-5">
             <p class="crm-kicker">Pendientes</p>
-            <p id="stat-pending" class="mt-3 text-3xl font-black text-white">—</p>
+            <p id="stat-pending" class="mt-3 text-3xl font-black text-crm-text">—</p>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     <!-- Briefs Table -->
     <section class="crm-panel overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+        <table class="crm-table min-w-full text-sm">
           <thead>
             <tr>
               <th class="px-6 py-3 text-left">Cliente</th>
@@ -68,9 +68,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               <th class="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody id="briefs-body" class="divide-y divide-gray-200">
+          <tbody id="briefs-body">
             <tr>
-              <td colspan="8" class="px-6 py-8 text-center text-slate-400">Cargando briefs...</td>
+              <td colspan="8" class="px-6 py-8 text-center text-crm-muted">Cargando briefs...</td>
             </tr>
           </tbody>
         </table>
@@ -103,9 +103,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       };
 
       const statusClasses = {
-        new: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-        reviewed: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-        archived: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+        new: 'crm-badge crm-badge-info',
+        reviewed: 'crm-badge crm-badge-success',
+        archived: 'crm-badge crm-badge-default',
       };
 
       // Source labels
@@ -136,7 +136,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           console.error('Error loading briefs:', error);
           briefsBody.innerHTML = `
             <tr>
-              <td colspan="8" class="px-6 py-8 text-center text-rose-200">
+              <td colspan="8" class="px-6 py-8 text-center text-crm-danger">
                 Error cargando briefs
                 <button onclick="window.location.reload()" class="crm-button crm-button-primary mt-4 ml-2">
                   Recargar
@@ -183,7 +183,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (filteredBriefs.length === 0) {
           briefsBody.innerHTML = `
             <tr>
-              <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+              <td colspan="8" class="px-6 py-8 text-center text-crm-muted">
                 No hay briefs que coincidan con los filtros
               </td>
             </tr>
@@ -192,35 +192,35 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         }
 
         briefsBody.innerHTML = filteredBriefs.map(brief => `
-          <tr class="hover:bg-gray-50">
+          <tr>
             <td class="px-6 py-4">
-              <div class="font-medium text-white">${escapeHtml(brief.clientName || '—')}</div>
-              <div class="text-xs text-slate-400">${escapeHtml(brief.clientCompany || '—')}</div>
+              <div class="font-medium text-crm-text">${escapeHtml(brief.clientName || '—')}</div>
+              <div class="text-xs text-crm-muted">${escapeHtml(brief.clientCompany || '—')}</div>
             </td>
-            <td class="px-6 py-4 text-slate-200">${escapeHtml(brief.email)}</td>
+            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(brief.email)}</td>
             <td class="px-6 py-4">
-              <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium bg-slate-700 text-slate-200">
+              <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium bg-crm-surface-hover text-crm-text-secondary">
                 ${escapeHtml(typeLabels[brief.tipo] || brief.tipo)}
               </span>
             </td>
-            <td class="px-6 py-4 max-w-xs truncate text-slate-200" title="${escapeHtml(brief.description)}">
+            <td class="px-6 py-4 max-w-xs truncate text-crm-text-secondary" title="${escapeHtml(brief.description)}">
               ${escapeHtml(brief.description)}
             </td>
-            <td class="px-6 py-4 text-slate-400">
+            <td class="px-6 py-4 text-crm-muted">
               ${escapeHtml(sourceLabels[brief.source] || brief.source || '—')}
             </td>
             <td class="px-6 py-4">
-              <span class="inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusClasses[brief.status] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}">
+              <span class="${statusClasses[brief.status] || 'crm-badge crm-badge-default'}">
                 ${escapeHtml(statusLabels[brief.status] || brief.status)}
               </span>
             </td>
-            <td class="px-6 py-4 text-slate-400">${formatDate(brief.createdAt)}</td>
+            <td class="px-6 py-4 text-crm-muted">${formatDate(brief.createdAt)}</td>
             <td class="px-6 py-4 text-right">
               <div class="flex items-center justify-end gap-2">
                 ${brief.status === 'new' || brief.status === 'reviewed' ? `
                   <button
                     onclick="createJob('${brief.id}')"
-                    class="text-sm font-medium text-emerald-300 hover:text-emerald-200 transition"
+                    class="text-sm font-medium text-crm-success transition hover:text-crm-text"
                     title="Crear job desde brief"
                   >
                     Crear job
@@ -229,7 +229,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 ${brief.status !== 'archived' ? `
                   <button
                     onclick="archiveBrief('${brief.id}')"
-                    class="text-sm font-medium text-slate-400 hover:text-white transition"
+                    class="text-sm font-medium text-crm-muted hover:text-crm-text transition"
                     title="Archivar brief"
                   >
                     Archivar

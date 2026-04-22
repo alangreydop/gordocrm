@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `clients_external_client_id_unique` ON `clients` (`external_client_id`);

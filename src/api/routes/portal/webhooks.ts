@@ -7,11 +7,12 @@
  * - Web → CRM: brief.submitted, onboarding.completed
  */
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import { enqueueQa } from '../../../lib/qa-queue.js';
 import type { AppContext } from '../../../types/index.js';
 
 const webhookSignatureSchema = z.object({
@@ -89,9 +90,9 @@ webhookRoutes.post('/ai-engine', async (c) => {
   const { event, data } = parsed.data;
   const db = c.get('db');
 
-  // Buscar job por external_job_id
+  // Buscar job por external_job_id con clientId
   const [job] = await db
-    .select({ id: schema.jobs.id })
+    .select({ id: schema.jobs.id, clientId: schema.jobs.clientId })
     .from(schema.jobs)
     .where(eq(schema.jobs.externalJobId, data.external_job_id))
     .limit(1);
@@ -99,6 +100,13 @@ webhookRoutes.post('/ai-engine', async (c) => {
   if (!job) {
     return c.json({ error: 'Job not found' }, 404);
   }
+
+  // Fetch client QA settings
+  const [client] = await db
+    .select({ qaEnabled: schema.clients.qaEnabled })
+    .from(schema.clients)
+    .where(eq(schema.clients.id, job.clientId))
+    .limit(1);
 
   // Actualizar job según evento
   if (event === 'job.started') {
@@ -109,9 +117,7 @@ webhookRoutes.post('/ai-engine', async (c) => {
         updatedAt: new Date(),
       })
       .where(eq(schema.jobs.id, job.id));
-  }
-
-  if (event === 'job.completed') {
+  } else if (event === 'job.completed') {
     await db
       .update(schema.jobs)
       .set({
@@ -121,23 +127,56 @@ webhookRoutes.post('/ai-engine', async (c) => {
       .where(eq(schema.jobs.id, job.id));
 
     // Guardar outputs como assets
+    const newAssetIds: string[] = [];
     if (data.outputs && data.outputs.length > 0) {
       for (const output of data.outputs) {
-        await db.insert(schema.assets).values({
-          jobId: job.id,
-          r2Key: output.url,
-          type: output.output_type,
-          metadata: output.metadata ? JSON.stringify(output.metadata) : null,
-          status: 'approved',
-          deliveryUrl: output.url,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
+        // A3: Idempotency — skip if asset already exists for this job+url
+        const [existing] = await db
+          .select({ id: schema.assets.id })
+          .from(schema.assets)
+          .where(and(eq(schema.assets.jobId, job.id), eq(schema.assets.r2Key, output.url)))
+          .limit(1);
+
+        if (existing) {
+          console.log(`[Webhook] Asset already exists for job ${job.id}, skipping: ${output.url}`);
+          continue;
+        }
+
+        const [asset] = await db
+          .insert(schema.assets)
+          .values({
+            jobId: job.id,
+            clientId: job.clientId,
+            r2Key: output.url,
+            type: output.output_type,
+            metadata: output.metadata ? JSON.stringify(output.metadata) : null,
+            status: 'approved',
+            deliveryUrl: output.url,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning({ id: schema.assets.id });
+
+        if (asset) newAssetIds.push(asset.id);
       }
     }
-  }
 
-  if (event === 'job.failed') {
+    // Sprint 2: Enqueue QA for new assets if client has qa_enabled
+    if (client?.qaEnabled && newAssetIds.length > 0) {
+      for (const assetId of newAssetIds) {
+        try {
+          const result = await enqueueQa(db, {
+            assetId,
+            jobId: job.id,
+            clientId: job.clientId,
+          });
+          console.log(`[Webhook] QA enqueued for asset ${assetId}: ${result.skipped ? 'skipped (exists)' : result.id}`);
+        } catch (e) {
+          console.error(`[Webhook] Failed to enqueue QA for asset ${assetId}:`, e);
+        }
+      }
+    }
+  } else if (event === 'job.failed') {
     await db
       .update(schema.jobs)
       .set({

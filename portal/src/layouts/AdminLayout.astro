@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import { siteLinks } from '../lib/site-links';
 
 interface Props {
   title: string;
@@ -8,157 +9,205 @@ interface Props {
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
-  { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/clients', label: 'Clientes' },
-  { href: '/admin/jobs', label: 'Trabajos' },
-  { href: '/admin/briefs', label: 'Briefs' },
-  { href: '/admin/settings', label: 'Configuracion' },
+    { href: '/admin', label: 'dashboard' },
+    { href: '/admin/clients', label: 'clientes' },
+    { href: '/admin/jobs', label: 'trabajos' },
+    { href: '/admin/briefs', label: 'briefs' },
+    { href: '/admin/pipeline-mappings', label: 'pipelines' },
+    { href: '/admin/brand-graphs', label: 'brand graphs' },
+    { href: '/admin/settings', label: 'configuración' },
 ];
 ---
 
 <BaseLayout title={title}>
-  <div class="min-h-screen bg-black text-white">
-    <div class="flex min-h-screen flex-col lg:flex-row">
-      <aside class="w-full border-b border-zinc-900 bg-black px-6 py-6 lg:w-80 lg:border-b-0 lg:border-r lg:px-6 lg:py-8">
-        <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-          <div class="flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2813.19 1671.88" class="h-8 w-auto" aria-hidden="true">
-              <path d="M1177.85 429.55c11.51 0 20.72-3.89 27.63-11.66s11.22-20.87 12.95-39.29c2.88-27.06 11.37-47.06 25.47-60.01 14.1-12.95 32.09-19.43 53.97-19.43 24.18 0 43.61 8.63 58.29 25.9 14.68 17.27 22.02 42.6 22.02 75.99v35.4l-134.7 64.76c-17.27 8.06-31.66 15.83-43.18 23.31-11.51 7.48-20.72 15.11-27.63 22.88s-11.8 15.97-14.68 24.61c-2.88 8.63-4.32 18.42-4.32 29.36 0 25.33 8.78 45.91 26.34 61.74 17.56 15.83 40.73 23.75 69.51 23.75 25.9 0 49.79-6.33 71.67-19 21.87-12.66 40.87-31.66 56.99-56.99 1.73 23.6 8.01 65.63 102.99 65.63h183.52V363.91c23.03-34.54 53.4-51.81 92.55-51.81 23.6 0 42.6 7.63 56.99 22.88s21.59 38.42 21.59 69.51v223.64c0 5.18-.86 9.07-2.59 11.66s-5.47 4.46-11.23 5.61l-41.45 5.18v25.9h193.42v-25.9l-43.18-5.18c-5.76-1.15-9.5-3.02-11.22-5.61-1.73-2.59-2.59-6.48-2.59-11.66V398.44c0-42.02-11.8-74.55-35.4-97.57-23.6-23.03-54.4-34.54-92.39-34.54-26.48 0-50.51 5.9-72.1 17.7-21.59 11.8-38.58 28.93-52.4 51.38V264.6l-138 35.4v12.09l43.18 18.13c5.76 2.88 9.35 5.61 10.79 8.2 1.44 2.59 2.16 7.05 2.16 13.38v276.31c0 5.18-.86 9.07-2.59 11.66s-8.39 8.21-14.15 9.36h-57.56c-44.61-5.76-50.89-38.86-50.89-53.83V414.83c.57-48.93-12.09-85.92-37.99-110.96-25.91-25.04-64.19-37.56-114.84-37.56-22.45 0-43.61 3.45-63.47 10.36-19.86 6.91-37.13 15.97-51.81 27.2-14.68 11.23-26.34 15.97-34.97 38.86-8.63 14.68-12.95 29.79-12.95 45.33 0 13.24 3.45 23.46 10.36 30.65 6.91 7.2 15.54 10.79 25.9 10.79Zm200.33 156.29c-24.18 33.39-52.67 50.08-85.48 50.08-17.27 0-31.09-4.75-41.45-14.25-10.36-9.5-15.54-22.88-15.54-40.15 0-15.54 4.17-28.93 12.52-40.15 8.35-11.23 23.46-22.59 45.33-34.11l84.62-44.04v122.61ZM2020.15 632.04c15.83 17.56 34.39 31.09 55.69 40.58 21.3 9.5 44.04 14.25 68.21 14.25 26.48 0 51.38-6.62 74.69-19.86 23.31-13.24 41.84-31.37 56.81-53.82v92.1l82.03-28.78.61-675.95L2220.03 0v12.08l43.17 18.13c5.76 2.88 9.35 5.61 10.79 8.2 1.44 2.59 2.16 7.05 2.16 13.38v266.36c-13.82-16.69-31.09-29.5-51.81-38.42-20.72-8.92-43.46-13.38-68.21-13.38s-50.23 5.18-72.97 15.54c-22.74 10.36-42.6 25.04-59.58 44.04-16.98 19-30.36 41.88-40.15 68.65-9.79 26.77-14.68 56.27-14.68 88.51s4.61 60.01 13.82 85.05 21.73 46.34 37.56 63.9Zm38.86-227.1c6.04-21.01 14.68-38.71 25.9-53.1 11.22-14.39 24.32-25.47 39.29-33.24 14.97-7.77 31.66-11.66 50.08-11.66 21.87 0 41.45 4.46 58.72 13.38 17.27 8.92 31.66 21.73 43.17 38.42v224.51c-13.24 17.27-28.35 30.51-45.33 39.72-16.98 9.21-36.41 13.82-58.29 13.82-16.69 0-32.38-3.74-47.06-11.22s-27.63-18.28-38.86-32.38c-11.22-14.1-20.15-31.09-26.77-50.95-6.62-19.86-9.93-42.17-9.93-66.92s3.02-49.36 9.07-70.37Z" fill="#fff"/>
-            </svg>
-            <div>
-              <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Grande &amp; Gordo</p>
-              <h1 class="mt-1 text-xl font-black tracking-tight text-white">CRM operativo</h1>
-            </div>
-          </div>
-          <p class="mt-3 text-sm leading-relaxed text-zinc-400">
-            Pipeline, produccion, margen y seguimiento con una capa visual mas
-            alineada con la marca y el customer journey.
-          </p>
+    <div class="crm-body min-h-screen">
+        <div class="flex min-h-screen flex-col lg:flex-row">
+            <!-- Skip navigation -->
+            <a href="#admin-main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-crm-accent focus:text-white focus:rounded-lg">
+                saltar al contenido
+            </a>
+
+            <!-- Mobile overlay -->
+            <div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm hidden lg:hidden"></div>
+
+            <!-- Dark Sidebar -->
+            <aside id="main-sidebar" role="navigation" aria-label="Panel de control" class="crm-sidebar w-full px-5 py-6 lg:w-72 lg:py-8 transition-all duration-300 ease-in-out -translate-x-full lg:translate-x-0 fixed lg:static z-40 h-full overflow-y-auto lg:border-r lg:border-b-0 border-b" style="border-color: var(--crm-sidebar-border);">
+                <!-- Brand Block -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2813.19 1671.88" class="h-9 w-auto" aria-hidden="true">
+                            <path d="M1177.85 429.55c11.51 0 20.72-3.89 27.63-11.66s11.22-20.87 12.95-39.29c2.88-27.06 11.37-47.06 25.47-60.01 14.1-12.95 32.09-19.43 53.97-19.43 24.18 0 43.61 8.63 58.29 25.9 14.68 17.27 22.02 42.6 22.02 75.99v35.4l-134.7 64.76c-17.27 8.06-31.66 15.83-43.18 23.31-11.51 7.48-20.72 15.11-27.63 22.88s-11.8 15.97-14.68 24.61c-2.88 8.63-4.32 18.42-4.32 29.36 0 25.33 8.78 45.91 26.34 61.74 17.56 15.83 40.73 23.75 69.51 23.75 25.9 0 49.79-6.33 71.67-19 21.87-12.66 40.87-31.66 56.99-56.99 1.73 23.6 8.01 65.63 102.99 65.63h183.52V363.91c23.03-34.54 53.4-51.81 92.55-51.81 23.6 0 42.6 7.63 56.99 22.88s21.59 38.42 21.59 69.51v223.64c0 5.18-.86 9.07-2.59 11.66s-5.47 4.46-11.23 5.61l-41.45 5.18v25.9h193.42v-25.9l-43.18-5.18c-5.76-1.15-9.5-3.02-11.22-5.61-1.73-2.59-2.59-6.48-2.59-11.66V398.44c0-42.02-11.8-74.55-35.4-97.57-23.6-23.03-54.4-34.54-92.39-34.54-26.48 0-50.51 5.9-72.1 17.7-21.59 11.8-38.58 28.93-52.4 51.38V264.6l-138 35.4v12.09l43.18 18.13c5.76 2.88 9.35 5.61 10.79 8.2 1.44 2.59 2.16 7.05 2.16 13.38v266.36c-13.82-16.69-31.09-29.5-51.81-38.42-20.72-8.92-43.46-13.38-68.21-13.38s-50.23 5.18-72.97 15.54c-22.74 10.36-42.6 25.04-59.58 44.04-16.98 19-30.36 41.88-40.15 68.65-9.79 26.77-14.68 56.27-14.68 88.51s4.61 60.01 13.82 85.05 21.73 46.34 37.56 63.9Zm38.86-227.1c6.04-21.01 14.68-38.71 25.9-53.1 11.22-14.39 24.32-25.47 39.29-33.24 14.97-7.77 31.66-11.66 50.08-11.66 21.87 0 41.45 4.46 58.72 13.38 17.27 8.92 31.66 21.73 43.17 38.42v224.51c-13.24 17.27-28.35 30.51-45.33 39.72-16.98 9.21-36.41 13.82-58.29 13.82-16.69 0-32.38-3.74-47.06-11.22s-27.63-18.28-38.86-32.38c-11.22-14.1-20.15-31.09-26.77-50.95-6.62-19.86-9.93-42.17-9.93-66.92s3.02-49.36 9.07-70.37Z" fill="currentColor" class="text-crm-accent"/>
+                        </svg>
+                        <div>
+                            <p class="text-[0.65rem] font-bold uppercase tracking-[0.28em]" style="color: var(--crm-accent-light);">Grande &amp; Gordo</p>
+                            <h1 class="mt-0.5 text-lg font-black tracking-tight" style="color: var(--crm-sidebar-text-active);">panel de control</h1>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs leading-relaxed" style="color: var(--crm-sidebar-text);">
+                        pipeline, producción y seguimiento.
+                    </p>
+                </div>
+
+                <!-- Search -->
+                <div class="relative mb-5">
+                    <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" style="color: var(--crm-sidebar-text);" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                    <input
+                        id="global-search"
+                        type="text"
+                        placeholder="buscar..."
+                        aria-label="Buscar en el panel"
+                        class="w-full rounded-lg py-2.5 pl-10 pr-4 text-sm transition focus:outline-none"
+                        style="background: var(--crm-sidebar-hover); color: var(--crm-sidebar-text-active); border: 1px solid var(--crm-sidebar-border);"
+                    />
+                    <div id="search-results" class="absolute z-50 mt-2 hidden max-h-80 w-full overflow-y-auto rounded-xl shadow-2xl" style="background: var(--crm-panel); border: 1px solid var(--crm-border);"></div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="grid gap-1">
+                    {navItems.map((item) => {
+                        const active =
+                            item.href === '/admin'
+                                ? pathname === '/admin'
+                                : pathname.startsWith(item.href);
+
+                        return (
+                            <a
+                                href={item.href}
+                                aria-current={active ? 'page' : undefined}
+                                class:list={[
+                                    'crm-sidebar-link block rounded-xl px-4 py-2.5 text-sm transition',
+                                    active ? 'crm-sidebar-link--active font-semibold' : '',
+                                ]}
+                                style={active ? '' : ''}
+                            >
+                                {item.label}
+                            </a>
+                        );
+                    })}
+                </nav>
+
+                <!-- User block at bottom -->
+                <div class="mt-auto pt-6" style="border-top: 1px solid var(--crm-sidebar-border); margin-top: auto;">
+                    <p class="text-[0.65rem] font-bold tracking-[0.06em] mb-1" style="color: var(--crm-sidebar-text);">operación</p>
+                    <p class="text-sm font-medium" style="color: var(--crm-sidebar-text-active);">hola@grandeandgordo.com</p>
+                    <p id="sidebar-user-name" class="mt-3 text-sm font-semibold" style="color: var(--crm-sidebar-text-active);">cargando...</p>
+                    <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
+                    <button type="button" id="logout-button" class="mt-3 text-sm cursor-pointer transition" style="color: var(--crm-sidebar-text);">
+                        Cerrar sesion
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Light Content Area -->
+            <main id="admin-main" class="crm-main flex-1 min-h-screen" style="background: var(--crm-bg);" role="main" aria-label="Contenido principal">
+                <!-- Mobile header -->
+                <div class="lg:hidden flex items-center gap-4 px-6 pt-6">
+                    <button id="sidebar-toggle" class="p-2 rounded-xl crm-button crm-button-secondary" aria-label="Abrir menú de navegación" style="min-height: 44px; min-width: 44px;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                    <span class="text-sm font-semibold" style="color: var(--crm-muted);">Admin</span>
+                </div>
+                <div class="mx-auto max-w-7xl px-6 py-8">
+                    <slot />
+                </div>
+            </main>
         </div>
-
-        <div class="relative mt-6">
-          <div class="relative">
-            <svg class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-600 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
-            <input
-              id="global-search"
-              type="text"
-              placeholder="Buscar clientes, trabajos o briefs..."
-              class="w-full rounded-xl border border-zinc-800 bg-black py-3 pl-11 pr-4 text-sm text-white placeholder-zinc-600 transition focus:border-zinc-600 focus:outline-none"
-            />
-          </div>
-          <div id="search-results" class="absolute z-50 mt-2 hidden max-h-80 w-full overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-950 shadow-2xl shadow-black/40 backdrop-blur-xl"></div>
-        </div>
-
-        <nav class="mt-6 grid gap-2">
-          {navItems.map((item) => {
-            const active =
-              item.href === '/admin'
-                ? pathname === '/admin'
-                : pathname.startsWith(item.href);
-
-            return (
-              <a
-                href={item.href}
-                class:list={[
-                  'block rounded-2xl px-4 py-3 text-sm transition',
-                  active
-                    ? 'bg-white text-black font-semibold'
-                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-white',
-                ]}
-              >
-                {item.label}
-              </a>
-            );
-          })}
-        </nav>
-
-        <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-950 p-5 lg:mt-auto">
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Operacion</p>
-          <p class="mt-3 text-sm font-medium text-white">hola@grandeandgordo.com</p>
-          <p id="sidebar-user-name" class="mt-5 text-sm font-semibold text-white">Cargando...</p>
-          <p id="sidebar-user-email" class="mt-1 text-xs text-zinc-500"></p>
-          <button type="button" id="logout-button" class="mt-4 text-sm text-zinc-400 hover:text-white cursor-pointer">
-            Cerrar sesion
-          </button>
-        </div>
-      </aside>
-
-      <main class="flex-1 px-6 py-10">
-        <div class="mx-auto max-w-7xl">
-          <slot />
-        </div>
-      </main>
     </div>
-  </div>
 
-  <script>
-    (async () => {
-    const { logout, requireRole, search, escapeHtml } = await import('../lib/api-client');
+    <script>
+        (async () => {
+        const { logout, requireRole, search, escapeHtml } = await import('../lib/api-client');
 
-    const user = await requireRole('admin');
-    if (user) {
-      const name = document.getElementById('sidebar-user-name');
-      const email = document.getElementById('sidebar-user-email');
+        const user = await requireRole('admin');
+        if (user) {
+            const name = document.getElementById('sidebar-user-name');
+            const email = document.getElementById('sidebar-user-email');
 
-      if (name) name.textContent = user.name;
-      if (email) email.textContent = user.email;
-    }
-
-    document.getElementById('logout-button')?.addEventListener('click', async () => {
-      await logout();
-      window.location.href = '/login';
-    });
-
-    // Global search
-    const searchInput = document.getElementById('global-search');
-    const searchResults = document.getElementById('search-results');
-    let debounceTimer = null;
-
-    searchInput?.addEventListener('input', () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(async () => {
-        const q = searchInput.value.trim();
-        if (!q || !searchResults) {
-          searchResults?.classList.add('hidden');
-          return;
+            if (name) name.textContent = user.name;
+            if (email) email.textContent = user.email;
         }
-        try {
-          const data = await search(q);
-          let html = '';
-          if (data.clients.length > 0) {
-            html += '<div class="border-b border-zinc-800 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-zinc-500">Clientes</div>';
-            for (const c of data.clients) {
-              html += `<a href="/admin/clients/detail?id=${encodeURIComponent(c.id)}" class="block px-4 py-3 text-sm text-zinc-300 transition hover:bg-zinc-900"><span class="font-medium text-white">${escapeHtml(c.name)}</span>${c.company ? ` <span class="text-zinc-500">— ${escapeHtml(c.company)}</span>` : ''}</a>`;
-            }
-          }
-          if (data.jobs.length > 0) {
-            html += '<div class="border-b border-zinc-800 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-zinc-500">Trabajos</div>';
-            for (const j of data.jobs) {
-              html += `<a href="/admin/jobs/detail?id=${encodeURIComponent(j.id)}" class="block px-4 py-3 text-sm text-zinc-300 transition hover:bg-zinc-900"><span class="font-medium text-white">${escapeHtml(j.briefText ?? '(sin brief)')}</span> <span class="text-zinc-500">— ${escapeHtml(j.clientName)}</span></a>`;
-            }
-          }
-          if (data.briefs.length > 0) {
-            html += '<div class="border-b border-zinc-800 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-zinc-500">Briefs</div>';
-            for (const b of data.briefs) {
-              html += `<a href="/admin/briefs" class="block px-4 py-3 text-sm text-zinc-300 transition hover:bg-zinc-900"><span class="font-medium text-white">${escapeHtml(b.email)}</span> <span class="text-zinc-500">— ${escapeHtml(b.clientName ?? b.tipo)}</span></a>`;
-            }
-          }
-          if (!html) {
-            html = '<div class="px-4 py-3 text-sm text-zinc-500">Sin resultados</div>';
-          }
-          searchResults.innerHTML = html;
-          searchResults.classList.remove('hidden');
-        } catch {
-          searchResults?.classList.add('hidden');
-        }
-      }, 300);
-    });
 
-    document.addEventListener('click', (e) => {
-      if (searchResults && !searchResults.contains(e.target) && e.target !== searchInput) {
-        searchResults.classList.add('hidden');
-      }
-    });
-    })();
-  </script>
+        document.getElementById('logout-button')?.addEventListener('click', async () => {
+            await logout();
+            window.location.href = '/login';
+        });
+
+        // Global search
+        const searchInput = document.getElementById('global-search');
+        const searchResults = document.getElementById('search-results');
+        let debounceTimer = null;
+
+        searchInput?.addEventListener('input', () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                const q = searchInput.value.trim();
+                if (!q || !searchResults) {
+                    searchResults?.classList.add('hidden');
+                    return;
+                }
+                try {
+                    const data = await search(q);
+                    let html = '';
+                    if (data.clients.length > 0) {
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Clientes</div>';
+                        for (const c of data.clients) {
+                            html += `<a href="/admin/clients/detail?id=${encodeURIComponent(c.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(c.name)}</span>${c.company ? ` <span style="color: var(--crm-muted);">— ${escapeHtml(c.company)}</span>` : ''}</a>`;
+                        }
+                    }
+                    if (data.jobs.length > 0) {
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Trabajos</div>';
+                        for (const j of data.jobs) {
+                            html += `<a href="/admin/jobs/detail?id=${encodeURIComponent(j.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(j.briefText ?? '(sin brief)')}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(j.clientName)}</span></a>`;
+                        }
+                    }
+                    if (data.briefs.length > 0) {
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Briefs</div>';
+                        for (const b of data.briefs) {
+                            html += `<a href="/admin/briefs" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(b.email)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(b.clientName ?? b.tipo)}</span></a>`;
+                        }
+                    }
+                    if (!html) {
+                        html = '<div class="px-4 py-3 text-sm" style="color: var(--crm-muted);">Sin resultados</div>';
+                    }
+                    searchResults.innerHTML = html;
+                    searchResults.classList.remove('hidden');
+                } catch {
+                    searchResults?.classList.add('hidden');
+                }
+            }, 300);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (searchResults && !searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        // Sidebar Mobile Toggle
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const mainSidebar = document.getElementById('main-sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        const toggleSidebar = (open) => {
+            if (open) {
+                mainSidebar?.classList.remove('-translate-x-full');
+                sidebarOverlay?.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                mainSidebar?.classList.add('-translate-x-full');
+                sidebarOverlay?.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        };
+
+        sidebarToggle?.addEventListener('click', () => toggleSidebar(true));
+        sidebarOverlay?.addEventListener('click', () => toggleSidebar(false));
+        // Close sidebar on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mainSidebar && !mainSidebar.classList.contains('-translate-x-full')) {
+                toggleSidebar(false);
+            }
+        });
+        })();
+    </script>
 </BaseLayout>

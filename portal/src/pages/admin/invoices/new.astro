@@ -5,52 +5,52 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 ---
 
 <AdminLayout title="Nueva Factura">
-  <div class="space-y-6">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
     <!-- Header -->
     <section class="flex items-center gap-4">
-      <a href="/admin/invoices" class="text-zinc-400 hover:text-white transition">
+      <a href="/admin/invoices" class="text-crm-muted hover:text-crm-text transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </a>
       <div>
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Facturación</p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight text-white">Nueva Factura</h1>
-        <p class="mt-2 text-sm text-zinc-400">Crea una nueva factura para un cliente</p>
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Facturación</p>
+        <h1 class="mt-2 text-3xl font-black tracking-tight text-crm-text">Nueva Factura</h1>
+        <p class="mt-2 text-sm text-crm-muted">Crea una nueva factura para un cliente</p>
       </div>
     </section>
 
     <!-- Form -->
-    <form id="invoice-form" class="space-y-6">
+    <form id="invoice-form" class="space-y-6" role="region" aria-label="Contenido principal">
       <!-- Cliente -->
-      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <h2 class="text-xl font-bold text-white mb-4">Cliente</h2>
+      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <h2 class="text-xl font-bold text-crm-text mb-4">Cliente</h2>
         <div class="space-y-4">
           <div>
-            <label for="client-id" class="block text-sm font-medium text-zinc-300 mb-2">
-              Cliente <span class="text-rose-400">*</span>
+            <label for="client-id" class="block text-sm font-medium text-crm-text-secondary mb-2">
+              Cliente <span class="text-crm-danger">*</span>
             </label>
             <select
               id="client-id"
               name="clientId"
               required
-              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              class="crm-input"
             >
               <option value="">Selecciona un cliente...</option>
             </select>
-            <p id="client-fiscal-info" class="mt-2 text-sm text-zinc-400"></p>
+            <p id="client-fiscal-info" class="mt-2 text-sm text-crm-muted"></p>
           </div>
         </div>
       </section>
 
       <!-- Líneas de factura -->
-      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-white">Líneas de factura</h2>
+          <h2 class="text-xl font-bold text-crm-text">Líneas de factura</h2>
           <button
             type="button"
             id="add-line-btn"
-            class="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+            class="crm-button crm-button-secondary"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -64,47 +64,47 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </div>
 
         <!-- Totales -->
-        <div class="mt-6 border-t border-zinc-800 pt-6">
+        <div class="mt-6 border-t border-crm-border pt-6">
           <div class="space-y-2">
             <div class="flex justify-between text-sm">
-              <span class="text-zinc-400">Subtotal</span>
-              <span id="subtotal-display" class="text-white">€0,00</span>
+              <span class="text-crm-muted">Subtotal</span>
+              <span id="subtotal-display" class="text-crm-text">€0,00</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-zinc-400">IVA (21%)</span>
-              <span id="tax-display" class="text-white">€0,00</span>
+              <span class="text-crm-muted">IVA (21%)</span>
+              <span id="tax-display" class="text-crm-text">€0,00</span>
             </div>
             <div class="flex justify-between text-lg font-bold">
-              <span class="text-white">Total</span>
-              <span id="total-display" class="text-white">€0,00</span>
+              <span class="text-crm-text">Total</span>
+              <span id="total-display" class="text-crm-text">€0,00</span>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Detalles de pago -->
-      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <h2 class="text-xl font-bold text-white mb-4">Detalles de pago</h2>
+      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <h2 class="text-xl font-bold text-crm-text mb-4">Detalles de pago</h2>
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label for="due-date" class="block text-sm font-medium text-zinc-300 mb-2">
+            <label for="due-date" class="block text-sm font-medium text-crm-text-secondary mb-2">
               Fecha de vencimiento
             </label>
             <input
               type="date"
               id="due-date"
               name="dueDate"
-              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              class="crm-input"
             />
           </div>
           <div>
-            <label for="payment-method" class="block text-sm font-medium text-zinc-300 mb-2">
+            <label for="payment-method" class="block text-sm font-medium text-crm-text-secondary mb-2">
               Método de pago
             </label>
             <select
               id="payment-method"
               name="paymentMethod"
-              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              class="crm-input"
             >
               <option value="transferencia">Transferencia bancaria</option>
               <option value="tarjeta">Tarjeta</option>
@@ -114,44 +114,44 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           </div>
         </div>
         <div class="mt-4">
-          <label for="payment-notes" class="block text-sm font-medium text-zinc-300 mb-2">
+          <label for="payment-notes" class="block text-sm font-medium text-crm-text-secondary mb-2">
             Notas de pago (ej: cuenta bancaria)
           </label>
           <textarea
             id="payment-notes"
             name="paymentNotes"
             rows="2"
-            class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+            class="w-full rounded-xl border border-crm-border bg-crm-panel px-4 py-3 text-crm-text focus:border-crm-accent focus:outline-none"
             placeholder="Transferencia a ES00 0000 0000 0000 0000 0000 - Banco XXX"
           ></textarea>
         </div>
       </section>
 
       <!-- Descripción y notas -->
-      <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <h2 class="text-xl font-bold text-white mb-4">Descripción y notas</h2>
+      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <h2 class="text-xl font-bold text-crm-text mb-4">Descripción y notas</h2>
         <div class="space-y-4">
           <div>
-            <label for="description" class="block text-sm font-medium text-zinc-300 mb-2">
+            <label for="description" class="block text-sm font-medium text-crm-text-secondary mb-2">
               Descripción (opcional)
             </label>
             <textarea
               id="description"
               name="description"
               rows="2"
-              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              class="crm-input"
               placeholder="Descripción general de la factura"
             ></textarea>
           </div>
           <div>
-            <label for="notes" class="block text-sm font-medium text-zinc-300 mb-2">
+            <label for="notes" class="block text-sm font-medium text-crm-text-secondary mb-2">
               Notas internas
             </label>
             <textarea
               id="notes"
               name="notes"
               rows="2"
-              class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white focus:border-zinc-600 focus:outline-none"
+              class="crm-input"
               placeholder="Notas que solo verá el admin"
             ></textarea>
           </div>
@@ -163,14 +163,14 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         <button
           type="button"
           id="save-draft-btn"
-          class="flex-1 rounded-full border border-zinc-700 bg-black px-6 py-4 text-sm font-bold text-white transition hover:border-zinc-500"
+          class="crm-button crm-button-secondary flex-1"
         >
           Guardar borrador
         </button>
         <button
           type="submit"
           id="create-btn"
-          class="flex-1 rounded-full bg-white px-6 py-4 text-sm font-bold text-black transition hover:bg-zinc-200"
+          class="crm-button crm-button-primary flex-1"
         >
           Crear factura
         </button>
@@ -186,19 +186,19 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
     // Template de línea de factura
     const createLineTemplate = (index = 0) => `
-      <div class="line-item grid grid-cols-12 gap-3 items-start p-4 rounded-xl border border-zinc-800 bg-black" data-line="${index}">
+      <div class="line-item grid grid-cols-12 gap-3 items-start p-4 rounded-xl border border-crm-border bg-crm-panel" data-line="${index}">
         <div class="col-span-5">
-          <label class="block text-xs font-medium text-zinc-500 mb-1">Descripción</label>
+          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Descripción</label>
           <input
             type="text"
             name="lines[${index}][description]"
             required
-            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none"
+            class="crm-input"
             placeholder="Concepto del servicio"
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-zinc-500 mb-1">Cantidad</label>
+          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Cantidad</label>
           <input
             type="number"
             name="lines[${index}][quantity]"
@@ -206,11 +206,11 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             min="0.01"
             step="0.01"
             required
-            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none"
+            class="crm-input"
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-zinc-500 mb-1">Precio (€)</label>
+          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Precio (€)</label>
           <input
             type="number"
             name="lines[${index}][unitPrice]"
@@ -218,20 +218,20 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             min="0"
             step="0.01"
             required
-            class="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-white focus:border-zinc-600 focus:outline-none line-price"
+            class="crm-input line-price"
             placeholder="0.00"
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-zinc-500 mb-1">Subtotal</label>
-          <div class="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2 text-sm text-zinc-400 line-subtotal">
+          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Subtotal</label>
+          <div class="rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-sm text-crm-muted line-subtotal">
             €0,00
           </div>
         </div>
         <div class="col-span-1 flex items-end">
           <button
             type="button"
-            class="remove-line w-full rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-rose-400 transition hover:border-rose-700 hover:text-rose-300"
+            class="remove-line crm-button crm-button-danger"
           >
             <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -342,9 +342,9 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             // Warn if missing fiscal data
             if (!option.dataset.taxId || !option.dataset.legalName || !option.dataset.address) {
               infoEl.innerHTML += `
-                <p class="mt-2 text-amber-400">
+                <p class="mt-2 text-crm-warning">
                   ⚠️ Este cliente no tiene completos los datos fiscales.
-                  <a href="/admin/clients/detail?id=${option.value}" class="underline hover:text-amber-300">
+                  <a href="/admin/clients/detail?id=${option.value}" class="underline hover:text-crm-accent">
                     Completar ahora →
                   </a>
                 </p>

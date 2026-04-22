@@ -1,4 +1,5 @@
 import type { Database } from '../../db/index.js';
+import type { R2Bucket } from '@cloudflare/workers-types';
 
 export type UserRole = 'admin' | 'client';
 export type ClientSubscriptionStatus = 'active' | 'inactive' | 'cancelled';
@@ -63,6 +64,8 @@ export interface AppBindings {
   EMAIL_FROM?: string;
   AI_ENGINE_URL?: string;
   LEAD_TRANSFER_SECRET?: string;
+  ANTHROPIC_API_KEY?: string;
+  ASSETS?: R2Bucket;
 }
 
 export interface AppVariables {

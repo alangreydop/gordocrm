@@ -3,10 +3,10 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Casos de Éxito">
-  <div class="max-w-5xl mx-auto space-y-8">
+  <div class="max-w-5xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
     <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-white">Casos de Éxito</h1>
-      <p class="text-zinc-400">Resultados reales de clientes que confiaron en Grande & Gordo.</p>
+      <h1 class="text-4xl font-black tracking-tight text-crm-text">Casos de Éxito</h1>
+      <p class="text-crm-muted">Resultados reales de clientes que confiaron en Grande & Gordo.</p>
     </section>
 
     <!-- Featured Case: Conservas Lalín -->
@@ -19,13 +19,13 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         ></div>
         <div class="relative z-20 p-8 md:p-12">
           <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase">Conservas</span>
-            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold uppercase">Exportación</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="background-color: color-mix(in srgb, var(--crm-success) 20%, transparent); color: var(--crm-success);">Conservas</span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="background-color: color-mix(in srgb, var(--crm-info) 20%, transparent); color: var(--crm-info);">Exportación</span>
           </div>
-          <h2 class="text-3xl md:text-4xl font-black text-white mb-4 group-hover:text-crm-accent transition">
+          <h2 class="text-3xl md:text-4xl font-black text-crm-text mb-4 group-hover:text-crm-accent transition">
             Conservas Lalín
           </h2>
-          <p class="text-lg text-zinc-400 mb-6 max-w-2xl">
+          <p class="text-lg text-crm-muted mb-6 max-w-2xl">
             De vender solo en Galicia a exportar el 60%
           </p>
           <div class="flex items-center gap-2 text-sm font-medium text-crm-accent">
@@ -72,7 +72,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         </p>
         <a
           href="/client/brief-assistant"
-          class="inline-flex items-center justify-center rounded-full bg-crm-text px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+          class="crm-button crm-button-primary"
         >
           Contar mi historia
         </a>
@@ -88,13 +88,13 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
       <div class="flex flex-wrap gap-3 justify-center">
         <a
           href="/client/brief-assistant"
-          class="inline-flex items-center justify-center rounded-full bg-crm-text px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
+          class="crm-button crm-button-primary"
         >
           Empezar ahora
         </a>
         <a
           href="mailto:hola@grandeandgordo.com"
-          class="inline-flex items-center justify-center rounded-full border border-crm-border px-6 py-3 text-sm font-semibold text-crm-text transition hover:bg-crm-panel-soft"
+          class="crm-button crm-button-secondary"
         >
           Hablar con el equipo
         </a>

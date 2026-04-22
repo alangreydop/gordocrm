@@ -16,13 +16,19 @@ import { publicBriefRoutes } from './api/routes/public/briefs.js';
 import { aiProxyRoutes } from './api/routes/ai-proxy.js';
 import { webhookRoutes } from './api/routes/portal/webhooks.js';
 import { assistantRoutes } from './api/routes/portal/brief-assistant.js';
+import { clientActivityRoutes } from './api/routes/portal/client-activities.js';
+import { uploadRoutes } from './api/routes/portal/upload.js';
 import { invoiceRoutes } from './api/routes/admin/invoices.js';
 import { vaultRoutes } from './api/routes/portal/vault.js';
 import { invoiceRoutes as clientInvoiceRoutes } from './api/routes/portal/invoices.js';
 import { kanbanRoutes } from './api/routes/admin/kanban.js';
+import { pipelineMappingRoutes } from './api/routes/portal/pipeline-mappings.js';
+import { brandGraphRoutes } from './api/routes/portal/brand-graphs.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import { sendQuarterlyReviewReminderEmail } from './lib/email.js';
 import { leadWonWebhook } from './api/routes/webhooks/lead-won.js';
+import { getPendingQaJobs, markQaComplete, markQaFailed, markQaProcessing } from './lib/qa-queue.js';
+import { scoreAsset } from './lib/qa-engine.js';
 import type { AppBindings, AppContext } from './types/index.js';
 
 const app = new Hono<AppContext>();
@@ -110,6 +116,8 @@ app.route('/api/portal/dashboard', dashboardRoutes);
 app.route('/api/portal/search', searchRoutes);
 app.route('/api/portal/webhooks', webhookRoutes);
 app.route('/api/portal/brief/assistant', assistantRoutes);
+app.route('/api/portal/client/activities', clientActivityRoutes);
+app.route('/api/portal/upload', uploadRoutes);
 app.route('/api/portal/vault', vaultRoutes);
 app.route('/api/portal/invoices', clientInvoiceRoutes);
 app.route('/api/public/briefs', publicBriefRoutes);
@@ -117,17 +125,15 @@ app.route('/api/ai', aiProxyRoutes);
 app.route('/api/admin/invoices', invoiceRoutes);
 app.route('/api/admin/kanban', kanbanRoutes);
 app.route('/api/webhooks', leadWonWebhook);
+app.route('/api/portal/pipeline-mappings', pipelineMappingRoutes);
+app.route('/api/portal/brand-graphs', brandGraphRoutes);
 
-// Cron handler for quarterly review reminders
-app.get('/__scheduled', async (c) => {
-  const db = c.get('db');
-  const env = c.env;
-
+// Shared cron logic: quarterly review reminders
+async function runQuarterlyReviewReminders(db: ReturnType<typeof getDb>, env: AppBindings) {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-  // Find clients due for review
   const clientsDue = await db
     .select()
     .from(schema.clients)
@@ -178,11 +184,109 @@ app.get('/__scheduled', async (c) => {
     }
   }
 
-  return c.json({
-    ok: true,
-    sent: sentCount,
-    total: clientsDue.length,
-  });
+  return { sent: sentCount, total: clientsDue.length };
+}
+
+// Manual trigger endpoint (backward compat / debugging)
+app.get('/__scheduled', async (c) => {
+  const db = c.get('db');
+  const env = c.env as AppBindings;
+  const result = await runQuarterlyReviewReminders(db, env);
+  return c.json({ ok: true, ...result });
 });
 
 export default app;
+
+// QA Engine cron processor
+async function processQaQueue(db: ReturnType<typeof getDb>, env: AppBindings) {
+  const pending = await getPendingQaJobs(db, 5);
+  if (pending.length === 0) return { processed: 0 };
+
+  let processed = 0;
+  for (const qaItem of pending) {
+    await markQaProcessing(db, qaItem.id);
+
+    try {
+      // Fetch asset details
+      const [asset] = await db
+        .select({
+          r2Key: schema.assets.r2Key,
+          type: schema.assets.type,
+        })
+        .from(schema.assets)
+        .where(eq(schema.assets.id, qaItem.assetId))
+        .limit(1);
+
+      if (!asset) {
+        await markQaFailed(db, qaItem.id, 'Asset not found');
+        continue;
+      }
+
+      // Fetch client's brand graph
+      const [client] = await db
+        .select({ brandGraph: schema.clients.brandGraph })
+        .from(schema.clients)
+        .where(eq(schema.clients.id, qaItem.clientId))
+        .limit(1);
+
+      let brandGraph: unknown = null;
+      if (client?.brandGraph) {
+        try {
+          brandGraph = JSON.parse(client.brandGraph);
+        } catch {
+          brandGraph = null;
+        }
+      }
+
+      if (!env.ASSETS) {
+        await markQaFailed(db, qaItem.id, 'R2 ASSETS bucket not configured');
+        continue;
+      }
+
+      // Score asset
+      const scores = await scoreAsset({
+        r2Key: asset.r2Key,
+        assetType: asset.type,
+        brandGraph: brandGraph as any,
+        anthropicApiKey: env.ANTHROPIC_API_KEY,
+        assetsBucket: env.ASSETS,
+      });
+
+      const threshold = 85;
+      const autoApproved = scores.overall >= threshold;
+
+      await markQaComplete(db, qaItem.id, scores, autoApproved);
+
+      // If auto-approved, update asset status
+      if (autoApproved) {
+        await db
+          .update(schema.assets)
+          .set({ status: 'approved', updatedAt: new Date() })
+          .where(eq(schema.assets.id, qaItem.assetId));
+      }
+
+      processed++;
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      await markQaFailed(db, qaItem.id, errorMessage);
+      console.error(`[QA Engine] Failed to process QA ${qaItem.id}:`, errorMessage);
+    }
+  }
+
+  return { processed };
+}
+
+export const scheduled = async (event: ScheduledEvent, env: AppBindings, ctx: ExecutionContext) => {
+  const db = getDb(env);
+
+  switch (event.cron) {
+    case '0 9 * * 1':
+      ctx.waitUntil(runQuarterlyReviewReminders(db, env));
+      break;
+    default:
+      console.log(`[Cron] Unknown cron pattern: ${event.cron}`);
+  }
+
+  // Always process QA queue on every cron tick (rate-limited internally)
+  ctx.waitUntil(processQaQueue(db, env));
+};

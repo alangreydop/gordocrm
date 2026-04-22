@@ -4,13 +4,13 @@ import { siteLinks } from '../../../lib/site-links';
 ---
 
 <ClientLayout title="AI Briefing Assistant">
-  <div class="max-w-3xl mx-auto space-y-8">
+  <div class="max-w-3xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
     <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-white">Conceptualizador de Contenido</h1>
-      <p class="text-zinc-400">Diseñemos juntos la estrategia de tu próximo video. No es un formulario, es una conversación.</p>
+      <h1 class="text-4xl font-black tracking-tight text-crm-text">Conceptualizador de Contenido</h1>
+      <p class="text-crm-muted">Diseñemos juntos la estrategia de tu próximo video. No es un formulario, es una conversación.</p>
     </section>
 
-    <div id="chat-container" class="flex flex-col gap-4 h-[600px] overflow-y-auto p-4 rounded-3xl border border-zinc-800 bg-zinc-950 shadow-2xl">
+    <div id="chat-container" class="flex flex-col gap-4 h-[600px] overflow-y-auto p-4 rounded-3xl border border-crm-border bg-crm-bg-alt shadow-2xl">
       <div class="flex flex-col gap-4" id="messages">
         <!-- Messages will be injected here -->
       </div>
@@ -21,11 +21,11 @@ import { siteLinks } from '../../../lib/site-links';
         type="text"
         id="chat-input"
         placeholder="Escribe tu idea aquí..."
-        class="flex-1 rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-4 text-white focus:border-sky-500 outline-none transition"
+        class="flex-1 rounded-2xl border border-crm-border bg-crm-bg-alt px-6 py-4 text-crm-text outline-none transition focus:border-crm-accent"
       />
       <button
         id="send-btn"
-        class="rounded-2xl bg-white px-8 py-4 font-bold text-black transition hover:bg-zinc-200"
+        class="crm-button crm-button-primary"
       >
         Enviar
       </button>
@@ -48,8 +48,8 @@ import { siteLinks } from '../../../lib/site-links';
         msg.innerHTML = `
           <div class="max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
             isUser
-            ? 'bg-white text-black font-medium'
-            : 'bg-zinc-800 text-zinc-200 border border-zinc-700'
+            ? 'bg-crm-panel text-crm-text font-medium'
+            : 'bg-crm-panel-soft text-crm-text-secondary border border-crm-border-strong'
           }">
             ${text}
           </div>

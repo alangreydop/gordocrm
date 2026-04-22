@@ -2,377 +2,401 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 const statusOptions = [
-  ['pending', 'Pending'],
-  ['processing', 'Processing'],
-  ['completed', 'Completed'],
-  ['failed', 'Failed'],
-  ['delivered', 'Delivered'],
+   ['pending', 'Pending'],
+   ['processing', 'Processing'],
+   ['completed', 'Completed'],
+   ['failed', 'Failed'],
+   ['delivered', 'Delivered'],
 ];
 const platformOptions = [
-  ['instagram', 'Instagram'],
-  ['tiktok', 'TikTok'],
-  ['amazon_pdp', 'Amazon PDP'],
-  ['paid_ads', 'Paid Ads'],
+   ['instagram', 'Instagram'],
+   ['tiktok', 'TikTok'],
+   ['amazon_pdp', 'Amazon PDP'],
+   ['paid_ads', 'Paid Ads'],
 ];
 const typeOptions = [
-  ['image', 'Imagen'],
-  ['video', 'Video'],
+   ['image', 'Imagen'],
+   ['video', 'Video'],
 ];
 const segmentOptions = [
-  ['rentable', 'Rentable'],
-  ['growth', 'Growth'],
-  ['premium', 'Premium'],
-  ['enterprise', 'Enterprise'],
+   ['rentable', 'Rentable'],
+   ['growth', 'Growth'],
+   ['premium', 'Premium'],
+   ['enterprise', 'Enterprise'],
 ];
 const marginOptions = [
-  ['estrecho', 'Estrecho'],
-  ['medio', 'Medio'],
-  ['alto', 'Alto'],
+   ['estrecho', 'Estrecho'],
+   ['medio', 'Medio'],
+   ['alto', 'Alto'],
 ];
 const assetDominantOptions = [
-  ['catalogo', 'Catalogo'],
-  ['paid_static', 'Paid Static'],
-  ['pdp_packaging', 'PDP Packaging'],
-  ['video_ads', 'Video Ads'],
-  ['video_edit', 'Video Edit'],
-  ['mixto', 'Mixto'],
+   ['catalogo', 'Catalogo'],
+   ['paid_static', 'Paid Static'],
+   ['pdp_packaging', 'PDP Packaging'],
+   ['video_ads', 'Video Ads'],
+   ['video_edit', 'Video Edit'],
+   ['mixto', 'Mixto'],
 ];
 const legalRiskOptions = [
-  ['normal', 'Normal'],
-  ['alto', 'Alto'],
+   ['normal', 'Normal'],
+   ['alto', 'Alto'],
 ];
 const turnaroundOptions = [
-  ['normal', 'Normal'],
-  ['urgente', 'Urgente'],
+   ['normal', 'Normal'],
+   ['urgente', 'Urgente'],
 ];
 const portabilityOptions = [
-  ['si', 'Si'],
-  ['no', 'No'],
+   ['si', 'Si'],
+   ['no', 'No'],
 ];
 const structuralDemandOptions = [
-  ['normal', 'Normal'],
-  ['alta', 'Alta'],
+   ['normal', 'Normal'],
+   ['alta', 'Alta'],
 ];
 const benchmarkOptions = [
-  ['L0', 'L0'],
-  ['L1', 'L1'],
-  ['L2', 'L2'],
-  ['L3', 'L3'],
+   ['L0', 'L0'],
+   ['L1', 'L1'],
+   ['L2', 'L2'],
+   ['L3', 'L3'],
 ];
 const stackLaneOptions = [
-  ['A', 'A'],
-  ['B', 'B'],
-  ['C', 'C'],
-  ['D', 'D'],
+   ['A', 'A'],
+   ['B', 'B'],
+   ['C', 'C'],
+   ['D', 'D'],
 ];
 const qaOptions = [
-  ['pending', 'Pending'],
-  ['approved', 'Approved'],
-  ['rejected', 'Rejected'],
+   ['pending', 'Pending'],
+   ['approved', 'Approved'],
+   ['rejected', 'Rejected'],
 ];
 ---
 
 <AdminLayout title="Detalle trabajo">
-  <div class="space-y-6">
-    <section class="crm-page-header">
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <a href="/admin/jobs" class="inline-block text-sm text-slate-300 transition hover:text-white">&larr; Trabajos</a>
-          <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-white md:text-5xl">Cargando trabajo...</h1>
-          <p class="mt-3 text-sm text-slate-200">
-            Cliente: <a id="job-client-link" href="/admin/clients" class="font-medium text-sky-200 transition hover:text-white">—</a>
-          </p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <span id="job-status-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">—</span>
-          <span id="job-lane-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200">—</span>
-        </div>
-        <div class="flex gap-2">
-          <button id="execute-ai-btn" class="inline-flex items-center gap-2 rounded-full bg-violet-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
+   <div class="space-y-6" role="region" aria-label="Detalle del trabajo">
+     <section class="crm-page-header" aria-labelledby="job-title">
+       <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+         <div>
+           <a href="/admin/jobs" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Trabajos</a>
+           <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Cargando trabajo...</h1>
+           <p class="mt-3 text-sm text-crm-text-secondary">
+            Cliente: <a id="job-client-link" href="/admin/clients" class="font-medium text-crm-accent transition hover:text-crm-text">—</a>
+           </p>
+         </div>
+         <div class="flex flex-wrap gap-2">
+           <span id="job-status-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-text-secondary">—</span>
+           <span id="job-lane-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-text-secondary">—</span>
+         </div>
+         <div class="flex flex-wrap items-center gap-2">
+           <span id="ai-engine-status" class="hidden crm-badge">—</span>
+           <button id="execute-ai-btn" class="crm-button crm-button-accent">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+             </svg>
             Ejecutar en AI Engine
-          </button>
-        </div>
-      </div>
-    </section>
+           </button>
+         </div>
+       </div>
+     </section>
 
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <div class="crm-metric-card">
-        <p class="crm-kicker">Due</p>
-        <p id="metric-due" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p id="metric-turnaround" class="text-sm text-gray-500 mt-2">—</p>
-      </div>
-      <div class="crm-metric-card">
-        <p class="crm-kicker">Units</p>
-        <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p id="metric-platform" class="text-sm text-gray-500 mt-2">—</p>
-      </div>
-      <div class="crm-metric-card">
-        <p class="crm-kicker">Margen y coste</p>
-        <p id="metric-margin" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p id="metric-ai-cost" class="text-sm text-gray-500 mt-2">—</p>
-      </div>
-      <div class="crm-metric-card">
-        <p class="crm-kicker">Assets</p>
-        <p id="metric-assets" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p id="metric-updated" class="text-sm text-gray-500 mt-2">—</p>
-      </div>
-    </div>
+     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+       <div class="crm-metric-card" role="region" aria-label="Due date">
+         <p class="crm-kicker">Due</p>
+         <p id="metric-due" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-turnaround" class="text-sm text-crm-muted mt-2">—</p>
+       </div>
+       <div class="crm-metric-card" role="region" aria-label="Unidades">
+         <p class="crm-kicker">Units</p>
+         <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-platform" class="text-sm text-crm-muted mt-2">—</p>
+       </div>
+       <div class="crm-metric-card" role="region" aria-label="Margen y coste">
+         <p class="crm-kicker">Margen y coste</p>
+         <p id="metric-margin" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-ai-cost" class="text-sm text-crm-muted mt-2">—</p>
+       </div>
+       <div class="crm-metric-card" role="region" aria-label="Assets">
+         <p class="crm-kicker">Assets</p>
+         <p id="metric-assets" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-updated" class="text-sm text-crm-muted mt-2">—</p>
+       </div>
+     </div>
 
-    <!-- Timeline visual del job -->
-    <section class="crm-panel p-6">
-      <h2 class="text-lg font-semibold text-white mb-4">Timeline del trabajo</h2>
-      <div id="job-timeline" class="relative">
-        <!-- Se renderiza dinámicamente -->
-      </div>
-    </section>
+     <!-- Timeline visual del job -->
+     <section class="crm-panel p-6" role="region" aria-label="Timeline del trabajo">
+       <h2 class="text-lg font-semibold text-crm-text mb-4">Timeline del trabajo</h2>
+       <div id="job-timeline" class="relative">
+         <!-- Se renderiza dinámicamente -->
+       </div>
+     </section>
 
-    <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
-      <section class="crm-form-section">
-        <div class="flex items-center justify-between gap-4 mb-4">
-          <div>
-            <h2 class="crm-form-section__title">Ficha de produccion</h2>
-            <p class="crm-form-section__text">Estado, stack, benchmark, riesgo, margen y notas internas.</p>
-          </div>
-          <div id="job-save-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
-        </div>
+     <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
+       <section class="crm-form-section" role="region" aria-label="Ficha de produccion">
+         <div class="flex items-center justify-between gap-4 mb-4">
+           <div>
+             <h2 class="crm-form-section__title">Ficha de produccion</h2>
+             <p class="crm-form-section__text">Estado, stack, benchmark, riesgo, margen y notas internas.</p>
+           </div>
+           <div id="job-save-success" class="hidden text-sm crm-alert crm-alert-success" role="status"></div>
+         </div>
 
-        <div id="job-save-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+         <div id="job-save-error" class="hidden crm-alert crm-alert-danger mb-4 text-sm" role="alert"></div>
 
-        <form id="job-form" class="space-y-5">
-          <div>
-            <label for="briefText" class="block text-sm font-medium text-gray-700 mb-1">Brief</label>
-            <textarea id="briefText" name="briefText" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
-          </div>
+         <form id="job-form" class="space-y-5" novalidate>
+           <div>
+             <label for="briefText" class="block text-sm font-medium text-crm-text-secondary mb-1">Brief</label>
+             <textarea id="briefText" name="briefText" rows="4" class="crm-input"></textarea>
+           </div>
 
-          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div>
-              <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-              <select id="status" name="status" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                {statusOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="platform" class="block text-sm font-medium text-gray-700 mb-1">Plataforma</label>
-              <select id="platform" name="platform" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-              <select id="type" name="type" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="dueAt" class="block text-sm font-medium text-gray-700 mb-1">Due date</label>
-              <input type="date" id="dueAt" name="dueAt" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="unitsPlanned" class="block text-sm font-medium text-gray-700 mb-1">Units planned</label>
-              <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="unitsConsumed" class="block text-sm font-medium text-gray-700 mb-1">Units consumed</label>
-              <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="turnaround" class="block text-sm font-medium text-gray-700 mb-1">Turnaround</label>
-              <select id="turnaround" name="turnaround" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="assetDominant" class="block text-sm font-medium text-gray-700 mb-1">Dominante</label>
-              <select id="assetDominant" name="assetDominant" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="clientSegment" class="block text-sm font-medium text-gray-700 mb-1">Segmento</label>
-              <select id="clientSegment" name="clientSegment" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="marginProfile" class="block text-sm font-medium text-gray-700 mb-1">Perfil margen</label>
-              <select id="marginProfile" name="marginProfile" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="grossMarginEstimated" class="block text-sm font-medium text-gray-700 mb-1">Margen bruto estimado</label>
-              <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="legalRisk" class="block text-sm font-medium text-gray-700 mb-1">Riesgo legal</label>
-              <select id="legalRisk" name="legalRisk" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="aiCostEstimated" class="block text-sm font-medium text-gray-700 mb-1">Coste AI estimado</label>
-              <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="aiCostReal" class="block text-sm font-medium text-gray-700 mb-1">Coste AI real</label>
-              <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="portabilityRequired" class="block text-sm font-medium text-gray-700 mb-1">Portabilidad</label>
-              <select id="portabilityRequired" name="portabilityRequired" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="structuralDemand" class="block text-sm font-medium text-gray-700 mb-1">Demanda estructural</label>
-              <select id="structuralDemand" name="structuralDemand" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="benchmarkLevel" class="block text-sm font-medium text-gray-700 mb-1">Nivel benchmark</label>
-              <select id="benchmarkLevel" name="benchmarkLevel" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label for="stackLane" class="block text-sm font-medium text-gray-700 mb-1">Stack lane</label>
-              <select id="stackLane" name="stackLane" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                <option value="">Sin definir</option>
-                {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-              </select>
-            </div>
-          </div>
+           <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+             <div>
+               <label for="status" class="block text-sm font-medium text-crm-text-secondary mb-1">Estado</label>
+               <select id="status" name="status" class="crm-input">
+                 {statusOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="platform" class="block text-sm font-medium text-crm-text-secondary mb-1">Plataforma</label>
+               <select id="platform" name="platform" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="type" class="block text-sm font-medium text-crm-text-secondary mb-1">Tipo</label>
+               <select id="type" name="type" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="dueAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Due date</label>
+               <input type="date" id="dueAt" name="dueAt" class="crm-input" />
+             </div>
+             <div>
+               <label for="unitsPlanned" class="block text-sm font-medium text-crm-text-secondary mb-1">Units planned</label>
+               <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" class="crm-input" />
+             </div>
+             <div>
+               <label for="unitsConsumed" class="block text-sm font-medium text-crm-text-secondary mb-1">Units consumed</label>
+               <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" class="crm-input" />
+             </div>
+             <div>
+               <label for="turnaround" class="block text-sm font-medium text-crm-text-secondary mb-1">Turnaround</label>
+               <select id="turnaround" name="turnaround" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="assetDominant" class="block text-sm font-medium text-crm-text-secondary mb-1">Dominante</label>
+               <select id="assetDominant" name="assetDominant" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="clientSegment" class="block text-sm font-medium text-crm-text-secondary mb-1">Segmento</label>
+               <select id="clientSegment" name="clientSegment" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="marginProfile" class="block text-sm font-medium text-crm-text-secondary mb-1">Perfil margen</label>
+               <select id="marginProfile" name="marginProfile" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="grossMarginEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Margen bruto estimado</label>
+               <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="crm-input" />
+             </div>
+             <div>
+               <label for="legalRisk" class="block text-sm font-medium text-crm-text-secondary mb-1">Riesgo legal</label>
+               <select id="legalRisk" name="legalRisk" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="aiCostEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI estimado</label>
+               <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="crm-input" />
+             </div>
+             <div>
+               <label for="aiCostReal" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI real</label>
+               <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="crm-input" />
+             </div>
+             <div>
+               <label for="portabilityRequired" class="block text-sm font-medium text-crm-text-secondary mb-1">Portabilidad</label>
+               <select id="portabilityRequired" name="portabilityRequired" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="structuralDemand" class="block text-sm font-medium text-crm-text-secondary mb-1">Demanda estructural</label>
+               <select id="structuralDemand" name="structuralDemand" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="benchmarkLevel" class="block text-sm font-medium text-crm-text-secondary mb-1">Nivel benchmark</label>
+               <select id="benchmarkLevel" name="benchmarkLevel" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+             <div>
+               <label for="stackLane" class="block text-sm font-medium text-crm-text-secondary mb-1">Stack lane</label>
+               <select id="stackLane" name="stackLane" class="crm-input">
+                 <option value="">Sin definir</option>
+                 {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+               </select>
+             </div>
+           </div>
 
-          <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div>
-              <label for="stackCandidate1" class="block text-sm font-medium text-gray-700 mb-1">Candidate 1</label>
-              <input type="text" id="stackCandidate1" name="stackCandidate1" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="stackCandidate2" class="block text-sm font-medium text-gray-700 mb-1">Candidate 2</label>
-              <input type="text" id="stackCandidate2" name="stackCandidate2" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="stackCandidate3" class="block text-sm font-medium text-gray-700 mb-1">Candidate 3</label>
-              <input type="text" id="stackCandidate3" name="stackCandidate3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="stackWinner" class="block text-sm font-medium text-gray-700 mb-1">Ganador</label>
-              <input type="text" id="stackWinner" name="stackWinner" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-          </div>
+           <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+             <div>
+               <label for="stackCandidate1" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 1</label>
+               <input type="text" id="stackCandidate1" name="stackCandidate1" class="crm-input" />
+             </div>
+             <div>
+               <label for="stackCandidate2" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 2</label>
+               <input type="text" id="stackCandidate2" name="stackCandidate2" class="crm-input" />
+             </div>
+             <div>
+               <label for="stackCandidate3" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 3</label>
+               <input type="text" id="stackCandidate3" name="stackCandidate3" class="crm-input" />
+             </div>
+             <div>
+               <label for="stackWinner" class="block text-sm font-medium text-crm-text-secondary mb-1">Ganador</label>
+               <input type="text" id="stackWinner" name="stackWinner" class="crm-input" />
+             </div>
+           </div>
 
-          <div>
-            <label for="stackSnapshot" class="block text-sm font-medium text-gray-700 mb-1">Snapshot stack</label>
-            <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
-          </div>
-          <div>
-            <label for="clientGoal" class="block text-sm font-medium text-gray-700 mb-1">Objetivo del cliente</label>
-            <textarea id="clientGoal" name="clientGoal" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
-          </div>
-          <div>
-            <label for="internalNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
-            <textarea id="internalNotes" name="internalNotes" rows="4" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
-          </div>
+           <div>
+             <label for="stackSnapshot" class="block text-sm font-medium text-crm-text-secondary mb-1">Snapshot stack</label>
+             <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="crm-input"></textarea>
+           </div>
+           <div>
+             <label for="clientGoal" class="block text-sm font-medium text-crm-text-secondary mb-1">Objetivo del cliente</label>
+             <textarea id="clientGoal" name="clientGoal" rows="3" class="crm-input"></textarea>
+           </div>
+           <div>
+             <label for="internalNotes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas internas</label>
+             <textarea id="internalNotes" name="internalNotes" rows="4" class="crm-input"></textarea>
+           </div>
 
-          <div class="flex gap-3">
-            <button type="submit" class="crm-button crm-button-primary">Guardar trabajo</button>
-          </div>
-        </form>
-      </section>
+           <div class="flex gap-3">
+             <button type="submit" class="crm-button crm-button-primary">Guardar trabajo</button>
+           </div>
+         </form>
+       </section>
 
-      <section class="space-y-6">
-        <div class="crm-form-section">
-          <div class="flex items-center justify-between gap-4 mb-4">
-            <div>
-              <h2 class="crm-form-section__title">Nuevo asset</h2>
-              <p class="crm-form-section__text">Registra entregables, links y estado de QA.</p>
-            </div>
-            <div id="asset-create-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
-          </div>
+       <section class="space-y-6">
+         <div class="crm-form-section" role="region" aria-label="Nuevo asset">
+           <div class="flex items-center justify-between gap-4 mb-4">
+             <div>
+               <h2 class="crm-form-section__title">Nuevo asset</h2>
+               <p class="crm-form-section__text">Registra entregables, links y estado de QA.</p>
+             </div>
+             <div id="asset-create-success" class="hidden text-sm crm-alert crm-alert-success" role="status"></div>
+           </div>
 
-          <div id="asset-create-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+           <div id="asset-create-error" class="hidden crm-alert crm-alert-danger mb-4 text-sm" role="alert"></div>
 
-          <form id="asset-form" class="space-y-4">
-            <div>
-              <label for="assetLabel" class="block text-sm font-medium text-gray-700 mb-1">Label</label>
-              <input type="text" id="assetLabel" name="assetLabel" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div class="grid md:grid-cols-2 gap-4">
-              <div>
-                <label for="assetType" class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                <select id="assetType" name="assetType" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                  {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label for="assetQaStatus" class="block text-sm font-medium text-gray-700 mb-1">QA</label>
-                <select id="assetQaStatus" name="assetQaStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900">
-                  {qaOptions.map(([value, label]) => <option value={value}>{label}</option>)}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label for="assetR2Key" class="block text-sm font-medium text-gray-700 mb-1">R2 key</label>
-              <input type="text" id="assetR2Key" name="assetR2Key" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="assetDeliveryUrl" class="block text-sm font-medium text-gray-700 mb-1">Delivery URL</label>
-              <input type="url" id="assetDeliveryUrl" name="assetDeliveryUrl" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900" />
-            </div>
-            <div>
-              <label for="assetQaNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas QA</label>
-              <textarea id="assetQaNotes" name="assetQaNotes" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900"></textarea>
-            </div>
-            <button type="submit" class="crm-button crm-button-primary w-full">
+           <form id="asset-form" class="space-y-4">
+             <div>
+               <label for="assetLabel" class="block text-sm font-medium text-crm-text-secondary mb-1">Label</label>
+               <input type="text" id="assetLabel" name="assetLabel" class="crm-input" />
+             </div>
+             <div class="grid md:grid-cols-2 gap-4">
+               <div>
+                 <label for="assetType" class="block text-sm font-medium text-crm-text-secondary mb-1">Tipo</label>
+                 <select id="assetType" name="assetType" class="crm-input">
+                   {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+                 </select>
+               </div>
+               <div>
+                 <label for="assetQaStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">QA</label>
+                 <select id="assetQaStatus" name="assetQaStatus" class="crm-input">
+                   {qaOptions.map(([value, label]) => <option value={value}>{label}</option>)}
+                 </select>
+               </div>
+             </div>
+             <div>
+               <label for="assetR2Key" class="block text-sm font-medium text-crm-text-secondary mb-1">R2 key</label>
+               <input type="text" id="assetR2Key" name="assetR2Key" class="crm-input" />
+             </div>
+             <div>
+               <label for="assetDeliveryUrl" class="block text-sm font-medium text-crm-text-secondary mb-1">Delivery URL</label>
+               <input type="url" id="assetDeliveryUrl" name="assetDeliveryUrl" class="crm-input" />
+             </div>
+             <div>
+               <label for="assetQaNotes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas QA</label>
+               <textarea id="assetQaNotes" name="assetQaNotes" rows="3" class="crm-input"></textarea>
+             </div>
+             <button type="submit" class="crm-button crm-button-primary w-full">
               Crear asset
-            </button>
-          </form>
-        </div>
+             </button>
+           </form>
 
-        <div class="crm-form-section">
-          <h2 class="crm-form-section__title">Operacion</h2>
-          <div class="mt-4 space-y-3 text-sm text-gray-600">
-            <p><span class="font-medium text-gray-900">Email operativo:</span> hola@grandeandgordo.com</p>
-            <p><span class="font-medium text-gray-900">Recomendacion:</span> usa QA aprobado para lo que deba ver el cliente y deja notas internas si algo cambia.</p>
-          </div>
-        </div>
-      </section>
-    </div>
+           <!-- Upload file directly -->
+           <div class="mt-6 border-t border-crm-border pt-6">
+             <p class="text-xs font-bold uppercase tracking-[0.2em] text-crm-subtle mb-3">O subir archivo</p>
+             <div id="upload-quota-info" class="mb-3 text-xs text-crm-muted">
+              Cargando quota del cliente...
+             </div>
+             <form id="upload-form" class="flex flex-col gap-3">
+               <input
+                type="file"
+                id="upload-file"
+                accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
+                class="crm-input text-sm"
+               />
+               <div class="flex items-center gap-3">
+                 <button type="submit" id="upload-btn" class="crm-button crm-button-accent text-sm w-full">
+                  Subir a R2
+                 </button>
+               </div>
+               <p class="text-xs text-crm-muted">Max 50MB. JPG, PNG, WebP, MP4, MOV.</p>
+               <div id="upload-status" class="hidden text-xs"></div>
+             </form>
+           </div>
+         </div>
 
-    <section class="crm-form-section">
-      <div class="flex items-center justify-between gap-4 mb-4">
-        <div>
-          <h2 id="assets-heading" class="text-lg font-semibold text-white">Assets</h2>
-          <p class="mt-2 text-sm text-slate-300">Edita metadata, links de entrega y estado de QA sin salir del trabajo.</p>
-        </div>
-        <div id="asset-update-success" class="hidden text-sm text-green-700 bg-green-50 rounded px-3 py-2"></div>
-      </div>
+         <div class="crm-form-section" role="region" aria-label="Operacion">
+           <h2 class="crm-form-section__title">Operacion</h2>
+           <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
+             <p><span class="font-medium text-crm-text">Email operativo:</span> hola@grandeandgordo.com</p>
+             <p><span class="font-medium text-crm-text">Recomendacion:</span> usa QA aprobado para lo que deba ver el cliente y deja notas internas si algo cambia.</p>
+           </div>
+         </div>
+       </section>
+     </div>
 
-      <div id="asset-update-error" class="hidden bg-red-50 text-red-700 rounded p-3 mb-4 text-sm"></div>
+     <section class="crm-form-section" role="region" aria-label="Assets del trabajo">
+       <div class="flex items-center justify-between gap-4 mb-4">
+         <div>
+           <h2 id="assets-heading" class="text-lg font-semibold text-crm-text">Assets</h2>
+           <p class="mt-2 text-sm text-crm-text-secondary">Edita metadata, links de entrega y estado de QA sin salir del trabajo.</p>
+         </div>
+         <div id="asset-update-success" class="hidden text-sm crm-alert crm-alert-success" role="status"></div>
+       </div>
 
-      <div id="assets-grid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <p class="text-gray-500">Cargando assets...</p>
-      </div>
-    </section>
-  </div>
+       <div id="asset-update-error" class="hidden crm-alert crm-alert-danger mb-4 text-sm" role="alert"></div>
 
-  <script>
-    (async () => {
+       <div id="assets-grid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+         <p class="text-crm-muted">Cargando assets...</p>
+       </div>
+     </section>
+   </div>
+
+   <script>
+     (async () => {
       const {
         API_BASE,
         api,
@@ -382,12 +406,16 @@ const qaOptions = [
         formatDate,
         formatNumber,
         formatPercent,
-        jobStatusClass,
         numberInputValue,
+        setText,
+        isDueSoon,
+       } = await import('../../../lib/crm-ui');
+      const {
+        jobStatusClass,
         qaStatusClass,
         stackLaneClass,
         turnaroundClass,
-      } = await import('../../../lib/api-client');
+       } = await import('../../../lib/ui-helpers');
 
       const jobId = new URLSearchParams(window.location.search).get('id');
       if (!jobId) {
@@ -410,20 +438,15 @@ const qaOptions = [
       let currentJob = null;
       let currentAssets = [];
 
-      const setText = (id, value) => {
-        const element = document.getElementById(id);
-        if (element) element.textContent = value;
-      };
-
       const setInputValue = (id, value) => {
         const field = document.getElementById(id);
         if (
           field instanceof HTMLInputElement ||
           field instanceof HTMLTextAreaElement ||
           field instanceof HTMLSelectElement
-        ) {
+         ) {
           field.value = value ?? '';
-        }
+         }
       };
 
       const fieldValue = (id) => {
@@ -432,9 +455,9 @@ const qaOptions = [
           field instanceof HTMLInputElement ||
           field instanceof HTMLTextAreaElement ||
           field instanceof HTMLSelectElement
-        ) {
+         ) {
           return field.value;
-        }
+         }
         return '';
       };
 
@@ -448,65 +471,65 @@ const qaOptions = [
         }
 
         assetsGrid.innerHTML = currentAssets.map((asset) => `
-          <article class="crm-panel-soft space-y-3 p-4" data-asset-id="${escapeHtml(asset.id)}">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <p class="font-medium text-white">${escapeHtml(asset.label ?? asset.type)}</p>
-                <p class="text-xs text-gray-500 mt-1">${escapeHtml(asset.r2Key ?? 'Sin key')}</p>
-              </div>
-              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${qaStatusClass(asset.qaStatus ?? 'pending')}">
-                ${escapeHtml(asset.qaStatus ?? 'pending')}
-              </span>
-            </div>
+           <article class="crm-panel-soft space-y-3 p-4" data-asset-id="${escapeHtml(asset.id)}">
+             <div class="flex items-start justify-between gap-4">
+               <div>
+                 <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? asset.type)}</p>
+                 <p class="text-xs text-crm-muted mt-1">${escapeHtml(asset.r2Key ?? 'Sin key')}</p>
+               </div>
+               <span class="${qaStatusClass(asset.qaStatus ?? 'pending')}">
+                 ${escapeHtml(asset.qaStatus ?? 'pending')}
+               </span>
+             </div>
 
-            <div class="space-y-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Label</label>
-                <input data-field="label" type="text" value="${escapeHtml(asset.label ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
-                  <select data-field="type" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
-                    <option value="image" ${asset.type === 'image' ? 'selected' : ''}>Imagen</option>
-                    <option value="video" ${asset.type === 'video' ? 'selected' : ''}>Video</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-500 mb-1">QA</label>
-                  <select data-field="qaStatus" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
-                    <option value="pending" ${asset.qaStatus === 'pending' ? 'selected' : ''}>Pending</option>
-                    <option value="approved" ${asset.qaStatus === 'approved' ? 'selected' : ''}>Approved</option>
-                    <option value="rejected" ${asset.qaStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">R2 key</label>
-                <input data-field="r2Key" type="text" value="${escapeHtml(asset.r2Key ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Delivery URL</label>
-                <input data-field="deliveryUrl" type="url" value="${escapeHtml(asset.deliveryUrl ?? '')}" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900" />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">QA notes</label>
-                <textarea data-field="qaNotes" rows="3" class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">${escapeHtml(asset.qaNotes ?? '')}</textarea>
-              </div>
-            </div>
+             <div class="space-y-3">
+               <div>
+                 <label class="block text-xs font-medium text-crm-muted mb-1">Label</label>
+                 <input data-field="label" type="text" value="${escapeHtml(asset.label ?? '')}" class="crm-input" />
+               </div>
+               <div class="grid grid-cols-2 gap-3">
+                 <div>
+                   <label class="block text-xs font-medium text-crm-muted mb-1">Tipo</label>
+                   <select data-field="type" class="crm-input">
+                     <option value="image" ${asset.type === 'image' ? 'selected' : ''}>Imagen</option>
+                     <option value="video" ${asset.type === 'video' ? 'selected' : ''}>Video</option>
+                   </select>
+                 </div>
+                 <div>
+                   <label class="block text-xs font-medium text-crm-muted mb-1">QA</label>
+                   <select data-field="qaStatus" class="crm-input">
+                     <option value="pending" ${asset.qaStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                     <option value="approved" ${asset.qaStatus === 'approved' ? 'selected' : ''}>Approved</option>
+                     <option value="rejected" ${asset.qaStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
+                   </select>
+                 </div>
+               </div>
+               <div>
+                 <label class="block text-xs font-medium text-crm-muted mb-1">R2 key</label>
+                 <input data-field="r2Key" type="text" value="${escapeHtml(asset.r2Key ?? '')}" class="crm-input" />
+               </div>
+               <div>
+                 <label class="block text-xs font-medium text-crm-muted mb-1">Delivery URL</label>
+                 <input data-field="deliveryUrl" type="url" value="${escapeHtml(asset.deliveryUrl ?? '')}" class="crm-input" />
+               </div>
+               <div>
+                 <label class="block text-xs font-medium text-crm-muted mb-1">QA notes</label>
+                 <textarea data-field="qaNotes" rows="3" class="crm-input">${escapeHtml(asset.qaNotes ?? '')}</textarea>
+               </div>
+             </div>
 
-            <div class="flex items-center justify-between gap-3">
-              ${
+             <div class="flex items-center justify-between gap-3">
+               ${
                 asset.deliveryUrl
-                  ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="text-sm font-medium text-sky-200 transition hover:text-white">Abrir entrega</a>`
-                  : '<span class="text-sm text-gray-400">Sin link de entrega</span>'
-              }
-              <button type="button" class="asset-save-button bg-gray-900 text-white px-3 py-2 rounded-md text-sm hover:bg-gray-800">
+                   ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="text-sm font-medium text-crm-accent transition hover:text-crm-text">Abrir entrega</a>`
+                   : '<span class="text-sm text-crm-muted">Sin link de entrega</span>'
+               }
+               <button type="button" class="asset-save-button bg-crm-bg-alt text-crm-text px-3 py-2 rounded-md text-sm hover:bg-crm-panel-soft">
                 Guardar asset
-              </button>
-            </div>
-          </article>
-        `).join('');
+               </button>
+             </div>
+           </article>
+         `).join('');
       };
 
       const jobStatusSteps = {
@@ -528,18 +551,18 @@ const qaOptions = [
           { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga', date: job.deliveredAt },
         ];
 
-        timelineEl.innerHTML = `<div class="relative pl-8 border-l-2 border-gray-700 space-y-6">${
+        timelineEl.innerHTML = `<div class="relative pl-8 border-l-2 border-crm-border-strong space-y-6">${
           steps.map((s, idx) => {
             const isCompleted = s.step <= currentStep;
             const isCurrent = s.step === currentStep;
             const dateStr = s.date ? formatDate(s.date) : '—';
             return `
               <div class="relative">
-                <div class="absolute -left-[41px] h-5 w-5 rounded-full ${isCompleted ? 'bg-emerald-500' : 'bg-gray-600'} ${isCurrent ? 'ring-4 ring-emerald-500/30' : ''}"></div>
+                <div class="absolute -left-[41px] h-5 w-5 rounded-full ${isCompleted ? 'bg-crm-success' : 'bg-crm-muted'} ${isCurrent ? 'ring-4' : ''}" style="${isCurrent ? 'box-shadow: 0 0 0 4px rgba(16,185,129,0.3)' : ''}"></div>
                 <div class="${isCurrent ? 'opacity-100' : 'opacity-60'}">
-                  <p class="text-sm font-medium ${isCompleted ? 'text-white' : 'text-gray-400'}">${escapeHtml(s.label)}</p>
-                  <p class="text-xs text-gray-400 mt-0.5">${escapeHtml(s.description)}</p>
-                  <p class="text-xs text-gray-500 mt-1">${dateStr}</p>
+                  <p class="text-sm font-medium ${isCompleted ? 'text-crm-text' : 'text-crm-muted'}">${escapeHtml(s.label)}</p>
+                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(s.description)}</p>
+                  <p class="text-xs text-crm-muted mt-1">${dateStr}</p>
                 </div>
               </div>
             `;
@@ -566,12 +589,12 @@ const qaOptions = [
 
         if (statusPill) {
           statusPill.textContent = job.status ?? 'pending';
-          statusPill.className = `inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}`;
+          statusPill.className = jobStatusClass(job.status ?? '');
         }
 
         if (lanePill) {
           lanePill.textContent = `lane ${job.stackLane ?? '—'}`;
-          lanePill.className = `inline-flex rounded-full px-3 py-1 text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}`;
+          lanePill.className = stackLaneClass(job.stackLane ?? '');
         }
 
         setText('metric-due', formatDate(job.dueAt));
@@ -617,10 +640,63 @@ const qaOptions = [
       const load = async () => {
         const payload = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
         render(payload);
+        return payload;
+      };
+
+      const fetchAIEngineStatus = async (job) => {
+        const statusBadge = document.getElementById('ai-engine-status');
+        if (!statusBadge) return;
+
+        if (!job?.externalJobId) {
+          statusBadge.textContent = 'IA: no ejecutado';
+          statusBadge.className = 'crm-badge crm-badge-default';
+          statusBadge.classList.remove('hidden');
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/ai/jobs/${encodeURIComponent(job.externalJobId)}`, {
+            credentials: 'include',
+          });
+
+          if (!res.ok) {
+            statusBadge.textContent = 'IA: error';
+            statusBadge.className = 'crm-badge crm-badge-danger';
+            statusBadge.classList.remove('hidden');
+            return;
+          }
+
+          const data = await res.json();
+          const status = data.status ?? data.state ?? data.job_status ?? 'unknown';
+          const statusMap = {
+            pending: { label: 'IA: en cola', class: 'crm-badge crm-badge-warning' },
+            queued: { label: 'IA: en cola', class: 'crm-badge crm-badge-warning' },
+            running: { label: 'IA: en ejecución', class: 'crm-badge crm-badge-info' },
+            processing: { label: 'IA: procesando', class: 'crm-badge crm-badge-info' },
+            completed: { label: 'IA: completado', class: 'crm-badge crm-badge-success' },
+            success: { label: 'IA: completado', class: 'crm-badge crm-badge-success' },
+            failed: { label: 'IA: fallido', class: 'crm-badge crm-badge-danger' },
+            error: { label: 'IA: fallido', class: 'crm-badge crm-badge-danger' },
+            cancelled: { label: 'IA: cancelado', class: 'crm-badge crm-badge-default' },
+            paused: { label: 'IA: pausado', class: 'crm-badge crm-badge-default' },
+            unknown: { label: 'IA: desconocido', class: 'crm-badge crm-badge-default' },
+          };
+          const mapped = statusMap[String(status).toLowerCase()] ?? statusMap.unknown;
+          statusBadge.textContent = mapped.label;
+          statusBadge.className = mapped.class;
+          statusBadge.classList.remove('hidden');
+        } catch {
+          statusBadge.textContent = 'IA: no disponible';
+          statusBadge.className = 'crm-badge crm-badge-default';
+          statusBadge.classList.remove('hidden');
+        }
       };
 
       try {
-        await load();
+        const payload = await load();
+        if (payload?.job) {
+          await fetchAIEngineStatus(payload.job);
+        }
       } catch {
         window.location.href = '/admin/jobs';
         return;
@@ -635,7 +711,7 @@ const qaOptions = [
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
           </svg>
-          Enviando...
+         Enviando...
         `;
 
         try {
@@ -661,8 +737,8 @@ const qaOptions = [
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-            Ejecutar en AI Engine
-          `;
+           Ejecutar en AI Engine
+         `;
         }
       });
 
@@ -830,6 +906,88 @@ const qaOptions = [
           }
         }
       });
-    })();
-  </script>
+
+      // Load client quota for upload context
+      const uploadQuotaInfo = document.getElementById('upload-quota-info');
+      const uploadForm = document.getElementById('upload-form');
+      const uploadFile = document.getElementById('upload-file');
+      const uploadBtn = document.getElementById('upload-btn');
+      const uploadStatus = document.getElementById('upload-status');
+
+      const loadQuota = async () => {
+        if (!currentJob?.clientId) return;
+        try {
+          const quota = await api(`/api/portal/upload/quota?clientId=${encodeURIComponent(currentJob.clientId)}`);
+          if (uploadQuotaInfo) {
+            const usedMB = (quota.storageUsed / (1024 * 1024)).toFixed(1);
+            const maxMB = (quota.storageMax / (1024 * 1024)).toFixed(0);
+            const remainingMB = (quota.storageRemaining / (1024 * 1024)).toFixed(1);
+            uploadQuotaInfo.innerHTML = `<span class="text-crm-text-secondary">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB · ${remainingMB} MB libres</span>`;
+          }
+        } catch {
+          if (uploadQuotaInfo) uploadQuotaInfo.textContent = '';
+        }
+      };
+
+      loadQuota();
+
+      uploadForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!(uploadFile instanceof HTMLInputElement) || !uploadFile.files?.length) {
+          uploadFile?.focus();
+          return;
+        }
+
+        const file = uploadFile.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        if (uploadBtn) {
+          uploadBtn.disabled = true;
+          uploadBtn.textContent = 'Subiendo...';
+        }
+        if (uploadStatus) {
+          uploadStatus.className = 'text-xs text-crm-info';
+          uploadStatus.textContent = 'Subiendo...';
+          uploadStatus.classList.remove('hidden');
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/upload/jobs/${encodeURIComponent(jobId)}/upload`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
+            throw new Error(data.error || 'Error al subir archivo');
+          }
+
+          uploadFile.value = '';
+          if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Subir a R2';
+          }
+          if (uploadStatus) {
+            uploadStatus.className = 'text-xs text-crm-success';
+            uploadStatus.textContent = '¡Subido correctamente!';
+          }
+
+          await load();
+          await loadQuota();
+        } catch (error) {
+          console.error('Upload failed:', error);
+          if (uploadBtn) {
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Subir a R2';
+          }
+          if (uploadStatus) {
+            uploadStatus.className = 'text-xs text-crm-danger';
+            uploadStatus.textContent = error instanceof Error ? error.message : 'Error al subir';
+          }
+        }
+      });
+     })();
+   </script>
 </AdminLayout>

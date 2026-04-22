@@ -1,0 +1,16 @@
+---
+interface Props {
+  kicker: string;
+  value?: string;
+  subtext?: string;
+}
+
+const { kicker, value, subtext } = Astro.props;
+---
+
+<div class="crm-metric-card" role="region" aria-label={kicker}>
+    <p class="crm-kicker">{kicker}</p>
+    {value && <p class="mt-3 text-3xl font-black tracking-tight" style="color: var(--crm-text);">{value}</p>}
+    {subtext && <p class="mt-1 text-sm" style="color: var(--crm-text-secondary);">{subtext}</p>}
+    <slot />
+</div>

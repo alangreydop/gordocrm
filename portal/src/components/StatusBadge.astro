@@ -1,0 +1,31 @@
+---
+import { jobStatusClass, jobStatusLabel, subscriptionClass, subscriptionLabel, datasetStatusClass, datasetStatusLabel, qaStatusClass, qaStatusLabel, turnaroundClass, turnaroundLabel } from '../lib/api-client';
+
+interface Props {
+  status: string;
+  type: 'job' | 'subscription' | 'dataset' | 'qa' | 'turnaround';
+}
+
+const { status, type } = Astro.props;
+
+const classMap: Record<string, (s: string) => string> = {
+  job: jobStatusClass,
+  subscription: subscriptionClass,
+  dataset: datasetStatusClass,
+  qa: qaStatusClass,
+  turnaround: turnaroundClass,
+};
+
+const labelMap: Record<string, (s: string) => string> = {
+  job: jobStatusLabel,
+  subscription: subscriptionLabel,
+  dataset: datasetStatusLabel,
+  qa: qaStatusLabel,
+  turnaround: turnaroundLabel,
+};
+
+const cssClass = classMap[type]?.(status) ?? 'crm-badge crm-badge-default';
+const label = labelMap[type]?.(status) ?? status;
+---
+
+<span class={cssClass}>{label}</span>

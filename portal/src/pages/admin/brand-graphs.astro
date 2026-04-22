@@ -1,0 +1,248 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Brand Graphs">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
+    <section class="crm-page-header">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">Identidad de marca</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">brand graphs</h1>
+          <p class="crm-page-header__meta mt-4">
+            Criterios creativos estructurados por cliente. Se inyectan automáticamente en cada job enviado al AI Engine.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="flex flex-col lg:flex-row gap-6 min-h-[600px]">
+      <!-- Left: Client list -->
+      <div class="lg:w-80 flex-shrink-0">
+        <div class="crm-panel">
+          <input
+            type="search"
+            id="client-search"
+            placeholder="Buscar cliente..."
+            class="crm-input w-full mb-4"
+          />
+          <div id="client-list" class="space-y-1 max-h-[520px] overflow-y-auto">
+            <p class="text-sm text-crm-muted px-2">Cargando clientes...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Editor -->
+      <div class="flex-1 min-w-0">
+        <div id="editor-panel" class="crm-panel hidden">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 id="editor-client-name" class="text-xl font-bold text-crm-text">—</h2>
+              <p class="text-sm text-crm-muted mt-1">ID: <span id="editor-client-id" class="font-mono">—</span></p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="save-status" class="crm-badge crm-badge-default hidden">guardando...</span>
+              <button id="btn-save" class="crm-button crm-button-primary">Guardar</button>
+            </div>
+          </div>
+
+          <div class="space-y-6" role="region" aria-label="Contenido principal">
+            <div class="crm-form-section">
+              <h3 class="text-sm font-semibold text-crm-subtle uppercase tracking-wider mb-3">Tono y mood</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Tono emocional</label>
+                  <input type="text" id="bg-emotional-tone" class="crm-input w-full" placeholder="ej. energético, calmado, urgente" />
+                </div>
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Iluminación</label>
+                  <input type="text" id="bg-lighting" class="crm-input w-full" placeholder="ej. soft natural, hard directional, studio flat" />
+                </div>
+              </div>
+            </div>
+
+            <div class="crm-form-section">
+              <h3 class="text-sm font-semibold text-crm-subtle uppercase tracking-wider mb-3">Composición</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Ángulos preferidos</label>
+                  <input type="text" id="bg-angles" class="crm-input w-full" placeholder="ej. 45° product hero, flat lay, eye level" />
+                </div>
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Reglas de composición</label>
+                  <input type="text" id="bg-composition-rules" class="crm-input w-full" placeholder="ej. rule of thirds, centered symmetry, negative space dominant" />
+                </div>
+              </div>
+            </div>
+
+            <div class="crm-form-section">
+              <h3 class="text-sm font-semibold text-crm-subtle uppercase tracking-wider mb-3">Materiales y color</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Materiales</label>
+                  <input type="text" id="bg-materials" class="crm-input w-full" placeholder="ej. matte plastic, brushed metal, organic fabric" />
+                </div>
+                <div>
+                  <label class="block text-sm text-crm-subtle mb-1">Paleta de color (hex codes separados por comas)</label>
+                  <input type="text" id="bg-color-palette" class="crm-input w-full" placeholder="#FF5733, #33FF57, #3357FF" />
+                  <div id="color-swatches" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="crm-form-section">
+              <h3 class="text-sm font-semibold text-crm-subtle uppercase tracking-wider mb-3">Restricciones</h3>
+              <div>
+                <label class="block text-sm text-crm-subtle mb-1">NO usar</label>
+                <textarea id="bg-do-not-use" rows="3" class="crm-input w-full" placeholder="ej. No mostrar manos. No usar fondos degradados. Evitar texto superpuesto."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="editor-empty" class="crm-panel flex items-center justify-center min-h-[400px]">
+          <div class="text-center">
+            <p class="crm-empty__title">Selecciona un cliente</p>
+            <p class="crm-empty__description mt-2">Haz click en un cliente de la lista para editar su Brand Graph.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const { api, escapeHtml } = await import('../../lib/api-client');
+
+      const clientList = document.getElementById('client-list');
+      const clientSearch = document.getElementById('client-search') as HTMLInputElement | null;
+      const editorPanel = document.getElementById('editor-panel');
+      const editorEmpty = document.getElementById('editor-empty');
+      const editorClientName = document.getElementById('editor-client-name');
+      const editorClientId = document.getElementById('editor-client-id');
+      const saveStatus = document.getElementById('save-status');
+
+      let clients: any[] = [];
+      let selectedClientId: string | null = null;
+      let currentBrandGraph: any = null;
+
+      const fields = {
+        emotionalTone: document.getElementById('bg-emotional-tone') as HTMLInputElement | null,
+        lighting: document.getElementById('bg-lighting') as HTMLInputElement | null,
+        angles: document.getElementById('bg-angles') as HTMLInputElement | null,
+        compositionRules: document.getElementById('bg-composition-rules') as HTMLInputElement | null,
+        materials: document.getElementById('bg-materials') as HTMLInputElement | null,
+        colorPalette: document.getElementById('bg-color-palette') as HTMLInputElement | null,
+        doNotUse: document.getElementById('bg-do-not-use') as HTMLTextAreaElement | null,
+      };
+
+      const renderSwatches = () => {
+        const container = document.getElementById('color-swatches');
+        if (!container || !fields.colorPalette) return;
+        const raw = fields.colorPalette.value;
+        const colors = raw.split(',').map((c) => c.trim()).filter(Boolean);
+        container.innerHTML = colors.map((c) =>
+          `<div class="w-8 h-8 rounded border border-gray-200" style="background:${c};" title="${escapeHtml(c)}"></div>`
+        ).join('');
+      };
+
+      fields.colorPalette?.addEventListener('input', renderSwatches);
+
+      const renderClientList = () => {
+        if (!clientList) return;
+        const query = clientSearch?.value.trim().toLowerCase() ?? '';
+        const filtered = clients.filter((c) =>
+          !query || [c.name, c.company, c.email].filter(Boolean).some((v) => String(v).toLowerCase().includes(query))
+        );
+
+        if (filtered.length === 0) {
+          clientList.innerHTML = `<p class="text-sm text-crm-muted px-2">Sin resultados.</p>`;
+          return;
+        }
+
+        clientList.innerHTML = filtered.map((c) => `
+          <button data-id="${escapeHtml(c.id)}" class="client-row w-full text-left px-3 py-2 rounded hover:bg-[var(--crm-hover)] transition ${selectedClientId === c.id ? 'bg-[var(--crm-hover)] ring-1 ring-[var(--crm-border)]' : ''}">
+            <p class="text-sm font-medium text-crm-text">${escapeHtml(c.name)}</p>
+            <p class="text-xs text-crm-muted">${escapeHtml(c.company ?? c.email ?? 'Sin empresa')}</p>
+          </button>
+        `).join('');
+
+        document.querySelectorAll('.client-row').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const id = (btn as HTMLElement).dataset.id ?? null;
+            if (!id) return;
+            selectedClientId = id;
+            renderClientList();
+            await loadBrandGraph(id);
+          });
+        });
+      };
+
+      const loadBrandGraph = async (clientId: string) => {
+        try {
+          const data = await api<{ brandGraph: any }>(`/api/portal/brand-graphs/clients/${clientId}/brand-graph`);
+          currentBrandGraph = data.brandGraph ?? {};
+
+          const client = clients.find((c) => c.id === clientId);
+          if (editorClientName) editorClientName.textContent = client?.name ?? '—';
+          if (editorClientId) editorClientId.textContent = clientId;
+
+          if (fields.emotionalTone) fields.emotionalTone.value = currentBrandGraph.emotionalTone ?? '';
+          if (fields.lighting) fields.lighting.value = currentBrandGraph.lighting ?? '';
+          if (fields.angles) fields.angles.value = currentBrandGraph.angles ?? '';
+          if (fields.compositionRules) fields.compositionRules.value = currentBrandGraph.compositionRules ?? '';
+          if (fields.materials) fields.materials.value = currentBrandGraph.materials ?? '';
+          if (fields.colorPalette) fields.colorPalette.value = (currentBrandGraph.colorPalette ?? []).join(', ');
+          if (fields.doNotUse) fields.doNotUse.value = currentBrandGraph.doNotUse ?? '';
+
+          renderSwatches();
+
+          editorPanel?.classList.remove('hidden');
+          editorEmpty?.classList.add('hidden');
+        } catch {
+          alert('Error al cargar Brand Graph');
+        }
+      };
+
+      const saveBrandGraph = async () => {
+        if (!selectedClientId) return;
+        if (saveStatus) { saveStatus.textContent = 'guardando...'; saveStatus.classList.remove('hidden', 'crm-badge-success', 'crm-badge-default'); saveStatus.classList.add('crm-badge-default'); }
+
+        const brandGraph: any = {};
+        if (fields.emotionalTone?.value) brandGraph.emotionalTone = fields.emotionalTone.value;
+        if (fields.lighting?.value) brandGraph.lighting = fields.lighting.value;
+        if (fields.angles?.value) brandGraph.angles = fields.angles.value;
+        if (fields.compositionRules?.value) brandGraph.compositionRules = fields.compositionRules.value;
+        if (fields.materials?.value) brandGraph.materials = fields.materials.value;
+        if (fields.colorPalette?.value) {
+          brandGraph.colorPalette = fields.colorPalette.value.split(',').map((c) => c.trim()).filter(Boolean);
+        }
+        if (fields.doNotUse?.value) brandGraph.doNotUse = fields.doNotUse.value;
+
+        try {
+          await api(`/api/portal/brand-graphs/clients/${selectedClientId}/brand-graph`, {
+            method: 'PUT',
+            body: JSON.stringify({ brandGraph: Object.keys(brandGraph).length ? brandGraph : null }),
+          });
+          if (saveStatus) { saveStatus.textContent = 'guardado'; saveStatus.classList.remove('crm-badge-default'); saveStatus.classList.add('crm-badge-success'); }
+          setTimeout(() => saveStatus?.classList.add('hidden'), 2000);
+        } catch (err: any) {
+          if (saveStatus) { saveStatus.textContent = 'error'; saveStatus.classList.remove('crm-badge-default'); saveStatus.classList.add('crm-badge-danger'); }
+          alert(err.message ?? 'Error al guardar');
+        }
+      };
+
+      document.getElementById('btn-save')?.addEventListener('click', saveBrandGraph);
+      clientSearch?.addEventListener('input', renderClientList);
+
+      // Load clients
+      try {
+        const data = await api<{ clients: any[] }>('/api/portal/clients');
+        clients = Array.isArray(data.clients) ? data.clients : [];
+        renderClientList();
+      } catch {
+        if (clientList) clientList.innerHTML = `<p class="text-sm text-crm-danger px-2">Error al cargar clientes.</p>`;
+      }
+    })();
+  </script>
+</AdminLayout>

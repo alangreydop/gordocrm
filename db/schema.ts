@@ -36,6 +36,8 @@ export const clients = sqliteTable(
     datasetStatus: text('dataset_status').notNull().default('pending_capture'),
     segment: text('segment'),
     marginProfile: text('margin_profile'),
+    brandGraph: text('brand_graph'), // JSON: lighting, angles, materials, etc.
+    qaEnabled: integer('qa_enabled', { mode: 'boolean' }).default(false), // Feature flag for auto-QA
     notes: text('notes'),
     nextReviewAt: integer('next_review_at', { mode: 'timestamp_ms' }),
     lastContactedAt: integer('last_contacted_at', { mode: 'timestamp_ms' }),
@@ -97,6 +99,7 @@ export const jobs = sqliteTable(
       .notNull()
       .references(() => clients.id),
     externalJobId: text('external_job_id'), // ID en AI Engine
+    pipelineId: text('pipeline_id'), // Resolved from pipeline_mappings
     status: text('status').notNull().default('pending'),
     briefText: text('brief_text'),
     platform: text('platform'),
@@ -152,9 +155,13 @@ export const assets = sqliteTable(
     jobId: text('job_id')
       .notNull()
       .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
     label: text('label'),
     type: text('type').notNull(),
     r2Key: text('r2_key').notNull(),
+    fileSize: integer('file_size'), // bytes, for quota tracking
     deliveryUrl: text('delivery_url'),
     status: text('status').notNull().default('pending'), // pending, approved, rejected
     metadata: text('metadata'), // JSON string con metadata del asset
@@ -181,6 +188,7 @@ export const assets = sqliteTable(
     index('idx_assets_status').on(table.status),
     index('idx_assets_client_visible').on(table.clientVisible),
     index('idx_assets_created_at').on(table.createdAt),
+    index('idx_assets_job_r2').on(table.jobId, table.r2Key),
   ],
 );
 
@@ -346,12 +354,64 @@ export const invoiceLogs = sqliteTable('invoice_logs', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 });
 
+// Pipeline Configurator — mapeo segmento × tipo × plataforma → pipeline_id
+export const pipelineMappings = sqliteTable(
+  'pipeline_mappings',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientSegment: text('client_segment').notNull(),
+    jobType: text('job_type'), // NULL = wildcard (cualquier tipo)
+    platform: text('platform'), // NULL = wildcard (cualquier plataforma)
+    pipelineId: text('pipeline_id').notNull(),
+    qaThreshold: integer('qa_threshold').notNull().default(85),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_pipeline_mapping_lookup').on(table.clientSegment, table.jobType, table.platform),
+    index('idx_pipeline_mapping_segment').on(table.clientSegment),
+  ],
+);
+
 // Tabla de configuración
 export const config = sqliteTable('config', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).$defaultFn(timestampNow),
 });
+
+// ============================================
+// QA Engine — Autonomous quality audit
+// ============================================
+
+export const qaResults = sqliteTable(
+  'qa_results',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    assetId: text('asset_id')
+      .notNull()
+      .references(() => assets.id),
+    jobId: text('job_id')
+      .notNull()
+      .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    status: text('status').notNull().default('queued'), // queued, processing, completed, failed
+    scores: text('scores'), // JSON: { consistency, composition, lighting, brand_alignment, overall }
+    overallScore: integer('overall_score'),
+    autoApproved: integer('auto_approved', { mode: 'boolean' }).default(false),
+    error: text('error'),
+    processingStartedAt: integer('processing_started_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_qa_status').on(table.status),
+    index('idx_qa_job_asset').on(table.jobId, table.assetId),
+    index('idx_qa_created_at').on(table.createdAt),
+  ],
+);
 
 // ============================================
 // Sistema de Notificaciones

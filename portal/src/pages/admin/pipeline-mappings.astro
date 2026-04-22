@@ -1,0 +1,217 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Pipelines">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
+    <section class="crm-page-header">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="crm-kicker">AI Engine</p>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">pipeline mappings</h1>
+          <p class="crm-page-header__meta mt-4">
+            Segmento × tipo × plataforma → pipeline_id. Se resuelve automáticamente al crear un trabajo.
+          </p>
+        </div>
+        <button id="btn-open-modal" class="crm-button crm-button-primary whitespace-nowrap">
+          Nuevo mapping
+        </button>
+      </div>
+    </section>
+
+    <div class="crm-table-wrap">
+      <div class="overflow-x-auto">
+        <table class="crm-table min-w-full text-sm">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">segmento</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">tipo</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">plataforma</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">pipeline id</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">umbral QA</th>
+              <th class="px-6 py-3 text-right text-xs font-medium tracking-[0.02em] text-crm-subtle">acciones</th>
+            </tr>
+          </thead>
+          <tbody id="mappings-body">
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-crm-muted">Cargando mappings...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="crm-empty hidden">
+      <p class="crm-empty__title">Sin mappings configurados</p>
+      <p class="crm-empty__description mt-2">Crea el primer mapping para que los trabajos se asignen automáticamente a un pipeline.</p>
+    </div>
+  </div>
+
+  <!-- Modal: Nuevo Mapping -->
+  <div id="modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="crm-panel w-full max-w-lg">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-crm-text">Nuevo mapping</h2>
+          <button id="btn-close-modal" class="text-crm-muted hover:text-crm-text transition">✕</button>
+        </div>
+        <form id="mapping-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-crm-subtle mb-1">Segmento de cliente</label>
+            <select name="clientSegment" class="crm-input w-full" required>
+              <option value="">Seleccionar...</option>
+              <option value="rentable">rentable</option>
+              <option value="growth">growth</option>
+              <option value="premium">premium</option>
+              <option value="enterprise">enterprise</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-crm-subtle mb-1">Tipo de trabajo</label>
+              <select name="jobType" class="crm-input w-full">
+                <option value="">Cualquiera</option>
+                <option value="image">image</option>
+                <option value="video">video</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-crm-subtle mb-1">Plataforma</label>
+              <select name="platform" class="crm-input w-full">
+                <option value="">Cualquiera</option>
+                <option value="instagram">instagram</option>
+                <option value="tiktok">tiktok</option>
+                <option value="amazon_pdp">amazon_pdp</option>
+                <option value="paid_ads">paid_ads</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-crm-subtle mb-1">Pipeline ID</label>
+              <input type="text" name="pipelineId" class="crm-input w-full" placeholder="ej. 1" required />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-crm-subtle mb-1">Umbral QA (0-100)</label>
+              <input type="number" name="qaThreshold" class="crm-input w-full" value="85" min="0" max="100" required />
+            </div>
+          </div>
+          <div class="pt-2 flex justify-end gap-3">
+            <button type="button" id="btn-cancel" class="crm-button crm-button-secondary">Cancelar</button>
+            <button type="submit" class="crm-button crm-button-primary">Guardar</button>
+          </div>
+        </form>
+        <p id="form-error" class="mt-4 text-sm text-crm-danger hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const { api, escapeHtml } = await import('../../lib/api-client');
+
+      const tbody = document.getElementById('mappings-body');
+      const modal = document.getElementById('modal');
+      const form = document.getElementById('mapping-form') as HTMLFormElement | null;
+      const formError = document.getElementById('form-error');
+      const emptyState = document.getElementById('empty-state');
+
+      let mappings: any[] = [];
+
+      const render = () => {
+        if (!tbody) return;
+        if (mappings.length === 0) {
+          tbody.innerHTML = '';
+          emptyState?.classList.remove('hidden');
+          return;
+        }
+        emptyState?.classList.add('hidden');
+        tbody.innerHTML = mappings.map((m) => `
+          <tr class="align-top">
+            <td class="px-6 py-4">
+              <span class="crm-badge crm-badge-default">${escapeHtml(m.clientSegment)}</span>
+            </td>
+            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(m.jobType ?? '*')}</td>
+            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(m.platform ?? '*')}</td>
+            <td class="px-6 py-4 font-mono text-crm-text">${escapeHtml(m.pipelineId)}</td>
+            <td class="px-6 py-4">
+              <span class="crm-badge ${(m.qaThreshold ?? 85) >= 85 ? 'crm-badge-success' : 'crm-badge-warning'}">${m.qaThreshold ?? 85}</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button data-id="${escapeHtml(m.id)}" class="btn-delete text-crm-danger hover:text-crm-text transition text-sm font-medium">Eliminar</button>
+            </td>
+          </tr>
+        `).join('');
+
+        document.querySelectorAll('.btn-delete').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            const id = (e.currentTarget as HTMLElement).dataset.id;
+            if (!id || !confirm('¿Eliminar este mapping?')) return;
+            try {
+              await api(`/api/portal/pipeline-mappings/${id}`, { method: 'DELETE' });
+              mappings = mappings.filter((m) => m.id !== id);
+              render();
+            } catch (err: any) {
+              alert(err.message ?? 'Error al eliminar');
+            }
+          });
+        });
+      };
+
+      const load = async () => {
+        try {
+          const data = await api<{ mappings: any[] }>('/api/portal/pipeline-mappings');
+          mappings = Array.isArray(data.mappings) ? data.mappings : [];
+          render();
+        } catch {
+          if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar los mappings.</td></tr>`;
+          }
+        }
+      };
+
+      // Modal
+      const openModal = () => { if (modal) { modal.classList.remove('hidden'); form?.reset(); if (formError) { formError.textContent = ''; formError.classList.add('hidden'); } } };
+      const closeModal = () => { if (modal) modal.classList.add('hidden'); };
+
+      document.getElementById('btn-open-modal')?.addEventListener('click', openModal);
+      document.getElementById('btn-close-modal')?.addEventListener('click', closeModal);
+      document.getElementById('btn-cancel')?.addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop')?.addEventListener('click', closeModal);
+
+      form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form) return;
+        const fd = new FormData(form);
+        const payload: Record<string, any> = {
+          clientSegment: fd.get('clientSegment'),
+          pipelineId: fd.get('pipelineId'),
+          qaThreshold: Number(fd.get('qaThreshold')),
+        };
+        const jobType = fd.get('jobType') as string;
+        const platform = fd.get('platform') as string;
+        if (jobType) payload.jobType = jobType;
+        if (platform) payload.platform = platform;
+
+        try {
+          const res = await api<{ mapping: any }>('/api/portal/pipeline-mappings', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          mappings.push(res.mapping);
+          render();
+          closeModal();
+        } catch (err: any) {
+          if (formError) {
+            formError.textContent = err.message ?? 'Error al guardar';
+            formError.classList.remove('hidden');
+          }
+        }
+      });
+
+      load();
+    })();
+  </script>
+</AdminLayout>

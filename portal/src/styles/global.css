@@ -16,59 +16,74 @@
 }
 
 :root {
-  /* ── Brand Accent (matches grandeandgordo.com) ── */
-  --crm-accent: #C4165A;
-  --crm-accent-hover: #a00f49;
-  --crm-accent-light: #f5709a;
-  --crm-accent-soft: rgba(196, 22, 90, 0.08);
-  --crm-btn-cream: #fce8ef;
-  --crm-btn-cream-hover: #f9d4e2;
+   /* ── Brand Accent (matches grandeandgordo.com) ── */
+   --crm-accent: #C4165A;
+   --crm-accent-hover: #a00f49;
+   --crm-accent-light: #f5709a;
+   --crm-accent-soft: rgba(196, 22, 90, 0.08);
+   --crm-btn-cream: #fce8ef;
+   --crm-btn-cream-hover: #f9d4e2;
 
-  /* ── Light Content Area ── */
-  --crm-bg: #ffffff;
-  --crm-bg-alt: #fdf8fa;
-  --crm-bg-elevated: #ffffff;
-  --crm-panel: #ffffff;
-  --crm-panel-strong: #ffffff;
-  --crm-panel-soft: #f8f5fa;
-  --crm-surface-hover: #f5f0f5;
+   /* ── Backgrounds (brand-aligned) ──
+    * --crm-bg: warm pinkish-mauve per gordo_new brand spec
+    * --crm-sidebar-bg: near-black with warm reddish tint per brand spec
+    */
+   --crm-bg: #f7f0f3;
+   --crm-bg-alt: #fdf8fa;
+   --crm-bg-elevated: #ffffff;
+   --crm-panel: #ffffff;
+   --crm-panel-strong: #ffffff;
+   --crm-panel-soft: #f8f5fa;
+   --crm-surface-hover: #f5f0f5;
 
-  /* ── Warm Borders (matches website #f0e4ea / #e8c8d4) ── */
-  --crm-border: #f0e4ea;
-  --crm-border-strong: #e8c8d4;
-  --crm-border-accent: rgba(196, 22, 90, 0.25);
+   /* ── Warm Borders (matches website #f0e4ea / #e8c8d4) ── */
+   --crm-border: #f0e4ea;
+   --crm-border-strong: #e8c8d4;
+   --crm-border-accent: rgba(196, 22, 90, 0.25);
 
-  /* ── Warm Text (matches website #1c1018 / #7a6068 / #c8a0ae) ── */
-  --crm-text: #1c1018;
-  --crm-text-secondary: #7a6068;
-  --crm-muted: #9a8a90;
-  --crm-subtle: #c8a0ae;
+   /* ── Warm Text (matches website #1c1018 / #7a6068 / #c8a0ae) ── */
+   --crm-text: #1c1018;
+   --crm-text-secondary: #7a6068;
+   --crm-muted: #9a8a90;
+   --crm-subtle: #c8a0ae;
 
-  /* ── Dark Sidebar ── */
-  --crm-sidebar-bg: #0a0a0a;
-  --crm-sidebar-text: rgba(255, 255, 255, 0.7);
-  --crm-sidebar-text-active: #ffffff;
-  --crm-sidebar-border: rgba(255, 255, 255, 0.08);
-  --crm-sidebar-hover: rgba(255, 255, 255, 0.06);
-  --crm-sidebar-accent-bg: rgba(196, 22, 90, 0.15);
+   /* ── Dark Sidebar (brand-aligned: #0b0608) ── */
+   --crm-sidebar-bg: #0b0608;
+   --crm-sidebar-text: rgba(255, 255, 255, 0.7);
+   --crm-sidebar-text-active: #ffffff;
+   --crm-sidebar-border: rgba(255, 255, 255, 0.08);
+   --crm-sidebar-hover: rgba(255, 255, 255, 0.06);
+   --crm-sidebar-accent-bg: rgba(196, 22, 90, 0.15);
 
-  /* ── Semantic Colors ── */
-  --crm-success: #10b981;
-  --crm-success-soft: rgba(16, 185, 129, 0.08);
-  --crm-success-border: rgba(16, 185, 129, 0.25);
-  --crm-warning: #f59e0b;
-  --crm-warning-soft: rgba(245, 158, 11, 0.08);
-  --crm-warning-border: rgba(245, 158, 11, 0.25);
-  --crm-danger: #ef4444;
-  --crm-danger-soft: rgba(239, 68, 68, 0.08);
-  --crm-danger-border: rgba(239, 68, 68, 0.25);
-  --crm-info: #3b82f6;
-  --crm-info-soft: rgba(59, 130, 246, 0.08);
-  --crm-info-border: rgba(59, 130, 246, 0.25);
+   /* ── Semantic Colors ── */
+   --crm-success: #10b981;
+   --crm-success-soft: rgba(16, 185, 129, 0.08);
+   --crm-success-border: rgba(16, 185, 129, 0.25);
+   --crm-warning: #f59e0b;
+   --crm-warning-soft: rgba(245, 158, 11, 0.08);
+   --crm-warning-border: rgba(245, 158, 11, 0.25);
+   --crm-danger: #ef4444;
+   --crm-danger-soft: rgba(239, 68, 68, 0.08);
+   --crm-danger-border: rgba(239, 68, 68, 0.25);
+   --crm-info: #3b82f6;
+   --crm-info-soft: rgba(59, 130, 246, 0.08);
+   --crm-info-border: rgba(59, 130, 246, 0.25);
 
-  /* ── Shadows ── */
-  --crm-shadow: 0 4px 24px rgba(28, 16, 24, 0.05);
-  --crm-shadow-lg: 0 12px 48px rgba(28, 16, 24, 0.08);
+   /* ── Shadows (brand-aligned)
+    * Soft: 0 18px 50px rgba(27,13,20,0.08) — per brand spec
+    * Strong: 0 24px 80px rgba(8,5,7,0.28) — per brand spec
+    */
+   --crm-shadow: 0 18px 50px rgba(27, 13, 20, 0.06);
+   --crm-shadow-strong: 0 24px 80px rgba(8, 5, 7, 0.18);
+
+   /* ── Border Radius (brand-aligned)
+    * sm: 8px — pills, buttons, small badges
+    * md: 16px — panels, cards
+    * lg: 24px — large panels, sections
+    */
+   --crm-radius-sm: 8px;
+   --crm-radius-md: 16px;
+   --crm-radius-lg: 24px;
 
   color-scheme: light;
 }
@@ -84,7 +99,7 @@ body.crm-body {
   background: var(--crm-bg);
   color: var(--crm-text);
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -116,21 +131,21 @@ a, button, input, select, textarea {
 
 .crm-panel {
   border: 1px solid var(--crm-border);
-  border-radius: 1.5rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel);
   box-shadow: var(--crm-shadow);
 }
 
 .crm-panel-strong {
   border: 1px solid var(--crm-border-strong);
-  border-radius: 1.75rem;
+  border-radius: var(--crm-radius-lg);
   background: var(--crm-panel-strong);
   box-shadow: var(--crm-shadow);
 }
 
 .crm-panel-soft {
   border: 1px solid var(--crm-border);
-  border-radius: 1.25rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel-soft);
 }
 
@@ -139,7 +154,7 @@ a, button, input, select, textarea {
 .crm-link-tile {
   display: block;
   border: 1px solid var(--crm-border);
-  border-radius: 1.25rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel-soft);
   padding: 1.05rem 1.1rem;
 }
@@ -155,7 +170,7 @@ a, button, input, select, textarea {
 .crm-input {
   width: 100%;
   border: 1px solid var(--crm-border-strong);
-  border-radius: 1rem;
+  border-radius: var(--crm-radius-sm);
   background: var(--crm-panel);
   color: var(--crm-text);
   padding: 0.75rem 1rem;
@@ -178,7 +193,7 @@ a, button, input, select, textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--crm-radius-sm);
   padding: 0.75rem 1.25rem;
   font-size: 0.9rem;
   font-weight: 700;
@@ -193,7 +208,7 @@ a, button, input, select, textarea {
 
 .crm-button-primary:hover {
   background: var(--crm-accent-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(196, 22, 90, 0.25);
 }
 
@@ -215,7 +230,7 @@ a, button, input, select, textarea {
 }
 
 .crm-button-accent:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(196, 22, 90, 0.35);
 }
 
@@ -235,7 +250,7 @@ a, button, input, select, textarea {
 .crm-table-wrap {
   overflow: hidden;
   border: 1px solid var(--crm-border);
-  border-radius: 1.5rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel);
   box-shadow: var(--crm-shadow);
 }
@@ -256,6 +271,14 @@ a, button, input, select, textarea {
   border-color: var(--crm-border);
 }
 
+.crm-table tbody tr {
+  border-top: 1px solid var(--crm-border);
+}
+
+.crm-table tbody tr:last-child {
+  border-bottom: 1px solid var(--crm-border);
+}
+
 .crm-table tr:hover {
   background: var(--crm-surface-hover);
 }
@@ -265,7 +288,7 @@ a, button, input, select, textarea {
 .crm-badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
+  border-radius: var(--crm-radius-sm);
   padding: 0.2rem 0.65rem;
   font-size: 0.72rem;
   font-weight: 600;
@@ -311,7 +334,7 @@ a, button, input, select, textarea {
 /* ── Alerts ── */
 
 .crm-alert {
-  border-radius: 1rem;
+  border-radius: var(--crm-radius-sm);
   padding: 0.875rem 1.125rem;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -345,7 +368,7 @@ a, button, input, select, textarea {
 
 .crm-empty {
   border: 1px dashed var(--crm-border);
-  border-radius: 1.35rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel-soft);
   padding: 2rem;
   text-align: center;
@@ -356,7 +379,7 @@ a, button, input, select, textarea {
 
 .crm-page-header {
   border: 1px solid var(--crm-border-strong);
-  border-radius: 1.75rem;
+  border-radius: var(--crm-radius-lg);
   background:
     radial-gradient(circle at top right, rgba(196, 22, 90, 0.06), transparent 28%),
     radial-gradient(circle at top left, rgba(196, 22, 90, 0.04), transparent 32%),
@@ -375,7 +398,7 @@ a, button, input, select, textarea {
 
 .crm-metric-card {
   border: 1px solid var(--crm-border);
-  border-radius: 1.5rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel);
   padding: 1.25rem;
   box-shadow: var(--crm-shadow);
@@ -391,7 +414,7 @@ a, button, input, select, textarea {
 
 .crm-form-section {
   border: 1px solid var(--crm-border);
-  border-radius: 1.5rem;
+  border-radius: var(--crm-radius-md);
   background: var(--crm-panel);
   padding: 1.5rem;
   box-shadow: var(--crm-shadow);
@@ -421,7 +444,7 @@ a, button, input, select, textarea {
 .crm-main select {
   width: 100%;
   border: 1px solid var(--crm-border-strong);
-  border-radius: 1rem;
+  border-radius: var(--crm-radius-sm);
   background: var(--crm-panel);
   color: var(--crm-text);
   padding: 0.75rem 1rem;
@@ -454,26 +477,50 @@ a, button, input, select, textarea {
   color: var(--crm-sidebar-text);
 }
 
-.crm-sidebar a {
+.crm-sidebar a,
+.crm-sidebar-link {
   color: var(--crm-sidebar-text);
   transition: background-color 160ms ease, color 160ms ease;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
 }
 
-.crm-sidebar a:hover {
+.crm-sidebar a:hover,
+.crm-sidebar-link:hover {
   background: var(--crm-sidebar-hover);
   color: var(--crm-sidebar-text-active);
 }
 
 .crm-sidebar a[aria-current="page"],
-.crm-sidebar a.active {
+.crm-sidebar a.active,
+.crm-sidebar-link--active {
   background: var(--crm-sidebar-accent-bg);
   color: var(--crm-accent-light);
+}
+
+/* ── Screen Reader Only ── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* ── Guarantee Badge ── */
 
 .crm-guarantee {
-  border-radius: 1rem;
+  border-radius: var(--crm-radius-sm);
   padding: 1rem 1.25rem;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
   border: 1px solid rgba(16, 185, 129, 0.2);
@@ -482,14 +529,15 @@ a, button, input, select, textarea {
 /* ── Responsive ── */
 
 @media (max-width: 1023px) {
-  .crm-sidebar {
+   --crm-sidebar-bg: var(--crm-bg);
+   .crm-sidebar {
     border-right: 0;
     border-bottom: 1px solid var(--crm-sidebar-border);
-  }
+   }
 }
 
 @media (min-width: 768px) {
-  .crm-main {
+   .crm-main {
     padding: 2rem;
-  }
+   }
 }

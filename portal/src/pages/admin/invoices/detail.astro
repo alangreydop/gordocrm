@@ -5,18 +5,18 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 ---
 
 <AdminLayout title="Detalle de Factura">
-  <div class="space-y-6">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
     <!-- Header -->
     <section class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <a href="/admin/invoices" class="text-zinc-400 hover:text-white transition">
+        <a href="/admin/invoices" class="text-crm-muted hover:text-crm-text transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </a>
         <div>
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Factura</p>
-          <h1 id="invoice-number" class="mt-2 text-3xl font-black tracking-tight text-white">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Factura</p>
+          <h1 id="invoice-number" class="mt-2 text-3xl font-black tracking-tight text-crm-text">
             Cargando...
           </h1>
           <p id="invoice-status" class="mt-2 text-sm"></p>
@@ -32,39 +32,39 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Client Info -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Cliente</h2>
-          <div id="client-info" class="text-sm text-zinc-400">
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Cliente</h2>
+          <div id="client-info" class="text-sm text-crm-muted">
             Cargando...
           </div>
         </section>
 
         <!-- Issuer Info -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Emisor</h2>
-          <div id="issuer-info" class="text-sm text-zinc-400">
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Emisor</h2>
+          <div id="issuer-info" class="text-sm text-crm-muted">
             Cargando...
           </div>
         </section>
 
         <!-- Lines -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Líneas de factura</h2>
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Líneas de factura</h2>
           <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
-              <thead class="border-b border-zinc-800">
+              <thead class="border-b border-crm-border">
                 <tr>
-                  <th class="py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Descripción</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Cant.</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Precio</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Subtotal</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">IVA</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Total</th>
+                  <th class="py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Descripción</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Cant.</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Precio</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Subtotal</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">IVA</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Total</th>
                 </tr>
               </thead>
-              <tbody id="lines-body" class="divide-y divide-zinc-800">
+              <tbody id="lines-body" class="divide-y divide-crm-border">
                 <tr>
-                  <td colspan="6" class="py-4 text-center text-zinc-500">Cargando líneas...</td>
+                  <td colspan="6" class="py-4 text-center text-crm-text-secondary">Cargando líneas...</td>
                 </tr>
               </tbody>
             </table>
@@ -73,73 +73,73 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       </div>
 
       <!-- Sidebar -->
-      <div class="space-y-6">
+      <div class="space-y-6" role="region" aria-label="Contenido principal">
         <!-- Totals -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Importes</h2>
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Importes</h2>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
-              <span class="text-zinc-400">Subtotal</span>
-              <span id="subtotal-display" class="text-white">€0,00</span>
+              <span class="text-crm-muted">Subtotal</span>
+              <span id="subtotal-display" class="text-crm-text">€0,00</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-zinc-400">IVA (21%)</span>
-              <span id="tax-display" class="text-white">€0,00</span>
+              <span class="text-crm-muted">IVA (21%)</span>
+              <span id="tax-display" class="text-crm-text">€0,00</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-zinc-400">IRPF</span>
-              <span id="irpf-display" class="text-white">€0,00</span>
+              <span class="text-crm-muted">IRPF</span>
+              <span id="irpf-display" class="text-crm-text">€0,00</span>
             </div>
-            <div class="border-t border-zinc-800 pt-3 flex justify-between text-lg font-bold">
-              <span class="text-white">Total</span>
-              <span id="total-display" class="text-white">€0,00</span>
+            <div class="border-t border-crm-border pt-3 flex justify-between text-lg font-bold">
+              <span class="text-crm-text">Total</span>
+              <span id="total-display" class="text-crm-text">€0,00</span>
             </div>
           </div>
         </section>
 
         <!-- Payment Info -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Pago</h2>
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Pago</h2>
           <div class="space-y-3 text-sm">
             <div>
-              <span class="text-zinc-400">Vencimiento</span>
-              <p id="due-date-display" class="mt-1 font-medium text-white">—</p>
+              <span class="text-crm-muted">Vencimiento</span>
+              <p id="due-date-display" class="mt-1 font-medium text-crm-text">—</p>
             </div>
             <div>
-              <span class="text-zinc-400">Método</span>
-              <p id="payment-method-display" class="mt-1 font-medium text-white">—</p>
+              <span class="text-crm-muted">Método</span>
+              <p id="payment-method-display" class="mt-1 font-medium text-crm-text">—</p>
             </div>
             <div>
-              <span class="text-zinc-400">Notas</span>
-              <p id="payment-notes-display" class="mt-1 text-zinc-300">—</p>
+              <span class="text-crm-muted">Notas</span>
+              <p id="payment-notes-display" class="mt-1 text-crm-text-secondary">—</p>
             </div>
           </div>
         </section>
 
         <!-- Metadata -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Metadata</h2>
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Metadata</h2>
           <div class="space-y-3 text-sm">
             <div>
-              <span class="text-zinc-400">Fecha de emisión</span>
-              <p id="issue-date-display" class="mt-1 font-medium text-white">—</p>
+              <span class="text-crm-muted">Fecha de emisión</span>
+              <p id="issue-date-display" class="mt-1 font-medium text-crm-text">—</p>
             </div>
             <div>
-              <span class="text-zinc-400">Año fiscal</span>
-              <p id="fiscal-year-display" class="mt-1 font-medium text-white">—</p>
+              <span class="text-crm-muted">Año fiscal</span>
+              <p id="fiscal-year-display" class="mt-1 font-medium text-crm-text">—</p>
             </div>
             <div>
-              <span class="text-zinc-400">Serie</span>
-              <p id="series-display" class="mt-1 font-medium text-white">—</p>
+              <span class="text-crm-muted">Serie</span>
+              <p id="series-display" class="mt-1 font-medium text-crm-text">—</p>
             </div>
           </div>
         </section>
 
         <!-- Audit Log -->
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-          <h2 class="text-lg font-semibold text-white mb-4">Actividad</h2>
+        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+          <h2 class="text-lg font-semibold text-crm-text mb-4">Actividad</h2>
           <div id="audit-log" class="space-y-2 text-sm">
-            <p class="text-zinc-500">Cargando actividad...</p>
+            <p class="text-crm-text-secondary">Cargando actividad...</p>
           </div>
         </section>
       </div>
@@ -159,12 +159,12 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
     };
 
     const statusClasses = {
-      draft: 'bg-zinc-800 text-zinc-300',
-      issued: 'bg-blue-900/30 text-blue-300 border border-blue-800/50',
-      sent: 'bg-violet-900/30 text-violet-300 border border-violet-800/50',
-      paid: 'bg-emerald-900/30 text-emerald-300 border border-emerald-800/50',
-      cancelled: 'bg-red-900/30 text-red-300 border border-red-800/50',
-      overdue: 'bg-amber-900/30 text-amber-300 border border-amber-800/50',
+      draft: 'crm-badge-default',
+      issued: 'crm-badge-warning',
+      sent: 'crm-badge-info',
+      paid: 'crm-badge-success',
+      cancelled: 'crm-badge-danger',
+      overdue: 'crm-badge-warning',
     };
 
     const formatMoney = (cents) => {
@@ -200,7 +200,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       if (invoice.status === 'draft') {
         buttons.push(`
-          <button onclick="issueInvoice()" class="rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-500">
+          <button onclick="issueInvoice()" class="crm-button crm-button-primary">
             Emitir factura
           </button>
         `);
@@ -208,7 +208,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       if (['issued', 'sent'].includes(invoice.status)) {
         buttons.push(`
-          <button onclick="sendInvoice()" class="rounded-full bg-violet-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-violet-500">
+          <button onclick="sendInvoice()" class="crm-button crm-button-primary">
             Enviar por email
           </button>
         `);
@@ -216,7 +216,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       if (['issued', 'sent', 'overdue'].includes(invoice.status)) {
         buttons.push(`
-          <button onclick="markAsPaid()" class="rounded-full bg-emerald-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-500">
+          <button onclick="markAsPaid()" class="crm-button crm-button-success">
             Marcar como pagada
           </button>
         `);
@@ -224,7 +224,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
       if (['draft', 'issued', 'sent'].includes(invoice.status)) {
         buttons.push(`
-          <button onclick="cancelInvoice()" class="rounded-full border border-rose-700 bg-rose-950/20 px-6 py-3 text-sm font-bold text-rose-400 transition hover:border-rose-600 hover:text-rose-300">
+          <button onclick="cancelInvoice()" class="crm-button crm-button-danger">
             Cancelar
           </button>
         `);
@@ -347,7 +347,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         // Render header
         document.getElementById('invoice-number').textContent = invoice.invoiceNumber;
         document.getElementById('invoice-status').innerHTML = `
-          <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${statusClasses[invoice.status]}">
+          <span class="crm-badge ${statusClasses[invoice.status]}">
             ${statusLabels[invoice.status]}
           </span>
         `;
@@ -357,16 +357,16 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 
         // Render client info
         document.getElementById('client-info').innerHTML = `
-          <p class="font-medium text-white">${escapeHtml(invoice.clientLegalName)}</p>
+          <p class="font-medium text-crm-text">${escapeHtml(invoice.clientLegalName)}</p>
           <p>NIF: ${escapeHtml(invoice.clientTaxId)}</p>
           <p>${escapeHtml(invoice.clientAddressLine1)}</p>
           <p>${escapeHtml(invoice.clientPostalCode)} ${escapeHtml(invoice.clientCity)}</p>
-          <p class="mt-2 text-zinc-500">${escapeHtml(invoice.clientEmail)}</p>
+          <p class="mt-2 text-crm-text-secondary">${escapeHtml(invoice.clientEmail)}</p>
         `;
 
         // Render issuer info
         document.getElementById('issuer-info').innerHTML = `
-          <p class="font-medium text-white">${escapeHtml(invoice.issuerLegalName)}</p>
+          <p class="font-medium text-crm-text">${escapeHtml(invoice.issuerLegalName)}</p>
           <p>NIF: ${escapeHtml(invoice.issuerTaxId)}</p>
           <p>${escapeHtml(invoice.issuerAddressLine1)}</p>
           <p>${escapeHtml(invoice.issuerPostalCode)} ${escapeHtml(invoice.issuerCity)}</p>
@@ -377,7 +377,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         // For now, show placeholder - items would need separate endpoint or include
         linesBody.innerHTML = `
           <tr>
-            <td colspan="6" class="py-4 text-center text-zinc-500">Líneas no disponibles en esta vista</td>
+            <td colspan="6" class="py-4 text-center text-crm-muted">Líneas no disponibles en esta vista</td>
           </tr>
         `;
 
@@ -400,13 +400,13 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         // Render audit log
         if (data.logs && data.logs.length > 0) {
           document.getElementById('audit-log').innerHTML = data.logs.map(log => `
-            <div class="flex items-center gap-2 text-zinc-400">
-              <span class="w-2 h-2 rounded-full bg-zinc-600"></span>
+            <div class="flex items-center gap-2 text-crm-muted">
+              <span class="w-2 h-2 rounded-full bg-crm-surface-hover"></span>
               <span>${escapeHtml(log.action)} - ${formatDate(log.createdAt)}</span>
             </div>
           `).join('');
         } else {
-          document.getElementById('audit-log').innerHTML = '<p class="text-zinc-500">Sin actividad registrada</p>';
+          document.getElementById('audit-log').innerHTML = '<p class="text-crm-text-secondary">Sin actividad registrada</p>';
         }
 
       } catch (error) {

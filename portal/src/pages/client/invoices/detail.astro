@@ -3,14 +3,14 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Detalle de Factura">
-  <div class="max-w-4xl mx-auto space-y-8">
+  <div class="max-w-4xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
     <div class="flex items-center gap-4">
-      <a href="/client/invoices" class="text-zinc-400 hover:text-white transition">← Volver</a>
-      <h1 class="text-3xl font-bold text-white" id="invoice-number">Factura</h1>
+      <a href="/client/invoices" class="text-crm-muted hover:text-crm-text transition">← Volver</a>
+      <h1 class="text-3xl font-bold text-crm-text" id="invoice-number">Factura</h1>
     </div>
 
-    <div id="invoice-detail" class="space-y-6">
-      <div class="text-center text-zinc-500 py-12">Cargando...</div>
+    <div id="invoice-detail" class="space-y-6" role="region" aria-label="Contenido principal">
+      <div class="text-center text-crm-text-secondary py-12">Cargando...</div>
     </div>
   </div>
 
@@ -26,12 +26,12 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
       const getStatusBadge = (status: string) => {
         const badges: Record<string, string> = {
-          draft: 'bg-zinc-800 text-zinc-400',
-          issued: 'bg-yellow-500/20 text-yellow-400',
-          sent: 'bg-blue-500/20 text-blue-400',
-          paid: 'bg-green-500/20 text-green-400',
-          cancelled: 'bg-red-500/20 text-red-400',
-          overdue: 'bg-orange-500/20 text-orange-400',
+          draft: 'bg-crm-panel-soft text-crm-muted',
+          issued: 'bg-crm-warning/20 text-crm-warning',
+          sent: 'bg-crm-info/20 text-crm-info',
+          paid: 'bg-crm-success/20 text-crm-success',
+          cancelled: 'bg-crm-danger/20 text-crm-danger',
+          overdue: 'bg-crm-danger/20 text-crm-danger',
         };
         const labels: Record<string, string> = {
           draft: 'Borrador',
@@ -48,7 +48,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
       const invoiceId = urlParams.get('id');
 
       if (!invoiceId) {
-        detailEl!.innerHTML = '<div class="text-red-400 py-12 text-center">ID de factura no proporcionado</div>';
+        detailEl!.innerHTML = '<div class="text-crm-danger py-12 text-center">ID de factura no proporcionado</div>';
         return;
       }
 
@@ -58,7 +58,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           const { invoice, items } = response;
 
           if (!invoice) {
-            detailEl!.innerHTML = '<div class="text-red-400">Factura no encontrada</div>';
+            detailEl!.innerHTML = '<div class="text-crm-danger">Factura no encontrada</div>';
             return;
           }
 
@@ -68,51 +68,51 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
           detailEl!.innerHTML = `
             <!-- Header -->
-            <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-8">
+            <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-8">
               <div class="flex items-start justify-between mb-8">
                 <div>
-                  <h2 class="text-2xl font-bold text-white mb-2">${invoice.issuerLegalName}</h2>
-                  <p class="text-zinc-400 text-sm">NIF: ${invoice.issuerTaxId}</p>
-                  <p class="text-zinc-400 text-sm">${invoice.issuerEmail}</p>
+                  <h2 class="text-2xl font-bold text-crm-text mb-2">${invoice.issuerLegalName}</h2>
+                  <p class="text-crm-muted text-sm">NIF: ${invoice.issuerTaxId}</p>
+                  <p class="text-crm-muted text-sm">${invoice.issuerEmail}</p>
                 </div>
                 <div class="text-right">
-                  <div class="text-3xl font-bold text-white mb-2">${formatMoney(invoice.totalCents)}</div>
+                  <div class="text-3xl font-bold text-crm-text mb-2">${formatMoney(invoice.totalCents)}</div>
                   ${getStatusBadge(invoice.status)}
                 </div>
               </div>
 
               <!-- Info grid -->
-              <div class="grid md:grid-cols-2 gap-6 pt-6 border-t border-zinc-800">
+              <div class="grid md:grid-cols-2 gap-6 pt-6 border-t border-crm-border">
                 <div>
-                  <h3 class="text-sm font-semibold text-zinc-500 uppercase mb-3">Facturar a</h3>
-                  <p class="text-white font-medium">${invoice.clientLegalName}</p>
-                  <p class="text-zinc-400 text-sm">NIF: ${invoice.clientTaxId}</p>
-                  <p class="text-zinc-400 text-sm">${invoice.clientAddressLine1}</p>
-                  <p class="text-zinc-400 text-sm">${invoice.clientPostalCode} ${invoice.clientCity}</p>
+                  <h3 class="text-sm font-semibold text-crm-text-secondary uppercase mb-3">Facturar a</h3>
+                  <p class="text-crm-text font-medium">${invoice.clientLegalName}</p>
+                  <p class="text-crm-muted text-sm">NIF: ${invoice.clientTaxId}</p>
+                  <p class="text-crm-muted text-sm">${invoice.clientAddressLine1}</p>
+                  <p class="text-crm-muted text-sm">${invoice.clientPostalCode} ${invoice.clientCity}</p>
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold text-zinc-500 uppercase mb-3">Detalles</h3>
+                  <h3 class="text-sm font-semibold text-crm-text-secondary uppercase mb-3">Detalles</h3>
                   <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
-                      <span class="text-zinc-400">Número:</span>
-                      <span class="text-white font-medium">${invoice.invoiceNumber}</span>
+                      <span class="text-crm-muted">Número:</span>
+                      <span class="text-crm-text font-medium">${invoice.invoiceNumber}</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-zinc-400">Fecha:</span>
-                      <span class="text-white">${new Date(invoice.issueDate).toLocaleDateString('es-ES')}</span>
+                      <span class="text-crm-muted">Fecha:</span>
+                      <span class="text-crm-text">${new Date(invoice.issueDate).toLocaleDateString('es-ES')}</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-zinc-400">Vencimiento:</span>
-                      <span class="text-white">${new Date(invoice.dueDate).toLocaleDateString('es-ES')}</span>
+                      <span class="text-crm-muted">Vencimiento:</span>
+                      <span class="text-crm-text">${new Date(invoice.dueDate).toLocaleDateString('es-ES')}</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-zinc-400">Método de pago:</span>
-                      <span class="text-white">${invoice.paymentMethod || 'Transferencia bancaria'}</span>
+                      <span class="text-crm-muted">Método de pago:</span>
+                      <span class="text-crm-text">${invoice.paymentMethod || 'Transferencia bancaria'}</span>
                     </div>
                     ${invoice.paidAt ? `
                       <div class="flex justify-between">
-                        <span class="text-zinc-400">Pagada el:</span>
-                        <span class="text-green-400">${new Date(invoice.paidAt).toLocaleDateString('es-ES')}</span>
+                        <span class="text-crm-muted">Pagada el:</span>
+                        <span class="text-crm-success">${new Date(invoice.paidAt).toLocaleDateString('es-ES')}</span>
                       </div>
                     ` : ''}
                   </div>
@@ -120,31 +120,31 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
               </div>
 
               ${invoice.description ? `
-                <div class="pt-6 border-t border-zinc-800">
-                  <h3 class="text-sm font-semibold text-zinc-500 uppercase mb-2">Descripción</h3>
-                  <p class="text-zinc-300">${invoice.description}</p>
+                <div class="pt-6 border-t border-crm-border">
+                  <h3 class="text-sm font-semibold text-crm-text-secondary uppercase mb-2">Descripción</h3>
+                  <p class="text-crm-text-secondary">${invoice.description}</p>
                 </div>
               ` : ''}
             </div>
 
             <!-- Line items -->
-            <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+            <div class="rounded-3xl border border-crm-border bg-crm-bg-alt overflow-hidden">
               <table class="w-full text-sm">
-                <thead class="bg-zinc-950 border-b border-zinc-800">
+                <thead class="bg-crm-bg-alt border-b border-crm-border">
                   <tr>
-                    <th class="text-left py-4 px-6 text-zinc-400 font-medium">Concepto</th>
-                    <th class="text-center py-4 px-6 text-zinc-400 font-medium">Cant.</th>
-                    <th class="text-right py-4 px-6 text-zinc-400 font-medium">Precio</th>
-                    <th class="text-right py-4 px-6 text-zinc-400 font-medium">Total</th>
+                    <th class="text-left py-4 px-6 text-crm-muted font-medium">Concepto</th>
+                    <th class="text-center py-4 px-6 text-crm-muted font-medium">Cant.</th>
+                    <th class="text-right py-4 px-6 text-crm-muted font-medium">Precio</th>
+                    <th class="text-right py-4 px-6 text-crm-muted font-medium">Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${(items || []).map((item: any) => `
-                    <tr class="border-b border-zinc-800 last:border-0">
-                      <td class="py-4 px-6 text-white">${item.description}</td>
-                      <td class="py-4 px-6 text-center text-zinc-400">${item.quantity}</td>
-                      <td class="py-4 px-6 text-right text-zinc-400">${formatMoney(item.unitPriceCents)}</td>
-                      <td class="py-4 px-6 text-right text-white font-medium">${formatMoney(item.totalCents)}</td>
+                    <tr class="border-b border-crm-border last:border-0">
+                      <td class="py-4 px-6 text-crm-text">${item.description}</td>
+                      <td class="py-4 px-6 text-center text-crm-muted">${item.quantity}</td>
+                      <td class="py-4 px-6 text-right text-crm-muted">${formatMoney(item.unitPriceCents)}</td>
+                      <td class="py-4 px-6 text-right text-crm-text font-medium">${formatMoney(item.totalCents)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -152,25 +152,25 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
             </div>
 
             <!-- Totals -->
-            <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 p-6 ml-auto max-w-sm">
+            <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 ml-auto max-w-sm">
               <div class="space-y-3">
                 <div class="flex justify-between text-sm">
-                  <span class="text-zinc-400">Subtotal</span>
-                  <span class="text-white">${formatMoney(invoice.subtotalCents)}</span>
+                  <span class="text-crm-muted">Subtotal</span>
+                  <span class="text-crm-text">${formatMoney(invoice.subtotalCents)}</span>
                 </div>
                 <div class="flex justify-between text-sm">
-                  <span class="text-zinc-400">IVA (21%)</span>
-                  <span class="text-white">${formatMoney(invoice.taxAmountCents)}</span>
+                  <span class="text-crm-muted">IVA (21%)</span>
+                  <span class="text-crm-text">${formatMoney(invoice.taxAmountCents)}</span>
                 </div>
                 ${invoice.irpfAmountCents ? `
                   <div class="flex justify-between text-sm">
-                    <span class="text-zinc-400">IRPF</span>
-                    <span class="text-red-400">-${formatMoney(invoice.irpfAmountCents)}</span>
+                    <span class="text-crm-muted">IRPF</span>
+                    <span class="text-crm-danger">-${formatMoney(invoice.irpfAmountCents)}</span>
                   </div>
                 ` : ''}
-                <div class="flex justify-between text-lg font-bold pt-3 border-t border-zinc-800">
-                  <span class="text-white">Total</span>
-                  <span class="text-white">${formatMoney(invoice.totalCents)}</span>
+                <div class="flex justify-between text-lg font-bold pt-3 border-t border-crm-border">
+                  <span class="text-crm-text">Total</span>
+                  <span class="text-crm-text">${formatMoney(invoice.totalCents)}</span>
                 </div>
               </div>
             </div>
@@ -180,12 +180,12 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
               ${!isPaid ? `
                 <button
                   onclick="uploadPaymentProof()"
-                  class="px-6 py-3 rounded-2xl bg-white text-black font-bold hover:bg-zinc-200 transition"
+                  class="crm-button crm-button-primary"
                 >
                   Subir justificante de pago
                 </button>
               ` : `
-                <div class="text-green-400 text-sm font-medium">
+                <div class="text-crm-success text-sm font-medium">
                   ✓ Factura pagada el ${new Date(invoice.paidAt).toLocaleDateString('es-ES')}
                 </div>
               `}
@@ -194,7 +194,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         } catch (e) {
           console.error('Failed to load invoice:', e);
           detailEl!.innerHTML = `
-            <div class="text-red-400 py-12 text-center">
+            <div class="text-crm-danger py-12 text-center">
               Error cargando la factura. Intenta de nuevo.
             </div>
           `;

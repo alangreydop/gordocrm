@@ -3,15 +3,15 @@ layout: '../../../layouts/AdminLayout.astro'
 title: 'Gestión de Facturas'
 ---
 
-<div class="max-w-7xl mx-auto space-y-8">
+<div class="max-w-7xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-white">Facturas</h1>
-      <p class="text-zinc-400 mt-1">Gestión completa de facturación</p>
+      <h1 class="text-3xl font-bold text-crm-text">Facturas</h1>
+      <p class="text-crm-muted mt-1">Gestión completa de facturación</p>
     </div>
     <button
       onclick="openCreateModal()"
-      class="rounded-2xl bg-white px-6 py-3 font-bold text-black hover:bg-zinc-200 transition"
+      class="crm-button crm-button-primary"
     >
       + Nueva factura
     </button>
@@ -19,7 +19,7 @@ title: 'Gestión de Facturas'
 
   <!-- Filters -->
   <div class="flex gap-4">
-    <select id="status-filter" class="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-white">
+    <select id="status-filter" class="rounded-xl border border-crm-border bg-crm-bg-alt px-4 py-2 text-crm-text">
       <option value="">Todos los estados</option>
       <option value="draft">Borrador</option>
       <option value="issued">Emitida</option>
@@ -30,16 +30,16 @@ title: 'Gestión de Facturas'
   </div>
 
   <!-- Invoices table -->
-  <div class="rounded-3xl border border-zinc-800 bg-zinc-900/50 overflow-hidden">
+  <div class="rounded-3xl border border-crm-border bg-crm-bg-alt overflow-hidden">
     <table class="w-full text-sm">
-      <thead class="bg-zinc-950 border-b border-zinc-800">
+      <thead class="bg-crm-bg-alt border-b border-crm-border">
         <tr>
-          <th class="text-left py-4 px-6 text-zinc-400 font-medium">Factura</th>
-          <th class="text-left py-4 px-6 text-zinc-400 font-medium">Cliente</th>
-          <th class="text-center py-4 px-6 text-zinc-400 font-medium">Estado</th>
-          <th class="text-right py-4 px-6 text-zinc-400 font-medium">Importe</th>
-          <th class="text-right py-4 px-6 text-zinc-400 font-medium">Vencimiento</th>
-          <th class="text-right py-4 px-6 text-zinc-400 font-medium">Acciones</th>
+          <th class="text-left py-4 px-6 text-crm-muted font-medium">Factura</th>
+          <th class="text-left py-4 px-6 text-crm-muted font-medium">Cliente</th>
+          <th class="text-center py-4 px-6 text-crm-muted font-medium">Estado</th>
+          <th class="text-right py-4 px-6 text-crm-muted font-medium">Importe</th>
+          <th class="text-right py-4 px-6 text-crm-muted font-medium">Vencimiento</th>
+          <th class="text-right py-4 px-6 text-crm-muted font-medium">Acciones</th>
         </tr>
       </thead>
       <tbody id="invoices-body"></tbody>
@@ -48,34 +48,34 @@ title: 'Gestión de Facturas'
 </div>
 
 <!-- Create Modal -->
-<div id="create-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
-  <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+<div id="create-modal" class="fixed inset-0 hidden items-center justify-center z-50" style="background-color: rgba(0,0,0,0.8);">
+  <div class="bg-crm-bg-alt rounded-3xl border border-crm-border p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold text-white">Nueva factura</h2>
-      <button onclick="closeCreateModal()" class="text-zinc-400 hover:text-white">✕</button>
+      <h2 class="text-xl font-bold text-crm-text">Nueva factura</h2>
+      <button onclick="closeCreateModal()" class="text-crm-muted hover:text-crm-text">✕</button>
     </div>
 
     <form id="create-form" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-2">Cliente</label>
-        <select id="client-select" required class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white">
+        <label class="block text-sm font-medium text-crm-muted mb-2">Cliente</label>
+        <select id="client-select" required class="w-full rounded-xl border border-crm-border bg-crm-bg-alt px-4 py-3 text-crm-text">
           <option value="">Seleccionar cliente...</option>
         </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-2">Descripción</label>
-        <input type="text" id="description" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white" placeholder="Ej: Producción de contenidos - Marzo 2026" />
+        <label class="block text-sm font-medium text-crm-muted mb-2">Descripción</label>
+        <input type="text" id="description" class="w-full rounded-xl border border-crm-border bg-crm-bg-alt px-4 py-3 text-crm-text" placeholder="Ej: Producción de contenidos - Marzo 2026" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-2">Vencimiento</label>
-        <input type="date" id="due-date" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white" />
+        <label class="block text-sm font-medium text-crm-muted mb-2">Vencimiento</label>
+        <input type="date" id="due-date" class="w-full rounded-xl border border-crm-border bg-crm-bg-alt px-4 py-3 text-crm-text" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-zinc-400 mb-2">Método de pago</label>
-        <select id="payment-method" class="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3 text-white">
+        <label class="block text-sm font-medium text-crm-muted mb-2">Método de pago</label>
+        <select id="payment-method" class="w-full rounded-xl border border-crm-border bg-crm-bg-alt px-4 py-3 text-crm-text">
           <option value="Transferencia bancaria">Transferencia bancaria</option>
           <option value="Tarjeta">Tarjeta</option>
           <option value="Efectivo">Efectivo</option>
@@ -83,18 +83,18 @@ title: 'Gestión de Facturas'
       </div>
 
       <div id="items-container" class="space-y-3">
-        <h3 class="text-sm font-semibold text-zinc-500 uppercase">Conceptos</h3>
+        <h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>
       </div>
 
-      <button type="button" onclick="addItem()" class="w-full rounded-xl border border-dashed border-zinc-700 py-3 text-zinc-400 hover:text-white hover:border-zinc-500 transition">
+      <button type="button" onclick="addItem()" class="w-full rounded-xl border border-dashed border-crm-border-strong py-3 text-crm-muted hover:text-crm-text hover:border-crm-accent transition">
         + Añadir concepto
       </button>
 
       <div class="flex gap-3 pt-4">
-        <button type="button" onclick="closeCreateModal()" class="flex-1 rounded-xl border border-zinc-800 py-3 text-zinc-400 hover:text-white">
+        <button type="button" onclick="closeCreateModal()" class="crm-button crm-button-secondary flex-1">
           Cancelar
         </button>
-        <button type="submit" class="flex-1 rounded-xl bg-white py-3 font-bold text-black hover:bg-zinc-200">
+        <button type="submit" class="crm-button crm-button-primary flex-1">
           Crear factura
         </button>
       </div>
@@ -131,12 +131,12 @@ title: 'Gestión de Facturas'
 
     const getStatusBadge = (status: string) => {
       const badges: Record<string, string> = {
-        draft: 'bg-zinc-800 text-zinc-400',
-        issued: 'bg-yellow-500/20 text-yellow-400',
-        sent: 'bg-blue-500/20 text-blue-400',
-        paid: 'bg-green-500/20 text-green-400',
-        cancelled: 'bg-red-500/20 text-red-400',
-        overdue: 'bg-orange-500/20 text-orange-400',
+        draft: 'crm-badge-default',
+        issued: 'crm-badge-warning',
+        sent: 'crm-badge-info',
+        paid: 'crm-badge-success',
+        cancelled: 'crm-badge-danger',
+        overdue: 'crm-badge-warning',
       };
       const labels: Record<string, string> = {
         draft: 'Borrador',
@@ -146,7 +146,7 @@ title: 'Gestión de Facturas'
         cancelled: 'Cancelada',
         overdue: 'Vencida',
       };
-      return `<span class="px-3 py-1 rounded-full text-xs font-bold ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
+      return `<span class="crm-badge ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
     };
 
     const formatMoney = (cents: number) => `€${(cents / 100).toFixed(2)}`;
@@ -155,37 +155,37 @@ title: 'Gestión de Facturas'
       const tbody = document.getElementById('invoices-body');
 
       if (!invoices.length) {
-        tbody!.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-zinc-500">No hay facturas</td></tr>';
+        tbody!.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-crm-muted">No hay facturas</td></tr>';
         return;
       }
 
       tbody!.innerHTML = invoices
         .map(
           (inv: any) => `
-          <tr class="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/50">
+          <tr class="border-b border-crm-border last:border-0 hover:bg-crm-panel-soft/50">
             <td class="py-4 px-6">
-              <div class="font-medium text-white">${inv.invoiceNumber}</div>
-              <div class="text-xs text-zinc-500">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
+              <div class="font-medium text-crm-text">${inv.invoiceNumber}</div>
+              <div class="text-xs text-crm-text-secondary">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
             </td>
             <td class="py-4 px-6">
-              <div class="text-white">${inv.clientLegalName || 'Sin cliente'}</div>
-              <div class="text-xs text-zinc-500">${inv.clientTaxId || ''}</div>
+              <div class="text-crm-text">${inv.clientLegalName || 'Sin cliente'}</div>
+              <div class="text-xs text-crm-text-secondary">${inv.clientTaxId || ''}</div>
             </td>
             <td class="py-4 px-6 text-center">${getStatusBadge(inv.status)}</td>
-            <td class="py-4 px-6 text-right font-medium text-white">${formatMoney(inv.totalCents)}</td>
+            <td class="py-4 px-6 text-right font-medium text-crm-text">${formatMoney(inv.totalCents)}</td>
             <td class="py-4 px-6 text-right">
-              <div class="${new Date(inv.dueDate) < new Date() && inv.status !== 'paid' ? 'text-red-400' : 'text-zinc-400'}">
+              <div class="${new Date(inv.dueDate) < new Date() && inv.status !== 'paid' ? 'text-crm-danger' : 'text-crm-muted'}">
                 ${new Date(inv.dueDate).toLocaleDateString('es-ES')}
               </div>
             </td>
             <td class="py-4 px-6 text-right">
               <div class="flex gap-2 justify-end">
-                <a href="/admin/invoices/${inv.id}" class="text-zinc-400 hover:text-white text-sm">Ver</a>
+                <a href="/admin/invoices/${inv.id}" class="text-crm-muted hover:text-crm-text text-sm">Ver</a>
                 ${inv.status === 'draft' ? `
-                  <button onclick="issueInvoice('${inv.id}')" class="text-yellow-400 hover:text-yellow-300 text-sm">Emitir</button>
+                  <button onclick="issueInvoice('${inv.id}')" class="text-crm-warning hover:text-crm-accent text-sm">Emitir</button>
                 ` : ''}
                 ${inv.status === 'sent' || inv.status === 'issued' ? `
-                  <button onclick="markAsPaid('${inv.id}')" class="text-green-400 hover:text-green-300 text-sm">Pagar</button>
+                  <button onclick="markAsPaid('${inv.id}')" class="text-crm-success hover:text-crm-success text-sm">Pagar</button>
                 ` : ''}
               </div>
             </td>
@@ -216,18 +216,18 @@ title: 'Gestión de Facturas'
       document.getElementById('create-modal')!.classList.add('hidden');
       document.getElementById('create-modal')!.classList.remove('flex');
       document.getElementById('create-form')?.reset();
-      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-zinc-500 uppercase">Conceptos</h3>';
+      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>';
     };
 
     const addItem = () => {
       const container = document.getElementById('items-container');
       const index = container!.children.length - 1;
       const itemHtml = `
-        <div class="item-row grid grid-cols-12 gap-3 p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-          <input type="text" name="desc_${index}" placeholder="Concepto" required class="col-span-5 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-white text-sm" />
-          <input type="number" name="qty_${index}" placeholder="Cant." value="1" min="1" required class="col-span-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-white text-sm text-center" />
-          <input type="number" name="price_${index}" placeholder="€" min="0" step="0.01" required class="col-span-4 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-white text-sm" />
-          <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-400 hover:text-red-300">🗑</button>
+        <div class="item-row grid grid-cols-12 gap-3 p-3 rounded-xl bg-crm-bg-alt border border-crm-border">
+          <input type="text" name="desc_${index}" placeholder="Concepto" required class="col-span-5 rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-crm-text text-sm" />
+          <input type="number" name="qty_${index}" placeholder="Cant." value="1" min="1" required class="col-span-2 rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-crm-text text-sm text-center" />
+          <input type="number" name="price_${index}" placeholder="€" min="0" step="0.01" required class="col-span-4 rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-crm-text text-sm" />
+          <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-crm-danger hover:text-crm-danger">🗑</button>
         </div>
       `;
       container!.insertAdjacentHTML('beforeend', itemHtml);

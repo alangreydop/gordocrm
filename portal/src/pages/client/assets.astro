@@ -3,12 +3,12 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Mis Assets">
-  <div class="space-y-6">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
     <!-- Header -->
     <section class="crm-panel-strong p-6 md:p-8">
       <p class="crm-kicker">Biblioteca de assets</p>
-      <h1 class="mt-3 text-3xl font-black text-white md:text-5xl">Assets Aprobados</h1>
-      <p class="mt-2 text-sm text-slate-300">Todos tus assets aprobados listos para descarga</p>
+      <h1 class="mt-3 text-3xl font-black text-crm-text md:text-5xl">Assets Aprobados</h1>
+      <p class="mt-2 text-sm text-crm-muted">Todos tus assets aprobados listos para descarga</p>
     </section>
 
     <!-- Filters -->
@@ -41,7 +41,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     <!-- Assets Grid -->
     <section class="crm-panel p-6 md:p-7">
       <div id="assets-grid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <div class="col-span-full text-center py-12 text-slate-400">
+        <div class="col-span-full text-center py-12 text-crm-muted">
           Cargando assets...
         </div>
       </div>
@@ -101,7 +101,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           console.error('Error loading assets:', error);
           assetsGrid.innerHTML = `
             <div class="col-span-full text-center py-12">
-              <p class="text-slate-400">Error cargando assets</p>
+              <p class="text-crm-muted">Error cargando assets</p>
               <button onclick="window.location.reload()" class="crm-button crm-button-primary mt-4">
                 Recargar
               </button>
@@ -147,18 +147,18 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         if (pageAssets.length === 0) {
           assetsGrid.innerHTML = `
             <div class="col-span-full text-center py-12">
-              <p class="text-slate-400">No hay assets que coincidan con los filtros</p>
+              <p class="text-crm-muted">No hay assets que coincidan con los filtros</p>
             </div>
           `;
         } else {
           assetsGrid.innerHTML = pageAssets.map(asset => `
             <article class="crm-panel-soft p-4 group">
-              <div class="aspect-square rounded-xl bg-slate-800 overflow-hidden mb-3 relative">
+              <div class="aspect-square rounded-xl bg-crm-panel-soft overflow-hidden mb-3 relative">
                 ${asset.type === 'video'
                   ? `<video src="${asset.deliveryUrl || ''}" class="w-full h-full object-cover" muted loop playsinline></video>`
                   : `<img src="${asset.deliveryUrl || ''}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-full object-cover" />`
                 }
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                   ${asset.deliveryUrl
                     ? `<a href="${asset.deliveryUrl}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs">Ver</a>`
                     : ''
@@ -169,11 +169,11 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
                   }
                 </div>
               </div>
-              <p class="font-medium text-white text-sm truncate">${escapeHtml(asset.label || asset.type)}</p>
-              <p class="text-xs text-slate-400 truncate">${escapeHtml(asset.jobName)}</p>
+              <p class="font-medium text-crm-text text-sm truncate">${escapeHtml(asset.label || asset.type)}</p>
+              <p class="text-xs text-crm-muted truncate">${escapeHtml(asset.jobName)}</p>
               <div class="flex items-center justify-between mt-1">
-                <span class="text-xs text-slate-500">${formatDate(asset.createdAt)}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full ${asset.type === 'video' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'}">
+                <span class="text-xs text-crm-text-secondary">${formatDate(asset.createdAt)}</span>
+                <span class="text-xs px-2 py-0.5 rounded-full ${asset.type === 'video' ? 'bg-crm-accent/20 text-crm-accent' : 'bg-crm-info/20 text-crm-info'}">
                   ${asset.type}
                 </span>
               </div>
@@ -190,8 +190,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
                 onclick="currentPage = ${page}; renderAssets();"
                 class="w-8 h-8 rounded-full text-sm font-medium transition ${
                   currentPage === page
-                    ? 'bg-white text-black'
-                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                    ? 'bg-crm-accent text-crm-text'
+                    : 'bg-crm-panel-soft text-crm-muted hover:bg-crm-panel'
                 }"
               >
                 ${page}

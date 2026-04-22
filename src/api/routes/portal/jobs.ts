@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
 import { sendFeedbackConfirmationEmail, sendJobCompletionEmail } from '../../../lib/email.js';
+import { resolvePipelineId } from './pipeline-mappings.js';
 import type { AppContext } from '../../../types/index.js';
 
 // Helper para crear JWT compatible con AI Engine
@@ -421,12 +422,21 @@ jobRoutes.post('/', async (c) => {
     return c.json({ error: 'Client not found' }, 400);
   }
 
+  // Tool 1: Auto-select pipeline from mapping table
+  const mapping = await resolvePipelineId(
+    db,
+    body.data.clientSegment ?? client.segment,
+    body.data.type,
+    body.data.platform,
+  );
+
   const id = crypto.randomUUID();
   const now = new Date();
 
   await db.insert(schema.jobs).values({
     id,
     clientId: body.data.clientId,
+    pipelineId: mapping?.pipelineId ?? null,
     briefText: body.data.briefText ?? null,
     platform: body.data.platform ?? null,
     type: body.data.type ?? null,
@@ -436,7 +446,7 @@ jobRoutes.post('/', async (c) => {
     aiCostEstimated: body.data.aiCostEstimated ?? null,
     aiCostReal: body.data.aiCostReal ?? null,
     grossMarginEstimated: body.data.grossMarginEstimated ?? null,
-    clientSegment: body.data.clientSegment ?? null,
+    clientSegment: body.data.clientSegment ?? client.segment ?? null,
     marginProfile: body.data.marginProfile ?? null,
     assetDominant: body.data.assetDominant ?? null,
     legalRisk: body.data.legalRisk ?? null,
@@ -472,26 +482,37 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
   const id = c.req.param('id');
   const db = c.get('db');
 
-  // Obtener job con detalles del pipeline
-  const [job] = await db
+  // Obtener job con detalles del pipeline y brand graph del cliente
+  const [jobWithClient] = await db
     .select({
-      id: schema.jobs.id,
-      clientId: schema.jobs.clientId,
-      stackWinner: schema.jobs.stackWinner,
-      briefText: schema.jobs.briefText,
-      type: schema.jobs.type,
+      job: {
+        id: schema.jobs.id,
+        clientId: schema.jobs.clientId,
+        pipelineId: schema.jobs.pipelineId,
+        stackWinner: schema.jobs.stackWinner,
+        briefText: schema.jobs.briefText,
+        type: schema.jobs.type,
+        platform: schema.jobs.platform,
+      },
+      clientBrandGraph: schema.clients.brandGraph,
     })
     .from(schema.jobs)
+    .innerJoin(schema.clients, eq(schema.clients.id, schema.jobs.clientId))
     .where(eq(schema.jobs.id, id))
     .limit(1);
 
-  if (!job) {
+  if (!jobWithClient) {
     return c.json({ error: 'Job not found' }, 404);
   }
 
-  // TODO: Obtener pipeline_id desde AI Engine basado en stackWinner
-  // Por ahora, usamos un pipeline por defecto
-  const pipelineId = 1; // Esto debería venir de una tabla de mapeo stack -> pipeline
+  const job = jobWithClient.job;
+
+  // Resolve pipeline_id: stored on job > resolve at execution time > fallback 1
+  let pipelineId = job.pipelineId;
+  if (!pipelineId) {
+    const mapping = await resolvePipelineId(db, undefined, job.type, job.platform);
+    pipelineId = mapping?.pipelineId ?? '1';
+  }
 
   // Crear job en AI Engine
   const aiEngineUrlBase =
@@ -516,6 +537,9 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
         crm_job_id: job.id,
         client_id: job.clientId,
         job_type: job.type,
+        brand_graph: jobWithClient.clientBrandGraph
+          ? JSON.parse(jobWithClient.clientBrandGraph)
+          : undefined,
       },
       external_job_id: job.id, // Referencia al CRM
     }),
@@ -659,7 +683,7 @@ jobRoutes.post('/:id/assets', async (c) => {
 
   const db = c.get('db');
   const [job] = await db
-    .select({ id: schema.jobs.id })
+    .select({ id: schema.jobs.id, clientId: schema.jobs.clientId })
     .from(schema.jobs)
     .where(eq(schema.jobs.id, jobId))
     .limit(1);
@@ -673,6 +697,7 @@ jobRoutes.post('/:id/assets', async (c) => {
   await db.insert(schema.assets).values({
     id: assetId,
     jobId,
+    clientId: job.clientId,
     label: body.data.label ?? null,
     type: body.data.type,
     r2Key: body.data.r2Key,

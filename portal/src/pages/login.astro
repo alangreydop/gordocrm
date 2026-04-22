@@ -4,188 +4,203 @@ import { siteLinks } from '../lib/site-links';
 ---
 
 <BaseLayout title="Login">
-  <div class="min-h-screen bg-black text-white">
-    <div class="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
-      <section class="relative overflow-hidden border-b border-zinc-900 px-6 py-14 lg:border-b-0 lg:border-r">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(196,22,90,0.12),_transparent_42%),radial-gradient(circle_at_bottom_right,_rgba(196,22,90,0.08),_transparent_38%)]"></div>
-        <div class="relative mx-auto flex h-full max-w-2xl flex-col">
-          <a href={siteLinks.home} class="inline-flex items-center gap-2 text-sm font-semibold text-zinc-400 transition hover:text-white">
-            <span aria-hidden="true">&larr;</span>
-            Volver a grandeandgordo.com
-          </a>
+       <div class="crm-body min-h-screen bg-white" role="region" aria-label="Contenido principal">
+           <div class="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
+               <section class="relative overflow-hidden border-b border-crm-border bg-white px-6 py-14 lg:border-b-0 lg:border-r">
+                   <div class="relative mx-auto flex h-full max-w-2xl flex role="region" aria-label="Contenido principal"-col">
+                       <a href={siteLinks.home} class="inline-flex items-center gap-2 text-sm font-semibold text-crm-muted transition hover:text-crm-accent">
+                           <span aria-hidden="true">&larr;</span>
+                           Volver a grandeandgordo.com
+                       </a>
 
-          <div class="mt-14 max-w-xl">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Portal cliente</p>
-            <h1 class="mt-5 text-4xl font-black leading-tight text-white md:text-6xl">
-              Misma marca.
-              <br />
-              Mismo cliente.
-              <br />
-              Mejor continuidad.
-            </h1>
-            <p class="mt-6 text-lg leading-relaxed text-zinc-400">
-              La web publica te acompana con onboarding, brief y recursos. Este CRM
-              concentra seguimiento, trabajos, entregables y cuenta. Los dos forman
-              parte del mismo journey.
-            </p>
-          </div>
+                       <div class="mt-14 max-w-xl">
+                           <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">portal cliente</p>
+                           <h1 class="mt-5 text-4xl font-black leading-tight text-crm-text md:text-6xl">
+                               misma marca.
+                               <br />
+                               mismo cliente.
+                               <br />
+                               mejor continuidad.
+                           </h1>
+                           <p class="mt-6 text-lg leading-relaxed text-crm-muted">
+                               la web pública te acompaña con onboarding, brief y recursos. este crm
+                               concentra seguimiento, trabajos, entregables y cuenta. los dos forman
+                               parte del mismo journey.
+                           </p>
+                       </div>
 
-          <div class="mt-10 grid gap-4 md:grid-cols-3">
-            <a href={siteLinks.portalHub} class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-600">
-              <p class="text-sm font-semibold text-white">Centro de cliente</p>
-              <p class="mt-2 text-sm leading-relaxed text-zinc-400">
-                Vista general para moverte entre portal, brief y onboarding.
-              </p>
-            </a>
-            <a href={siteLinks.brief} class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-600">
-              <p class="text-sm font-semibold text-white">Brief</p>
-              <p class="mt-2 text-sm leading-relaxed text-zinc-400">
-                Comparte contexto de marca, referencias y necesidades del proyecto.
-              </p>
-            </a>
-            <a href={siteLinks.onboarding} class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-600">
-              <p class="text-sm font-semibold text-white">Onboarding</p>
-              <p class="mt-2 text-sm leading-relaxed text-zinc-400">
-                Revisa checklist, preparacion de sesion y preguntas frecuentes.
-              </p>
-            </a>
-          </div>
+                       <div class="mt-10 grid gap-4 md:grid-cols-3">
+                           <a href={siteLinks.portalHub} class="crm-link-tile">
+                               <p class="text-sm font-semibold text-crm-text">Centro de cliente</p>
+                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
+                                   Vista general para moverte entre portal, brief y onboarding.
+                               </p>
+                           </a>
+                           <a href={siteLinks.brief} class="crm-link-tile">
+                               <p class="text-sm font-semibold text-crm-text">Brief</p>
+                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
+                                   Comparte contexto de marca, referencias y necesidades del proyecto.
+                               </p>
+                           </a>
+                           <a href={siteLinks.onboarding} class="crm-link-tile">
+                               <p class="text-sm font-semibold text-crm-text">Onboarding</p>
+                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
+                                   Revisa checklist, preparacion de sesion y preguntas frecuentes.
+                               </p>
+                           </a>
+                       </div>
 
-          <div class="mt-10 grid gap-4 md:grid-cols-3">
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-              <p class="text-xs font-bold uppercase tracking-[0.24em] text-zinc-500">Journey</p>
-              <p class="mt-3 text-3xl font-black text-white">01</p>
-              <p class="mt-2 text-sm text-zinc-400">La web captura contexto y reduce friccion.</p>
-            </div>
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-              <p class="text-xs font-bold uppercase tracking-[0.24em] text-zinc-500">Operacion</p>
-              <p class="mt-3 text-3xl font-black text-white">02</p>
-              <p class="mt-2 text-sm text-zinc-400">El CRM concentra trabajos, estados y entregables.</p>
-            </div>
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
-              <p class="text-xs font-bold uppercase tracking-[0.24em] text-zinc-500">Continuidad</p>
-              <p class="mt-3 text-3xl font-black text-white">03</p>
-              <p class="mt-2 text-sm text-zinc-400">El cliente se mueve sin notar la frontera entre capas.</p>
-            </div>
-          </div>
+                       <div class="mt-10 grid gap-4 md:grid-cols-3">
+                           <div class="crm-panel-soft p-5">
+                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Journey</p>
+                               <p class="mt-3 text-3xl font-black text-crm-accent">01</p>
+                               <p class="mt-2 text-sm text-crm-muted">La web captura contexto y reduce friccion.</p>
+                           </div>
+                           <div class="crm-panel-soft p-5">
+                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Operacion</p>
+                               <p class="mt-3 text-3xl font-black text-crm-accent">02</p>
+                               <p class="mt-2 text-sm text-crm-muted">El CRM concentra trabajos, estados y entregables.</p>
+                           </div>
+                           <div class="crm-panel-soft p-5">
+                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Continuidad</p>
+                               <p class="mt-3 text-3xl font-black text-crm-accent">03</p>
+                               <p class="mt-2 text-sm text-crm-muted">El cliente se mueve sin notar la frontera entre capas.</p>
+                           </div>
+                       </div>
 
-          <div class="mt-auto pt-10 text-sm text-zinc-500">
-            Si aun no tienes acceso o tu equipo necesita soporte, escribe a
-            {' '}
-            <a href={siteLinks.supportMailto} class="font-semibold text-white underline decoration-zinc-700 underline-offset-4 transition hover:decoration-white">
-              {siteLinks.supportEmail}
-            </a>
-            .
-          </div>
-        </div>
-      </section>
+                       <div class="mt-auto pt-10 text-sm text-crm-muted">
+                           Si aun no tienes acceso o tu equipo necesita soporte, escribe a
+                           {' '}
+                           <a href={siteLinks.supportMailto} class="font-semibold text-crm-text underline decoration-crm-border underline-offset-4 transition hover:decoration-crm-accent">
+                               {siteLinks.supportEmail}
+                           </a>
+                           .
+                       </div>
+                   </div>
+               </section>
 
-      <section class="flex items-center px-6 py-14">
-        <div class="mx-auto w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
-          <div class="mb-8">
-            <p class="text-xs font-bold uppercase tracking-[0.28em] text-zinc-500">Acceso seguro</p>
-            <h2 class="mt-3 text-3xl font-black text-white">Entrar al CRM</h2>
-            <p class="mt-3 text-sm leading-relaxed text-zinc-400">
-              Usa el email y la contrasena con los que te dimos acceso. Si vienes desde
-              la web, este es el siguiente paso para ver trabajos y entregables.
-            </p>
-          </div>
+               <section class="flex items-center px-6 py-14">
+                   <div class="mx-auto w-full max-w-md rounded-3xl border border-crm-border bg-crm-panel p-8 crm-panel">
+                       <div class="mb-8">
+                           <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">acceso seguro</p>
+                           <h2 class="mt-3 text-3xl font-black text-crm-text">entrar al CRM</h2>
+                           <p class="mt-3 text-sm leading-relaxed text-crm-muted">
+                               email y contraseña. si vienes desde la web, este es el siguiente paso para ver trabajos y entregables.
+                           </p>
+                       </div>
 
-          <div id="login-error" class="mb-4 hidden rounded-xl border border-rose-800/50 bg-rose-950/30 p-3 text-sm text-rose-400"></div>
+                       <div id="login-error" class="mb-4 hidden rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600" role="alert" aria-live="polite"></div>
 
-          <form id="login-form" class="space-y-4">
-            <div>
-              <label for="email" class="mb-2 block text-sm font-medium text-zinc-300">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white placeholder-zinc-600 transition focus:border-zinc-600 focus:outline-none"
-                placeholder="cliente@tumarca.com"
-              />
-            </div>
-            <div>
-              <label for="password" class="mb-2 block text-sm font-medium text-zinc-300">Contrasena</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                class="w-full rounded-xl border border-zinc-800 bg-black px-4 py-3 text-white placeholder-zinc-600 transition focus:border-zinc-600 focus:outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              class="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3.5 text-sm font-bold text-black transition hover:bg-zinc-200"
-            >
-              Iniciar sesion
-            </button>
-          </form>
+                       <form id="login-form" class="space-y-4" novalidate>
+                           <div>
+                               <label for="email" class="mb-2 block text-sm font-medium text-crm-text">Email</label>
+                               <input
+                                   type="email"
+                                   id="email"
+                                   name="email"
+                                   required
+                                   autocomplete="email"
+                                   class="crm-input"
+                                   placeholder="cliente@tumarca.com"
+                                   aria-describedby="email-hint"
+                               />
+                               <p id="email-hint" class="mt-1 text-xs text-crm-muted">el email de tu cuenta de cliente</p>
+                           </div>
+                           <div>
+                               <label for="password" class="mb-2 block text-sm font-medium text-crm-text">Contrasena</label>
+                               <input
+                                   type="password"
+                                   id="password"
+                                   name="password"
+                                   required
+                                   autocomplete="current-password"
+                                   class="crm-input"
+                                   aria-describedby="password-hint"
+                               />
+                               <p id="password-hint" class="mt-1 text-xs text-crm-muted">tu contrasena de acceso al portal</p>
+                           </div>
+                           <button
+                               type="submit"
+                               class="crm-button crm-button-primary w-full py-3.5"
+                               id="login-submit"
+                           >
+                               Iniciar sesion
+                           </button>
+                       </form>
 
-          <div class="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">
-            <p class="font-semibold text-white">Antes o despues de entrar</p>
-            <div class="mt-3 flex flex-wrap gap-3">
-              <a href={siteLinks.brief} class="font-medium text-zinc-300 underline decoration-zinc-700 underline-offset-4 transition hover:text-white hover:decoration-white">
-                Brief
-              </a>
-              <a href={siteLinks.onboarding} class="font-medium text-zinc-300 underline decoration-zinc-700 underline-offset-4 transition hover:text-white hover:decoration-white">
-                Onboarding
-              </a>
-              <a href={siteLinks.portalHub} class="font-medium text-zinc-300 underline decoration-zinc-700 underline-offset-4 transition hover:text-white hover:decoration-white">
-                Centro de cliente
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+                       <div class="mt-6 rounded-2xl border border-crm-border bg-crm-panel-soft p-4 text-sm text-crm-muted">
+                           <p class="font-semibold text-crm-text">antes o después de entrar</p>
+                           <div class="mt-3 flex flex-wrap gap-3">
+                               <a href={siteLinks.brief} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
+                                   Brief
+                               </a>
+                               <a href={siteLinks.onboarding} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
+                                   Onboarding
+                               </a>
+                               <a href={siteLinks.portalHub} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
+                                   Centro de cliente
+                               </a>
+                           </div>
+                       </div>
+                   </div>
+               </section>
+           </div>
+       </div>
 
-  <script>
-    (async () => {
-    const { API_BASE, getSessionUser } = await import('../lib/api-client');
+       <script>
+           (async () => {
+           const { API_BASE, getSessionUser } = await import('../lib/api-client');
 
-    const existingUser = await getSessionUser();
-    if (existingUser) {
-      window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
-    }
+           const existingUser = await getSessionUser();
+           if (existingUser) {
+               window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
+           }
 
-    const form = document.getElementById('login-form');
-    const errorDiv = document.getElementById('login-error');
+           const form = document.getElementById('login-form');
+           const errorDiv = document.getElementById('login-error');
+           const submitBtn = document.getElementById('login-submit');
 
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      errorDiv?.classList.add('hidden');
+           form?.addEventListener('submit', async (event) => {
+               event.preventDefault();
+               if (errorDiv) errorDiv.classList.add('hidden');
+               if (submitBtn) {
+                   const originalText = submitBtn.textContent;
+                   submitBtn.textContent = 'Entrando...';
+                   submitBtn.disabled = true;
+               }
 
-      const email = document.getElementById('email');
-      const password = document.getElementById('password');
+               const email = document.getElementById('email');
+               const password = document.getElementById('password');
 
-      try {
-        const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: email instanceof HTMLInputElement ? email.value : '',
-            password: password instanceof HTMLInputElement ? password.value : '',
-          }),
-        });
+               try {
+                   const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
+                       method: 'POST',
+                       headers: { 'Content-Type': 'application/json' },
+                       credentials: 'include',
+                       body: JSON.stringify({
+                           email: email instanceof HTMLInputElement ? email.value : '',
+                           password: password instanceof HTMLInputElement ? password.value : '',
+                       }),
+                   });
 
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error ?? 'Login failed');
-        }
+                   if (!res.ok) {
+                       const data = await res.json().catch(() => ({}));
+                       throw new Error(data.error ?? 'Login failed');
+                   }
 
-        const data = await res.json();
-        window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
-      } catch (error) {
-        if (errorDiv instanceof HTMLDivElement) {
-          errorDiv.textContent = error instanceof Error ? error.message : 'Login failed';
-          errorDiv.classList.remove('hidden');
-        }
-      }
-    });
-    })();
-  </script>
+                   const data = await res.json();
+                   window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
+               } catch (error) {
+                   if (errorDiv instanceof HTMLDivElement) {
+                       errorDiv.textContent = error instanceof Error ? error.message : 'Error al iniciar sesion';
+                       errorDiv.classList.remove('hidden');
+                   }
+                   if (submitBtn) {
+                       submitBtn.textContent = 'Iniciar sesion';
+                       submitBtn.disabled = false;
+                   }
+               }
+           });
+           })();
+       </script>
 </BaseLayout>

@@ -3,14 +3,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Trabajos">
-  <div class="space-y-6">
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
     <section class="crm-page-header">
       <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="crm-kicker">Produccion</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">Trabajos</h1>
+          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">trabajos</h1>
           <p class="crm-page-header__meta mt-4">
-            Vista de produccion con deadline, stack, consumo, margen y urgencia
+            vista de producción con deadline, stack, consumo, margen y urgencia
             para priorizar bien antes de entrar al detalle.
           </p>
         </div>
@@ -31,40 +31,40 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <div class="crm-metric-card">
         <p class="crm-kicker">Trabajos activos</p>
-        <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Urgentes</p>
-        <p id="metric-urgent-jobs" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-urgent-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Margen bajo</p>
-        <p id="metric-low-margin" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
-        <p class="mt-2 text-sm text-slate-400">&lt; 65%</p>
+        <p id="metric-low-margin" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+        <p class="mt-2 text-sm text-crm-muted">&lt; 65%</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Due en 7 dias</p>
-        <p id="metric-due-soon" class="mt-4 text-4xl font-black tracking-tight text-white">—</p>
+        <p id="metric-due-soon" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
       </div>
     </div>
 
     <div class="crm-table-wrap">
       <div class="overflow-x-auto">
-        <table class="crm-table min-w-full divide-y divide-gray-200 text-sm">
+        <table class="crm-table min-w-full text-sm">
           <thead>
             <tr>
-              <th class="px-6 py-3 text-left">Cliente</th>
-              <th class="px-6 py-3 text-left">Brief</th>
-              <th class="px-6 py-3 text-left">Estado</th>
-              <th class="px-6 py-3 text-left">Due</th>
-              <th class="px-6 py-3 text-left">Operacion</th>
-              <th class="px-6 py-3 text-left">Margen</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">cliente</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">brief</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">estado</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">due</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">operación</th>
+              <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">margen</th>
               <th class="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody id="jobs-body" class="divide-y divide-gray-200">
+          <tbody id="jobs-body">
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-slate-400">Cargando trabajos...</td>
+              <td colspan="7" class="px-6 py-8 text-center text-crm-muted">Cargando trabajos...</td>
             </tr>
           </tbody>
         </table>
@@ -80,10 +80,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         formatDate,
         formatNumber,
         formatPercent,
+      } = await import('../../../lib/api-client');
+      const {
         jobStatusClass,
         stackLaneClass,
         turnaroundClass,
-      } = await import('../../../lib/api-client');
+      } = await import('../../../lib/ui-helpers');
 
       const tbody = document.getElementById('jobs-body');
       const searchInput = document.getElementById('jobs-search');
@@ -145,42 +147,41 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-slate-400">No hay trabajos para ese filtro.</td>
+              <td colspan="7" class="px-6 py-8 text-center text-crm-muted">No hay trabajos para ese filtro.</td>
             </tr>
           `;
           return;
         }
 
         tbody.innerHTML = filtered.map((job) => `
-          <tr class="hover:bg-gray-50 align-top">
+          <tr class="align-top">
             <td class="px-6 py-4">
-              <p class="font-medium text-white">${escapeHtml(job.clientName ?? '—')}</p>
-              <p class="text-xs text-gray-500 mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
+              <p class="font-medium text-crm-text">${escapeHtml(job.clientName ?? '—')}</p>
+              <p class="text-xs text-crm-muted mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
             </td>
             <td class="px-6 py-4">
-              <p class="font-medium text-white max-w-xs">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
-              <p class="text-xs text-gray-500 mt-1">Benchmark ${escapeHtml(job.benchmarkLevel ?? '—')}</p>
+              <p class="font-medium text-crm-text max-w-xs">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+              <p class="text-xs text-crm-muted mt-1">Benchmark ${escapeHtml(job.benchmarkLevel ?? '—')}</p>
             </td>
             <td class="px-6 py-4">
-              <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+              <span class="${jobStatusClass(job.status ?? '')}">
                 ${escapeHtml(job.status ?? 'pending')}
               </span>
             </td>
-            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatDate(job.dueAt))}</td>
-            <td class="px-6 py-4 text-gray-600">
+            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatDate(job.dueAt))}</td>
+            <td class="px-6 py-4 text-crm-text-secondary">
               <div class="flex flex-wrap gap-2">
-                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${turnaroundClass(job.turnaround ?? 'normal')}">
+                <span class="${turnaroundClass(job.turnaround ?? 'normal')}">
                   ${escapeHtml(job.turnaround ?? 'normal')}
                 </span>
-                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${stackLaneClass(job.stackLane ?? '')}">
-                  lane ${escapeHtml(job.stackLane ?? '—')}
-                </span>
+                <span class="${stackLaneClass(job.stackLane ?? '')}">
+                  lane ${escapeHtml(job.stackLane ?? '—')}</span>
               </div>
-              <p class="text-xs text-gray-500 mt-2">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))} unidades</p>
+              <p class="text-xs text-crm-muted mt-2">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))} unidades</p>
             </td>
-            <td class="px-6 py-4 text-gray-600">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
+            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
             <td class="px-6 py-4 text-right">
-              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-sky-200 transition hover:text-white">
+              <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent transition hover:text-crm-text">
                 Abrir
               </a>
             </td>
@@ -196,7 +197,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="7" class="px-6 py-8 text-center text-rose-200">No se pudieron cargar los trabajos.</td>
+              <td colspan="7" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar los trabajos.</td>
             </tr>
           `;
         }
