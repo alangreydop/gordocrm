@@ -241,7 +241,7 @@ import { siteLinks } from '../../../lib/site-links';
                       ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
                            <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                          </div>`
-                      : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+                      : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
                          <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
                            <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                          </div>`
@@ -296,7 +296,7 @@ import { siteLinks } from '../../../lib/site-links';
               <div class="max-w-5xl max-h-[85vh]">
                 ${type === 'video'
                   ? `<video src="${url}" controls class="max-w-full max-h-[85vh] rounded-lg"></video>`
-                  : `<img src="${url}" alt="Asset preview" class="max-w-full max-h-[85vh] rounded-lg object-contain"/>`
+                  : `<img src="${url}" alt="Asset preview" class="max-w-full max-h-[85vh] rounded-lg object-contain" decoding="async"/>`
                 }
                 <div class="mt-4 flex justify-center gap-4">
                   <a href="${url}" download class="crm-button crm-button-primary">
@@ -335,11 +335,15 @@ import { siteLinks } from '../../../lib/site-links';
 
               const downloadPromises = assets.map(async (asset, idx) => {
                 if (!asset.deliveryUrl) return;
-
-                const response = await fetch(asset.deliveryUrl);
-                const blob = await response.blob();
-                const filename = `${asset.label ?? 'asset_' + idx}${asset.type === 'video' ? '.mp4' : '.jpg'}`;
-                folder.file(filename, blob);
+                try {
+                  const response = await fetch(asset.deliveryUrl);
+                  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                  const blob = await response.blob();
+                  const filename = `${asset.label ?? 'asset_' + idx}${asset.type === 'video' ? '.mp4' : '.jpg'}`;
+                  folder.file(filename, blob);
+                } catch {
+                  // Skip failed downloads — zip continues with available assets
+                }
                });
 
               await Promise.all(downloadPromises);
@@ -561,7 +565,7 @@ import { siteLinks } from '../../../lib/site-links';
                           ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
                                <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                              </div>`
-                          : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+                          : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
                              <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
                                <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                              </div>`

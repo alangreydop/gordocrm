@@ -156,7 +156,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
               <div class="aspect-square rounded-xl bg-crm-panel-soft overflow-hidden mb-3 relative">
                 ${asset.type === 'video'
                   ? `<video src="${asset.deliveryUrl || ''}" class="w-full h-full object-cover" muted loop playsinline></video>`
-                  : `<img src="${asset.deliveryUrl || ''}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-full object-cover" />`
+                  : `<img src="${asset.deliveryUrl || ''}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-full object-cover" loading="lazy" decoding="async" />`
                 }
                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                   ${asset.deliveryUrl

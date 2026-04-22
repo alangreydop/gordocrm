@@ -15,7 +15,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       </a>
       <div>
         <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Facturación</p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight text-crm-text">Nueva Factura</h1>
+        <h1 class="mt-2 text-3xl font-black tracking-tight text-crm-text">Nueva factura</h1>
         <p class="mt-2 text-sm text-crm-muted">Crea una nueva factura para un cliente</p>
       </div>
     </section>
@@ -343,7 +343,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             if (!option.dataset.taxId || !option.dataset.legalName || !option.dataset.address) {
               infoEl.innerHTML += `
                 <p class="mt-2 text-crm-warning">
-                  ⚠️ Este cliente no tiene completos los datos fiscales.
+                  <span class="text-crm-warning">Atención:</span> Este cliente no tiene completos los datos fiscales.
                   <a href="/admin/clients/detail?id=${option.value}" class="underline hover:text-crm-accent">
                     Completar ahora →
                   </a>

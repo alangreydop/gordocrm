@@ -329,12 +329,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                      `).join('');
               }
           } catch {
-              if (recentJobsBody) {
-                  recentJobsBody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-crm-danger">No se pudo cargar el dashboard.</td></tr>`;
-              }
-              if (reviewsList) {
-                  reviewsList.innerHTML = `<div class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar las revisiones.</div>`;
-              }
+              const errorMsg = 'No se pudo cargar el dashboard.';
+              if (recentJobsBody) recentJobsBody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-crm-danger">${errorMsg}</td></tr>`;
+              if (reviewsList) reviewsList.innerHTML = `<div class="px-6 py-8 text-center text-crm-danger">${errorMsg}</div>`;
+              if (alertsList) alertsList.innerHTML = `<div class="px-6 py-8 text-center text-crm-danger">${errorMsg}</div>`;
+              if (laneChart) laneChart.innerHTML = `<div class="text-sm text-crm-danger">${errorMsg}</div>`;
+              if (statusChart) statusChart.innerHTML = `<div class="text-sm text-crm-danger">${errorMsg}</div>`;
           }
           })();
      </script>

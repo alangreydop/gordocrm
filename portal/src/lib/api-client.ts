@@ -86,6 +86,20 @@ export async function getSessionContext(): Promise<SessionContext | null> {
   }
 }
 
+export interface SafeResult<T> {
+  data: T | null;
+  error: string | null;
+}
+
+export async function apiSafe<T>(path: string, options: RequestInit = {}): Promise<SafeResult<T>> {
+  try {
+    const data = await api<T>(path, options);
+    return { data, error: null };
+  } catch (e) {
+    return { data: null, error: e instanceof Error ? e.message : 'Error desconocido' };
+  }
+}
+
 export async function requireRole(
   role: 'admin' | 'client',
 ): Promise<SessionUser | null> {

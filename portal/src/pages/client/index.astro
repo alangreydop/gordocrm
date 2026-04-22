@@ -543,12 +543,14 @@ import { siteLinks } from '../../lib/site-links';
                    }
                 } catch {
                   if (tbody) {
-                    tbody.innerHTML = `
-                       <tr>
-                         <td colspan="6" class="px-6 py-8 text-center text-crm-danger">no se pudieron cargar tus trabajos.</td>
-                       </tr>
-                     `;
+                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-crm-danger">no se pudieron cargar tus trabajos.</td></tr>`;
                   }
+                  const timelineEl = document.getElementById('client-timeline');
+                  if (timelineEl) timelineEl.innerHTML = '<p class="text-sm text-crm-danger">no se pudo cargar la actividad.</p>';
+                  const notificationsFeed = document.getElementById('notifications-feed');
+                  if (notificationsFeed) notificationsFeed.innerHTML = '<p class="text-sm text-crm-danger">no se pudieron cargar las notificaciones.</p>';
+                  const unreadBadge = document.getElementById('unread-badge');
+                  if (unreadBadge) unreadBadge.classList.add('hidden');
                 }
            })();
       </script>

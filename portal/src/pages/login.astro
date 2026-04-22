@@ -191,8 +191,11 @@ import { siteLinks } from '../lib/site-links';
                    const data = await res.json();
                    window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
                } catch (error) {
+                   const { showToast } = await import('../lib/crm-ui');
+                   const msg = error instanceof Error ? error.message : 'Error al iniciar sesion';
+                   showToast(msg, 'error');
                    if (errorDiv instanceof HTMLDivElement) {
-                       errorDiv.textContent = error instanceof Error ? error.message : 'Error al iniciar sesion';
+                       errorDiv.textContent = msg;
                        errorDiv.classList.remove('hidden');
                    }
                    if (submitBtn) {

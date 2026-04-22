@@ -333,15 +333,9 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       }
 
       try {
-        const [invoiceRes, itemsRes, logsRes] = await Promise.all([
-          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
-          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
-          fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' }),
-        ]);
-
-        if (!invoiceRes.ok) throw new Error('Factura no encontrada');
-
-        const data = await invoiceRes.json();
+        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' });
+        if (!res.ok) throw new Error('Factura no encontrada');
+        const data = await res.json();
         const invoice = data.invoice;
 
         // Render header

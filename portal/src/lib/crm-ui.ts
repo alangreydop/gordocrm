@@ -169,3 +169,42 @@ export function announceToSR(elementId: string, message: string) {
     }
     el.textContent = message;
 }
+
+// ── Toast Notifications ──
+
+type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export function showToast(message: string, type: ToastType = 'info', durationMs = 4000) {
+    let container = document.getElementById('crm-toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'crm-toast-container';
+        container.setAttribute('role', 'status');
+        container.setAttribute('aria-live', 'polite');
+        container.className = 'fixed top-4 right-4 z-[100] flex flex-col gap-2';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    const colors = {
+        success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+        error: 'bg-red-50 text-red-800 border-red-200',
+        warning: 'bg-amber-50 text-amber-800 border-amber-200',
+        info: 'bg-sky-50 text-sky-800 border-sky-200',
+    };
+
+    toast.className = `px-4 py-3 rounded-lg border shadow-lg text-sm font-medium max-w-sm transform transition-all duration-300 translate-x-full opacity-0 ${colors[type]}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    // Animate in
+    requestAnimationFrame(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+    });
+
+    // Remove after duration
+    setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, durationMs);
+}
