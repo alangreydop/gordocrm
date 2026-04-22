@@ -198,7 +198,7 @@ briefRoutes.post('/:id/create-job', async (c) => {
     clientId: brief.clientId,
     status: 'pending',
     briefText: `[Brief web · ${briefLabel}] ${brief.description}`,
-    type: mapBriefTypeToJobType(brief.tipo),
+    type: mapBriefTypeToJobType(brief.tipo ?? 'foto') || 'image',
     turnaround: 'normal',
     clientSegment: brief.clientSegment ?? null,
     marginProfile: brief.marginProfile ?? null,

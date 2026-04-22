@@ -79,8 +79,8 @@ function constantTimeCompare(a: string, b: string): boolean {
 
   let result = aBuf.length ^ bBuf.length;
   for (let i = 0; i < maxLen; i++) {
-    const aByte = i < aBuf.length ? aBuf[i] : 0;
-    const bByte = i < bBuf.length ? bBuf[i] : 0;
+    const aByte = aBuf[i] ?? 0;
+    const bByte = bBuf[i] ?? 0;
     result |= aByte ^ bByte;
   }
 

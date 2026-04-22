@@ -65,12 +65,15 @@ export interface AppBindings {
   AI_ENGINE_URL?: string;
   LEAD_TRANSFER_SECRET?: string;
   ANTHROPIC_API_KEY?: string;
+  CRON_SECRET?: string;
+  PORTAL_URL?: string;
   ASSETS?: R2Bucket;
 }
 
 export interface AppVariables {
   db: Database;
   user: AuthUser;
+  aiEngineToken: string;
 }
 
 export type AppContext = {

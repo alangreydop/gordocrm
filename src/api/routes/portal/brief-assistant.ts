@@ -96,8 +96,8 @@ assistant.post('/chat', async (c) => {
     };
 
     try {
-      const inserted = await db.insert(briefSubmissions).values(briefData).returning();
-      briefData = { id: inserted[0].id };
+      const inserted = await db.insert(briefSubmissions).values(briefData as typeof briefSubmissions.$inferInsert).returning();
+      briefData = { id: inserted[0]?.id };
 
       response =
         '¡Brief generado y guardado! Tu brief técnico ha sido optimizado y enviado al equipo de producción. Te contactaremos pronto con los siguientes pasos.';
@@ -115,7 +115,7 @@ assistant.post('/chat', async (c) => {
     });
   }
 
-  response = STAGE_PROMPTS[currentStage as keyof typeof STAGE_PROMPTS];
+  response = STAGE_PROMPTS[currentStage as keyof typeof STAGE_PROMPTS] ?? '';
   nextStage = currentStage === BRIEFING_STAGES.CTA ? BRIEFING_STAGES.FINALIZING : currentStage;
 
   const stageKey = currentStage.toLowerCase();

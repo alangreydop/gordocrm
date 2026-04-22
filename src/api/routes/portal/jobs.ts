@@ -36,7 +36,7 @@ async function createAIFngineJWT(user: {
     encoder.encode(JSON.stringify(payload)),
   );
 
-  const base64Url = (data: ArrayBuffer) =>
+  const base64Url = (data: ArrayBuffer | Uint8Array) =>
     btoa(String.fromCharCode(...new Uint8Array(data)))
       .replace(/=/g, '')
       .replace(/\+/g, '-')
@@ -547,7 +547,7 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Error desconocido' }));
-    return c.json({ error: `AI Engine error: ${error.error}` }, 500);
+    return c.json({ error: `AI Engine error: ${error instanceof Error ? error.message : (error as { error?: string }).error || 'Unknown'}` }, 500);
   }
 
   const aiJob: any = await response.json();

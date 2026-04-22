@@ -27,7 +27,7 @@ aiProxyRoutes.use('*', async (c, next) => {
   // Guardar en contexto para usar en las requests
   c.set('aiEngineToken', jwt);
 
-  await next();
+  return next();
 });
 
 // Helper para crear JWT compatible con AI Engine
@@ -59,7 +59,7 @@ async function createAIFngineJWT(user: {
     encoder.encode(JSON.stringify(payload)),
   );
 
-  const base64Url = (data: ArrayBuffer) =>
+  const base64Url = (data: ArrayBuffer | Uint8Array) =>
     btoa(String.fromCharCode(...new Uint8Array(data)))
       .replace(/=/g, '')
       .replace(/\+/g, '-')

@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { check, foreignKey, index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 const timestampNow = () => new Date();
 const randomId = () => crypto.randomUUID();
@@ -302,7 +302,7 @@ export const invoices = sqliteTable('invoices', {
 
   isRectificative: integer('is_rectificative', { mode: 'boolean' }).default(false),
   rectificativeReason: text('rectificative_reason'),
-  originalInvoiceId: text('original_invoice_id').references(() => invoices.id),
+  originalInvoiceId: text('original_invoice_id'),
 
   relatedJobIds: text('related_job_ids'),
 
@@ -312,7 +312,13 @@ export const invoices = sqliteTable('invoices', {
 
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
-});
+}, (table) => [
+  foreignKey({
+    columns: [table.originalInvoiceId],
+    foreignColumns: [table.id],
+    name: 'fk_invoices_original_invoice',
+  }),
+]);
 
 export const invoiceItems = sqliteTable('invoice_items', {
   id: text('id').primaryKey().$defaultFn(randomId),

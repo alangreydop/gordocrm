@@ -1,4 +1,4 @@
-import { and, eq, lt, or } from 'drizzle-orm';
+import { and, eq, isNull, lt, or } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { schema } from '../../../../db/index.js';
 import { sendQuarterlyReviewReminderEmail } from '../../../lib/email.js';
@@ -35,11 +35,11 @@ cronRoutes.get('/quarterly-reviews', async (c) => {
       and(
         or(
           lt(schema.clients.nextReviewAt, now),
-          and(schema.clients.nextReviewAt, new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)),
+          lt(schema.clients.nextReviewAt, new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)),
         ),
         or(
           lt(schema.clients.lastContactedAt, sevenDaysAgo),
-          schema.clients.lastContactedAt === null,
+          isNull(schema.clients.lastContactedAt),
         ),
       ),
     );

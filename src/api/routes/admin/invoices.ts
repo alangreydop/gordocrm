@@ -12,7 +12,7 @@
 import { and, desc, eq, gt } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { schema } from '../../../../db/index.js';
+import { schema, type Database } from '../../../../db/index.js';
 import { requireAdmin } from '../../../lib/auth.js';
 import { sendEmail } from '../../../lib/email.js';
 import type { AppContext } from '../../../types/index.js';
@@ -59,7 +59,7 @@ const addItemsSchema = z.object({
 /**
  * Genera número de factura único: F2026-001, F2026-002, etc.
  */
-async function generateInvoiceNumber(db: AppContext['db'], year: number): Promise<string> {
+async function generateInvoiceNumber(db: Database, year: number): Promise<string> {
   const prefix = 'F';
 
   // Buscar última factura del año
@@ -80,7 +80,8 @@ async function generateInvoiceNumber(db: AppContext['db'], year: number): Promis
   }
 
   // Extraer número y incrementar
-  const lastNumber = parseInt(lastInvoice.invoiceNumber.split('-')[1], 10);
+  const parts = lastInvoice.invoiceNumber.split('-');
+  const lastNumber = parseInt(parts[1] ?? '0', 10);
   const newNumber = String(lastNumber + 1).padStart(3, '0');
 
   return `${prefix}${year}-${newNumber}`;
@@ -110,15 +111,15 @@ function calculateInvoiceTotals(
   items: Array<{
     subtotalCents: number;
     taxAmountCents: number;
-    irpfAmountCents: number;
+    irpfAmountCents: number | null;
     totalCents: number;
   }>,
 ): { subtotalCents: number; taxAmountCents: number; irpfAmountCents: number; totalCents: number } {
-  return items.reduce(
+  return items.reduce<{ subtotalCents: number; taxAmountCents: number; irpfAmountCents: number; totalCents: number }>(
     (acc, item) => ({
       subtotalCents: acc.subtotalCents + item.subtotalCents,
       taxAmountCents: acc.taxAmountCents + item.taxAmountCents,
-      irpfAmountCents: acc.irpfAmountCents + (item.irpfAmountCents || 0),
+      irpfAmountCents: acc.irpfAmountCents + (item.irpfAmountCents ?? 0),
       totalCents: acc.totalCents + item.totalCents,
     }),
     { subtotalCents: 0, taxAmountCents: 0, irpfAmountCents: 0, totalCents: 0 },
@@ -128,7 +129,7 @@ function calculateInvoiceTotals(
 /**
  * Obtiene datos fiscales del emisor desde config
  */
-async function getIssuerData(db: AppContext['db']): Promise<{
+async function getIssuerData(db: Database): Promise<{
   taxId: string;
   legalName: string;
   addressLine1: string;
@@ -145,9 +146,20 @@ async function getIssuerData(db: AppContext['db']): Promise<{
     .from(schema.config)
     .where(gt(schema.config.key, 'issuer_'));
 
-  const configMap = Object.fromEntries(configRows.map((r) => [r.key, r.value]));
+  const configMap = Object.fromEntries(configRows.map((r: { key: string; value: string }) => [r.key, r.value]));
 
-  return {
+  const result: {
+    taxId: string;
+    legalName: string;
+    addressLine1: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    email: string;
+    phone?: string;
+    registrationNumber?: string;
+    footer?: string;
+  } = {
     taxId: configMap['issuer_tax_id'] || 'B00000000',
     legalName: configMap['issuer_legal_name'] || 'Grande & Gordo S.L.',
     addressLine1: configMap['issuer_address_line1'] || 'Calle Ejemplo, 123',
@@ -155,17 +167,20 @@ async function getIssuerData(db: AppContext['db']): Promise<{
     postalCode: configMap['issuer_postal_code'] || '15001',
     country: configMap['issuer_country'] || 'ES',
     email: configMap['issuer_email'] || 'facturacion@grandeandgordo.com',
-    phone: configMap['issuer_phone'],
-    registrationNumber: configMap['issuer_registration_number'],
-    footer: configMap['invoice_footer'],
   };
+
+  if (configMap['issuer_phone']) result.phone = configMap['issuer_phone'];
+  if (configMap['issuer_registration_number']) result.registrationNumber = configMap['issuer_registration_number'];
+  if (configMap['invoice_footer']) result.footer = configMap['invoice_footer'];
+
+  return result;
 }
 
 /**
  * Registra un log de auditoría
  */
 async function logInvoiceAction(
-  db: AppContext['db'],
+  db: Database,
   invoiceId: string,
   action: string,
   userId?: string,
@@ -379,7 +394,7 @@ invoiceRoutes.post('/', async (c) => {
     paymentMethod: paymentMethod || null,
     paymentNotes: paymentNotes || null,
     notes: notes || null,
-    isRectificative: 0,
+    isRectificative: false,
     relatedJobIds: relatedJobIds ? JSON.stringify(relatedJobIds) : null,
     createdAt: now,
     updatedAt: now,
