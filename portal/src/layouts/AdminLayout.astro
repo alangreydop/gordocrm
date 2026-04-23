@@ -30,8 +30,7 @@ const secondaryNavItems = [
 
         <div id="sidebar-overlay" class="crm-overlay fixed inset-0 z-30 hidden lg:hidden"></div>
 
-        <div class="flex min-h-screen flex-col lg:flex-row">
-            <aside id="main-sidebar" role="navigation" aria-label="Panel de control" class="crm-sidebar fixed z-40 flex h-full w-full flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:static lg:w-72 lg:translate-x-0 lg:px-6 lg:py-8">
+        <aside id="main-sidebar" role="navigation" aria-label="Panel de control" class="crm-sidebar fixed z-40 flex h-full w-72 flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:px-6 lg:py-8">
                 <div class="crm-sidebar__section crm-sidebar__brand" style="padding-bottom: 1.75rem; margin-bottom: 1.75rem;">
                     <a href="/admin" aria-label="Grande&Gordo — Operaciones">
                         <img
@@ -120,7 +119,7 @@ const secondaryNavItems = [
                 </div>
             </aside>
 
-            <main id="admin-main" class="crm-main flex-1 min-h-screen" role="main" aria-label="Contenido principal">
+            <main id="admin-main" class="crm-main min-h-screen lg:ml-72" role="main" aria-label="Contenido principal">
                 <div class="crm-main-frame">
                     <div class="crm-topbar">
                         <div class="crm-topbar__context">
@@ -139,7 +138,6 @@ const secondaryNavItems = [
                     </div>
                 </div>
             </main>
-        </div>
     </div>
 
     <script>
