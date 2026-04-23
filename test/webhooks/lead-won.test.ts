@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Hono } from 'hono';
-import { leadWonWebhook } from '../../src/api/routes/webhooks/lead-won';
+import { leadWonWebhook } from '../../src/api/routes/lead-won-webhook';
 import { generateWebhookSignature } from '../../src/lib/webhook-signature';
+import { sendWelcomeEmail } from '../../src/lib/email';
 
 vi.mock('../../src/lib/auth.js', () => ({
   createUser: vi.fn().mockResolvedValue({ id: 'user-123' }),
@@ -164,5 +165,11 @@ describe('lead-won webhook', () => {
 
     // Verify inserts happened
     expect(Object.keys(inserts).length).toBeGreaterThan(0);
+    expect(sendWelcomeEmail).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        portalUrl: 'https://crm.grandeandgordo.com/login/',
+      }),
+    );
   });
 });

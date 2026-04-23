@@ -280,82 +280,33 @@ webhookRoutes.post('/invoice/paid', async (c) => {
 
 // Webhook desde Web (brief submit)
 webhookRoutes.post('/web/brief', async (c) => {
-  const body: unknown = await c.req.json();
-
-  const briefSchema = z.object({
-    email: z.string().email(),
-    tipo: z.string(),
-    description: z.string(),
-    company: z.string().optional(),
-    name: z.string().optional(),
-  });
-
-  const parsed = briefSchema.safeParse(body);
-  if (!parsed.success) {
-    return c.json({ error: 'Invalid brief payload' }, 400);
-  }
-
-  const db = c.get('db');
-  const { email, tipo, description, company, name } = parsed.data;
-
-  // Buscar o crear cliente por email
-  const [existingClient] = await db
-    .select({ id: schema.clients.id })
-    .from(schema.clients)
-    .where(eq(schema.clients.email, email))
-    .limit(1);
-
-  let clientId = existingClient?.id;
-
-  if (!clientId) {
-    const [newClient] = await db
-      .insert(schema.clients)
-      .values({
-        email,
-        name: name || 'Cliente',
-        company: company || undefined,
-        subscriptionStatus: 'inactive',
-        plan: undefined,
-        monthlyUnitCapacity: 0,
-        segment: 'lead',
-        marginProfile: 'unknown',
-        datasetStatus: 'pending_capture',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .returning({ id: schema.clients.id });
-
-    if (newClient) {
-      clientId = newClient.id;
-    } else {
-      return c.json({ error: 'Failed to create client' }, 500);
-    }
-  }
-
-  // Crear brief submission (schema usa briefSubmissions con contentType)
-  await db.insert(schema.briefSubmissions).values({
-    clientId,
-    email,
-    contentType: tipo, // 'foto', 'video', 'ambos'
-    description,
-    status: 'new',
-    source: 'web_form',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-
-  return c.json({ ok: true, clientId });
+  return c.json({
+    error: 'Web brief intake is disabled',
+    message:
+      'Client records are now provisioned only after lead-won, and brief updates must come from an authenticated portal session.',
+  }, 410);
 });
 
 // Webhook desde Web (onboarding completado)
-webhookRoutes.post('/web/onboarding', async (c) => {
+webhookRoutes.post('/web/onboarding', requireAuth, async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'client') {
+    return c.json({ error: 'Client access only' }, 403);
+  }
+
   const body: unknown = await c.req.json();
 
   const onboardingSchema = z.object({
-    clientId: z.string(),
     checklistCompleted: z.boolean(),
     sessionScheduled: z.boolean().optional(),
     sessionDate: z.string().optional(),
+    readiness: z.object({
+      materialsReady: z.boolean().optional(),
+      brandReady: z.boolean().optional(),
+      accessReady: z.boolean().optional(),
+    }).optional(),
+    priorityFocus: z.string().trim().max(200).optional(),
+    openQuestions: z.string().trim().max(1200).optional(),
   });
 
   const parsed = onboardingSchema.safeParse(body);
@@ -364,7 +315,23 @@ webhookRoutes.post('/web/onboarding', async (c) => {
   }
 
   const db = c.get('db');
-  const { clientId, checklistCompleted, sessionScheduled, sessionDate } = parsed.data;
+  const {
+    checklistCompleted,
+    sessionScheduled,
+    sessionDate,
+    readiness,
+    priorityFocus,
+    openQuestions,
+  } = parsed.data;
+  const [client] = await db
+    .select({ id: schema.clients.id })
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, user.id))
+    .limit(1);
+
+  if (!client) {
+    return c.json({ error: 'Client record not found' }, 404);
+  }
 
   const updates: Record<string, unknown> = {
     onboardingCompletedAt: checklistCompleted ? new Date() : null,
@@ -375,9 +342,37 @@ webhookRoutes.post('/web/onboarding', async (c) => {
     updates.firstSessionAt = new Date(sessionDate);
   }
 
-  await db.update(schema.clients).set(updates).where(eq(schema.clients.id, clientId));
+  await db.update(schema.clients).set(updates).where(eq(schema.clients.id, client.id));
 
-  return c.json({ ok: true });
+  const readinessSummary = [
+    readiness?.materialsReady ? 'materiales listos' : 'materiales pendientes',
+    readiness?.brandReady ? 'marca lista' : 'marca pendiente',
+    readiness?.accessReady ? 'accesos listos' : 'accesos pendientes',
+  ].join(' · ');
+
+  const activityLines = [
+    'Activacion confirmada desde portal.',
+    readinessSummary,
+    priorityFocus ? `Foco inicial: ${priorityFocus}` : null,
+    openQuestions ? `Preguntas abiertas: ${openQuestions}` : null,
+  ].filter(Boolean);
+
+  await db.insert(schema.clientActivities).values({
+    id: crypto.randomUUID(),
+    clientId: client.id,
+    type: 'activation.completed',
+    content: activityLines.join('\n'),
+    metadata: JSON.stringify({
+      readiness: readiness ?? null,
+      priorityFocus: priorityFocus ?? null,
+      openQuestions: openQuestions ?? null,
+      sessionDate: sessionScheduled ? sessionDate ?? null : null,
+      source: 'portal_activation',
+    }),
+    createdAt: new Date(),
+  });
+
+  return c.json({ ok: true, clientId: client.id });
 });
 
 // Admin: listar webhooks recibidos

@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, or } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
@@ -36,6 +36,12 @@ briefRoutes.get('/', async (c) => {
       email: schema.briefSubmissions.email,
       tipo: schema.briefSubmissions.contentType,
       description: schema.briefSubmissions.description,
+      objective: schema.briefSubmissions.objective,
+      hook: schema.briefSubmissions.hook,
+      style: schema.briefSubmissions.style,
+      audience: schema.briefSubmissions.audience,
+      cta: schema.briefSubmissions.cta,
+      optimizedBrief: schema.briefSubmissions.optimizedBrief,
       status: schema.briefSubmissions.status,
       source: schema.briefSubmissions.source,
       sourcePage: schema.briefSubmissions.sourcePage,
@@ -74,28 +80,6 @@ briefRoutes.get('/latest', async (c) => {
     return c.json({ brief: null });
   }
 
-  const emailClauses = [client.email, user.email]
-    .filter((value, index, values) => Boolean(value) && values.indexOf(value) === index)
-    .map((value) => eq(schema.briefSubmissions.email, value));
-
-  const emailFallbackClause =
-    emailClauses.length === 0
-      ? null
-      : emailClauses.length === 1
-        ? emailClauses[0]
-        : or(...emailClauses);
-
-  const whereClause =
-    !emailFallbackClause
-      ? eq(schema.briefSubmissions.clientId, client.id)
-      : or(
-          eq(schema.briefSubmissions.clientId, client.id),
-          and(
-            isNull(schema.briefSubmissions.clientId),
-            emailFallbackClause,
-          ),
-        );
-
   const [brief] = await db
     .select({
       id: schema.briefSubmissions.id,
@@ -109,7 +93,7 @@ briefRoutes.get('/latest', async (c) => {
       updatedAt: schema.briefSubmissions.updatedAt,
     })
     .from(schema.briefSubmissions)
-    .where(whereClause)
+    .where(eq(schema.briefSubmissions.clientId, client.id))
     .orderBy(desc(schema.briefSubmissions.createdAt))
     .limit(1);
 

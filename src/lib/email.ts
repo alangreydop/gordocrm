@@ -1,9 +1,9 @@
 import type { AppBindings } from '../types/index.js';
+import { getClientActivationUrl, getClientHomeUrl, getPortalBaseUrl } from './portal-url.js';
 
 const RESEND_API_URL = 'https://api.resend.com/emails';
 const DEFAULT_FROM = 'Grande & Gordo <web@grandeandgordo.com>';
 const DEFAULT_ADMIN_RECIPIENT = 'hola@grandeandgordo.com';
-const DEFAULT_SITE_BASE = 'https://www.grandeandgordo.com';
 
 interface SendEmailInput {
   to: string | string[];
@@ -128,8 +128,9 @@ export async function sendBriefNotifications(
   const safeEmail = escapeHtml(input.email);
   const safeSource = escapeHtml(input.source?.trim() || 'website');
   const safeSourcePage = input.sourcePage?.trim() ? escapeHtml(input.sourcePage.trim()) : null;
-  const portalUrl = `${DEFAULT_SITE_BASE}/portal`;
-  const onboardingUrl = `${DEFAULT_SITE_BASE}/onboarding`;
+  const portalBase = getPortalBaseUrl(env);
+  const portalUrl = getClientHomeUrl(portalBase);
+  const onboardingUrl = getClientActivationUrl(portalBase);
 
   const adminHtml = `
     <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
@@ -279,8 +280,7 @@ export async function sendQuarterlyReviewReminderEmail(
   const safeClientName = escapeHtml(input.clientName);
   const safeCompany = escapeHtml(input.clientCompany?.trim() || '');
   const safeReviewDate = escapeHtml(input.reviewDate);
-  const portalUrl = input.portalUrl;
-  const hubUrl = `${portalUrl}/client/hub`;
+  const clientHomeUrl = getClientHomeUrl(input.portalUrl);
 
   const html = `
     <div style="font-family:Arial,Helvetica,sans-serif;color:#111827">
@@ -302,7 +302,7 @@ export async function sendQuarterlyReviewReminderEmail(
         Puedes agendar tu sesión directamente desde tu portal de cliente o respondiendo a este email.
       </p>
       <p style="margin:16px 0">
-        <a href="${hubUrl}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Ir al portal</a>
+        <a href="${clientHomeUrl}" style="display:inline-block;padding:12px 24px;background:#C4165A;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:600">Ir al portal</a>
       </p>
       <p style="margin:0 0 12px;font-size:13px;color:#6b7280">
         Grande & Gordo · hola@grandeandgordo.com
@@ -314,7 +314,7 @@ export async function sendQuarterlyReviewReminderEmail(
     to: input.clientEmail,
     subject: 'Recordatorio: Review trimestral de cuenta',
     html,
-    text: `Hola ${input.clientName},\n\nHa llegado el momento de hacer tu review trimestral de cuenta. Repasaremos rendimiento de assets, nuevos objetivos y planificación del próximo trimestre.\n\nPuedes agendar desde tu portal: ${hubUrl}\n\nGrande & Gordo · hola@grandeandgordo.com`,
+    text: `Hola ${input.clientName},\n\nHa llegado el momento de hacer tu review trimestral de cuenta. Repasaremos rendimiento de assets, nuevos objetivos y planificación del próximo trimestre.\n\nPuedes agendar desde tu portal: ${clientHomeUrl}\n\nGrande & Gordo · hola@grandeandgordo.com`,
   });
 
   return { ok: result.ok ?? false, skipped: result.skipped ?? false };

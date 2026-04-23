@@ -26,7 +26,8 @@ import { pipelineMappingRoutes } from './api/routes/portal/pipeline-mappings.js'
 import { brandGraphRoutes } from './api/routes/portal/brand-graphs.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import { sendQuarterlyReviewReminderEmail } from './lib/email.js';
-import { leadWonWebhook } from './api/routes/webhooks/lead-won.js';
+import { getPortalBaseUrl } from './lib/portal-url.js';
+import { leadWonWebhook } from './api/routes/lead-won-webhook.js';
 import { getPendingQaJobs, markQaComplete, markQaFailed, markQaProcessing } from './lib/qa-queue.js';
 import { scoreAsset } from './lib/qa-engine.js';
 import type { AppBindings, AppContext } from './types/index.js';
@@ -171,7 +172,7 @@ async function runQuarterlyReviewReminders(db: ReturnType<typeof getDb>, env: Ap
       clientEmail: user.email,
       clientName: client.name,
       clientCompany: client.company,
-      portalUrl: 'https://crm.grandeandgordo.com',
+      portalUrl: getPortalBaseUrl(env),
       reviewDate,
     });
 
