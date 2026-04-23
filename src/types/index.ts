@@ -50,6 +50,7 @@ export interface AppBindings {
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   AI_ENGINE_WEBHOOK_URL?: string;
+  AI_ENGINE_JWT_SECRET?: string;
   FAL_KEY?: string;
   OPENAI_API_KEY?: string;
   R2_ACCOUNT_ID?: string;
@@ -74,6 +75,7 @@ export interface AppVariables {
   db: Database;
   user: AuthUser;
   aiEngineToken: string;
+  aiEngineBase: string;
 }
 
 export type AppContext = {

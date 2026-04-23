@@ -1,8 +1,8 @@
 ---
-layout: '../../../layouts/AdminLayout.astro'
-title: 'Facturas'
+import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
+<AdminLayout title="Facturas">
 <div class="max-w-crm mx-auto space-y-8" role="region" aria-label="Contenido principal">
   <div class="flex items-center justify-between">
     <div>
@@ -102,9 +102,9 @@ title: 'Facturas'
   </div>
 </div>
 
-<script>
+  <script>
   (async () => {
-    const { api } = await import('../../lib/api-client');
+    const { api, escapeHtml } = await import('../../lib/api-client');
     const { showToast } = await import('../../lib/crm-ui');
 
     let allInvoices = [];
@@ -147,7 +147,7 @@ title: 'Facturas'
         cancelled: 'Cancelada',
         overdue: 'Vencida',
       };
-      return `<span class="crm-badge ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
+      return `<span class="crm-badge ${badges[status] || badges.draft}">${escapeHtml(labels[status] || status)}</span>`;
     };
 
     const formatMoney = (cents: number) => `€${(cents / 100).toFixed(2)}`;
@@ -165,12 +165,12 @@ title: 'Facturas'
           (inv: any) => `
           <tr class="border-b border-crm-border last:border-0 hover:bg-crm-panel-soft/50">
             <td class="py-4 px-6">
-              <div class="font-medium text-crm-text">${inv.invoiceNumber}</div>
+              <div class="font-medium text-crm-text">${escapeHtml(inv.invoiceNumber)}</div>
               <div class="text-xs text-crm-muted">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
             </td>
             <td class="py-4 px-6">
-              <div class="text-crm-text">${inv.clientLegalName || 'Sin cliente'}</div>
-              <div class="text-xs text-crm-muted">${inv.clientTaxId || ''}</div>
+              <div class="text-crm-text">${escapeHtml(inv.clientLegalName || 'Sin cliente')}</div>
+              <div class="text-xs text-crm-muted">${escapeHtml(inv.clientTaxId || '')}</div>
             </td>
             <td class="py-4 px-6 text-center">${getStatusBadge(inv.status)}</td>
             <td class="py-4 px-6 text-right font-medium text-crm-text">${formatMoney(inv.totalCents)}</td>
@@ -181,7 +181,8 @@ title: 'Facturas'
             </td>
             <td class="py-4 px-6 text-right">
               <div class="flex gap-2 justify-end">
-                <a href="/admin/invoices/${inv.id}" class="text-crm-muted hover:text-crm-text text-sm">Ver</a>
+                <a href="/admin/invoices/detail?id=${encodeURIComponent(inv.id)}" class="text-crm-muted hover:text-crm-text text-sm">Ver</a>
+                <a href="/api/admin/invoices/${encodeURIComponent(inv.id)}/pdf?download=1" class="text-crm-muted hover:text-crm-text text-sm">PDF</a>
                 ${inv.status === 'draft' ? `
                   <button onclick="issueInvoice('${inv.id}')" class="text-crm-warning hover:text-crm-accent text-sm">Emitir</button>
                 ` : ''}
@@ -274,7 +275,7 @@ title: 'Facturas'
           body: JSON.stringify({
             clientId,
             description,
-            dueDate: new Date(dueDate).toISOString(),
+            dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
             paymentMethod,
             items,
           }),
@@ -333,3 +334,4 @@ title: 'Facturas'
     await Promise.all([loadInvoices(), loadClients()]);
   })();
 </script>
+</AdminLayout>

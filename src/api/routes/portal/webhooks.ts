@@ -249,7 +249,13 @@ webhookRoutes.post('/invoice/paid', async (c) => {
 
         // Notificar AI Engine
         const aiEngineUrl =
-          c.env.AI_ENGINE_WEBHOOK_URL || 'http://localhost:4000/webhooks/job-created';
+          c.env.AI_ENGINE_WEBHOOK_URL ??
+          (c.env.APP_ENV === 'production' ? undefined : 'http://localhost:4000/webhooks/job-created');
+
+        if (!aiEngineUrl) {
+          console.warn('AI_ENGINE_WEBHOOK_URL is not configured; skipping AI Engine notification');
+          continue;
+        }
 
         try {
           await fetch(aiEngineUrl, {

@@ -15,6 +15,7 @@ import { z } from 'zod';
 import { schema, type Database } from '../../../../db/index.js';
 import { requireAdmin } from '../../../lib/auth.js';
 import { sendEmail } from '../../../lib/email.js';
+import { bytesToBase64, generateInvoicePdfBytes, invoicePdfFilename } from '../../../lib/invoice-pdf.js';
 import type { AppContext } from '../../../types/index.js';
 
 // ============================================
@@ -140,13 +141,29 @@ async function getIssuerData(db: Database): Promise<{
   phone?: string;
   registrationNumber?: string;
   footer?: string;
+  defaultPaymentMethod?: string;
+  defaultPaymentNotes?: string;
 }> {
   const configRows = await db
     .select({ key: schema.config.key, value: schema.config.value })
-    .from(schema.config)
-    .where(gt(schema.config.key, 'issuer_'));
+    .from(schema.config);
 
   const configMap = Object.fromEntries(configRows.map((r: { key: string; value: string }) => [r.key, r.value]));
+  const configValue = (key: string): string => configMap[key] ?? '';
+  const requiredKeys = [
+    'issuer_tax_id',
+    'issuer_legal_name',
+    'issuer_address_line1',
+    'issuer_city',
+    'issuer_postal_code',
+    'issuer_country',
+    'issuer_email',
+  ];
+  const missing = requiredKeys.filter((key) => !configMap[key]);
+
+  if (missing.length > 0) {
+    throw new Error(`Faltan datos fiscales del emisor: ${missing.join(', ')}`);
+  }
 
   const result: {
     taxId: string;
@@ -159,19 +176,23 @@ async function getIssuerData(db: Database): Promise<{
     phone?: string;
     registrationNumber?: string;
     footer?: string;
+    defaultPaymentMethod?: string;
+    defaultPaymentNotes?: string;
   } = {
-    taxId: configMap['issuer_tax_id'] || 'B00000000',
-    legalName: configMap['issuer_legal_name'] || 'Grande & Gordo S.L.',
-    addressLine1: configMap['issuer_address_line1'] || 'Calle Ejemplo, 123',
-    city: configMap['issuer_city'] || 'A Coruña',
-    postalCode: configMap['issuer_postal_code'] || '15001',
-    country: configMap['issuer_country'] || 'ES',
-    email: configMap['issuer_email'] || 'facturacion@grandeandgordo.com',
+    taxId: configValue('issuer_tax_id'),
+    legalName: configValue('issuer_legal_name'),
+    addressLine1: configValue('issuer_address_line1'),
+    city: configValue('issuer_city'),
+    postalCode: configValue('issuer_postal_code'),
+    country: configValue('issuer_country'),
+    email: configValue('issuer_email'),
   };
 
   if (configMap['issuer_phone']) result.phone = configMap['issuer_phone'];
   if (configMap['issuer_registration_number']) result.registrationNumber = configMap['issuer_registration_number'];
   if (configMap['invoice_footer']) result.footer = configMap['invoice_footer'];
+  if (configMap['default_payment_method']) result.defaultPaymentMethod = configMap['default_payment_method'];
+  if (configMap['default_payment_notes']) result.defaultPaymentNotes = configMap['default_payment_notes'];
 
   return result;
 }
@@ -320,8 +341,18 @@ invoiceRoutes.post('/', async (c) => {
     );
   }
 
-  // Obtener datos del emisor
-  const issuer = await getIssuerData(db);
+  let issuer: Awaited<ReturnType<typeof getIssuerData>>;
+  try {
+    issuer = await getIssuerData(db);
+  } catch (error) {
+    return c.json(
+      {
+        error: error instanceof Error ? error.message : 'Datos fiscales del emisor incompletos',
+        hint: 'Configura los datos fiscales reales del emisor antes de crear facturas.',
+      },
+      500,
+    );
+  }
 
   // Generar número de factura
   const currentYear = new Date().getFullYear();
@@ -391,8 +422,8 @@ invoiceRoutes.post('/', async (c) => {
     irpfAmountCents: null,
     totalCents: totals.totalCents,
     status: 'draft',
-    paymentMethod: paymentMethod || null,
-    paymentNotes: paymentNotes || null,
+    paymentMethod: paymentMethod || issuer.defaultPaymentMethod || null,
+    paymentNotes: paymentNotes || issuer.defaultPaymentNotes || null,
     notes: notes || null,
     isRectificative: false,
     relatedJobIds: relatedJobIds ? JSON.stringify(relatedJobIds) : null,
@@ -654,11 +685,24 @@ invoiceRoutes.get('/:id/pdf', async (c) => {
     .where(eq(schema.invoiceItems.invoiceId, id))
     .orderBy(schema.invoiceItems.sortOrder);
 
-  const pdfBase64 = generateInvoicePdfBase64(invoice);
+  const pdfBytes = await generateInvoicePdfBytes(invoice, items);
+  const filename = invoicePdfFilename(invoice.invoiceNumber);
+
+  if (c.req.query('download') === '1') {
+    return new Response(pdfBytes, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${filename}"`,
+        'Cache-Control': 'private, no-store',
+      },
+    });
+  }
 
   return c.json({
-    pdf: pdfBase64,
+    pdf: bytesToBase64(pdfBytes),
+    mimeType: 'application/pdf',
     invoiceNumber: invoice.invoiceNumber,
+    filename,
     generatedAt: new Date().toISOString(),
   });
 });
@@ -882,34 +926,4 @@ Total: €${(invoice.totalCents! / 100).toFixed(2)}
 
 Para cualquier duda, contacta en ${invoice.issuerEmail}
   `.trim();
-}
-
-/**
- * Genera PDF de factura (base64 para descarga)
- */
-function generateInvoicePdfBase64(invoice: typeof schema.invoices.$inferSelect): string {
-  // En producción, usar una librería como @react-pdf/renderer o pdfmake
-  // Por ahora, retornamos un placeholder que el frontend puede convertir
-  // La implementación real requiere bundling de librerías PDF
-
-  const svgContent = `
-    <svg width="800" height="1000" xmlns="http://www.w3.org/2000/svg">
-      <rect width="800" height="1000" fill="white"/>
-      <text x="50" y="50" font-family="Arial" font-size="24" fill="#111827">${invoice.issuerLegalName}</text>
-      <text x="50" y="80" font-family="Arial" font-size="14" fill="#6b7280">NIF: ${invoice.issuerTaxId}</text>
-      <text x="50" y="120" font-family="Arial" font-size="18" fill="#111827">FACTURA ${invoice.invoiceNumber}</text>
-      <text x="50" y="150" font-family="Arial" font-size="14" fill="#6b7280">Fecha: ${new Date(invoice.issueDate!).toLocaleDateString('es-ES')}</text>
-      <text x="50" y="190" font-family="Arial" font-size="16" fill="#111827">Facturar a:</text>
-      <text x="50" y="210" font-family="Arial" font-size="14" fill="#111827">${invoice.clientLegalName}</text>
-      <text x="50" y="230" font-family="Arial" font-size="14" fill="#6b7280">NIF: ${invoice.clientTaxId}</text>
-      <text x="50" y="250" font-family="Arial" font-size="14" fill="#6b7280">${invoice.clientAddressLine1}</text>
-      <text x="50" y="270" font-family="Arial" font-size="14" fill="#6b7280">${invoice.clientPostalCode} ${invoice.clientCity}</text>
-      <text x="50" y="320" font-family="Arial" font-size="18" fill="#111827">Total: €${(invoice.totalCents! / 100).toFixed(2)}</text>
-      <text x="50" y="360" font-family="Arial" font-size="14" fill="#6b7280">Vencimiento: ${new Date(invoice.dueDate!).toLocaleDateString('es-ES')}</text>
-      <text x="50" y="380" font-family="Arial" font-size="14" fill="#6b7280">Método de pago: ${invoice.paymentMethod || 'Transferencia bancaria'}</text>
-      ${invoice.description ? `<text x="50" y="420" font-family="Arial" font-size="14" fill="#111827">${invoice.description}</text>` : ''}
-    </svg>
-  `;
-
-  return btoa(svgContent);
 }

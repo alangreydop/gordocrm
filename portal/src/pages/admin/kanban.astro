@@ -1,9 +1,9 @@
 ---
-layout: '../../../layouts/AdminLayout.astro'
-title: 'Production Kanban'
+import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<div class="h-screen flex flex-col" style="background: var(--crm-bg);" role="region" aria-label="Production Kanban">
+<AdminLayout title="Production Kanban">
+<div class="flex min-h-[calc(100vh-9rem)] flex-col" role="region" aria-label="Production Kanban">
     <!-- Header -->
     <header class="crm-panel border-b-0 rounded-none mb-4 px-6 py-4 flex items-center justify-between" style="border-radius: 0;">
         <div>
@@ -103,7 +103,7 @@ title: 'Production Kanban'
 
 <script>
     (async () => {
-        const { api } = await import('../../lib/api-client');
+        const { api, escapeHtml } = await import('../../lib/api-client');
 
         const refreshBtn = document.getElementById('refresh-btn');
 
@@ -135,29 +135,35 @@ title: 'Production Kanban'
             };
 
         const renderColumns = (columns) => {
-            const renderCard = (job) => `
+            const renderCard = (job) => {
+                const jobId = String(job.id ?? '');
+                const status = String(job.status ?? '');
+                const dueAt = job.dueAt ? new Date(job.dueAt) : null;
+
+                return `
                 <div class="crm-panel p-4 rounded-lg hover:border-crm-accent transition cursor-pointer group">
                     <div class="flex items-start justify-between mb-2">
-                        <span class="text-xs font-mono text-crm-muted">#${job.id.slice(0, 8)}</span>
+                        <span class="text-xs font-mono text-crm-muted">#${escapeHtml(jobId.slice(0, 8))}</span>
                         <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                            ${job.status !== 'pending' ? `<button class="move-left text-xs text-crm-muted hover:text-crm-text" data-id="${job.id}" data-direction="prev">←</button>` : ''}
-                            ${job.status !== 'completed' ? `<button class="move-right text-xs text-crm-muted hover:text-crm-text" data-id="${job.id}" data-direction="next">→</button>` : ''}
+                            ${status !== 'pending' ? `<button class="move-left text-xs text-crm-muted hover:text-crm-text" data-id="${escapeHtml(jobId)}" data-direction="prev">←</button>` : ''}
+                            ${status !== 'completed' ? `<button class="move-right text-xs text-crm-muted hover:text-crm-text" data-id="${escapeHtml(jobId)}" data-direction="next">→</button>` : ''}
                         </div>
                     </div>
-                    <h3 class="font-semibold text-crm-text text-sm mb-1 truncate">${job.clientName || 'Sin cliente'}</h3>
-                    <p class="text-xs text-crm-muted line-clamp-2 mb-3">${job.briefText || 'Sin descripción'}</p>
+                    <h3 class="font-semibold text-crm-text text-sm mb-1 truncate">${escapeHtml(job.clientName || 'Sin cliente')}</h3>
+                    <p class="text-xs text-crm-muted line-clamp-2 mb-3">${escapeHtml(job.briefText || 'Sin descripción')}</p>
                     <div class="flex items-center justify-between text-xs">
                         <div class="flex items-center gap-2">
-                            <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${job.platform || 'N/A'}</span>
-                            <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${job.type || 'N/A'}</span>
+                            <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${escapeHtml(job.platform || 'N/A')}</span>
+                            <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${escapeHtml(job.type || 'N/A')}</span>
                         </div>
-                        <span class="text-crm-muted">${job.assetCount} assets</span>
+                        <span class="text-crm-muted">${escapeHtml(job.assetCount ?? 0)} assets</span>
                     </div>
-                    ${job.dueAt ? `<div class="mt-3 pt-3 border-t border-crm-border text-xs ${new Date(job.dueAt) < new Date() ? 'text-crm-danger' : 'text-crm-muted'}">
-                        Due: ${new Date(job.dueAt).toLocaleDateString()}
+                    ${dueAt && !Number.isNaN(dueAt.getTime()) ? `<div class="mt-3 pt-3 border-t border-crm-border text-xs ${dueAt < new Date() ? 'text-crm-danger' : 'text-crm-muted'}">
+                        Due: ${dueAt.toLocaleDateString()}
                     </div>` : ''}
                 </div>
             `;
+            };
 
             document.getElementById('col-pending').innerHTML = (columns.pending || []).map(renderCard).join('');
             document.getElementById('col-processing').innerHTML = (columns.processing || []).map(renderCard).join('');
@@ -223,3 +229,4 @@ title: 'Production Kanban'
         setInterval(loadKanban, 60000);
         })();
 </script>
+</AdminLayout>

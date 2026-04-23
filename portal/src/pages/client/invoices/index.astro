@@ -48,7 +48,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
   <script>
     (async () => {
-      const { api } = await import('../../../lib/api-client');
+      const { api, escapeHtml } = await import('../../../lib/api-client');
       const { showToast } = await import('../../../lib/crm-ui');
       const listEl = document.getElementById('invoices-list');
 
@@ -71,7 +71,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           cancelled: 'Cancelada',
           overdue: 'Vencida',
         };
-        return `<span class="crm-badge ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
+        return `<span class="crm-badge ${badges[status] || badges.draft}">${escapeHtml(labels[status] || status)}</span>`;
       };
 
       const loadInvoices = async () => {
@@ -110,14 +110,15 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
                   <tbody>
                     ${invoices.map((inv: any) => `
                       <tr>
-                        <td><p class="font-semibold" style="color: var(--gg-text);">${inv.invoiceNumber}</p></td>
-                        <td class="text-crm-muted">${inv.description || '—'}</td>
+                        <td><p class="font-semibold" style="color: var(--gg-text);">${escapeHtml(inv.invoiceNumber)}</p></td>
+                        <td class="text-crm-muted">${escapeHtml(inv.description || '—')}</td>
                         <td><span class="font-bold" style="color: var(--gg-text);">${formatMoney(inv.totalCents)}</span></td>
                         <td class="text-crm-muted">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</td>
                         <td>${getStatusBadge(inv.status)}</td>
                         <td style="text-align: right;">
                           <div class="flex gap-2 justify-end">
-                            <a href="/client/invoices/detail?id=${inv.id}" class="crm-button crm-button-secondary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">Ver detalle</a>
+                            <a href="/client/invoices/detail?id=${encodeURIComponent(inv.id)}" class="crm-button crm-button-secondary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">Ver detalle</a>
+                            <a href="/api/portal/invoices/${encodeURIComponent(inv.id)}/pdf?download=1" class="crm-button crm-button-secondary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">PDF</a>
                             ${inv.status !== 'paid' ? `
                               <button onclick="uploadProof('${inv.id}')" class="crm-button crm-button-primary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">
                                 Subir justificante
@@ -151,8 +152,8 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           method: 'POST',
           body: JSON.stringify({
             paymentDate: new Date().toISOString(),
-            notes: notes || null,
-            proofUrl: proofUrl || null,
+            notes: notes || undefined,
+            proofUrl: proofUrl || undefined,
           }),
         })
           .then(() => {

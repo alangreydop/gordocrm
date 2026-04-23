@@ -7,11 +7,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
          <section class="crm-page-header">
              <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
                  <div>
-                     <p class="crm-kicker crm-kicker--accent">consola operativa</p>
+                     <p class="crm-kicker crm-kicker--accent">admin interno</p>
                      <h1 class="crm-page-header__title mt-4">Operaciones</h1>
                      <p class="crm-page-header__meta mt-4">
-                        Visibilidad rápida de briefs, producción, capacidad y alertas para decidir
-                        qué desbloquear hoy y dónde puede aparecer fricción operativa.
+                        Briefs, producción, capacidad y cobros en una sola lectura para decidir
+                        qué desbloquear hoy.
                      </p>
                  </div>
                  <div class="grid gap-4 sm:grid-cols-2">
@@ -22,11 +22,25 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                          </p>
                      </div>
                      <div class="crm-panel-soft p-5">
-                         <p class="crm-kicker">enfoque del día</p>
+                         <p class="crm-kicker">enfoque</p>
                          <p class="mt-3 text-sm leading-relaxed text-crm-text">
                             Producción, facturación y revisiones próximas en una sola vista.
                          </p>
                      </div>
+                 </div>
+             </div>
+         </section>
+
+         <section class="crm-panel-soft p-4">
+             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                 <div>
+                     <p class="crm-kicker">acciones rápidas</p>
+                     <p class="mt-2 text-sm text-crm-muted">Crear, revisar o facturar sin pasar por la navegación lateral.</p>
+                 </div>
+                 <div class="flex flex-wrap gap-2">
+                     <a href="/admin/jobs/new" class="crm-button crm-button-secondary crm-button-sm">nuevo trabajo</a>
+                     <a href="/admin/clients/new" class="crm-button crm-button-secondary crm-button-sm">nuevo cliente</a>
+                     <a href="/admin/invoices/new" class="crm-button crm-button-primary crm-button-sm">nueva factura</a>
                  </div>
              </div>
          </section>
@@ -62,7 +76,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                  <div class="border-b border-crm-border px-6 py-5">
                      <p class="crm-kicker">lanes</p>
                      <h2 class="mt-3 text-lg font-semibold text-crm-text">distribución por lane</h2>
-                     <p class="mt-2 text-sm text-crm-muted">Como estan repartidos los trabajos entre los lanes del stack.</p>
+                     <p class="mt-2 text-sm text-crm-muted">Cómo se reparte la producción real entre los lanes activos.</p>
                  </div>
                  <div id="lane-chart" class="p-6">
                      <div class="space-y-3">
@@ -75,7 +89,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                  <div class="border-b border-crm-border px-6 py-5">
                      <p class="crm-kicker">pipeline</p>
                      <h2 class="mt-3 text-lg font-semibold text-crm-text">estado de trabajos</h2>
-                     <p class="mt-2 text-sm text-crm-muted">Breakdown por estado del pipeline.</p>
+                     <p class="mt-2 text-sm text-crm-muted">Lectura rápida del pipeline para detectar atasco o deuda.</p>
                  </div>
                  <div id="status-chart" class="p-6">
                      <div class="space-y-3">
@@ -89,7 +103,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
              <div class="border-b border-crm-border px-6 py-5">
                  <p class="crm-kicker">alertas</p>
                  <h2 class="mt-3 text-lg font-semibold text-crm-text">alertas operativas</h2>
-                 <p class="mt-2 text-sm text-crm-muted">Trabajos vencidos y clientes con capacidad baja.</p>
+                 <p class="mt-2 text-sm text-crm-muted">Trabajos vencidos, fricción operativa y capacidad en riesgo.</p>
              </div>
              <div id="alerts-list" class="divide-y divide-crm-border">
                  <div class="px-6 py-4 text-sm text-crm-muted">Verificando alertas...</div>
@@ -102,9 +116,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                      <div>
                          <p class="crm-kicker">trabajos</p>
                          <h2 class="mt-3 text-lg font-semibold text-crm-text">trabajos recientes</h2>
-                         <p class="mt-2 text-sm text-crm-muted">Lo que conviene revisar hoy antes de producir.</p>
+                         <p class="mt-2 text-sm text-crm-muted">Lo que conviene revisar hoy antes de producir o entregar.</p>
                      </div>
-                     <a href="/admin/jobs" class="text-sm font-medium text-crm-accent transition hover:text-crm-accent-hover">Ver todos</a>
+                     <a href="/admin/jobs" class="text-sm font-medium text-crm-accent transition hover:text-crm-accent-hover">ver todos</a>
                  </div>
                  <div class="overflow-x-auto">
                      <table class="crm-table min-w-full divide-y divide-crm-border text-sm">
@@ -132,7 +146,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                  <div class="border-b border-crm-border px-6 py-5">
                      <p class="crm-kicker">seguimiento</p>
                      <h2 class="mt-3 text-lg font-semibold text-crm-text">revisiones próximas</h2>
-                     <p class="mt-2 text-sm text-crm-muted">Clientes que deberian tener seguimiento en los proximos 14 dias.</p>
+                     <p class="mt-2 text-sm text-crm-muted">Clientes que deberían tener seguimiento en los próximos 14 días.</p>
                  </div>
                  <div id="reviews-list" class="divide-y divide-crm-border">
                      <div class="px-6 py-8 text-center text-crm-muted">Cargando revisiones...</div>

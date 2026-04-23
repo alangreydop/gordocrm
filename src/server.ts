@@ -49,7 +49,7 @@ app.use('*', async (c, next) => {
       'Content-Security-Policy',
       [
         "default-src 'self'",
-        "script-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' https: data:",
         "font-src 'self' https:",
@@ -86,7 +86,7 @@ app.use(
   '/api/*',
   cors({
     credentials: true,
-    allowMethods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     origin: (origin, c) => {
       if (!origin) return undefined;

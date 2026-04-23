@@ -8,15 +8,15 @@ import { resolvePipelineId } from './pipeline-mappings.js';
 import type { AppContext } from '../../../types/index.js';
 
 // Helper para crear JWT compatible con AI Engine
-async function createAIFngineJWT(user: {
+async function createAIEngineJWT(user: {
   id: string;
   email: string;
   role: string;
-}): Promise<string> {
+}, secret: string): Promise<string> {
   const encoder = new TextEncoder();
   const keyData = await crypto.subtle.importKey(
     'raw',
-    encoder.encode('gordo-ai-engine-secret-key-2026'),
+    encoder.encode(secret),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign'],
@@ -515,13 +515,20 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
   }
 
   // Crear job en AI Engine
-  const aiEngineUrlBase =
-    (c.env && 'AI_ENGINE_URL' in c.env ? c.env.AI_ENGINE_URL : undefined) ??
-    'http://localhost:8000';
-  const aiEngineUrl = `${aiEngineUrlBase}/api/v1/jobs`;
+  const isProduction = c.env.APP_ENV === 'production';
+  const aiEngineUrlBase = c.env.AI_ENGINE_URL?.replace(/\/+$/, '') ?? (isProduction ? undefined : 'http://localhost:8000');
+  if (!aiEngineUrlBase) {
+    return c.json({ error: 'AI_ENGINE_URL is not configured' }, 503);
+  }
+  const aiEngineApiBase = aiEngineUrlBase.endsWith('/api/v1') ? aiEngineUrlBase : `${aiEngineUrlBase}/api/v1`;
+  const aiEngineUrl = `${aiEngineApiBase}/jobs`;
 
   // Obtener token JWT del CRM
-  const token = await createAIFngineJWT(user);
+  const aiEngineJwtSecret = c.env.AI_ENGINE_JWT_SECRET ?? (isProduction ? undefined : 'local-ai-engine-secret');
+  if (!aiEngineJwtSecret) {
+    return c.json({ error: 'AI_ENGINE_JWT_SECRET is not configured' }, 503);
+  }
+  const token = await createAIEngineJWT(user, aiEngineJwtSecret);
 
   const response = await fetch(aiEngineUrl, {
     method: 'POST',
