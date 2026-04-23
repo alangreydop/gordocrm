@@ -2,11 +2,11 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<AdminLayout title="Settings">
+<AdminLayout title="Cuenta interna">
   <div class="max-w-4xl space-y-6" role="region" aria-label="Contenido principal">
     <section class="crm-page-header" aria-labelledby="page-title">
-      <p class="crm-kicker">Cuenta interna</p>
-      <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Settings</h1>
+      <p class="crm-kicker crm-kicker--accent">sistema</p>
+      <h1 class="crm-page-header__title mt-4">Cuenta <em class="baskerville-italic">interna</em></h1>
       <p class="crm-page-header__meta mt-4">
         Gestiona tu acceso al CRM y la identidad operativa con la misma capa visual
         que el resto del sistema.
@@ -37,7 +37,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       </section>
 
       <section class="crm-form-section">
-        <h2 class="text-lg font-semibold text-crm-text mb-4">Cambiar contrasena</h2>
+        <h2 class="text-lg font-semibold text-crm-text mb-4">Cambiar contraseña</h2>
         <div id="password-success" class="hidden crm-alert crm-alert-success mb-4"></div>
         <div id="password-error" class="hidden crm-alert crm-alert-danger mb-4"></div>
 
@@ -53,7 +53,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
               class="crm-input" />
           </div>
           <button type="submit" class="crm-button crm-button-primary">
-            Actualizar contrasena
+            Actualizar contraseña
           </button>
         </form>
       </section>

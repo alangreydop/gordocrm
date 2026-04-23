@@ -18,7 +18,7 @@ const primaryNavItems = [
 const secondaryNavItems = [
     { href: '/admin/pipeline-mappings', label: 'pipelines' },
     { href: '/admin/brand-graphs', label: 'brand graphs' },
-    { href: '/admin/settings', label: 'configuracion' },
+    { href: '/admin/settings', label: 'cuenta interna' },
 ];
 ---
 
@@ -32,13 +32,24 @@ const secondaryNavItems = [
 
         <div class="flex min-h-screen flex-col lg:flex-row">
             <aside id="main-sidebar" role="navigation" aria-label="Panel de control" class="crm-sidebar fixed z-40 flex h-full w-full flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:static lg:w-72 lg:translate-x-0 lg:px-6 lg:py-8">
-                <div class="crm-sidebar__section crm-sidebar__brand">
-                    <p class="crm-sidebar__eyebrow">Grande&amp;Gordo</p>
-                    <h1 class="crm-sidebar__title">operations console</h1>
-                    <p class="crm-sidebar__copy">clientes, briefs, trabajos y facturas en una sola consola operativa.</p>
+                <div class="crm-sidebar__section crm-sidebar__brand" style="padding-bottom: 1.75rem; margin-bottom: 1.75rem;">
+                    <a href="/admin" aria-label="Grande&Gordo — Operaciones">
+                        <img
+                            src="https://logos.grandeandgordo.com/logoggblanco.png"
+                            alt="Grande&Gordo"
+                            width="160"
+                            height="60"
+                            style="height: 32px; width: auto; margin-bottom: 1.25rem; display: block;"
+                            loading="eager"
+                            decoding="async"
+                        />
+                    </a>
+                    <h1 class="crm-sidebar__title">consola operativa</h1>
+                    <p class="crm-sidebar__copy">clientes, briefs, trabajos y facturas dentro de una sola capa interna, sin ruido comercial.</p>
                 </div>
 
                 <div class="crm-sidebar__section crm-sidebar__search">
+                    <p class="crm-sidebar__nav-title" style="margin-bottom: 0.75rem;">búsqueda global</p>
                     <svg class="crm-sidebar__search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
                     <input
                         id="global-search"
@@ -52,7 +63,7 @@ const secondaryNavItems = [
 
                 <nav class="crm-sidebar__section" aria-label="Navegación principal">
                     <div class="grid gap-3">
-                        <p class="crm-sidebar__nav-title">core ops</p>
+                        <p class="crm-sidebar__nav-title">operaciones</p>
                         <div class="crm-sidebar__nav">
                             {primaryNavItems.map((item) => {
                                 const active =
@@ -94,13 +105,18 @@ const secondaryNavItems = [
                 </nav>
 
                 <div class="crm-sidebar__section crm-sidebar__meta">
-                    <p class="crm-sidebar__meta-label">ops</p>
+                    <p class="crm-sidebar__meta-label">soporte</p>
                     <p class="crm-sidebar__meta-value">{siteLinks.supportEmail}</p>
                     <p id="sidebar-user-name" class="crm-sidebar__meta-value mt-3">cargando...</p>
                     <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
                     <button type="button" id="logout-button" class="text-sm transition" style="color: var(--crm-sidebar-text); width: fit-content;">
                         cerrar sesión
                     </button>
+                </div>
+
+                <div class="crm-sidebar__legal">
+                    <a href={siteLinks.home}>web principal</a>
+                    <a href="/client">portal cliente</a>
                 </div>
             </aside>
 
@@ -113,7 +129,7 @@ const secondaryNavItems = [
                             </button>
                             <div class="grid gap-1">
                                 <p class="crm-topbar__eyebrow">admin</p>
-                                <span class="crm-topbar__path">operations console</span>
+                                <span id="admin-topbar-path" class="crm-topbar__path">consola operativa</span>
                             </div>
                         </div>
                     </div>
@@ -143,6 +159,22 @@ const secondaryNavItems = [
             await logout();
             window.location.href = '/login';
         });
+
+        const formatSegment = (segment) =>
+            segment
+                .split('-')
+                .filter(Boolean)
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+
+        const topbarPath = document.getElementById('admin-topbar-path');
+        if (topbarPath) {
+            const path = window.location.pathname.replace(/\/+$/, '');
+            const segments = path.split('/').filter(Boolean).slice(1);
+            topbarPath.textContent = segments.length > 0
+                ? segments.map(formatSegment).join(' / ')
+                : 'consola operativa';
+        }
 
         // Global search
         const searchInput = document.getElementById('global-search');

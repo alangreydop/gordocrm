@@ -9,11 +9,11 @@ interface Props {
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
-    { href: '/client', label: 'Inicio' },
-    { href: '/client/jobs', label: 'Trabajos' },
-    { href: '/client/vault', label: 'Vault' },
-    { href: '/client/invoices', label: 'Facturacion' },
-    { href: '/client/profile', label: 'Cuenta' },
+    { href: '/client', label: 'inicio' },
+    { href: '/client/jobs', label: 'trabajos' },
+    { href: '/client/vault', label: 'vault' },
+    { href: '/client/invoices', label: 'facturación' },
+    { href: '/client/profile', label: 'cuenta' },
 ];
 ---
 
@@ -25,343 +25,334 @@ const navItems = [
 
         <div id="sidebar-overlay" class="crm-overlay fixed inset-0 z-30 hidden lg:hidden"></div>
 
-        <div class="flex min-h-screen flex-col lg:flex-row">
-            <aside id="main-sidebar" role="navigation" aria-label="Área de cliente" class="crm-sidebar fixed z-40 flex h-full w-full flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:static lg:w-72 lg:translate-x-0 lg:px-6 lg:py-8">
-                <div class="crm-sidebar__section crm-sidebar__brand">
-                    <p class="crm-sidebar__eyebrow">Grande&amp;Gordo</p>
-                    <h1 class="crm-sidebar__title">portal operativo</h1>
-                    <p class="crm-sidebar__copy">brief, trabajos, vault y facturación sin ruido comercial.</p>
+        <!-- ═══════════════════════════════════════
+             SIDEBAR — redesigned
+        ═══════════════════════════════════════ -->
+        <aside
+            id="main-sidebar"
+            role="navigation"
+            aria-label="Área de cliente"
+            class="crm-sidebar fixed z-40 flex h-full w-72 flex-col overflow-y-auto transition-transform duration-300 ease-in-out -translate-x-full lg:static lg:translate-x-0"
+            style="padding: 2rem 1.5rem 1.5rem;"
+        >
+            <!-- Logo + brand -->
+            <div class="crm-sidebar__brand" style="padding-bottom: 1.75rem; margin-bottom: 1.75rem;">
+                <a href="/client" aria-label="Grande&Gordo — Inicio">
+                    <img
+                        src="https://logos.grandeandgordo.com/logoggblanco.png"
+                        alt="Grande&Gordo"
+                        width="160"
+                        height="60"
+                        style="height: 32px; width: auto; margin-bottom: 1.25rem; display: block;"
+                        loading="eager"
+                        decoding="async"
+                    />
+                </a>
+                <h1 class="crm-sidebar__title">portal operativo</h1>
+                <p class="crm-sidebar__copy">brief, trabajos, vault y facturación sin ruido comercial.</p>
+            </div>
+
+            <!-- Nav: cliente -->
+            <nav class="crm-sidebar__section" aria-label="Navegación del cliente" style="margin-bottom: 1.75rem;">
+                <p class="crm-sidebar__nav-title">cliente</p>
+                <div class="crm-sidebar__nav">
+                    {navItems.map((item) => {
+                        const active =
+                            item.href === '/client'
+                                ? pathname === '/client' || pathname === '/client/'
+                                : pathname.startsWith(item.href);
+                        return (
+                            <a
+                                href={item.href}
+                                aria-current={active ? 'page' : undefined}
+                                class:list={['crm-sidebar-link', active && 'crm-sidebar-link--active']}
+                            >
+                                {item.label}
+                            </a>
+                        );
+                    })}
                 </div>
+            </nav>
 
-                <nav class="crm-sidebar__section" aria-label="Navegación del cliente">
-                    <p class="crm-sidebar__nav-title">cliente</p>
-                    <div class="crm-sidebar__nav">
-                        {navItems.map((item) => {
-                            const active =
-                                item.href === '/client'
-                                    ? pathname === '/client'
-                                    : pathname.startsWith(item.href);
+            <!-- Meta / user / soporte -->
+            <div class="crm-sidebar__meta" style="margin-top: auto;">
+                <p class="crm-sidebar__meta-label">soporte</p>
+                <p class="crm-sidebar__meta-value" style="color: var(--gg-accent-bright); font-size: 0.82rem; margin-bottom: 0.75rem;">{siteLinks.supportEmail}</p>
+                <p id="sidebar-user-name" class="crm-sidebar__meta-value">cargando...</p>
+                <p id="sidebar-user-email" style="font-size: 0.75rem; color: var(--crm-sidebar-text); margin-bottom: 0.75rem;"></p>
+                <button
+                    type="button"
+                    id="logout-button"
+                    style="font-size: 0.8rem; color: var(--crm-sidebar-text); background: none; border: none; cursor: pointer; padding: 0; transition: color 160ms;"
+                    onmouseover="this.style.color='var(--crm-sidebar-text-active)'"
+                    onmouseout="this.style.color='var(--crm-sidebar-text)'"
+                >
+                    cerrar sesión
+                </button>
+            </div>
 
-                            return (
-                                <a
-                                    href={item.href}
-                                    aria-current={active ? 'page' : undefined}
-                                    class:list={['crm-sidebar-link', active && 'crm-sidebar-link--active']}
-                                >
-                                    {item.label.toLowerCase()}
-                                </a>
-                            );
-                        })}
-                    </div>
-                </nav>
+            <!-- Legal links -->
+            <div class="crm-sidebar__legal">
+                <a href="/client/legal/terms">términos</a>
+                <a href="/client/legal/privacy">privacidad</a>
+            </div>
+        </aside>
 
-                <div class="crm-sidebar__section crm-sidebar__meta">
-                    <p class="crm-sidebar__meta-label">soporte</p>
-                    <p class="crm-sidebar__meta-value">{siteLinks.supportEmail}</p>
-                    <p id="sidebar-user-name" class="crm-sidebar__meta-value mt-3">cargando...</p>
-                    <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
-                    <button type="button" id="logout-button" class="text-sm transition" style="color: var(--crm-sidebar-text); width: fit-content;">
-                        cerrar sesión
-                    </button>
-                </div>
+        <!-- ═══════════════════════════════════════
+             MAIN
+        ═══════════════════════════════════════ -->
+        <main id="client-main" class="crm-main flex-1 min-h-screen" role="main" aria-label="Contenido del área de cliente">
+            <div class="crm-main-frame">
 
-                <div class="crm-sidebar__legal">
-                    <a href="/client/legal/terms" class="transition hover:underline">términos</a>
-                    <a href="/client/legal/privacy" class="transition hover:underline">privacidad</a>
-                </div>
-            </aside>
-
-            <main id="client-main" class="crm-main flex-1 min-h-screen" role="main" aria-label="Contenido del área de cliente">
-                <div class="crm-main-frame">
-                    <div class="crm-topbar">
-                        <div class="crm-topbar__context">
-                            <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="Abrir menú de navegación">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                            </button>
-                            <div class="grid gap-1">
-                                <p class="crm-topbar__eyebrow">cliente</p>
-                                <nav id="breadcrumbs" aria-label="Breadcrumbs">
-                                    <ol class="crm-topbar__path">
-                                        <li><a href="/client" class="transition hover:text-crm-text">inicio</a></li>
-                                    </ol>
-                                </nav>
-                            </div>
+                <!-- Topbar -->
+                <div class="crm-topbar">
+                    <div class="crm-topbar__context">
+                        <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="Abrir menú de navegación">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
+                        <div style="display: grid; gap: 2px;">
+                            <p class="crm-topbar__eyebrow">cliente</p>
+                            <nav id="breadcrumbs" aria-label="Breadcrumbs">
+                                <ol class="crm-topbar__path">
+                                    <li><a href="/client" class="transition hover:text-crm-text">inicio</a></li>
+                                </ol>
+                            </nav>
                         </div>
+                    </div>
 
-                        <div class="relative">
-                            <button id="notifications-btn" class="crm-topbar-button relative" aria-label="Notificaciones" aria-expanded="false" aria-controls="notifications-dropdown">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                </svg>
-                                <span id="notifications-badge" class="absolute top-2 right-2 hidden h-2.5 w-2.5 rounded-full" style="background: var(--crm-accent);"></span>
-                            </button>
+                    <div class="relative">
+                        <button
+                            id="notifications-btn"
+                            class="crm-topbar-button relative"
+                            aria-label="Notificaciones"
+                            aria-expanded="false"
+                            aria-controls="notifications-dropdown"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <span id="notifications-badge" class="absolute top-2 right-2 hidden h-2.5 w-2.5 rounded-full" style="background: var(--crm-accent);"></span>
+                        </button>
 
-                            <div id="notifications-dropdown" class="crm-notification-dropdown hidden absolute right-0 mt-3 z-50" role="menu" aria-label="Notificaciones">
-                                <div class="flex items-center justify-between px-5 py-4" style="border-bottom: 1px solid var(--crm-border);">
-                                    <div>
-                                        <p class="crm-kicker crm-kicker--accent">actividad</p>
-                                        <h3 class="text-base font-semibold" style="color: var(--crm-text);">notificaciones</h3>
-                                    </div>
-                                    <button id="mark-all-read-btn" class="crm-button crm-button-secondary text-sm" style="min-height: auto; padding: 0.55rem 0.8rem;" role="menuitem">
-                                        marcar leídas
-                                    </button>
+                        <div id="notifications-dropdown" class="crm-notification-dropdown hidden absolute right-0 mt-3 z-50" role="menu" aria-label="Notificaciones">
+                            <div class="flex items-center justify-between px-5 py-4" style="border-bottom: 1px solid var(--crm-border);">
+                                <div>
+                                    <p class="crm-kicker crm-kicker--accent">actividad</p>
+                                    <h3 class="text-base font-semibold" style="color: var(--crm-text);">notificaciones</h3>
                                 </div>
-                                <div id="notifications-list" class="max-h-96 overflow-y-auto" role="list"></div>
+                                <button id="mark-all-read-btn" class="crm-button crm-button-secondary text-sm" style="min-height: auto; padding: 0.55rem 0.8rem;" role="menuitem">
+                                    marcar leídas
+                                </button>
                             </div>
+                            <div id="notifications-list" class="max-h-96 overflow-y-auto" role="list"></div>
                         </div>
                     </div>
-
-                    <div class="crm-main-content">
-                        <slot />
-                    </div>
                 </div>
-            </main>
-        </div>
+
+                <!-- Page content -->
+                <div class="crm-main-content">
+                    <slot />
+                </div>
+
+            </div>
+        </main>
     </div>
 
-     <script>
-         (async () => {
-        const { logout, requireRole } = await import('../lib/api-client');
+    <script>
+        (async () => {
+            const { logout, requireRole } = await import('../lib/api-client');
 
-        const user = await requireRole('client');
-        if (user) {
-            const name = document.getElementById('sidebar-user-name');
-            const email = document.getElementById('sidebar-user-email');
+            const user = await requireRole('client');
+            if (user) {
+                const name = document.getElementById('sidebar-user-name');
+                const email = document.getElementById('sidebar-user-email');
+                if (name) name.textContent = user.name;
+                if (email) email.textContent = user.email;
+            }
 
-            if (name) name.textContent = user.name;
-            if (email) email.textContent = user.email;
-         }
+            document.getElementById('logout-button')?.addEventListener('click', async () => {
+                await logout();
+                window.location.href = '/login';
+            });
 
-        document.getElementById('logout-button')?.addEventListener('click', async () => {
-            await logout();
-            window.location.href = '/login';
-         });
+            // Notificaciones
+            const notificationsBtn = document.getElementById('notifications-btn');
+            const notificationsDropdown = document.getElementById('notifications-dropdown');
+            const notificationsList = document.getElementById('notifications-list');
+            const notificationsBadge = document.getElementById('notifications-badge');
+            const markAllReadBtn = document.getElementById('mark-all-read-btn');
 
-         // Notificaciones
-        const notificationsBtn = document.getElementById('notifications-btn');
-        const notificationsDropdown = document.getElementById('notifications-dropdown');
-        const notificationsList = document.getElementById('notifications-list');
-        const notificationsBadge = document.getElementById('notifications-badge');
-        const markAllReadBtn = document.getElementById('mark-all-read-btn');
-
-        const formatNotificationTime = (dateString) => {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now.getTime() - date.getTime();
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            if (diffMins < 1) return 'Ahora mismo';
-            if (diffMins < 60) return `Hace ${diffMins}m`;
-            if (diffHours < 24) return `Hace ${diffHours}h`;
-            if (diffDays < 7) return `Hace ${diffDays}d`;
-            return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-         };
-
-        const getNotificationLabel = (type) => {
-            switch (type) {
-                case 'job_completed': return 'listo';
-                case 'job_updated': return 'cambio';
-                case 'feedback_received': return 'feedback';
-                case 'message': return 'mensaje';
-                case 'reminder': return 'aviso';
-                default: return 'update';
-             }
-         };
-
-        let notificationsData = [];
-
-        const loadNotifications = async () => {
-            try {
-                const { api } = await import('../lib/api-client');
-                const data = await api('/api/portal/notifications');
-                notificationsData = data.notifications || [];
-
-                if (notificationsBadge) {
-                    if (data.unreadCount > 0) {
-                        notificationsBadge.classList.remove('hidden');
-                     } else {
-                        notificationsBadge.classList.add('hidden');
-                     }
-                 }
-
-                if (notificationsList) {
-                    if (notificationsData.length === 0) {
-                        notificationsList.innerHTML = '<p class="p-4 text-sm text-center" style="color: var(--crm-muted);">No hay notificaciones</p>';
-                     } else {
-                        notificationsList.innerHTML = notificationsData.map((notif) => `
-                             <div class="crm-notification-row ${!notif.read ? 'crm-notification-row--unread' : ''}" role="listitem">
-                                 <span class="crm-notification-type">${getNotificationLabel(notif.type)}</span>
-                                 <div class="min-w-0">
-                                     <p class="text-sm font-medium truncate" style="color: var(--crm-text);">${notif.title}</p>
-                                     <p class="text-xs mt-0.5" style="color: var(--crm-muted);">${notif.message}</p>
-                                     <p class="text-xs mt-2" style="color: var(--crm-subtle);">${formatNotificationTime(notif.createdAt)}</p>
-                                 </div>
-                                 ${!notif.read ? '<span class="crm-notification-dot"></span>' : '<span></span>'}
-                             </div>
-                         `).join('');
-                     }
-                 }
-             } catch (error) {
-                console.error('Failed to load notifications:', error);
-                if (notificationsList) {
-                    notificationsList.innerHTML = '<p class="p-4 text-sm text-center" style="color: var(--crm-muted);">No se pudieron cargar las notificaciones</p>';
-                 }
-             }
-         };
-
-        const markAllAsRead = async () => {
-            try {
-                const { api } = await import('../lib/api-client');
-                await api('/api/portal/notifications/mark-all-read', { method: 'POST' });
-                await loadNotifications();
-             } catch (error) {
-                console.error('Failed to mark notifications as read:', error);
-             }
-         };
-
-        notificationsBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isHidden = notificationsDropdown?.classList.contains('hidden');
-            if (isHidden) {
-                notificationsBtn.setAttribute('aria-expanded', 'true');
-                loadNotifications();
-             } else {
-                notificationsBtn.setAttribute('aria-expanded', 'false');
-             }
-            notificationsDropdown?.classList.toggle('hidden');
-         });
-
-        document.addEventListener('click', (e) => {
-            if (notificationsDropdown && !notificationsDropdown.contains(e.target) && !notificationsBtn?.contains(e.target)) {
-                notificationsDropdown.classList.add('hidden');
-                notificationsBtn?.setAttribute('aria-expanded', 'false');
-             }
-         });
-
-        markAllReadBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            markAllAsRead();
-         });
-
-         // Reduce polling from 30s to 60s (performance fix)
-        setInterval(loadNotifications, 60000);
-
-         // Close dropdown on Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && notificationsDropdown && !notificationsDropdown.classList.contains('hidden')) {
-                notificationsDropdown.classList.add('hidden');
-                notificationsBtn?.setAttribute('aria-expanded', 'false');
-             }
-         });
-
-         // Breadcrumbs
-        const breadcrumbs = document.getElementById('breadcrumbs');
-        if (breadcrumbs) {
-            const path = window.location.pathname;
-            const pages = {
-                 '/client/brief-assistant': { label: 'Brief', href: '/client/brief-assistant' },
-                 '/client/invoices': { label: 'Facturacion', href: '/client/invoices' },
-                 '/client/profile': { label: 'Perfil', href: '/client/profile' },
-                 '/client/jobs': { label: 'Trabajos', href: '/client/jobs' },
-                 '/client/jobs/detail': { label: 'Trabajos', href: '/client/jobs' },
-                 '/client/onboarding': { label: 'Onboarding', href: '/client/onboarding' },
-                 '/client/vault': { label: 'Vault', href: '/client/vault' },
+            const formatNotificationTime = (dateString) => {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now.getTime() - date.getTime();
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                if (diffMins < 1) return 'Ahora mismo';
+                if (diffMins < 60) return `Hace ${diffMins}m`;
+                if (diffHours < 24) return `Hace ${diffHours}h`;
+                if (diffDays < 7) return `Hace ${diffDays}d`;
+                return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
             };
 
-            const currentPage = Object.entries(pages).find(([key]) => path.startsWith(key));
-            if (currentPage && (path !== '/client' && path !== '/client/')) {
-                const ol = breadcrumbs.querySelector('ol');
-                const li = document.createElement('li');
-                li.className = 'flex items-center gap-2';
-                li.innerHTML = `
-                     <svg class="w-3.5 h-3.5" style="color: var(--crm-subtle);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                     ${currentPage[1].href ? `<a href="${currentPage[1].href}" class="transition" style="color: var(--crm-muted);">${currentPage[1].label}</a>` : `<span style="color: var(--crm-text);">${currentPage[1].label}</span>`}
-                 `;
-                if (path.includes('/detail')) {
-                    li.innerHTML += `
-                         <span class="flex items-center gap-2">
-                             <svg class="w-3.5 h-3.5" style="color: var(--crm-subtle);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                             <span style="color: var(--crm-text);">Detalle</span>
-                         </span>
-                     `;
-                 }
-                ol.appendChild(li);
-             }
-         }
+            const getNotificationLabel = (type) => {
+                const labels = { job_completed: 'listo', job_updated: 'cambio', feedback_received: 'feedback', message: 'mensaje', reminder: 'aviso' };
+                return labels[type] ?? 'update';
+            };
 
-         // Sidebar Mobile Toggle
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const mainSidebar = document.getElementById('main-sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
+            let notificationsData = [];
 
-        const toggleSidebar = (open) => {
-            if (open) {
-                mainSidebar?.classList.remove('-translate-x-full');
-                sidebarOverlay?.classList.remove('hidden');
+            const loadNotifications = async () => {
+                try {
+                    const { api } = await import('../lib/api-client');
+                    const data = await api('/api/portal/notifications');
+                    notificationsData = data.notifications || [];
+
+                    if (notificationsBadge) {
+                        notificationsBadge.classList.toggle('hidden', !(data.unreadCount > 0));
+                    }
+
+                    if (notificationsList) {
+                        if (notificationsData.length === 0) {
+                            notificationsList.innerHTML = '<p class="p-4 text-sm text-center" style="color: var(--crm-muted);">No hay notificaciones</p>';
+                        } else {
+                            notificationsList.innerHTML = notificationsData.map((notif) => `
+                                <div class="crm-notification-row ${!notif.read ? 'crm-notification-row--unread' : ''}" role="listitem">
+                                    <span class="crm-notification-type">${getNotificationLabel(notif.type)}</span>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium truncate" style="color: var(--crm-text);">${notif.title}</p>
+                                        <p class="text-xs mt-0.5" style="color: var(--crm-muted);">${notif.message}</p>
+                                        <p class="text-xs mt-2" style="color: var(--crm-subtle);">${formatNotificationTime(notif.createdAt)}</p>
+                                    </div>
+                                    ${!notif.read ? '<span class="crm-notification-dot"></span>' : '<span></span>'}
+                                </div>
+                            `).join('');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load notifications:', error);
+                    if (notificationsList) {
+                        notificationsList.innerHTML = '<p class="p-4 text-sm text-center" style="color: var(--crm-muted);">No se pudieron cargar las notificaciones</p>';
+                    }
+                }
+            };
+
+            notificationsBtn?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = notificationsDropdown?.classList.contains('hidden');
+                notificationsBtn.setAttribute('aria-expanded', String(isHidden));
+                if (isHidden) loadNotifications();
+                notificationsDropdown?.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (notificationsDropdown && !notificationsDropdown.contains(e.target) && !notificationsBtn?.contains(e.target)) {
+                    notificationsDropdown.classList.add('hidden');
+                    notificationsBtn?.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            markAllReadBtn?.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                try {
+                    const { api } = await import('../lib/api-client');
+                    await api('/api/portal/notifications/mark-all-read', { method: 'POST' });
+                    await loadNotifications();
+                } catch (error) {
+                    console.error('Failed to mark notifications as read:', error);
+                }
+            });
+
+            setInterval(loadNotifications, 60000);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && notificationsDropdown && !notificationsDropdown.classList.contains('hidden')) {
+                    notificationsDropdown.classList.add('hidden');
+                    notificationsBtn?.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Breadcrumbs
+            const breadcrumbs = document.getElementById('breadcrumbs');
+            if (breadcrumbs) {
+                const path = window.location.pathname;
+                const pages = {
+                    '/client/brief-assistant': { label: 'Brief', href: '/client/brief-assistant' },
+                    '/client/invoices': { label: 'Facturación', href: '/client/invoices' },
+                    '/client/profile': { label: 'Perfil', href: '/client/profile' },
+                    '/client/jobs': { label: 'Trabajos', href: '/client/jobs' },
+                    '/client/onboarding': { label: 'Onboarding', href: '/client/onboarding' },
+                    '/client/vault': { label: 'Vault', href: '/client/vault' },
+                };
+                const currentPage = Object.entries(pages).find(([key]) => path.startsWith(key));
+                if (currentPage && (path !== '/client' && path !== '/client/')) {
+                    const ol = breadcrumbs.querySelector('ol');
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center gap-2';
+                    li.innerHTML = `
+                        <svg class="w-3.5 h-3.5" style="color: var(--crm-subtle);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        ${currentPage[1].href ? `<a href="${currentPage[1].href}" class="transition" style="color: var(--crm-muted);">${currentPage[1].label}</a>` : `<span style="color: var(--crm-text);">${currentPage[1].label}</span>`}
+                    `;
+                    ol.appendChild(li);
+                }
+            }
+
+            // Sidebar Mobile Toggle
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mainSidebar = document.getElementById('main-sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            const toggleSidebar = (open) => {
+                if (open) {
+                    mainSidebar?.classList.remove('-translate-x-full');
+                    sidebarOverlay?.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mainSidebar?.classList.add('-translate-x-full');
+                    sidebarOverlay?.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            };
+
+            sidebarToggle?.addEventListener('click', () => toggleSidebar(true));
+            sidebarOverlay?.addEventListener('click', () => toggleSidebar(false));
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && mainSidebar && !mainSidebar.classList.contains('-translate-x-full')) {
+                    toggleSidebar(false);
+                }
+            });
+
+            // Welcome Modal
+            const welcomeModal = document.getElementById('welcome-modal');
+            const welcomeStartBtn = document.getElementById('welcome-start-btn');
+            const welcomeTourBtn = document.getElementById('welcome-tour-btn');
+            const hasSeenWelcome = localStorage.getItem('gordo_welcome_seen');
+
+            if (!hasSeenWelcome && welcomeModal) {
+                welcomeModal.classList.remove('hidden');
+                welcomeModal.classList.add('flex');
                 document.body.style.overflow = 'hidden';
-             } else {
-                mainSidebar?.classList.add('-translate-x-full');
-                sidebarOverlay?.classList.add('hidden');
-                document.body.style.overflow = '';
-             }
-         };
 
-        sidebarToggle?.addEventListener('click', () => toggleSidebar(true));
-        sidebarOverlay?.addEventListener('click', () => toggleSidebar(false));
-
-         // Close sidebar on Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && mainSidebar && !mainSidebar.classList.contains('-translate-x-full')) {
-                toggleSidebar(false);
-             }
-         });
-
-         // Welcome Modal
-        const welcomeModal = document.getElementById('welcome-modal');
-        const welcomeTourBtn = document.getElementById('welcome-tour-btn');
-        const welcomeStartBtn = document.getElementById('welcome-start-btn');
-        const hasSeenWelcome = localStorage.getItem('gordo_welcome_seen');
-
-        if (!hasSeenWelcome && welcomeModal) {
-            welcomeModal.classList.remove('hidden');
-            welcomeModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-
-            const closeWelcome = () => {
-                localStorage.setItem('gordo_welcome_seen', 'true');
-                welcomeModal.classList.add('hidden');
-                welcomeModal.classList.remove('flex');
-                document.body.style.overflow = '';
-             };
-
-            welcomeStartBtn?.addEventListener('click', closeWelcome);
-            welcomeTourBtn?.addEventListener('click', () => {
-                closeWelcome();
-             });
-            welcomeModal.addEventListener('click', (e) => {
-                if (e.target === welcomeModal) closeWelcome();
-             });
-        }
-         // Close modal on Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && welcomeModal && !welcomeModal.classList.contains('hidden')) {
-                welcomeModal.classList.add('hidden');
-                welcomeModal.classList.remove('flex');
-                document.body.style.overflow = '';
-             }
-         });
-         // Close modal on overlay click
-         if (welcomeModal) {
-            welcomeModal.addEventListener('click', (e) => {
-                if (e.target === welcomeModal) {
+                const closeWelcome = () => {
+                    localStorage.setItem('gordo_welcome_seen', 'true');
                     welcomeModal.classList.add('hidden');
                     welcomeModal.classList.remove('flex');
                     document.body.style.overflow = '';
-                 }
-             });
-         }
-         })();
-     </script>
+                };
+
+                welcomeStartBtn?.addEventListener('click', closeWelcome);
+                welcomeTourBtn?.addEventListener('click', closeWelcome);
+                welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) closeWelcome(); });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && welcomeModal && !welcomeModal.classList.contains('hidden')) {
+                    welcomeModal.classList.add('hidden');
+                    welcomeModal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            });
+        })();
+    </script>
 </BaseLayout>

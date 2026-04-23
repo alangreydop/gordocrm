@@ -3,201 +3,192 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Mis trabajos">
-          <div class="space-y-6" role="region" aria-label="Contenido principal">
-              <section class="crm-page-header">
-                  <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                      <div>
-                          <p class="crm-kicker">Produccion</p>
-                          <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Mis trabajos</h1>
-                          <p class="crm-page-header__meta mt-4">
-                            Seguimiento de todos tus trabajos con deadline, estado y consumo de unidades.
-                          </p>
-                      </div>
-                      <input
-                        type="search"
-                        id="jobs-search"
-                        aria-label="Buscar trabajos por brief, plataforma o tipo"
-                        placeholder="Buscar por brief, plataforma o tipo"
-                        class="crm-input w-full md:w-80"
-                      />
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
+
+    <!-- Header -->
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+      <div>
+        <p class="crm-kicker crm-kicker--accent">Producción</p>
+        <h1 class="crm-page-header__title mt-3">
+          Mis <em class="baskerville-italic" style="font-weight: 400;">trabajos</em>
+        </h1>
+        <p class="crm-page-header__meta mt-3">
+          Seguimiento de todos tus trabajos con deadline, estado y consumo de unidades.
+        </p>
+      </div>
+      <input
+        type="search"
+        id="jobs-search"
+        aria-label="Buscar trabajos por brief, plataforma o tipo"
+        placeholder="Buscar por brief, plataforma o tipo"
+        class="crm-input w-full md:w-80"
+      />
+    </div>
+
+    <!-- Metric cards -->
+    <div class="grid gap-4 md:grid-cols-4">
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Total trabajos</p>
+        <p id="metric-total" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">En producción</p>
+        <p id="metric-processing" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Completados</p>
+        <p id="metric-completed" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Pendientes feedback</p>
+        <p id="metric-feedback" class="crm-metric-card__value">—</p>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="crm-table-wrap">
+      <div class="overflow-x-auto">
+        <table class="crm-table min-w-full text-sm">
+          <thead>
+            <tr>
+              <th>Brief</th>
+              <th>Plataforma</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Due</th>
+              <th>Unidades</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="jobs-body">
+            <tr>
+              <td colspan="7" class="px-6 py-8 text-center text-crm-muted">Cargando trabajos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (async () => {
+      const {
+        api,
+        escapeHtml,
+        formatDate,
+        formatNumber,
+      } = await import('../../../lib/api-client');
+      const { jobStatusClass } = await import('../../../lib/ui-helpers');
+
+      const tbody = document.getElementById('jobs-body');
+      const searchInput = document.getElementById('jobs-search');
+
+      let jobs = [];
+
+      const setMetric = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
+
+      const isDueSoon = (value) => {
+        if (!value) return false;
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return false;
+        const now = new Date();
+        const diff = date.getTime() - now.getTime();
+        return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
+      };
+
+      const render = () => {
+        if (!tbody) return;
+
+        const query =
+          searchInput instanceof HTMLInputElement
+            ? searchInput.value.trim().toLowerCase()
+            : '';
+
+        const filtered = jobs.filter((job) => {
+          if (!query) return true;
+          return [job.briefText, job.platform, job.type]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(query));
+        });
+
+        setMetric('metric-total', String(jobs.length));
+        setMetric('metric-processing', String(jobs.filter((job) => job.status === 'processing').length));
+        setMetric('metric-completed', String(jobs.filter((job) => ['completed', 'delivered'].includes(job.status)).length));
+        setMetric('metric-feedback', String(jobs.filter((job) => job.status === 'completed' && (!job.assets || job.assets.length === 0)).length));
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="px-6 py-16 text-center text-crm-muted">
+                No encontramos trabajos que coincidan con tu búsqueda.
+                <button onclick="document.getElementById('jobs-search').value='';document.getElementById('jobs-search').dispatchEvent(new Event('input'))" class="ml-2 text-xs text-crm-accent underline">Limpiar búsqueda</button>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((job) => {
+          const progress = job.unitsPlanned > 0
+            ? Math.round((job.unitsConsumed / job.unitsPlanned) * 100)
+            : 0;
+          const isProcessing = job.status === 'processing';
+          const assetsCount = job.assetsCount ?? 0;
+
+          return `
+            <tr class="align-top">
+              <td class="px-6 py-4">
+                <p class="font-medium text-crm-text max-w-xs truncate">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+                <p class="text-xs text-crm-muted mt-1">Actualizado ${escapeHtml(formatDate(job.updatedAt))}</p>
+                ${assetsCount > 0 ? `<p class="text-xs text-crm-success mt-1">${assetsCount} asset${assetsCount !== 1 ? 's' : ''} completado${assetsCount !== 1 ? 's' : ''}</p>` : ''}
+                ${isProcessing && progress > 0 ? `
+                  <div class="mt-2 flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-crm-border-strong rounded-full overflow-hidden">
+                      <div class="h-full rounded-full transition-all" style="width: ${progress}%; background: var(--crm-success)"></div>
+                    </div>
+                    <span class="text-xs text-crm-success font-medium">${progress}%</span>
                   </div>
-              </section>
+                ` : ''}
+              </td>
+              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.platform ?? '—')}</td>
+              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.type ?? '—')}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+                  ${escapeHtml(job.status ?? 'pending')}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-crm-muted">
+                ${escapeHtml(formatDate(job.dueAt))}
+                ${isDueSoon(job.dueAt) ? '<span class="ml-2 crm-badge crm-badge-danger">Pronto</span>' : ''}
+              </td>
+              <td class="px-6 py-4 text-crm-muted">
+                ${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}
+              </td>
+              <td class="px-6 py-4 text-right">
+                <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent transition hover:opacity-75">
+                  Abrir
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      };
 
-              <div class="grid gap-4 md:grid-cols-4">
-                  <div class="crm-metric-card">
-                      <p class="crm-kicker">Total trabajos</p>
-                      <p id="metric-total" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
-                  </div>
-                  <div class="crm-metric-card">
-                      <p class="crm-kicker">En produccion</p>
-                      <p id="metric-processing" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
-                  </div>
-                  <div class="crm-metric-card">
-                      <p class="crm-kicker">Completados</p>
-                      <p id="metric-completed" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
-                  </div>
-                  <div class="crm-metric-card">
-                      <p class="crm-kicker">Pendientes feedback</p>
-                      <p id="metric-feedback" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
-                  </div>
-              </div>
+      try {
+        const data = await api('/api/portal/jobs');
+        jobs = Array.isArray(data.jobs) ? data.jobs : [];
+        render();
+      } catch {
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar los trabajos.</td></tr>`;
+        }
+      }
 
-              <div class="crm-table-wrap">
-                  <div class="overflow-x-auto">
-                      <table class="crm-table min-w-full text-sm">
-                          <thead>
-                              <tr>
-                                  <th class="px-6 py-3 text-left">Brief</th>
-                                  <th class="px-6 py-3 text-left">Plataforma</th>
-                                  <th class="px-6 py-3 text-left">Tipo</th>
-                                  <th class="px-6 py-3 text-left">Estado</th>
-                                  <th class="px-6 py-3 text-left">Due</th>
-                                  <th class="px-6 py-3 text-left">Unidades</th>
-                                  <th class="px-6 py-3"></th>
-                              </tr>
-                          </thead>
-                          <tbody id="jobs-body">
-                              <tr>
-                                  <td colspan="7" class="px-6 py-8 text-center text-crm-muted">Cargando trabajos...</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-          </div>
-
-          <script>
-              (async () => {
-                const {
-                    api,
-                    escapeHtml,
-                    formatDate,
-                    formatNumber,
-                    } = await import('../../../lib/api-client');
-                const { jobStatusClass } = await import('../../../lib/ui-helpers');
-
-                const tbody = document.getElementById('jobs-body');
-                const searchInput = document.getElementById('jobs-search');
-                let jobs = [];
-
-                const setMetric = (id, value) => {
-                    const element = document.getElementById(id);
-                    if (element) element.textContent = value;
-                      };
-
-                const isDueSoon = (value) => {
-                    if (!value) return false;
-                    const date = new Date(value);
-                    if (Number.isNaN(date.getTime())) return false;
-                    const now = new Date();
-                    const diff = date.getTime() - now.getTime();
-                    return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
-                      };
-
-                const render = () => {
-                    if (!tbody) return;
-
-                    const query =
-                        searchInput instanceof HTMLInputElement
-                              ? searchInput.value.trim().toLowerCase()
-                              : '';
-
-                    const filtered = jobs.filter((job) => {
-                        if (!query) return true;
-                        return [
-                            job.briefText,
-                            job.platform,
-                            job.type,
-                            ].filter(Boolean)
-                              .some((value) => String(value).toLowerCase().includes(query));
-                            });
-
-                        // Metricas
-                    setMetric('metric-total', String(jobs.length));
-                    setMetric('metric-processing', String(jobs.filter((job) => job.status === 'processing').length));
-                    setMetric('metric-completed', String(jobs.filter((job) => ['completed', 'delivered'].includes(job.status)).length));
-                    setMetric('metric-feedback', String(jobs.filter((job) => job.status === 'completed' && (!job.assets || job.assets.length === 0)).length));
-
-                    if (filtered.length === 0) {
-                        tbody.innerHTML = `
-                              <tr class="bg-crm-bg-alt/50">
-                                  <td colspan="7" class="px-6 py-16 text-center">
-                                      <div class="flex flex-col items-center justify-center gap-3">
-                                          <div class="rounded-full bg-crm-bg-alt p-4 text-crm-muted">
-                                              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                          </div>
-                                          <p class="text-crm-muted font-medium">No encontramos trabajos que coincidan con tu búsqueda</p>
-                                          <p class="text-xs text-crm-muted">Prueba con otros términos o revisa tus filtros</p>
-                                          <button onclick="document.getElementById('jobs-search').value=''; document.getElementById('jobs-search').dispatchEvent(new Event('input'))" class="mt-2 text-xs text-crm-info hover:text-crm-accent transition underline">Limpiar búsqueda</button>
-                                      </div>
-                                  </td>
-                              </tr>
-                            `;
-                        return;
-                          }
-
-                    tbody.innerHTML = filtered.map((job) => {
-                        const progress = job.unitsPlanned > 0
-                              ? Math.round((job.unitsConsumed / job.unitsPlanned) * 100)
-                              : 0;
-                        const isProcessing = job.status === 'processing';
-                        const assetsCount = job.assetsCount ?? 0;
-
-                        return `
-                          <tr class="align-top">
-                              <td class="px-6 py-4">
-                                  <p class="font-medium text-crm-text max-w-xs truncate">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
-                                  <p class="text-xs text-crm-muted mt-1">Actualizado ${escapeHtml(formatDate(job.updatedAt))}</p>
-                                  ${assetsCount > 0 ? `
-                                      <p class="text-xs text-crm-success mt-1">${assetsCount} asset${assetsCount !== 1 ? 's' : ''} completado${assetsCount !== 1 ? 's' : ''}</p>
-                                  ` : ''}
-                                  ${isProcessing && progress > 0 ? `
-                                      <div class="mt-2 flex items-center gap-2">
-                                          <div class="flex-1 h-1.5 bg-crm-border-strong rounded-full overflow-hidden">
-                                              <div class="h-full rounded-full transition-all" style="width: ${progress}%; background: var(--crm-success)"></div>
-                                          </div>
-                                          <span class="text-xs text-crm-success font-medium">${progress}%</span>
-                                      </div>
-                                  ` : ''}
-                              </td>
-                              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.platform ?? '—')}</td>
-                              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.type ?? '—')}</td>
-                              <td class="px-6 py-4">
-                                  <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
-                                      ${escapeHtml(job.status ?? 'pending')}
-                                  </span>
-                              </td>
-                              <td class="px-6 py-4 text-crm-muted">
-                                  ${escapeHtml(formatDate(job.dueAt))}
-                                  ${isDueSoon(job.dueAt) ? '<span class="ml-2 crm-badge crm-badge-danger">Pronto</span>' : ''}
-                              </td>
-                              <td class="px-6 py-4 text-crm-muted">
-                                  ${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}
-                              </td>
-                              <td class="px-6 py-4 text-right">
-                                  <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent transition hover:text-crm-text">
-                                     Abrir
-                                  </a>
-                              </td>
-                          </tr>
-                        `}).join('');
-                          };
-
-                try {
-                    const data = await api('/api/portal/jobs');
-                    jobs = Array.isArray(data.jobs) ? data.jobs : [];
-                    render();
-                      } catch {
-                    if (tbody) {
-                        tbody.innerHTML = `
-                              <tr>
-                                  <td colspan="7" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar los trabajos.</td>
-                              </tr>
-                            `;
-                          }
-                          }
-
-                searchInput?.addEventListener('input', render);
-                  })();
-              </script>
-          </ClientLayout>
+      searchInput?.addEventListener('input', render);
+    })();
+  </script>
+</ClientLayout>
