@@ -28,3 +28,15 @@ Thumbs.db
 # Temporary files
 tmp/
 .wrangler/
+*.bak
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Stray dirs that don't belong here
+ai-engine/
+test_root_owned_backup/
+portal/dist-codex/
+portal/dist.root-owned/
