@@ -2,21 +2,21 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<AdminLayout title="Dashboard">
+<AdminLayout title="Operations Console">
      <div class="space-y-6" role="region" aria-label="Contenido principal">
          <section class="crm-page-header">
              <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
                  <div>
-                     <p class="crm-kicker">Control operativo</p>
-                     <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">dashboard</h1>
+                     <p class="crm-kicker crm-kicker--accent">operations console</p>
+                     <h1 class="crm-page-header__title mt-4">operaciones</h1>
                      <p class="crm-page-header__meta mt-4">
-                        visibilidad rápida de pipeline, margen, capacidad y seguimiento comercial
-                        para decidir qué revisar hoy y dónde puede aparecer fricción.
+                        visibilidad rápida de briefs, producción, capacidad y alertas para decidir
+                        qué desbloquear hoy y dónde puede aparecer fricción operativa.
                      </p>
                  </div>
                  <div class="grid gap-4 sm:grid-cols-2">
                      <div class="crm-panel-soft p-5">
-                         <p class="crm-kicker">Operacion</p>
+                         <p class="crm-kicker">ops</p>
                          <p class="mt-3 text-sm leading-relaxed text-crm-muted">
                             hola@grandeandgordo.com
                          </p>
@@ -24,7 +24,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                      <div class="crm-panel-soft p-5">
                          <p class="crm-kicker">Enfoque</p>
                          <p class="mt-3 text-sm leading-relaxed text-crm-text">
-                            Produccion, margen y revisiones proximas en una sola vista.
+                            Produccion, facturacion y revisiones proximas en una sola vista.
                          </p>
                      </div>
                  </div>
@@ -33,25 +33,25 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
              <div class="crm-metric-card">
-                 <p class="crm-kicker">Trabajos activos</p>
-                 <p id="active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                 <p class="crm-kicker">trabajos activos</p>
+                 <p id="active-jobs" class="crm-metric-card__value">—</p>
                  <p id="urgent-jobs" class="text-sm text-crm-danger mt-2">—</p>
                  <p id="past-due-jobs" class="text-sm text-crm-danger mt-1">—</p>
              </div>
              <div class="crm-metric-card">
-                 <p class="crm-kicker">Capacidad del mes</p>
-                 <p id="units-planned" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                 <p class="crm-kicker">capacidad del mes</p>
+                 <p id="units-planned" class="crm-metric-card__value">—</p>
                  <p id="units-consumed" class="text-sm text-crm-muted mt-2">—</p>
                  <p id="capacity-utilization" class="text-sm text-crm-muted mt-1">—</p>
              </div>
              <div class="crm-metric-card">
-                 <p class="crm-kicker">Margen estimado medio</p>
-                 <p id="avg-margin" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                 <p class="crm-kicker">margen estimado medio</p>
+                 <p id="avg-margin" class="crm-metric-card__value">—</p>
                  <p id="low-margin-jobs" class="text-sm text-crm-warning mt-2">—</p>
              </div>
              <div class="crm-metric-card">
-                 <p class="crm-kicker">Clientes y revisiones</p>
-                 <p id="total-clients" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                 <p class="crm-kicker">clientes y revisiones</p>
+                 <p id="total-clients" class="crm-metric-card__value">—</p>
                  <p id="reviews-due" class="text-sm text-crm-info mt-2">—</p>
                  <p id="active-clients" class="text-sm text-crm-muted mt-1">—</p>
              </div>
@@ -60,7 +60,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
          <div class="grid gap-6 lg:grid-cols-2">
              <section class="crm-panel overflow-hidden">
                  <div class="border-b border-crm-border px-6 py-5">
-                     <h2 class="text-lg font-semibold text-crm-text">Distribucion por lane</h2>
+                     <p class="crm-kicker">lanes</p>
+                     <h2 class="mt-3 text-lg font-semibold text-crm-text">distribución por lane</h2>
                      <p class="mt-2 text-sm text-crm-muted">Como estan repartidos los trabajos entre los lanes del stack.</p>
                  </div>
                  <div id="lane-chart" class="p-6">
@@ -72,7 +73,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
              <section class="crm-panel overflow-hidden">
                  <div class="border-b border-crm-border px-6 py-5">
-                     <h2 class="text-lg font-semibold text-crm-text">Estado de trabajos</h2>
+                     <p class="crm-kicker">pipeline</p>
+                     <h2 class="mt-3 text-lg font-semibold text-crm-text">estado de trabajos</h2>
                      <p class="mt-2 text-sm text-crm-muted">Breakdown por estado del pipeline.</p>
                  </div>
                  <div id="status-chart" class="p-6">
@@ -85,7 +87,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
          <section class="crm-panel overflow-hidden">
              <div class="border-b border-crm-border px-6 py-5">
-                 <h2 class="text-lg font-semibold text-crm-text">Alertas operativas</h2>
+                 <p class="crm-kicker">alertas</p>
+                 <h2 class="mt-3 text-lg font-semibold text-crm-text">alertas operativas</h2>
                  <p class="mt-2 text-sm text-crm-muted">Trabajos vencidos y clientes con capacidad baja.</p>
              </div>
              <div id="alerts-list" class="divide-y divide-crm-border">
@@ -97,7 +100,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
              <section class="crm-table-wrap">
                  <div class="flex items-center justify-between gap-4 border-b border-crm-border px-6 py-5">
                      <div>
-                         <h2 class="text-lg font-semibold text-crm-text">Trabajos recientes</h2>
+                         <p class="crm-kicker">trabajos</p>
+                         <h2 class="mt-3 text-lg font-semibold text-crm-text">trabajos recientes</h2>
                          <p class="mt-2 text-sm text-crm-muted">Lo que conviene revisar hoy antes de producir.</p>
                      </div>
                      <a href="/admin/jobs" class="text-sm font-medium text-crm-accent transition hover:text-crm-accent-hover">Ver todos</a>
@@ -126,7 +130,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
              <section class="crm-panel overflow-hidden">
                  <div class="border-b border-crm-border px-6 py-5">
-                     <h2 class="text-lg font-semibold text-crm-text">Revisiones proximas</h2>
+                     <p class="crm-kicker">seguimiento</p>
+                     <h2 class="mt-3 text-lg font-semibold text-crm-text">revisiones próximas</h2>
                      <p class="mt-2 text-sm text-crm-muted">Clientes que deberian tener seguimiento en los proximos 14 dias.</p>
                  </div>
                  <div id="reviews-list" class="divide-y divide-crm-border">
@@ -203,8 +208,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                                      <span class="font-medium text-crm-text">Lane ${escapeHtml(lane.lane ?? '—')}</span>
                                      <span class="text-crm-muted">${escapeHtml(lane.count ?? 0)} trabajos (${pct}%)</span>
                                  </div>
-                                 <div class="h-2 w-full bg-crm-border rounded-full overflow-hidden">
-                                     <div class="h-full rounded-full" style="width: ${pct}%; background: ${colorValue}"></div>
+                                 <div class="h-2 w-full bg-crm-border rounded-md overflow-hidden">
+                                     <div class="h-full rounded-md" style="width: ${pct}%; background: ${colorValue}"></div>
                                  </div>
                              </div>
                          `;
@@ -235,8 +240,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                                      <span class="font-medium text-crm-text capitalize">${escapeHtml(status.status ?? '—')}</span>
                                      <span class="text-crm-muted">${escapeHtml(status.count ?? 0)} trabajos (${pct}%)</span>
                                  </div>
-                                 <div class="h-2 w-full bg-crm-border rounded-full overflow-hidden">
-                                     <div class="h-full rounded-full" style="width: ${pct}%; background: ${colorValue}"></div>
+                                 <div class="h-2 w-full bg-crm-border rounded-md overflow-hidden">
+                                     <div class="h-full rounded-md" style="width: ${pct}%; background: ${colorValue}"></div>
                                  </div>
                              </div>
                          `;

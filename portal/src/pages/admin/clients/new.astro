@@ -30,7 +30,7 @@ const marginOptions = [
   <div class="max-w-5xl space-y-6" role="region" aria-label="Contenido principal">
     <section class="crm-page-header">
       <p class="crm-kicker">Nueva cuenta</p>
-      <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Nuevo cliente</h1>
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Nuevo cliente</h1>
       <p class="crm-page-header__meta mt-4">
         Crea la ficha comercial, operativa y de acceso al portal en un solo paso.
       </p>
@@ -46,22 +46,22 @@ const marginOptions = [
         </div>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="name" class="block text-sm font-medium text-crm-text-secondary mb-1">Nombre</label>
+            <label for="name" class="block text-sm font-medium text-crm-muted mb-1">Nombre</label>
             <input type="text" id="name" name="name" required
               class="crm-input" />
           </div>
           <div>
-            <label for="email" class="block text-sm font-medium text-crm-text-secondary mb-1">Email principal</label>
+            <label for="email" class="block text-sm font-medium text-crm-muted mb-1">Email principal</label>
             <input type="email" id="email" name="email" required placeholder="hola@grandeandgordo.com"
               class="crm-input" />
           </div>
           <div>
-            <label for="company" class="block text-sm font-medium text-crm-text-secondary mb-1">Empresa</label>
+            <label for="company" class="block text-sm font-medium text-crm-muted mb-1">Empresa</label>
             <input type="text" id="company" name="company"
               class="crm-input" />
           </div>
           <div>
-            <label for="accountManager" class="block text-sm font-medium text-crm-text-secondary mb-1">Account manager</label>
+            <label for="accountManager" class="block text-sm font-medium text-crm-muted mb-1">Account manager</label>
             <input type="text" id="accountManager" name="accountManager" value="hola@grandeandgordo.com"
               class="crm-input" />
           </div>
@@ -75,31 +75,31 @@ const marginOptions = [
         </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div>
-            <label for="plan" class="block text-sm font-medium text-crm-text-secondary mb-1">Plan</label>
+            <label for="plan" class="block text-sm font-medium text-crm-muted mb-1">Plan</label>
             <input type="text" id="plan" name="plan" placeholder="Campaña Pro"
               class="crm-input" />
           </div>
           <div>
-            <label for="subscriptionStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">Suscripción</label>
+            <label for="subscriptionStatus" class="block text-sm font-medium text-crm-muted mb-1">Suscripción</label>
             <select id="subscriptionStatus" name="subscriptionStatus"
               class="crm-input">
               {subscriptionOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="datasetStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">Base visual</label>
+            <label for="datasetStatus" class="block text-sm font-medium text-crm-muted mb-1">Base visual</label>
             <select id="datasetStatus" name="datasetStatus"
               class="crm-input">
               {datasetOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="monthlyUnitCapacity" class="block text-sm font-medium text-crm-text-secondary mb-1">Capacidad mensual</label>
+            <label for="monthlyUnitCapacity" class="block text-sm font-medium text-crm-muted mb-1">Capacidad mensual</label>
             <input type="number" id="monthlyUnitCapacity" name="monthlyUnitCapacity" min="0" placeholder="72"
               class="crm-input" />
           </div>
           <div>
-            <label for="segment" class="block text-sm font-medium text-crm-text-secondary mb-1">Segmento</label>
+            <label for="segment" class="block text-sm font-medium text-crm-muted mb-1">Segmento</label>
             <select id="segment" name="segment"
               class="crm-input">
               <option value="">Sin definir</option>
@@ -107,7 +107,7 @@ const marginOptions = [
             </select>
           </div>
           <div>
-            <label for="marginProfile" class="block text-sm font-medium text-crm-text-secondary mb-1">Perfil margen</label>
+            <label for="marginProfile" class="block text-sm font-medium text-crm-muted mb-1">Perfil margen</label>
             <select id="marginProfile" name="marginProfile"
               class="crm-input">
               <option value="">Sin definir</option>
@@ -115,18 +115,18 @@ const marginOptions = [
             </select>
           </div>
           <div>
-            <label for="lastContactedAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Último contacto</label>
+            <label for="lastContactedAt" class="block text-sm font-medium text-crm-muted mb-1">Último contacto</label>
             <input type="date" id="lastContactedAt" name="lastContactedAt"
               class="crm-input" />
           </div>
           <div>
-            <label for="nextReviewAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Próxima review</label>
+            <label for="nextReviewAt" class="block text-sm font-medium text-crm-muted mb-1">Próxima review</label>
             <input type="date" id="nextReviewAt" name="nextReviewAt"
               class="crm-input" />
           </div>
         </div>
         <div>
-          <label for="notes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas internas</label>
+          <label for="notes" class="block text-sm font-medium text-crm-muted mb-1">Notas internas</label>
           <textarea id="notes" name="notes" rows="4" placeholder="Contexto comercial, próximas acciones, riesgos..."
             class="crm-input"></textarea>
         </div>
@@ -138,7 +138,7 @@ const marginOptions = [
           <p class="crm-form-section__text">Si defines una contrasena ahora, el cliente sale ya con acceso habilitado.</p>
         </div>
         <div class="max-w-md">
-          <label for="portalPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Contraseña inicial</label>
+          <label for="portalPassword" class="block text-sm font-medium text-crm-muted mb-1">Contraseña inicial</label>
           <input type="password" id="portalPassword" name="portalPassword" minlength="8"
             class="crm-input" />
         </div>

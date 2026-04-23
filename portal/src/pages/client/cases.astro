@@ -1,103 +1,31 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 ---
 
-<ClientLayout title="Casos de Éxito">
-  <div class="max-w-5xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
-    <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-crm-text">Casos de Éxito</h1>
-      <p class="text-crm-muted">Resultados reales de clientes que confiaron en Grande&Gordo.</p>
+<ClientLayout title="Casos y referencias">
+  <div class="mx-auto max-w-5xl space-y-6" role="region" aria-label="Contenido principal">
+    <section class="crm-panel-strong p-6 md:p-8">
+      <PageHeader
+        kicker="Casos"
+        title="Referencias en preparación"
+        description="Estamos rehaciendo esta sección para que solo muestre trabajo real, vigente y bien contextualizado. Cuando publiquemos casos, aparecerán aquí."
+      />
     </section>
 
-    <!-- Featured Case: Conservas Lalín -->
-    <a href="/client/cases/conservas-lalin" class="block group">
-      <div class="relative rounded-3xl border border-crm-border overflow-hidden bg-crm-panel">
-        <div class="absolute inset-0 bg-gradient-to-r from-crm-panel to-transparent z-10"></div>
-        <div
-          class="absolute inset-0 bg-cover bg-center opacity-20 group-hover:opacity-30 transition duration-500"
-          style="background-image: url('https://assets.grandeandgordo.com/001/Screenshot%202026-04-08%20at%2003.30.40.avif');"
-        ></div>
-        <div class="relative z-20 p-8 md:p-12">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="background-color: color-mix(in srgb, var(--crm-success) 20%, transparent); color: var(--crm-success);">Conservas</span>
-            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="background-color: color-mix(in srgb, var(--crm-info) 20%, transparent); color: var(--crm-info);">Exportación</span>
-          </div>
-          <h2 class="text-3xl md:text-4xl font-black text-crm-text mb-4 group-hover:text-crm-accent transition">
-            Conservas Lalín
-          </h2>
-          <p class="text-lg text-crm-muted mb-6 max-w-2xl">
-            De vender solo en Galicia a exportar el 60%
-          </p>
-          <div class="flex items-center gap-2 text-sm font-medium text-crm-accent">
-            Ver caso completo
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </a>
-
-    <!-- Metrics summary -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
-        <p class="text-4xl font-black text-crm-text">150+</p>
-        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Clientes servidos</p>
-      </div>
-      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
-        <p class="text-4xl font-black text-crm-text">12.000+</p>
-        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Assets producidos</p>
-      </div>
-      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
-        <p class="text-4xl font-black text-crm-text">98%</p>
-        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">Satisfacción</p>
-      </div>
-      <div class="rounded-2xl border border-crm-border bg-crm-panel p-5 text-center">
-        <p class="text-4xl font-black text-crm-text">3x</p>
-        <p class="text-xs text-crm-muted mt-1 uppercase tracking-wide">ROI promedio</p>
-      </div>
-    </div>
-
-    <!-- More Cases Coming Soon -->
-    <section class="rounded-3xl border border-crm-border bg-crm-panel-soft p-8 text-center">
-      <div class="max-w-2xl mx-auto">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-crm-panel flex items-center justify-center">
-          <svg class="w-8 h-8 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-          </svg>
-        </div>
-        <h3 class="text-xl font-black text-crm-text mb-2">Más casos próximamente</h3>
-        <p class="text-sm text-crm-muted mb-6">
-          Estamos preparando casos de éxito de textil, panadería, astilleros y cosmética.
+    <section class="crm-panel p-8 text-center md:p-10">
+      <div class="mx-auto max-w-2xl space-y-4">
+        <p class="crm-kicker">Sin humo</p>
+        <h2 class="text-2xl font-bold tracking-tight text-crm-text md:text-3xl">
+          Preferimos no enseñar un caso antes de que esté listo para sostenerse solo.
+        </h2>
+        <p class="text-sm leading-relaxed text-crm-text-secondary md:text-base">
+          Si necesitas contexto comercial o ejemplos cercanos a tu categoría, pídelos al equipo y te orientaremos con material pertinente.
         </p>
-        <a
-          href="/client/brief-assistant"
-          class="crm-button crm-button-primary"
-        >
-          Contar mi historia
-        </a>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="rounded-3xl border border-crm-border bg-crm-panel p-8 text-center">
-      <h2 class="text-2xl font-black text-crm-text mb-4">¿Quieres ser el próximo caso de éxito?</h2>
-      <p class="text-sm text-crm-muted mb-6 max-w-2xl mx-auto">
-        Únete a Conservas Lalín y otros clientes que ya están transformando su negocio con Grande&Gordo.
-      </p>
-      <div class="flex flex-wrap gap-3 justify-center">
-        <a
-          href="/client/brief-assistant"
-          class="crm-button crm-button-primary"
-        >
-          Empezar ahora
-        </a>
-        <a
-          href="mailto:hola@grandeandgordo.com"
-          class="crm-button crm-button-secondary"
-        >
-          Hablar con el equipo
-        </a>
+        <div class="flex flex-wrap justify-center gap-3 pt-2">
+          <a href="/client/brief-assistant" class="crm-button crm-button-primary">Actualizar brief</a>
+          <a href="mailto:hola@grandeandgordo.com" class="crm-button crm-button-secondary">Hablar con el equipo</a>
+        </div>
       </div>
     </section>
   </div>

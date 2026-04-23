@@ -7,7 +7,7 @@ title: 'Production Kanban'
     <!-- Header -->
     <header class="crm-panel border-b-0 rounded-none mb-4 px-6 py-4 flex items-center justify-between" style="border-radius: 0;">
         <div>
-            <h1 class="text-2xl font-black text-crm-text">Production Kanban</h1>
+            <h1 class="text-2xl font-bold text-crm-text">Production Kanban</h1>
             <p class="text-sm text-crm-muted">Gestión visual de producción</p>
         </div>
         <div class="flex items-center gap-4">
@@ -138,7 +138,7 @@ title: 'Production Kanban'
             const renderCard = (job) => `
                 <div class="crm-panel p-4 rounded-lg hover:border-crm-accent transition cursor-pointer group">
                     <div class="flex items-start justify-between mb-2">
-                        <span class="text-xs font-mono text-crm-text-secondary">#${job.id.slice(0, 8)}</span>
+                        <span class="text-xs font-mono text-crm-muted">#${job.id.slice(0, 8)}</span>
                         <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
                             ${job.status !== 'pending' ? `<button class="move-left text-xs text-crm-muted hover:text-crm-text" data-id="${job.id}" data-direction="prev">←</button>` : ''}
                             ${job.status !== 'completed' ? `<button class="move-right text-xs text-crm-muted hover:text-crm-text" data-id="${job.id}" data-direction="next">→</button>` : ''}
@@ -151,9 +151,9 @@ title: 'Production Kanban'
                             <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${job.platform || 'N/A'}</span>
                             <span class="crm-panel-soft px-2 py-0.5 rounded text-crm-muted">${job.type || 'N/A'}</span>
                         </div>
-                        <span class="text-crm-text-secondary">${job.assetCount} assets</span>
+                        <span class="text-crm-muted">${job.assetCount} assets</span>
                     </div>
-                    ${job.dueAt ? `<div class="mt-3 pt-3 border-t border-crm-border text-xs ${new Date(job.dueAt) < new Date() ? 'text-crm-danger' : 'text-crm-text-secondary'}">
+                    ${job.dueAt ? `<div class="mt-3 pt-3 border-t border-crm-border text-xs ${new Date(job.dueAt) < new Date() ? 'text-crm-danger' : 'text-crm-muted'}">
                         Due: ${new Date(job.dueAt).toLocaleDateString()}
                     </div>` : ''}
                 </div>

@@ -9,7 +9,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
         <div>
           <p class="crm-kicker">Briefs recibidos</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Briefs Recibidos</h1>
+          <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Briefs Recibidos</h1>
           <p class="crm-page-header__meta mt-4">
             Briefs submissions desde la web y formularios. Revisa, crea jobs o archiva según corresponda.
           </p>
@@ -17,11 +17,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="crm-panel-soft p-5">
             <p class="crm-kicker">Nuevos</p>
-            <p id="stat-new" class="mt-3 text-3xl font-black text-crm-text">—</p>
+            <p id="stat-new" class="mt-3 text-3xl font-bold text-crm-text">—</p>
           </div>
           <div class="crm-panel-soft p-5">
             <p class="crm-kicker">Pendientes</p>
-            <p id="stat-pending" class="mt-3 text-3xl font-black text-crm-text">—</p>
+            <p id="stat-pending" class="mt-3 text-3xl font-bold text-crm-text">—</p>
           </div>
         </div>
       </div>
@@ -198,13 +198,13 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               <div class="font-medium text-crm-text">${escapeHtml(brief.clientName || '—')}</div>
               <div class="text-xs text-crm-muted">${escapeHtml(brief.clientCompany || '—')}</div>
             </td>
-            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(brief.email)}</td>
+            <td class="px-6 py-4 text-crm-muted">${escapeHtml(brief.email)}</td>
             <td class="px-6 py-4">
-              <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium bg-crm-surface-hover text-crm-text-secondary">
+              <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium bg-crm-surface-hover text-crm-muted">
                 ${escapeHtml(typeLabels[brief.tipo] || brief.tipo)}
               </span>
             </td>
-            <td class="px-6 py-4 max-w-xs truncate text-crm-text-secondary" title="${escapeHtml(brief.description)}">
+            <td class="px-6 py-4 max-w-xs truncate text-crm-muted" title="${escapeHtml(brief.description)}">
               ${escapeHtml(brief.description)}
             </td>
             <td class="px-6 py-4 text-crm-muted">

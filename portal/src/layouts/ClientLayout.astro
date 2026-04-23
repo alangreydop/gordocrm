@@ -9,147 +9,115 @@ interface Props {
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
-    { href: '/client', label: 'Resumen' },
-    { href: '/client/assets', label: 'Assets' },
-    { href: '/client/history', label: 'Historial' },
-    { href: '/client/profile', label: 'Perfil' },
+    { href: '/client', label: 'Inicio' },
+    { href: '/client/jobs', label: 'Trabajos' },
+    { href: '/client/vault', label: 'Vault' },
+    { href: '/client/invoices', label: 'Facturacion' },
+    { href: '/client/profile', label: 'Cuenta' },
 ];
 ---
 
 <BaseLayout title={title}>
-    <div class="crm-body min-h-screen">
+    <div class="crm-shell">
+        <a href="#client-main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-crm-accent focus:text-white focus:rounded-lg">
+            saltar al contenido
+        </a>
+
+        <div id="sidebar-overlay" class="crm-overlay fixed inset-0 z-30 hidden lg:hidden"></div>
+
         <div class="flex min-h-screen flex-col lg:flex-row">
-            <!-- Skip navigation -->
-             <a href="#client-main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-crm-accent focus:text-white focus:rounded-lg">
-                 saltar al contenido
-             </a>
+            <aside id="main-sidebar" role="navigation" aria-label="Área de cliente" class="crm-sidebar fixed z-40 flex h-full w-full flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:static lg:w-72 lg:translate-x-0 lg:px-6 lg:py-8">
+                <div class="crm-sidebar__section crm-sidebar__brand">
+                    <p class="crm-sidebar__eyebrow">Grande&amp;Gordo</p>
+                    <h1 class="crm-sidebar__title">portal operativo</h1>
+                    <p class="crm-sidebar__copy">brief, trabajos, vault y facturación sin ruido comercial.</p>
+                </div>
 
-             <!-- Mobile overlay -->
-             <div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm hidden lg:hidden"></div>
+                <nav class="crm-sidebar__section" aria-label="Navegación del cliente">
+                    <p class="crm-sidebar__nav-title">cliente</p>
+                    <div class="crm-sidebar__nav">
+                        {navItems.map((item) => {
+                            const active =
+                                item.href === '/client'
+                                    ? pathname === '/client'
+                                    : pathname.startsWith(item.href);
 
-             <!-- Dark Sidebar -->
-             <aside id="main-sidebar" role="navigation" aria-label="Área de cliente" class="crm-sidebar w-full px-5 py-6 lg:w-72 lg:py-8 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 fixed lg:static z-40 h-full overflow-y-auto lg:border-r lg:border-b-0 border-b" style="border-color: var(--crm-sidebar-border);">
-                 <!-- Brand Block -->
-                 <div class="mb-6">
-                     <div class="flex items-center gap-3">
-                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2813.19 1671.88" class="h-9 w-auto" aria-hidden="true">
-                             <path d="M1177.85 429.55c11.51 0 20.72-3.89 27.63-11.66s11.22-20.87 12.95-39.29c2.88-27.06 11.37-47.06 25.47-60.01 14.1-12.95 32.09-19.43 53.97-19.43 24.18 0 43.61 8.63 58.29 25.9 14.68 17.27 22.02 42.6 22.02 75.99v35.4l-134.7 64.76c-17.27 8.06-31.66 15.83-43.18 23.31-11.51 7.48-20.72 15.11-27.63 22.88s-11.8 15.97-14.68 24.61c-2.88 8.63-4.32 18.42-4.32 29.36 0 25.33 8.78 45.91 26.34 61.74 17.56 15.83 40.73 23.75 69.51 23.75 25.9 0 49.79-6.33 71.67-19 21.87-12.66 40.87-31.66 56.99-56.99 1.73 23.6 8.01 65.63 102.99 65.63h183.52V363.91c23.03-34.54 53.4-51.81 92.55-51.81 23.6 0 42.6 7.63 56.99 22.88s21.59 38.42 21.59 69.51v223.64c0 5.18-.86 9.07-2.59 11.66s-5.47 4.46-11.23 5.61l-41.45 5.18v25.9h193.42v-25.9l-43.18-5.18c-5.76-1.15-9.5-3.02-11.22-5.61-1.73-2.59-2.59-6.48-2.59-11.66V398.44c0-42.02-11.8-74.55-35.4-97.57-23.6-23.03-54.4-34.54-92.39-34.54-26.48 0-50.51 5.9-72.1 17.7-21.59 11.8-38.58 28.93-52.4 51.38V264.6l-138 35.4v12.09l43.18 18.13c5.76 2.88 9.35 5.61 10.79 8.2 1.44 2.59 2.16 7.05 2.16 13.38v266.36c-13.82-16.69-31.09-29.5-51.81-38.42-20.72-8.92-43.46-13.38-68.21-13.38s-50.23 5.18-72.97 15.54c-22.74 10.36-42.6 25.04-59.58 44.04-16.98 19-30.36 41.88-40.15 68.65-9.79 26.77-14.68 56.27-14.68 88.51s4.61 60.01 13.82 85.05 21.73 46.34 37.56 63.9Zm38.86-227.1c6.04-21.01 14.68-38.71 25.9-53.1 11.22-14.39 24.32-25.47 39.29-33.24 14.97-7.77 31.66-11.66 50.08-11.66 21.87 0 41.45 4.46 58.72 13.38 17.27 8.92 31.66 21.73 43.17 38.42v224.51c-13.24 17.27-28.35 30.51-45.33 39.72-16.98 9.21-36.41 13.82-58.29 13.82-16.69 0-32.38-3.74-47.06-11.22s-27.63-18.28-38.86-32.38c-11.22-14.1-20.15-31.09-26.77-50.95-6.62-19.86-9.93-42.17-9.93-66.92s3.02-49.36 9.07-70.37Z" fill="currentColor" class="text-crm-accent"/>
-                         </svg>
-                         <div>
-                             <p class="text-[0.65rem] font-bold uppercase tracking-[0.28em]" style="color: var(--crm-accent-light);">Grande&Gordo</p>
-                             <h1 class="mt-0.5 text-lg font-black tracking-tight" style="color: var(--crm-sidebar-text-active);">área de cliente</h1>
-                         </div>
-                     </div>
-                     <p class="mt-2 text-xs leading-relaxed" style="color: var(--crm-sidebar-text);">
-                        tu proyecto, aquí.
-                     </p>
-                 </div>
+                            return (
+                                <a
+                                    href={item.href}
+                                    aria-current={active ? 'page' : undefined}
+                                    class:list={['crm-sidebar-link', active && 'crm-sidebar-link--active']}
+                                >
+                                    {item.label.toLowerCase()}
+                                </a>
+                            );
+                        })}
+                    </div>
+                </nav>
 
-                 <!-- Navigation -->
-                 <nav class="grid gap-1">
-                     {navItems.map((item) => {
-                        const active =
-                            item.href === '/client'
-                                 ? pathname === '/client'
-                                 : pathname.startsWith(item.href);
+                <div class="crm-sidebar__section crm-sidebar__meta">
+                    <p class="crm-sidebar__meta-label">soporte</p>
+                    <p class="crm-sidebar__meta-value">{siteLinks.supportEmail}</p>
+                    <p id="sidebar-user-name" class="crm-sidebar__meta-value mt-3">cargando...</p>
+                    <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
+                    <button type="button" id="logout-button" class="text-sm transition" style="color: var(--crm-sidebar-text); width: fit-content;">
+                        cerrar sesión
+                    </button>
+                </div>
 
-                        return (
-                             <a
-                                href={item.href}
-                                aria-current={active ? 'page' : undefined}
-                                class:list={[
-                                     'crm-sidebar-link block rounded-xl px-4 py-2.5 text-sm transition',
-                                    active ? 'crm-sidebar-link--active font-semibold' : '',
-                                 ]}
-                                style={active ? '' : ''}
-                             >
-                                 {item.label.toLowerCase()}
-                             </a>
-                         );
-                     })}
-                 </nav>
+                <div class="crm-sidebar__legal">
+                    <a href="/client/legal/terms" class="transition hover:underline">términos</a>
+                    <a href="/client/legal/privacy" class="transition hover:underline">privacidad</a>
+                </div>
+            </aside>
 
-                 <!-- Connected Resources -->
-                 <div class="mt-6 pt-6" style="border-top: 1px solid var(--crm-sidebar-border);">
-                     <p class="text-[0.65rem] font-bold tracking-[0.06em] mb-3" style="color: var(--crm-sidebar-text);">recursos</p>
-                     <div class="space-y-0.5 text-sm">
-                         <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              Centro de cliente
-                         </a>
-                         <a href="/client/pricing" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              Planes y precios
-                         </a>
-                         <a href={siteLinks.cases} target="_blank" rel="noreferrer" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              Casos de éxito
-                         </a>
-                         <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              Brief de proyecto
-                         </a>
-                         <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              Onboarding
-                         </a>
-                         <a href="/client/faq" class="crm-sidebar-link block rounded-lg px-3 py-2 transition">
-                              FAQ
-                         </a>
-                     </div>
-                 </div>
+            <main id="client-main" class="crm-main flex-1 min-h-screen" role="main" aria-label="Contenido del área de cliente">
+                <div class="crm-main-frame">
+                    <div class="crm-topbar">
+                        <div class="crm-topbar__context">
+                            <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="Abrir menú de navegación">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                            </button>
+                            <div class="grid gap-1">
+                                <p class="crm-topbar__eyebrow">cliente</p>
+                                <nav id="breadcrumbs" aria-label="Breadcrumbs">
+                                    <ol class="crm-topbar__path">
+                                        <li><a href="/client" class="transition hover:text-crm-text">inicio</a></li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
 
-                 <!-- User block at bottom -->
-                 <div class="mt-auto pt-6" style="border-top: 1px solid var(--crm-sidebar-border); margin-top: auto;">
-                     <p class="text-[0.65rem] font-bold tracking-[0.06em] mb-1" style="color: var(--crm-sidebar-text);">soporte</p>
-                     <p class="text-sm font-medium" style="color: var(--crm-sidebar-text-active);">{siteLinks.supportEmail}</p>
-                     <p id="sidebar-user-name" class="mt-3 text-sm font-semibold" style="color: var(--crm-sidebar-text-active);">cargando...</p>
-                     <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
-                     <button type="button" id="logout-button" class="mt-3 text-sm cursor-pointer transition" style="color: var(--crm-sidebar-text);">
-                          Cerrar sesion
-                     </button>
-                 </div>
+                        <div class="relative">
+                            <button id="notifications-btn" class="crm-topbar-button relative" aria-label="Notificaciones" aria-expanded="false" aria-controls="notifications-dropdown">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                <span id="notifications-badge" class="absolute top-2 right-2 hidden h-2.5 w-2.5 rounded-full" style="background: var(--crm-accent);"></span>
+                            </button>
 
-                 <div class="mt-4 flex flex-wrap gap-4 text-xs" style="color: var(--crm-sidebar-text);">
-                     <a href="/client/legal/terms" class="hover:underline transition">Términos</a>
-                     <a href="/client/legal/privacy" class="hover:underline transition">Privacidad</a>
-                 </div>
-             </aside>
+                            <div id="notifications-dropdown" class="crm-notification-dropdown hidden absolute right-0 mt-3 z-50" role="menu" aria-label="Notificaciones">
+                                <div class="flex items-center justify-between px-5 py-4" style="border-bottom: 1px solid var(--crm-border);">
+                                    <div>
+                                        <p class="crm-kicker crm-kicker--accent">actividad</p>
+                                        <h3 class="text-base font-semibold" style="color: var(--crm-text);">notificaciones</h3>
+                                    </div>
+                                    <button id="mark-all-read-btn" class="crm-button crm-button-secondary text-sm" style="min-height: auto; padding: 0.55rem 0.8rem;" role="menuitem">
+                                        marcar leídas
+                                    </button>
+                                </div>
+                                <div id="notifications-list" class="max-h-96 overflow-y-auto" role="list"></div>
+                            </div>
+                        </div>
+                    </div>
 
-             <!-- Light Content Area -->
-             <main id="client-main" class="crm-main flex-1 min-h-screen" style="background: var(--crm-bg);" role="main" aria-label="Contenido del área de cliente">
-                 <div class="mx-auto max-w-7xl px-6 py-8">
-                     <!-- Mobile header -->
-                     <div class="flex items-center justify-between mb-6">
-                         <div class="flex items-center gap-4">
-                             <button id="sidebar-toggle" class="p-2 rounded-xl crm-button crm-button-secondary" aria-label="Abrir menú de navegación" style="min-height: 44px; min-width: 44px;">
-                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                             </button>
-                             <nav id="breadcrumbs" class="text-sm" aria-label="Breadcrumbs">
-                                 <ol class="flex items-center gap-2" style="color: var(--crm-muted);">
-                                     <li><a href="/client" class="transition" style="color: var(--crm-muted);">Resumen</a></li>
-                                 </ol>
-                             </nav>
-                         </div>
-                         <div class="relative">
-                             <button id="notifications-btn" class="relative rounded-full p-2 crm-button crm-button-secondary" aria-label="Notificaciones" aria-expanded="false" aria-controls="notifications-dropdown" style="min-height: 44px; min-width: 44px;">
-                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                 </svg>
-                                 <span id="notifications-badge" class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full hidden" style="background: var(--crm-accent);"></span>
-                             </button>
-                             <!-- Notifications Dropdown -->
-                             <div id="notifications-dropdown" class="hidden absolute right-0 mt-2 w-80 rounded-2xl shadow-2xl z-50 crm-panel" role="menu" aria-label="Notificaciones">
-                                 <div class="p-4" style="border-bottom: 1px solid var(--crm-border);">
-                                     <div class="flex items-center justify-between">
-                                         <h3 class="font-semibold" style="color: var(--crm-text);">Notificaciones</h3>
-                                         <button id="mark-all-read-btn" class="text-sm crm-button crm-button-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;" role="menuitem">Marcar todas como leídas</button>
-                                     </div>
-                                 </div>
-                                 <div id="notifications-list" class="max-h-96 overflow-y-auto" role="list"></div>
-                             </div>
-                         </div>
-                     </div>
-                     <slot />
-                 </div>
-             </main>
-         </div>
-     </div>
+                    <div class="crm-main-content">
+                        <slot />
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 
      <script>
          (async () => {
@@ -191,14 +159,14 @@ const navItems = [
             return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
          };
 
-        const getNotificationIcon = (type) => {
+        const getNotificationLabel = (type) => {
             switch (type) {
                 case 'job_completed': return 'listo';
-                case 'job_updated': return 'actualizado';
+                case 'job_updated': return 'cambio';
                 case 'feedback_received': return 'feedback';
                 case 'message': return 'mensaje';
-                case 'reminder': return 'recordatorio';
-                default: return 'notificacion';
+                case 'reminder': return 'aviso';
+                default: return 'update';
              }
          };
 
@@ -223,16 +191,14 @@ const navItems = [
                         notificationsList.innerHTML = '<p class="p-4 text-sm text-center" style="color: var(--crm-muted);">No hay notificaciones</p>';
                      } else {
                         notificationsList.innerHTML = notificationsData.map((notif) => `
-                             <div class="p-4 transition" style="border-bottom: 1px solid var(--crm-border); ${!notif.read ? 'background: var(--crm-accent-soft);' : ''}" role="listitem">
-                                 <div class="flex items-start gap-3">
-                                     <span class="text-lg">${getNotificationIcon(notif.type)}</span>
-                                     <div class="flex-1 min-w-0">
-                                         <p class="text-sm font-medium truncate" style="color: var(--crm-text);">${notif.title}</p>
-                                         <p class="text-xs mt-0.5" style="color: var(--crm-muted);">${notif.message}</p>
-                                         <p class="text-xs mt-2" style="color: var(--crm-subtle);">${formatNotificationTime(notif.createdAt)}</p>
-                                     </div>
-                                     ${!notif.read ? '<span class="w-2 h-2 rounded-full flex-shrink-0 mt-1" style="background: var(--crm-info);"></span>' : ''}
+                             <div class="crm-notification-row ${!notif.read ? 'crm-notification-row--unread' : ''}" role="listitem">
+                                 <span class="crm-notification-type">${getNotificationLabel(notif.type)}</span>
+                                 <div class="min-w-0">
+                                     <p class="text-sm font-medium truncate" style="color: var(--crm-text);">${notif.title}</p>
+                                     <p class="text-xs mt-0.5" style="color: var(--crm-muted);">${notif.message}</p>
+                                     <p class="text-xs mt-2" style="color: var(--crm-subtle);">${formatNotificationTime(notif.createdAt)}</p>
                                  </div>
+                                 ${!notif.read ? '<span class="crm-notification-dot"></span>' : '<span></span>'}
                              </div>
                          `).join('');
                      }
@@ -295,13 +261,13 @@ const navItems = [
         if (breadcrumbs) {
             const path = window.location.pathname;
             const pages = {
-                 '/client/assets': { label: 'Assets', href: '/client/assets' },
-                 '/client/history': { label: 'Historial', href: '/client/history' },
+                 '/client/brief-assistant': { label: 'Brief', href: '/client/brief-assistant' },
+                 '/client/invoices': { label: 'Facturacion', href: '/client/invoices' },
                  '/client/profile': { label: 'Perfil', href: '/client/profile' },
                  '/client/jobs': { label: 'Trabajos', href: '/client/jobs' },
                  '/client/jobs/detail': { label: 'Trabajos', href: '/client/jobs' },
                  '/client/onboarding': { label: 'Onboarding', href: '/client/onboarding' },
-                 '/client/hub': { label: 'Centro de cliente', href: '/client/hub' },
+                 '/client/vault': { label: 'Vault', href: '/client/vault' },
             };
 
             const currentPage = Object.entries(pages).find(([key]) => path.startsWith(key));

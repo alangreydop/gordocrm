@@ -14,8 +14,8 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </svg>
       </a>
       <div>
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Facturación</p>
-        <h1 class="mt-2 text-3xl font-black tracking-tight text-crm-text">Nueva factura</h1>
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Facturación</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-crm-text">Nueva factura</h1>
         <p class="mt-2 text-sm text-crm-muted">Crea una nueva factura para un cliente</p>
       </div>
     </section>
@@ -23,11 +23,11 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
     <!-- Form -->
     <form id="invoice-form" class="space-y-6" role="region" aria-label="Contenido principal">
       <!-- Cliente -->
-      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
         <h2 class="text-xl font-bold text-crm-text mb-4">Cliente</h2>
         <div class="space-y-4">
           <div>
-            <label for="client-id" class="block text-sm font-medium text-crm-text-secondary mb-2">
+            <label for="client-id" class="block text-sm font-medium text-crm-muted mb-2">
               Cliente <span class="text-crm-danger">*</span>
             </label>
             <select
@@ -44,7 +44,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       </section>
 
       <!-- Líneas de factura -->
-      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-bold text-crm-text">Líneas de factura</h2>
           <button
@@ -83,11 +83,11 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       </section>
 
       <!-- Detalles de pago -->
-      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
         <h2 class="text-xl font-bold text-crm-text mb-4">Detalles de pago</h2>
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label for="due-date" class="block text-sm font-medium text-crm-text-secondary mb-2">
+            <label for="due-date" class="block text-sm font-medium text-crm-muted mb-2">
               Fecha de vencimiento
             </label>
             <input
@@ -98,7 +98,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             />
           </div>
           <div>
-            <label for="payment-method" class="block text-sm font-medium text-crm-text-secondary mb-2">
+            <label for="payment-method" class="block text-sm font-medium text-crm-muted mb-2">
               Método de pago
             </label>
             <select
@@ -114,7 +114,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           </div>
         </div>
         <div class="mt-4">
-          <label for="payment-notes" class="block text-sm font-medium text-crm-text-secondary mb-2">
+          <label for="payment-notes" class="block text-sm font-medium text-crm-muted mb-2">
             Notas de pago (ej: cuenta bancaria)
           </label>
           <textarea
@@ -128,11 +128,11 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       </section>
 
       <!-- Descripción y notas -->
-      <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
         <h2 class="text-xl font-bold text-crm-text mb-4">Descripción y notas</h2>
         <div class="space-y-4">
           <div>
-            <label for="description" class="block text-sm font-medium text-crm-text-secondary mb-2">
+            <label for="description" class="block text-sm font-medium text-crm-muted mb-2">
               Descripción (opcional)
             </label>
             <textarea
@@ -144,7 +144,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             ></textarea>
           </div>
           <div>
-            <label for="notes" class="block text-sm font-medium text-crm-text-secondary mb-2">
+            <label for="notes" class="block text-sm font-medium text-crm-muted mb-2">
               Notas internas
             </label>
             <textarea
@@ -192,7 +192,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
     const createLineTemplate = (index = 0) => `
       <div class="line-item grid grid-cols-12 gap-3 items-start p-4 rounded-xl border border-crm-border bg-crm-panel" data-line="${index}">
         <div class="col-span-5">
-          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Descripción</label>
+          <label class="block text-xs font-medium text-crm-muted mb-1">Descripción</label>
           <input
             type="text"
             name="lines[${index}][description]"
@@ -202,7 +202,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Cantidad</label>
+          <label class="block text-xs font-medium text-crm-muted mb-1">Cantidad</label>
           <input
             type="number"
             name="lines[${index}][quantity]"
@@ -214,7 +214,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Precio (€)</label>
+          <label class="block text-xs font-medium text-crm-muted mb-1">Precio (€)</label>
           <input
             type="number"
             name="lines[${index}][unitPrice]"
@@ -227,7 +227,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           />
         </div>
         <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-text-secondary mb-1">Subtotal</label>
+          <label class="block text-xs font-medium text-crm-muted mb-1">Subtotal</label>
           <div class="rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-sm text-crm-muted line-subtotal">
             €0,00
           </div>

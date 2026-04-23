@@ -31,9 +31,9 @@ const marginOptions = [
       <section class="crm-page-header" aria-labelledby="client-name">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <a href="/admin/clients" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Clientes</a>
-            <h1 id="client-name" class="mt-3 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Cargando cliente...</h1>
-            <p id="client-email" class="mt-3 text-sm text-crm-text-secondary">—</p>
+            <a href="/admin/clients" class="inline-block text-sm text-crm-muted transition hover:text-crm-text">&larr; Clientes</a>
+            <h1 id="client-name" class="mt-3 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Cargando cliente...</h1>
+            <p id="client-email" class="mt-3 text-sm text-crm-muted">—</p>
             <p id="client-company" class="mt-1 text-sm text-crm-muted"></p>
             <div class="mt-4 flex flex-wrap gap-2">
               <span id="client-status" class="crm-badge crm-badge-default">—</span>
@@ -51,19 +51,19 @@ const marginOptions = [
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="crm-metric-card" role="region" aria-label="Trabajos totales">
           <p class="crm-kicker">Trabajos totales</p>
-          <p id="summary-total-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+          <p id="summary-total-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
         </div>
         <div class="crm-metric-card" role="region" aria-label="Activos">
           <p class="crm-kicker">Activos</p>
-          <p id="summary-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+          <p id="summary-active-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
         </div>
         <div class="crm-metric-card" role="region" aria-label="Entregados">
           <p class="crm-kicker">Entregados</p>
-          <p id="summary-delivered-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+          <p id="summary-delivered-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
         </div>
         <div class="crm-metric-card" role="region" aria-label="Unidades">
           <p class="crm-kicker">Unidades</p>
-          <p id="summary-units" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+          <p id="summary-units" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
           <p id="summary-capacity" class="text-sm text-crm-muted mt-2">—</p>
         </div>
       </div>
@@ -83,66 +83,66 @@ const marginOptions = [
           <form id="client-form" class="space-y-5" novalidate>
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label for="name" class="block text-sm font-medium text-crm-text-secondary mb-1">Nombre</label>
+                <label for="name" class="block text-sm font-medium text-crm-muted mb-1">Nombre</label>
                 <input type="text" id="name" name="name" required class="crm-input" />
               </div>
               <div>
-                <label for="email" class="block text-sm font-medium text-crm-text-secondary mb-1">Email principal</label>
+                <label for="email" class="block text-sm font-medium text-crm-muted mb-1">Email principal</label>
                 <input type="email" id="email" name="email" required class="crm-input" />
               </div>
               <div>
-                <label for="company" class="block text-sm font-medium text-crm-text-secondary mb-1">Empresa</label>
+                <label for="company" class="block text-sm font-medium text-crm-muted mb-1">Empresa</label>
                 <input type="text" id="company" name="company" class="crm-input" />
               </div>
               <div>
-                <label for="accountManager" class="block text-sm font-medium text-crm-text-secondary mb-1">Account manager</label>
+                <label for="accountManager" class="block text-sm font-medium text-crm-muted mb-1">Account manager</label>
                 <input type="text" id="accountManager" name="accountManager" class="crm-input" />
               </div>
               <div>
-                <label for="plan" class="block text-sm font-medium text-crm-text-secondary mb-1">Plan</label>
+                <label for="plan" class="block text-sm font-medium text-crm-muted mb-1">Plan</label>
                 <input type="text" id="plan" name="plan" class="crm-input" />
               </div>
               <div>
-                <label for="monthlyUnitCapacity" class="block text-sm font-medium text-crm-text-secondary mb-1">Capacidad mensual</label>
+                <label for="monthlyUnitCapacity" class="block text-sm font-medium text-crm-muted mb-1">Capacidad mensual</label>
                 <input type="number" min="0" id="monthlyUnitCapacity" name="monthlyUnitCapacity" class="crm-input" />
               </div>
               <div>
-                <label for="subscriptionStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">Suscripcion</label>
+                <label for="subscriptionStatus" class="block text-sm font-medium text-crm-muted mb-1">Suscripcion</label>
                 <select id="subscriptionStatus" name="subscriptionStatus" class="crm-input">
                   {subscriptionOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                 </select>
               </div>
               <div>
-                <label for="datasetStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">Base visual</label>
+                <label for="datasetStatus" class="block text-sm font-medium text-crm-muted mb-1">Base visual</label>
                 <select id="datasetStatus" name="datasetStatus" class="crm-input">
                   {datasetOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                 </select>
               </div>
               <div>
-                <label for="segment" class="block text-sm font-medium text-crm-text-secondary mb-1">Segmento</label>
+                <label for="segment" class="block text-sm font-medium text-crm-muted mb-1">Segmento</label>
                 <select id="segment" name="segment" class="crm-input">
                   <option value="">Sin definir</option>
                   {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                 </select>
               </div>
               <div>
-                <label for="marginProfile" class="block text-sm font-medium text-crm-text-secondary mb-1">Perfil margen</label>
+                <label for="marginProfile" class="block text-sm font-medium text-crm-muted mb-1">Perfil margen</label>
                 <select id="marginProfile" name="marginProfile" class="crm-input">
                   <option value="">Sin definir</option>
                   {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                 </select>
               </div>
               <div>
-                <label for="lastContactedAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Último contacto</label>
+                <label for="lastContactedAt" class="block text-sm font-medium text-crm-muted mb-1">Último contacto</label>
                 <input type="date" id="lastContactedAt" name="lastContactedAt" class="crm-input" />
               </div>
               <div>
-                <label for="nextReviewAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Próxima revisión</label>
+                <label for="nextReviewAt" class="block text-sm font-medium text-crm-muted mb-1">Próxima revisión</label>
                 <input type="date" id="nextReviewAt" name="nextReviewAt" class="crm-input" />
               </div>
             </div>
             <div>
-              <label for="notes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas internas</label>
+              <label for="notes" class="block text-sm font-medium text-crm-muted mb-1">Notas internas</label>
               <textarea id="notes" name="notes" rows="5" class="crm-input"></textarea>
             </div>
             <div class="flex gap-3">
@@ -161,7 +161,7 @@ const marginOptions = [
               <div id="portal-access-success" class="hidden text-sm crm-alert crm-alert-success" role="status"></div>
             </div>
 
-            <div id="portal-access-summary" class="rounded-lg bg-crm-panel-soft p-4 text-sm text-crm-text-secondary" aria-live="polite">
+            <div id="portal-access-summary" class="rounded-lg bg-crm-panel-soft p-4 text-sm text-crm-muted" aria-live="polite">
             Cargando acceso del portal...
             </div>
 
@@ -169,15 +169,15 @@ const marginOptions = [
 
             <form id="portal-access-form" class="space-y-4 mt-4">
               <div>
-                <label for="portalName" class="block text-sm font-medium text-crm-text-secondary mb-1">Nombre del usuario portal</label>
+                <label for="portalName" class="block text-sm font-medium text-crm-muted mb-1">Nombre del usuario portal</label>
                 <input type="text" id="portalName" name="portalName" class="crm-input" />
               </div>
               <div>
-                <label for="portalEmail" class="block text-sm font-medium text-crm-text-secondary mb-1">Email del usuario portal</label>
+                <label for="portalEmail" class="block text-sm font-medium text-crm-muted mb-1">Email del usuario portal</label>
                 <input type="email" id="portalEmail" name="portalEmail" class="crm-input" />
               </div>
               <div>
-                <label for="portalPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Nueva contrasena</label>
+                <label for="portalPassword" class="block text-sm font-medium text-crm-muted mb-1">Nueva contrasena</label>
                 <input type="password" id="portalPassword" name="portalPassword" minlength="8" required class="crm-input" />
               </div>
               <button type="submit" id="portal-access-button" class="crm-button crm-button-primary w-full">
@@ -188,7 +188,7 @@ const marginOptions = [
 
           <div class="crm-form-section" role="region" aria-label="Operacion Grande&Gordo">
             <h2 class="crm-form-section__title">Operacion Grande&Gordo</h2>
-            <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
+            <div class="mt-4 space-y-3 text-sm text-crm-muted">
               <p><span class="font-medium text-crm-text">Email operativo:</span> hola@grandeandgordo.com</p>
               <p><span class="font-medium text-crm-text">Objetivo:</span> concentrar seguimiento, acceso, delivery y margen por cuenta.</p>
               <p><span class="font-medium text-crm-text">Recomendacion:</span> mantén revisiones y dataset al dia para evitar cuellos de botella.</p>
@@ -201,7 +201,7 @@ const marginOptions = [
         <div class="flex items-center justify-between border-b border-crm-border px-6 py-5">
           <div>
             <h2 id="jobs-heading" class="text-lg font-semibold text-crm-text">Trabajos</h2>
-            <p class="mt-2 text-sm text-crm-text-secondary">Produccion vinculada al cliente con foco en margen, stack y deadline.</p>
+            <p class="mt-2 text-sm text-crm-muted">Produccion vinculada al cliente con foco en margen, stack y deadline.</p>
           </div>
         </div>
         <div class="overflow-x-auto">
@@ -300,7 +300,7 @@ const marginOptions = [
         if (!portalUser) {
           portalSummary.innerHTML = `
              <p class="font-medium text-crm-text">Sin acceso activo</p>
-             <p class="mt-2 text-crm-text-secondary">Este cliente todavia no tiene usuario para entrar al portal.</p>
+             <p class="mt-2 text-crm-muted">Este cliente todavia no tiene usuario para entrar al portal.</p>
            `;
           if (portalButton) portalButton.textContent = 'Crear acceso';
           return;
@@ -308,9 +308,9 @@ const marginOptions = [
 
         portalSummary.innerHTML = `
            <p class="font-medium text-crm-text">Acceso activo</p>
-           <p class="mt-2 text-crm-text-secondary">Usuario: ${escapeHtml(portalUser.name ?? '—')}</p>
-           <p class="mt-1 text-crm-text-secondary">Email: ${escapeHtml(portalUser.email ?? '—')}</p>
-           <p class="mt-1 text-crm-text-secondary">Actualizado: ${escapeHtml(formatDate(portalUser.updatedAt))}</p>
+           <p class="mt-2 text-crm-muted">Usuario: ${escapeHtml(portalUser.name ?? '—')}</p>
+           <p class="mt-1 text-crm-muted">Email: ${escapeHtml(portalUser.email ?? '—')}</p>
+           <p class="mt-1 text-crm-muted">Actualizado: ${escapeHtml(formatDate(portalUser.updatedAt))}</p>
          `;
         if (portalButton) portalButton.textContent = 'Resetear acceso';
        };
@@ -340,14 +340,14 @@ const marginOptions = [
                  ${escapeHtml(job.status ?? 'pending')}
                </span>
              </td>
-             <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatDate(job.dueAt))}</td>
-             <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
+             <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.dueAt))}</td>
+             <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
              <td class="px-6 py-4">
                <span class="${stackLaneClass(job.stackLane ?? '')}">
                  ${escapeHtml(job.stackLane ?? '—')}
                </span>
              </td>
-             <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
+             <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
              <td class="px-6 py-4 text-right">
                <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent transition hover:text-crm-text">Abrir</a>
              </td>

@@ -8,7 +8,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="crm-kicker">Produccion</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">trabajos</h1>
+          <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">trabajos</h1>
           <p class="crm-page-header__meta mt-4">
             vista de producción con deadline, stack, consumo, margen y urgencia
             para priorizar bien antes de entrar al detalle.
@@ -31,20 +31,20 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <div class="crm-metric-card">
         <p class="crm-kicker">Trabajos activos</p>
-        <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+        <p id="metric-active-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Urgentes</p>
-        <p id="metric-urgent-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+        <p id="metric-urgent-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Margen bajo</p>
-        <p id="metric-low-margin" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+        <p id="metric-low-margin" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
         <p class="mt-2 text-sm text-crm-muted">&lt; 65%</p>
       </div>
       <div class="crm-metric-card">
         <p class="crm-kicker">Due en 7 dias</p>
-        <p id="metric-due-soon" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+        <p id="metric-due-soon" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
       </div>
     </div>
 
@@ -168,8 +168,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 ${escapeHtml(job.status ?? 'pending')}
               </span>
             </td>
-            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatDate(job.dueAt))}</td>
-            <td class="px-6 py-4 text-crm-text-secondary">
+            <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.dueAt))}</td>
+            <td class="px-6 py-4 text-crm-muted">
               <div class="flex flex-wrap gap-2">
                 <span class="${turnaroundClass(job.turnaround ?? 'normal')}">
                   ${escapeHtml(job.turnaround ?? 'normal')}
@@ -179,7 +179,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
               </div>
               <p class="text-xs text-crm-muted mt-2">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))} unidades</p>
             </td>
-            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
+            <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatPercent(job.grossMarginEstimated))}</td>
             <td class="px-6 py-4 text-right">
               <a href="/admin/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent transition hover:text-crm-text">
                 Abrir

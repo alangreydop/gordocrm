@@ -87,6 +87,8 @@ authRoutes.get('/me', requireAuth, async (c) => {
       notes: schema.clients.notes,
       nextReviewAt: schema.clients.nextReviewAt,
       lastContactedAt: schema.clients.lastContactedAt,
+      onboardingCompletedAt: schema.clients.onboardingCompletedAt,
+      firstSessionAt: schema.clients.firstSessionAt,
     })
     .from(schema.clients)
     .where(eq(schema.clients.userId, user.id))

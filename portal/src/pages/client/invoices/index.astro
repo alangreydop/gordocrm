@@ -5,28 +5,28 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 <ClientLayout title="Mis Facturas">
   <div class="max-w-5xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
     <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-crm-text">Mis Facturas</h1>
+      <h1 class="text-4xl font-bold tracking-tight text-crm-text">Mis Facturas</h1>
       <p class="text-crm-muted">Gestiona tus facturas y pagos. Método de pago: Transferencia bancaria.</p>
     </section>
 
     <!-- Bank info card -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6">
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
       <h2 class="text-lg font-bold text-crm-text mb-4">Datos para transferencia</h2>
       <div class="grid md:grid-cols-2 gap-4 text-sm">
         <div>
-          <span class="text-crm-text-secondary">Titular:</span>
+          <span class="text-crm-muted">Titular:</span>
           <p class="text-crm-text font-medium">Grande&Gordo S.L.</p>
         </div>
         <div>
-          <span class="text-crm-text-secondary">Banco:</span>
+          <span class="text-crm-muted">Banco:</span>
           <p class="text-crm-text font-medium">Abanca</p>
         </div>
         <div>
-          <span class="text-crm-text-secondary">IBAN:</span>
+          <span class="text-crm-muted">IBAN:</span>
           <p class="text-crm-text font-medium font-mono">ESXX XXXX XXXX XXXX XXXX</p>
         </div>
         <div>
-          <span class="text-crm-text-secondary">Concepto:</span>
+          <span class="text-crm-muted">Concepto:</span>
           <p class="text-crm-text font-medium">Número de factura</p>
         </div>
       </div>
@@ -34,7 +34,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
     <!-- Invoices list -->
     <div class="space-y-4" id="invoices-list">
-      <div class="text-center text-crm-text-secondary py-12">Cargando facturas...</div>
+      <div class="text-center text-crm-muted py-12">Cargando facturas...</div>
     </div>
   </div>
 
@@ -73,7 +73,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
           if (!invoices || invoices.length === 0) {
             listEl!.innerHTML = `
-              <div class="text-center text-crm-text-secondary py-12">
+              <div class="text-center text-crm-muted py-12">
                 <p>No tienes facturas todavía.</p>
                 <p class="text-sm mt-2">Contacta con nosotros para más información.</p>
               </div>
@@ -84,7 +84,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           listEl!.innerHTML = invoices
             .map(
               (inv: any) => `
-            <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 hover:border-crm-accent transition">
+            <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 hover:border-crm-accent transition">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
@@ -95,7 +95,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
                     Emitida: ${new Date(inv.issueDate).toLocaleDateString('es-ES')}
                     ${inv.dueDate ? `· Vence: ${new Date(inv.dueDate).toLocaleDateString('es-ES')}` : ''}
                   </p>
-                  ${inv.description ? `<p class="text-sm text-crm-text-secondary mt-2">${inv.description}</p>` : ''}
+                  ${inv.description ? `<p class="text-sm text-crm-muted mt-2">${inv.description}</p>` : ''}
                 </div>
                 <div class="text-right">
                   <div class="text-2xl font-bold text-crm-text">${formatMoney(inv.totalCents)}</div>

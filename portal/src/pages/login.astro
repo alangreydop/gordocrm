@@ -3,111 +3,298 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Login">
-       <div class="min-h-screen flex items-center justify-center bg-crm-bg">
-           <div class="w-full max-w-md px-6">
-               <a href="/" class="inline-block text-xs font-bold tracking-[0.06em] text-crm-muted transition hover:text-crm-accent mb-8">
-                  grandeandgordo.com
-               </a>
+  <div class="login-shell">
+    <div class="login-grid">
+      <section class="login-intro">
+        <a href="/" class="login-back">
+          grandeandgordo.com
+        </a>
+        <p class="crm-kicker crm-kicker--accent">portal operativo</p>
+        <h1 class="login-title">entra en tu espacio de trabajo.</h1>
+        <p class="login-copy">
+          brief, activación, entregables, vault y facturación viven aquí. Sin brochure. Sin ruido.
+        </p>
 
-               <div class="mb-8">
-                   <h1 class="text-2xl font-black text-crm-text">Entrar al CRM</h1>
-                   <p class="mt-2 text-sm text-crm-muted">
-                      email y contrasena.
-                   </p>
-               </div>
+        <div class="login-notes">
+          <div class="login-note">
+            <span class="login-note__index">01</span>
+            <div>
+              <p class="login-note__title">cliente</p>
+              <p class="login-note__text">sigue briefs, trabajos, activos y billing desde una sola vista.</p>
+            </div>
+          </div>
+          <div class="login-note">
+            <span class="login-note__index">02</span>
+            <div>
+              <p class="login-note__title">admin</p>
+              <p class="login-note__text">entra en operaciones, capacidad, briefs y jobs con el mismo acceso.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-               <div id="login-error" class="mb-4 hidden rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600" role="alert" aria-live="polite"></div>
+      <section class="login-panel">
+        <div class="login-panel__head">
+          <p class="crm-kicker">acceso</p>
+          <h2 class="login-panel__title">email y contraseña</h2>
+          <p class="login-panel__copy">usa el usuario vinculado a tu cuenta del portal.</p>
+        </div>
 
-               <form id="login-form" class="space-y-4" novalidate>
-                   <div>
-                       <label for="email" class="mb-2 block text-sm font-medium text-crm-text">Email</label>
-                       <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          required
-                          autocomplete="email"
-                          class="crm-input w-full"
-                          placeholder="cliente@tumarca.com"
-                       />
-                   </div>
-                   <div>
-                       <label for="password" class="mb-2 block text-sm font-medium text-crm-text">Contrasena</label>
-                       <input
-                          type="password"
-                          id="password"
-                          name="password"
-                          required
-                          autocomplete="current-password"
-                          class="crm-input w-full"
-                       />
-                   </div>
-                   <button
-                      type="submit"
-                      class="crm-button crm-button-primary w-full py-3.5"
-                      id="login-submit"
-                   >
-                      Iniciar sesion
-                   </button>
-               </form>
-           </div>
-       </div>
+        <div id="login-error" class="mb-4 hidden rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600" role="alert" aria-live="polite"></div>
 
-       <script>
-           (async () => {
-           const { API_BASE, getSessionUser } = await import('../lib/api-client');
+        <form id="login-form" class="login-form" novalidate>
+          <div class="login-field">
+            <label for="email">email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              class="crm-input w-full"
+              placeholder="cliente@tumarca.com"
+            />
+          </div>
+          <div class="login-field">
+            <label for="password">contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              class="crm-input w-full"
+            />
+          </div>
+          <button
+            type="submit"
+            class="crm-button crm-button-primary w-full py-3.5"
+            id="login-submit"
+          >
+            entrar
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
 
-           const existingUser = await getSessionUser();
-           if (existingUser) {
-               window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
-           }
+  <script>
+    (async () => {
+      const { API_BASE, getSessionUser } = await import('../lib/api-client');
 
-           const form = document.getElementById('login-form');
-           const errorDiv = document.getElementById('login-error');
-           const submitBtn = document.getElementById('login-submit');
+      const existingUser = await getSessionUser();
+      if (existingUser) {
+        window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
+      }
 
-           form?.addEventListener('submit', async (event) => {
-               event.preventDefault();
-               if (errorDiv) errorDiv.classList.add('hidden');
-               if (submitBtn) {
-                   const originalText = submitBtn.textContent;
-                   submitBtn.textContent = 'Entrando...';
-                   submitBtn.disabled = true;
-               }
+      const form = document.getElementById('login-form');
+      const errorDiv = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit');
 
-               const email = document.getElementById('email');
-               const password = document.getElementById('password');
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (errorDiv) errorDiv.classList.add('hidden');
+        if (submitBtn) {
+          submitBtn.textContent = 'entrando...';
+          submitBtn.disabled = true;
+        }
 
-               try {
-                   const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
-                       method: 'POST',
-                       headers: { 'Content-Type': 'application/json' },
-                       credentials: 'include',
-                       body: JSON.stringify({
-                           email: email instanceof HTMLInputElement ? email.value : '',
-                           password: password instanceof HTMLInputElement ? password.value : '',
-                       }),
-                   });
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
 
-                   if (!res.ok) {
-                       const data = await res.json().catch(() => ({}));
-                       throw new Error(data.error ?? 'Login failed');
-                   }
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: email instanceof HTMLInputElement ? email.value : '',
+              password: password instanceof HTMLInputElement ? password.value : '',
+            }),
+          });
 
-                   const data = await res.json();
-                   window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
-               } catch (error) {
-                   const msg = error instanceof Error ? error.message : 'error al iniciar sesión';
-                   if (errorDiv instanceof HTMLDivElement) {
-                       errorDiv.textContent = msg;
-                       errorDiv.classList.remove('hidden');
-                   }
-                   if (submitBtn) {
-                       submitBtn.textContent = 'Iniciar sesion';
-                       submitBtn.disabled = false;
-                   }
-               }
-           });
-           })();
-       </script>
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'login failed');
+          }
+
+          const data = await res.json();
+          window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : 'error al iniciar sesión';
+          if (errorDiv instanceof HTMLDivElement) {
+            errorDiv.textContent = msg;
+            errorDiv.classList.remove('hidden');
+          }
+          if (submitBtn) {
+            submitBtn.textContent = 'entrar';
+            submitBtn.disabled = false;
+          }
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    .login-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+    }
+
+    .login-grid {
+      width: min(100%, 72rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .login-intro {
+      border-radius: var(--radius-xl);
+      padding: clamp(1.75rem, 3vw, 2.5rem);
+      background:
+        linear-gradient(180deg, rgba(22, 13, 17, 0.96), rgba(11, 6, 8, 1)),
+        var(--gg-dark);
+      color: var(--gg-text-white);
+      box-shadow: var(--shadow-strong);
+      display: grid;
+      align-content: start;
+      gap: 1rem;
+    }
+
+    .login-back {
+      width: fit-content;
+      font-size: var(--text-sm);
+      color: rgba(255, 253, 253, 0.72);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+
+    .login-back:hover {
+      color: var(--gg-text-white);
+    }
+
+    .login-title {
+      font-size: clamp(2.3rem, 5vw, 4.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      max-width: 9ch;
+    }
+
+    .login-copy {
+      color: rgba(255, 253, 253, 0.78);
+      max-width: 34ch;
+      line-height: 1.75;
+    }
+
+    .login-notes {
+      margin-top: auto;
+      display: grid;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .login-note {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .login-note:last-child {
+      border-bottom: 0;
+    }
+
+    .login-note__index {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--gg-accent-light);
+      font-size: 0.9rem;
+      padding-top: 0.2rem;
+    }
+
+    .login-note__title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--gg-text-white);
+      margin: 0;
+    }
+
+    .login-note__text {
+      margin: 0.2rem 0 0;
+      font-size: var(--text-sm);
+      color: rgba(255, 253, 253, 0.68);
+      line-height: 1.65;
+    }
+
+    .login-panel {
+      border-radius: var(--radius-xl);
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.98)),
+        var(--crm-panel);
+      border: 1px solid var(--crm-border);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      align-content: center;
+      gap: 1.5rem;
+    }
+
+    .login-panel__head {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .login-panel__title {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.04;
+      color: var(--crm-text);
+      margin: 0;
+    }
+
+    .login-panel__copy {
+      color: var(--crm-muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .login-field {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .login-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: lowercase;
+      color: var(--crm-muted);
+    }
+
+    @media (max-width: 900px) {
+      .login-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .login-intro {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .login-shell {
+        padding: 1rem;
+      }
+
+      .login-grid {
+        gap: 1rem;
+      }
+    }
+  </style>
 </BaseLayout>

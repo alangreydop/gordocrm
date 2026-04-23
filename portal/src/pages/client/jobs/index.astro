@@ -8,7 +8,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
                   <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                       <div>
                           <p class="crm-kicker">Produccion</p>
-                          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Mis trabajos</h1>
+                          <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Mis trabajos</h1>
                           <p class="crm-page-header__meta mt-4">
                             Seguimiento de todos tus trabajos con deadline, estado y consumo de unidades.
                           </p>
@@ -26,19 +26,19 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
               <div class="grid gap-4 md:grid-cols-4">
                   <div class="crm-metric-card">
                       <p class="crm-kicker">Total trabajos</p>
-                      <p id="metric-total" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                      <p id="metric-total" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
                   </div>
                   <div class="crm-metric-card">
                       <p class="crm-kicker">En produccion</p>
-                      <p id="metric-processing" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                      <p id="metric-processing" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
                   </div>
                   <div class="crm-metric-card">
                       <p class="crm-kicker">Completados</p>
-                      <p id="metric-completed" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                      <p id="metric-completed" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
                   </div>
                   <div class="crm-metric-card">
                       <p class="crm-kicker">Pendientes feedback</p>
-                      <p id="metric-feedback" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                      <p id="metric-feedback" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
                   </div>
               </div>
 
@@ -123,7 +123,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
                               <tr class="bg-crm-bg-alt/50">
                                   <td colspan="7" class="px-6 py-16 text-center">
                                       <div class="flex flex-col items-center justify-center gap-3">
-                                          <div class="rounded-full bg-crm-bg-alt p-4 text-crm-text-secondary">
+                                          <div class="rounded-full bg-crm-bg-alt p-4 text-crm-muted">
                                               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                           </div>
                                           <p class="text-crm-muted font-medium">No encontramos trabajos que coincidan con tu búsqueda</p>
@@ -160,18 +160,18 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
                                       </div>
                                   ` : ''}
                               </td>
-                              <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(job.platform ?? '—')}</td>
-                              <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(job.type ?? '—')}</td>
+                              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.platform ?? '—')}</td>
+                              <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.type ?? '—')}</td>
                               <td class="px-6 py-4">
                                   <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
                                       ${escapeHtml(job.status ?? 'pending')}
                                   </span>
                               </td>
-                              <td class="px-6 py-4 text-crm-text-secondary">
+                              <td class="px-6 py-4 text-crm-muted">
                                   ${escapeHtml(formatDate(job.dueAt))}
                                   ${isDueSoon(job.dueAt) ? '<span class="ml-2 crm-badge crm-badge-danger">Pronto</span>' : ''}
                               </td>
-                              <td class="px-6 py-4 text-crm-text-secondary">
+                              <td class="px-6 py-4 text-crm-muted">
                                   ${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}
                               </td>
                               <td class="px-6 py-4 text-right">

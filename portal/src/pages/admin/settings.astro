@@ -6,7 +6,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   <div class="max-w-4xl space-y-6" role="region" aria-label="Contenido principal">
     <section class="crm-page-header" aria-labelledby="page-title">
       <p class="crm-kicker">Cuenta interna</p>
-      <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Settings</h1>
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Settings</h1>
       <p class="crm-page-header__meta mt-4">
         Gestiona tu acceso al CRM y la identidad operativa con la misma capa visual
         que el resto del sistema.
@@ -43,12 +43,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
         <form id="password-form" class="space-y-4">
           <div>
-            <label for="currentPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Contraseña actual</label>
+            <label for="currentPassword" class="block text-sm font-medium text-crm-muted mb-1">Contraseña actual</label>
             <input type="password" id="currentPassword" name="currentPassword" required
               class="crm-input" />
           </div>
           <div>
-            <label for="newPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Nueva contraseña</label>
+            <label for="newPassword" class="block text-sm font-medium text-crm-muted mb-1">Nueva contraseña</label>
             <input type="password" id="newPassword" name="newPassword" required minlength="8"
               class="crm-input" />
           </div>

@@ -12,13 +12,13 @@ searchRoutes.get('/', async (c) => {
   const q = c.req.query('q')?.trim();
 
   if (!q || q.length === 0) {
-    return c.json({ clients: [], jobs: [] });
+    return c.json({ clients: [], jobs: [], briefs: [], invoices: [] });
   }
 
   const db = c.get('db');
   const pattern = `%${q}%`;
 
-  const [clients, jobs, briefs] = await Promise.all([
+  const [clients, jobs, briefs, invoices] = await Promise.all([
     db
       .select({
         id: schema.clients.id,
@@ -65,7 +65,25 @@ searchRoutes.get('/', async (c) => {
       )
       .orderBy(desc(schema.briefSubmissions.createdAt))
       .limit(5),
+    db
+      .select({
+        id: schema.invoices.id,
+        invoiceNumber: schema.invoices.invoiceNumber,
+        clientLegalName: schema.invoices.clientLegalName,
+        status: schema.invoices.status,
+        totalCents: schema.invoices.totalCents,
+      })
+      .from(schema.invoices)
+      .where(
+        or(
+          like(schema.invoices.invoiceNumber, pattern),
+          like(schema.invoices.clientLegalName, pattern),
+          like(schema.invoices.description, pattern),
+        ),
+      )
+      .orderBy(desc(schema.invoices.createdAt))
+      .limit(5),
   ]);
 
-  return c.json({ clients, jobs, briefs });
+  return c.json({ clients, jobs, briefs, invoices });
 });

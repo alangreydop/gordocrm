@@ -22,6 +22,8 @@ export interface SessionClient {
   notes: string | null;
   nextReviewAt: string | number | Date | null;
   lastContactedAt: string | number | Date | null;
+  onboardingCompletedAt: string | number | Date | null;
+  firstSessionAt: string | number | Date | null;
 }
 
 export interface SessionContext {
@@ -129,6 +131,7 @@ export interface SearchResult {
   clients: { id: string; name: string; company: string | null; email: string }[];
   jobs: { id: string; briefText: string | null; status: string; clientId: string; clientName: string }[];
   briefs: { id: string; email: string; tipo: string; status: string; clientId: string | null; clientName: string | null }[];
+  invoices: { id: string; invoiceNumber: string; clientLegalName: string; status: string; totalCents: number }[];
 }
 
 export async function search(q: string): Promise<SearchResult> {

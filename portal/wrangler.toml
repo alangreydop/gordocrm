@@ -1,0 +1,5 @@
+name = "gordocrm-portal"
+pages_build_output_dir = "dist"
+
+[vars]
+PUBLIC_API_URL="https://gordocrm-api-production.alangreydop.workers.dev"

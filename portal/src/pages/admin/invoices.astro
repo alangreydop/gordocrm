@@ -3,7 +3,7 @@ layout: '../../../layouts/AdminLayout.astro'
 title: 'Facturas'
 ---
 
-<div class="max-w-7xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
+<div class="max-w-crm mx-auto space-y-8" role="region" aria-label="Contenido principal">
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-3xl font-bold text-crm-text">Facturas</h1>
@@ -30,7 +30,7 @@ title: 'Facturas'
   </div>
 
   <!-- Invoices table -->
-  <div class="rounded-3xl border border-crm-border bg-crm-bg-alt overflow-hidden">
+  <div class="rounded-xl border border-crm-border bg-crm-bg-alt overflow-hidden">
     <table class="w-full text-sm">
       <thead class="bg-crm-bg-alt border-b border-crm-border">
         <tr>
@@ -49,7 +49,7 @@ title: 'Facturas'
 
 <!-- Create Modal -->
 <div id="create-modal" class="fixed inset-0 hidden items-center justify-center z-50" style="background-color: rgba(0,0,0,0.8);">
-  <div class="bg-crm-bg-alt rounded-3xl border border-crm-border p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+  <div class="bg-crm-bg-alt rounded-xl border border-crm-border p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl font-bold text-crm-text">Nueva factura</h2>
       <button onclick="closeCreateModal()" class="text-crm-muted hover:text-crm-text">✕</button>
@@ -83,7 +83,7 @@ title: 'Facturas'
       </div>
 
       <div id="items-container" class="space-y-3">
-        <h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>
+        <h3 class="text-sm font-semibold text-crm-muted uppercase">Conceptos</h3>
       </div>
 
       <button type="button" onclick="addItem()" class="w-full rounded-xl border border-dashed border-crm-border-strong py-3 text-crm-muted hover:text-crm-text hover:border-crm-accent transition">
@@ -166,11 +166,11 @@ title: 'Facturas'
           <tr class="border-b border-crm-border last:border-0 hover:bg-crm-panel-soft/50">
             <td class="py-4 px-6">
               <div class="font-medium text-crm-text">${inv.invoiceNumber}</div>
-              <div class="text-xs text-crm-text-secondary">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
+              <div class="text-xs text-crm-muted">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
             </td>
             <td class="py-4 px-6">
               <div class="text-crm-text">${inv.clientLegalName || 'Sin cliente'}</div>
-              <div class="text-xs text-crm-text-secondary">${inv.clientTaxId || ''}</div>
+              <div class="text-xs text-crm-muted">${inv.clientTaxId || ''}</div>
             </td>
             <td class="py-4 px-6 text-center">${getStatusBadge(inv.status)}</td>
             <td class="py-4 px-6 text-right font-medium text-crm-text">${formatMoney(inv.totalCents)}</td>
@@ -217,7 +217,7 @@ title: 'Facturas'
       document.getElementById('create-modal')!.classList.add('hidden');
       document.getElementById('create-modal')!.classList.remove('flex');
       document.getElementById('create-form')?.reset();
-      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>';
+      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-crm-muted uppercase">Conceptos</h3>';
     };
 
     const addItem = () => {
