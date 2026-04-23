@@ -1,1 +1,0 @@
-# Grande&Gordo AI Engine
