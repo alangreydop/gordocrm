@@ -19,6 +19,21 @@ export const invoiceRoutes = new Hono<AppContext>();
 
 invoiceRoutes.use('*', requireAuth);
 
+// RECOGER info de pago del emisor (IBAN, banco, titular)
+invoiceRoutes.get('/payment-info', async (c) => {
+  const db = c.get('db');
+
+  const rows = await db.select({ key: schema.config.key, value: schema.config.value }).from(schema.config);
+  const cfg = Object.fromEntries(rows.map((r: { key: string; value: string }) => [r.key, r.value]));
+
+  return c.json({
+    issuerLegalName: cfg['issuer_legal_name'] || '',
+    issuerTaxId: cfg['issuer_tax_id'] || '',
+    defaultPaymentMethod: cfg['default_payment_method'] || 'Transferencia bancaria',
+    defaultPaymentNotes: cfg['default_payment_notes'] || '',
+  });
+});
+
 // DESCARGAR PDF de factura del cliente
 invoiceRoutes.get('/:id/pdf', async (c) => {
   const id = c.req.param('id');

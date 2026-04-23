@@ -12,29 +12,25 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         Mis <em class="baskerville-italic" style="font-weight: 400;">facturas</em>
       </h1>
       <p class="crm-page-header__meta mt-3">
-        Gestiona tus facturas y pagos. Método de pago: Transferencia bancaria.
+        Gestiona tus facturas y pagos.
       </p>
     </div>
 
     <!-- Bank info -->
-    <div class="crm-panel" style="max-width: 600px;">
+    <div id="payment-info-panel" class="crm-panel" style="max-width: 600px;">
       <p class="crm-kicker" style="margin-bottom: 1rem;">Datos para transferencia</p>
       <div class="grid md:grid-cols-2 gap-3 text-sm">
         <div class="crm-panel-soft p-4">
           <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Titular</p>
-          <p class="mt-2 font-semibold" style="color: var(--gg-text);">Grande&Gordo S.L.</p>
-        </div>
-        <div class="crm-panel-soft p-4">
-          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Banco</p>
-          <p class="mt-2 font-semibold" style="color: var(--gg-text);">Abanca</p>
+          <p id="pay-title" class="mt-2 font-semibold" style="color: var(--gg-text);">Cargando...</p>
         </div>
         <div class="crm-panel-soft p-4 md:col-span-2">
-          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">IBAN</p>
-          <p class="mt-2 font-semibold font-mono tracking-wide" style="color: var(--gg-text);">ESXX XXXX XXXX XXXX XXXX</p>
+          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Datos de pago</p>
+          <p id="pay-details" class="mt-2 font-semibold font-mono tracking-wide" style="color: var(--gg-text);">Cargando...</p>
         </div>
-        <div class="crm-panel-soft p-4">
-          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Concepto</p>
-          <p class="mt-2 font-semibold" style="color: var(--gg-text);">Número de factura</p>
+        <div class="crm-panel-soft p-4 md:col-span-2">
+          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Método / Concepto</p>
+          <p id="pay-method" class="mt-2 font-semibold" style="color: var(--gg-text);">Cargando...</p>
         </div>
       </div>
     </div>
@@ -166,6 +162,30 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
       };
 
       (window as any).uploadProof = uploadProof;
+
+      const loadPaymentInfo = async () => {
+        try {
+          const { api: apiCall } = await import('../../../lib/api-client');
+          const data = await apiCall('/api/portal/invoices/payment-info');
+
+          const titleEl = document.getElementById('pay-title');
+          const detailsEl = document.getElementById('pay-details');
+          const methodEl = document.getElementById('pay-method');
+
+          if (titleEl) titleEl.textContent = data.issuerLegalName || '—';
+          if (detailsEl) detailsEl.textContent = data.defaultPaymentNotes || '—';
+          if (methodEl) methodEl.textContent = data.defaultPaymentMethod || 'Transferencia bancaria';
+        } catch {
+          const titleEl = document.getElementById('pay-title');
+          const detailsEl = document.getElementById('pay-details');
+          const methodEl = document.getElementById('pay-method');
+          if (titleEl) titleEl.textContent = '—';
+          if (detailsEl) detailsEl.textContent = '—';
+          if (methodEl) methodEl.textContent = '—';
+        }
+      };
+
+      await loadPaymentInfo();
       await loadInvoices();
     })();
   </script>
