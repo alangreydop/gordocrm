@@ -2,229 +2,139 @@
 import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
-<ClientLayout title="Onboarding | Grande&Gordo">
-  <div class="max-w-4xl space-y-6" role="region" aria-label="Contenido principal">
-    <section class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Bienvenida</p>
-      <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Prepara tu sesión</h1>
+<ClientLayout title="Activacion">
+  <div class="max-w-5xl space-y-6" role="region" aria-label="Activacion de cuenta">
+    <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Activacion</p>
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Deja lista la primera sesión</h1>
       <p class="mt-4 max-w-3xl text-sm leading-relaxed text-crm-muted md:text-base">
-        Completa esta checklist para que tu sesión sea lo más productiva posible.
-        Cuanto mejor lleguemos a ese día, más sólido quedará el sistema.
+        Este paso sustituye al onboarding largo. Confirma preparación, foco inicial y disponibilidad.
+        Con eso el equipo puede entrar en producción sin ruido ni ida y vuelta innecesaria.
       </p>
     </section>
 
-    <section id="onboarding-success" class="hidden rounded-3xl border p-8 text-center" style="border-color: color-mix(in srgb, var(--crm-success) 50%, transparent); background-color: color-mix(in srgb, var(--crm-success) 10%, transparent);">
-      <svg class="w-16 h-16 text-crm-success mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <h2 class="text-2xl font-black text-crm-text mb-2">Onboarding completado</h2>
-      <p class="text-crm-muted text-sm leading-relaxed max-w-md mx-auto">
-        Gracias por completar la preparación. Tu sesión está lista para comenzar.
-        Te enviaremos un email con los siguientes pasos en las próximas 24 horas.
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="crm-metric-card">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Cuenta</p>
+        <p id="activation-company" class="mt-4 text-2xl font-bold tracking-tight text-crm-text">Cargando...</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Contacto</p>
+        <p id="activation-manager" class="mt-4 text-sm font-semibold text-crm-text">hola@grandeandgordo.com</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Base visual</p>
+        <p id="activation-dataset" class="mt-4 text-sm font-semibold text-crm-text">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Primera sesion</p>
+        <p id="activation-session" class="mt-4 text-sm font-semibold text-crm-text">Sin fecha propuesta</p>
+      </div>
+    </section>
+
+    <section
+      id="activation-status"
+      class="hidden rounded-xl border p-6"
+      style="border-color: color-mix(in srgb, var(--crm-success) 50%, transparent); background-color: color-mix(in srgb, var(--crm-success) 10%, transparent);"
+    >
+      <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-success">Estado</p>
+      <h2 id="activation-status-title" class="mt-3 text-2xl font-bold text-crm-text">Activacion confirmada</h2>
+      <p id="activation-status-body" class="mt-3 max-w-3xl text-sm leading-relaxed text-crm-muted">
+        El equipo ya tiene tu activacion registrada.
       </p>
     </section>
 
-    <form id="onboarding-form" class="space-y-6" role="region" aria-label="Contenido principal">
-      <div class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
-        <h2 class="text-xl font-bold text-crm-text mb-2">Producto</h2>
-        <p class="text-crm-muted text-sm mb-6">Lo que necesitamos tener listo para la sesión.</p>
-
-        <div class="space-y-3">
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="product_clean" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Unidades limpias (sin polvo, sin huellas)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Producto preparado físicamente para la sesión.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="product_skus" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Versiones de producto según tu pack</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">1, 3 o 5+ SKUs listos según lo contratado.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="product_packaging" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Packaging completo (si aplica)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Cajas, etiquetas, bolsas u otros elementos.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="product_variants" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Variantes de color o tamaño</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Si tu producto tiene múltiples versiones.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="product_docs" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Documentación técnica</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Fichas, ingredientes, especificaciones.</p>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
-        <h2 class="text-xl font-bold text-crm-text mb-2">Identidad de marca</h2>
-        <p class="text-crm-muted text-sm mb-6">Los elementos visuales que definen tu marca.</p>
-
-        <div class="space-y-3">
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="brand_logo" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Logo en vectorial (SVG/AI) + PNG transparente</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Archivos de alta calidad para usar en producciones.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="brand_colors" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Paleta de colores (HEX o Pantone)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Códigos exactos de tus colores corporativos.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="brand_fonts" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Tipografías de marca (TTF/OTF)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Archivos de fuentes o enlaces a licencias.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="brand_guidelines" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Brand guidelines (si tienes)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Documento con normas de uso de marca.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="brand_references" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Referencias visuales</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Tablero Pinterest o carpeta con inspiración.</p>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
-        <h2 class="text-xl font-bold text-crm-text mb-2">Contexto y usos</h2>
-        <p class="text-crm-muted text-sm mb-6">Dónde y cómo se usará el material.</p>
-
-        <div class="space-y-3">
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="context_platforms" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Plataformas de publicación</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Instagram, TikTok, Amazon, web, etc.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="context_audience" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Público objetivo definido</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Edad, intereses, estilo de vida.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="context_concepts" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">3-5 conceptos visuales a explorar</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Ideas o direcciones creativas que quieres probar.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="context_backgrounds" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Estilos de fondo preferidos</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Lifestyle, estudio, naturaleza, etc.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="context_calendar" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Calendario de campañas (3 meses)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Fechas clave o lanzamientos previstos.</p>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
-        <h2 class="text-xl font-bold text-crm-text mb-2">Accesos (opcional)</h2>
-        <p class="text-crm-muted text-sm mb-6">Permisos para colaborar en tus cuentas.</p>
-
-        <div class="space-y-3">
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="access_social" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Acceso colaborador Instagram/TikTok</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Para revisar métricas y publicar directamente.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="access_store" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Acceso a tienda Shopify/WooCommerce</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Para subir assets directamente a listings.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="access_amazon" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Acceso Amazon Seller (si aplica)</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Para gestionar contenido A+ y listings.</p>
-            </div>
-          </label>
-
-          <label class="flex items-start gap-3 p-4 rounded-xl border border-crm-border bg-crm-panel hover:border-crm-accent transition cursor-pointer">
-            <input type="checkbox" name="checklist" value="access_drive" class="mt-1 w-5 h-5 rounded border-crm-border-strong bg-crm-bg-alt text-crm-text focus:ring-white focus:ring-offset-0" />
-            <div>
-              <span class="text-crm-text font-medium text-sm">Carpeta compartida Drive/Dropbox</span>
-              <p class="text-crm-text-secondary text-xs mt-0.5">Para enviar y recibir assets de forma organizada.</p>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <div class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
-        <h2 class="text-xl font-bold text-crm-text mb-4">Programa tu sesión</h2>
-        <p class="text-crm-muted text-sm mb-6">Elige cuándo te gustaría hacer la sesión.</p>
-
-        <div class="grid sm:grid-cols-2 gap-4">
+    <form id="activation-form" class="space-y-6">
+      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
-            <label for="session-date" class="block text-sm font-medium text-crm-text-secondary mb-2">Fecha preferida</label>
-            <input type="date" id="session-date" name="sessionDate" class="crm-input w-full" />
+            <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Preparacion minima</p>
+            <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Confirma lo que ya está listo</h2>
+            <p class="mt-3 text-sm leading-relaxed text-crm-muted">
+              No hace falta marcarlo todo. Marca solo los bloques que hoy están realmente preparados.
+            </p>
           </div>
-          <div>
-            <label for="session-time" class="block text-sm font-medium text-crm-text-secondary mb-2">Horario preferido</label>
-            <select id="session-time" name="sessionTime" class="crm-input w-full">
-              <option value="">Selecciona...</option>
-              <option value="morning">Mañana (9:00 - 13:00)</option>
-              <option value="afternoon">Tarde (15:00 - 19:00)</option>
-              <option value="flexible">Flexible</option>
-            </select>
+          <p id="activation-progress" class="text-sm font-medium text-crm-muted">0 de 3 bloques listos</p>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-3">
+          <label class="rounded-xl border border-crm-border bg-crm-panel p-5 transition hover:border-crm-accent cursor-pointer">
+            <input id="materials-ready" type="checkbox" class="sr-only" />
+            <span class="text-sm font-semibold text-crm-text">Materiales</span>
+            <p class="mt-2 text-sm text-crm-muted">Producto, muestras, packaging y referencias físicas listas para sesión.</p>
+          </label>
+          <label class="rounded-xl border border-crm-border bg-crm-panel p-5 transition hover:border-crm-accent cursor-pointer">
+            <input id="brand-ready" type="checkbox" class="sr-only" />
+            <span class="text-sm font-semibold text-crm-text">Identidad</span>
+            <p class="mt-2 text-sm text-crm-muted">Logo, paleta, tono, tablero visual o ejemplos ya definidos.</p>
+          </label>
+          <label class="rounded-xl border border-crm-border bg-crm-panel p-5 transition hover:border-crm-accent cursor-pointer">
+            <input id="access-ready" type="checkbox" class="sr-only" />
+            <span class="text-sm font-semibold text-crm-text">Accesos</span>
+            <p class="mt-2 text-sm text-crm-muted">Drive, tienda o cuentas colaborativas listas si van a hacer falta.</p>
+          </label>
+        </div>
+      </section>
+
+      <section class="grid gap-6 lg:grid-cols-[1fr_360px]">
+        <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Direccion inicial</p>
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Qué hay que resolver primero</h2>
+          <p class="mt-3 text-sm leading-relaxed text-crm-muted">
+            Define la prioridad con la que quieres arrancar. Esto orienta la primera sesión y el primer trabajo.
+          </p>
+
+          <div class="mt-6 space-y-4">
+            <div>
+              <label for="priority-focus" class="mb-2 block text-sm font-medium text-crm-muted">Foco inicial</label>
+              <input
+                id="priority-focus"
+                type="text"
+                maxlength="200"
+                class="crm-input w-full"
+                placeholder="Ej: Lanzamiento PDP Amazon, campaña paid, nuevo packshot..."
+              />
+            </div>
+            <div>
+              <label for="open-questions" class="mb-2 block text-sm font-medium text-crm-muted">Bloqueos o preguntas</label>
+              <textarea
+                id="open-questions"
+                rows="5"
+                maxlength="1200"
+                class="crm-input w-full"
+                placeholder="Ej: necesitamos decidir fondo, ratio, claims o materiales pendientes."
+              ></textarea>
+            </div>
           </div>
         </div>
-      </div>
+
+        <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-7">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Disponibilidad</p>
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Propón la primera sesión</h2>
+
+          <div class="mt-6 space-y-4">
+            <div>
+              <label for="session-date" class="mb-2 block text-sm font-medium text-crm-muted">Fecha preferida</label>
+              <input id="session-date" type="date" class="crm-input w-full" />
+            </div>
+            <div>
+              <label for="session-time" class="mb-2 block text-sm font-medium text-crm-muted">Ventana horaria</label>
+              <select id="session-time" class="crm-input w-full">
+                <option value="">Sin preferencia</option>
+                <option value="morning">Mañana (09:00 - 13:00)</option>
+                <option value="afternoon">Tarde (15:00 - 19:00)</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+            <div class="rounded-xl border border-crm-border bg-crm-panel p-4">
+              <p class="text-sm font-medium text-crm-text">Qué pasa al confirmar</p>
+              <p class="mt-2 text-sm text-crm-muted">
+                Guardamos tu activacion en la cuenta, registramos el resumen para operaciones y dejamos lista la siguiente coordinación.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div class="sticky bottom-4 z-10">
         <button
@@ -233,100 +143,192 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
           disabled
           class="crm-button crm-button-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span id="btn-text">Completar onboarding</span>
+          <span id="btn-text">Confirmar activacion</span>
           <svg id="btn-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
         </button>
-        <p id="progress-text" class="text-center text-crm-text-secondary text-xs mt-3">0 / 19 items completados</p>
+        <p class="mt-3 text-center text-xs text-crm-muted">
+          Marca al menos un bloque, define un foco o deja propuesta de sesión para activar el envío.
+        </p>
       </div>
     </form>
   </div>
 
   <script>
-    const API_BASE = import.meta.env.GG_API_BASE || 'http://127.0.0.1:8787';
+    (async () => {
+      const { API_BASE, formatDate, getSessionContext } = await import('../../lib/api-client');
 
-    const form = document.getElementById('onboarding-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnSpinner = document.getElementById('btn-spinner');
-    const successBox = document.getElementById('onboarding-success');
-    const progressText = document.getElementById('progress-text');
-    const checkboxes = form.querySelectorAll('input[name="checklist"]');
+      const companyEl = document.getElementById('activation-company');
+      const managerEl = document.getElementById('activation-manager');
+      const datasetEl = document.getElementById('activation-dataset');
+      const sessionEl = document.getElementById('activation-session');
+      const statusBox = document.getElementById('activation-status');
+      const statusTitle = document.getElementById('activation-status-title');
+      const statusBody = document.getElementById('activation-status-body');
+      const progressEl = document.getElementById('activation-progress');
+      const form = document.getElementById('activation-form');
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const btnSpinner = document.getElementById('btn-spinner');
+      const sessionDate = document.getElementById('session-date');
+      const sessionTime = document.getElementById('session-time');
+      const priorityFocus = document.getElementById('priority-focus');
+      const openQuestions = document.getElementById('open-questions');
+      const readinessInputs = [
+        document.getElementById('materials-ready'),
+        document.getElementById('brand-ready'),
+        document.getElementById('access-ready'),
+      ];
 
-    // Actualizar progreso
-    function updateProgress() {
-      const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
-      progressText.textContent = `${checked} / ${checkboxes.length} items completados`;
-      submitBtn.disabled = checked === 0;
-    }
+      const labelFor = (input) => input instanceof HTMLInputElement ? input.closest('label') : null;
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateProgress));
+      const syncReadinessCards = () => {
+        readinessInputs.forEach((input) => {
+          const label = labelFor(input);
+          if (!label || !(input instanceof HTMLInputElement)) return;
 
-    function setLoading(on) {
-      submitBtn.disabled = on;
-      btnText.textContent = on ? 'Enviando...' : 'Completar onboarding';
-      btnSpinner.classList.toggle('hidden', !on);
-    }
+          label.classList.toggle('border-crm-accent', input.checked);
+          label.classList.toggle('bg-crm-accent-soft', input.checked);
+        });
+      };
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      const updateFormState = () => {
+        const readinessCount = readinessInputs.filter(
+          (input) => input instanceof HTMLInputElement && input.checked,
+        ).length;
 
-      const checkedItems = Array.from(checkboxes)
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
+        if (progressEl) {
+          progressEl.textContent = `${readinessCount} de 3 bloques listos`;
+        }
 
-      const sessionDate = document.getElementById('session-date').value;
-      const sessionTime = document.getElementById('session-time').value;
+        const hasFocus =
+          priorityFocus instanceof HTMLInputElement && priorityFocus.value.trim().length > 0;
+        const hasQuestions =
+          openQuestions instanceof HTMLTextAreaElement && openQuestions.value.trim().length > 0;
+        const hasSession =
+          sessionDate instanceof HTMLInputElement && sessionDate.value.trim().length > 0;
 
-      setLoading(true);
+        if (submitBtn instanceof HTMLButtonElement) {
+          submitBtn.disabled = readinessCount === 0 && !hasFocus && !hasQuestions && !hasSession;
+        }
+
+        syncReadinessCards();
+      };
+
+      const setLoading = (loading) => {
+        if (!(submitBtn instanceof HTMLButtonElement) || !(btnText instanceof HTMLElement) || !(btnSpinner instanceof SVGElement)) {
+          return;
+        }
+
+        submitBtn.disabled = loading;
+        btnText.textContent = loading ? 'Guardando activacion...' : 'Confirmar activacion';
+        btnSpinner.classList.toggle('hidden', !loading);
+      };
 
       try {
-        // Obtener sesión para client_id
-        const sessionRes = await fetch(`${API_BASE}/api/portal/session`, {
-          credentials: 'include',
-        });
+        const session = await getSessionContext();
+        const client = session?.client;
 
-        if (!sessionRes.ok) {
-          throw new Error('no se pudo obtener la sesión');
+        if (!client) {
+          window.location.href = '/login';
+          return;
         }
 
-        const session = await sessionRes.json();
-        const clientId = session.client?.id;
+        if (companyEl) companyEl.textContent = client.company ?? client.name;
+        if (managerEl) managerEl.textContent = client.accountManager ?? 'hola@grandeandgordo.com';
+        if (datasetEl) datasetEl.textContent = client.datasetStatus ?? 'pending_capture';
 
-        if (!clientId) {
-          throw new Error('Cliente no encontrado');
+        if (sessionDate instanceof HTMLInputElement && client.firstSessionAt) {
+          const currentSessionDate = new Date(client.firstSessionAt);
+          if (!Number.isNaN(currentSessionDate.getTime())) {
+            sessionDate.value = currentSessionDate.toISOString().slice(0, 10);
+          }
         }
 
-        // Enviar webhook al CRM
-        const webhookRes = await fetch(`${API_BASE}/api/portal/webhooks/web/onboarding`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            clientId,
-            checklistCompleted: true,
-            sessionScheduled: !!sessionDate,
-            sessionDate: sessionDate ? `${sessionDate}T${sessionTime === 'morning' ? '10:00' : sessionTime === 'afternoon' ? '16:00' : ''}` : null,
-          }),
-        });
-
-        if (!webhookRes.ok) {
-          const error = await webhookRes.json().catch(() => ({}));
-          throw new Error(error.error || 'error al guardar onboarding');
+        if (sessionEl) {
+          sessionEl.textContent = client.firstSessionAt
+            ? formatDate(client.firstSessionAt)
+            : 'Sin fecha propuesta';
         }
 
-        // Ocultar formulario y mostrar éxito
-        form.classList.add('hidden');
-        successBox.classList.remove('hidden');
-
-      } catch (err) {
-        console.error('Onboarding error:', err);
-        (window as any).__showToast?.('hubo un error al completar el onboarding. por favor, inténtalo de nuevo.', 'error');
-      } finally {
-        setLoading(false);
+        if (client.onboardingCompletedAt && statusBox && statusTitle && statusBody) {
+          statusBox.classList.remove('hidden');
+          statusTitle.textContent = 'Activacion ya confirmada';
+          statusBody.textContent = client.firstSessionAt
+            ? `La activacion ya está registrada. Primera sesión propuesta: ${formatDate(client.firstSessionAt)}. Puedes reenviar una actualización si cambió algo.`
+            : 'La activacion ya está registrada. Puedes reenviar una actualización si cambió algo operativo.';
+        }
+      } catch (error) {
+        console.error('Activation session error:', error);
       }
-    });
+
+      readinessInputs.forEach((input) => input?.addEventListener('change', updateFormState));
+      priorityFocus?.addEventListener('input', updateFormState);
+      openQuestions?.addEventListener('input', updateFormState);
+      sessionDate?.addEventListener('input', updateFormState);
+      sessionTime?.addEventListener('change', updateFormState);
+      updateFormState();
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const readiness = {
+          materialsReady: readinessInputs[0] instanceof HTMLInputElement ? readinessInputs[0].checked : false,
+          brandReady: readinessInputs[1] instanceof HTMLInputElement ? readinessInputs[1].checked : false,
+          accessReady: readinessInputs[2] instanceof HTMLInputElement ? readinessInputs[2].checked : false,
+        };
+
+        const selectedDate = sessionDate instanceof HTMLInputElement ? sessionDate.value : '';
+        const selectedTime = sessionTime instanceof HTMLSelectElement ? sessionTime.value : '';
+        const sessionDateTime = selectedDate
+          ? `${selectedDate}T${selectedTime === 'morning' ? '10:00' : selectedTime === 'afternoon' ? '16:00' : '12:00'}`
+          : null;
+
+        setLoading(true);
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/webhooks/web/onboarding`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              checklistCompleted: true,
+              sessionScheduled: Boolean(selectedDate),
+              sessionDate: sessionDateTime,
+              readiness,
+              priorityFocus: priorityFocus instanceof HTMLInputElement ? priorityFocus.value.trim() : '',
+              openQuestions: openQuestions instanceof HTMLTextAreaElement ? openQuestions.value.trim() : '',
+            }),
+          });
+
+          if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.error || 'No se pudo guardar la activacion');
+          }
+
+          if (statusBox && statusTitle && statusBody) {
+            statusBox.classList.remove('hidden');
+            statusTitle.textContent = 'Activacion confirmada';
+            statusBody.textContent = selectedDate
+              ? `Todo guardado. Hemos dejado propuesta la sesión del ${formatDate(selectedDate)} y el equipo ya tiene el resumen operativo.`
+              : 'Todo guardado. El equipo ya tiene el resumen operativo y te contactará para cerrar la primera sesión.';
+          }
+
+          if (sessionEl) {
+            sessionEl.textContent = selectedDate ? formatDate(selectedDate) : 'Pendiente de coordinación';
+          }
+
+          (window).__showToast?.('activacion guardada correctamente.', 'success');
+        } catch (error) {
+          console.error('Activation save error:', error);
+          (window).__showToast?.('no se pudo guardar la activacion. Intenta de nuevo.', 'error');
+        } finally {
+          setLoading(false);
+          updateFormState();
+        }
+      });
+    })();
   </script>
 </ClientLayout>

@@ -8,14 +8,17 @@ interface Props {
 
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
-const navItems = [
-    { href: '/admin', label: 'dashboard' },
+const primaryNavItems = [
+    { href: '/admin', label: 'operaciones' },
     { href: '/admin/clients', label: 'clientes' },
-    { href: '/admin/jobs', label: 'trabajos' },
     { href: '/admin/briefs', label: 'briefs' },
+    { href: '/admin/jobs', label: 'trabajos' },
+    { href: '/admin/invoices', label: 'facturas' },
+];
+const secondaryNavItems = [
     { href: '/admin/pipeline-mappings', label: 'pipelines' },
     { href: '/admin/brand-graphs', label: 'brand graphs' },
-    { href: '/admin/settings', label: 'configuración' },
+    { href: '/admin/settings', label: 'configuracion' },
 ];
 ---
 
@@ -40,11 +43,11 @@ const navItems = [
                         </svg>
                         <div>
                             <p class="text-[0.65rem] font-bold uppercase tracking-[0.28em]" style="color: var(--crm-accent-light);">Grande&Gordo</p>
-                            <h1 class="mt-0.5 text-lg font-black tracking-tight" style="color: var(--crm-sidebar-text-active);">panel de control</h1>
+                            <h1 class="mt-0.5 text-lg font-bold tracking-tight" style="color: var(--crm-sidebar-text-active);">operations console</h1>
                         </div>
                     </div>
                     <p class="mt-2 text-xs leading-relaxed" style="color: var(--crm-sidebar-text);">
-                        pipeline, producción y seguimiento.
+                        clientes, briefs, trabajos y facturas en una sola consola.
                     </p>
                 </div>
 
@@ -54,41 +57,66 @@ const navItems = [
                     <input
                         id="global-search"
                         type="text"
-                        placeholder="buscar..."
+                        placeholder="buscar cliente, brief, trabajo o factura..."
                         aria-label="Buscar en el panel"
                         class="w-full rounded-lg py-2.5 pl-10 pr-4 text-sm transition focus:outline-none"
                         style="background: var(--crm-sidebar-hover); color: var(--crm-sidebar-text-active); border: 1px solid var(--crm-sidebar-border);"
                     />
-                    <div id="search-results" class="absolute z-50 mt-2 hidden max-h-80 w-full overflow-y-auto rounded-xl shadow-2xl" style="background: var(--crm-panel); border: 1px solid var(--crm-border);"></div>
+                    <div id="search-results" class="absolute z-50 mt-2 hidden max-h-80 w-full overflow-y-auto rounded-md shadow-crm-strong" style="background: var(--crm-panel); border: 1px solid var(--crm-border);"></div>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="grid gap-1">
-                    {navItems.map((item) => {
-                        const active =
-                            item.href === '/admin'
-                                ? pathname === '/admin'
-                                : pathname.startsWith(item.href);
+                <nav class="space-y-5">
+                    <div>
+                        <p class="mb-2 px-4 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-sidebar-text);">core ops</p>
+                        <div class="grid gap-1">
+                            {primaryNavItems.map((item) => {
+                                const active =
+                                    item.href === '/admin'
+                                        ? pathname === '/admin'
+                                        : pathname.startsWith(item.href);
 
-                        return (
-                            <a
-                                href={item.href}
-                                aria-current={active ? 'page' : undefined}
-                                class:list={[
-                                    'crm-sidebar-link block rounded-xl px-4 py-2.5 text-sm transition',
-                                    active ? 'crm-sidebar-link--active font-semibold' : '',
-                                ]}
-                                style={active ? '' : ''}
-                            >
-                                {item.label}
-                            </a>
-                        );
-                    })}
+                                return (
+                                    <a
+                                        href={item.href}
+                                        aria-current={active ? 'page' : undefined}
+                                        class:list={[
+                                            'crm-sidebar-link block rounded-md px-4 py-2.5 text-sm transition',
+                                            active ? 'crm-sidebar-link--active font-semibold' : '',
+                                        ]}
+                                    >
+                                        {item.label}
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mb-2 px-4 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-sidebar-text);">sistema</p>
+                        <div class="grid gap-1">
+                            {secondaryNavItems.map((item) => {
+                                const active = pathname.startsWith(item.href);
+
+                                return (
+                                    <a
+                                        href={item.href}
+                                        aria-current={active ? 'page' : undefined}
+                                        class:list={[
+                                            'crm-sidebar-link block rounded-md px-4 py-2.5 text-sm transition',
+                                            active ? 'crm-sidebar-link--active font-semibold' : '',
+                                        ]}
+                                    >
+                                        {item.label}
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </nav>
 
                 <!-- User block at bottom -->
                 <div class="mt-auto pt-6" style="border-top: 1px solid var(--crm-sidebar-border); margin-top: auto;">
-                    <p class="text-[0.65rem] font-bold tracking-[0.06em] mb-1" style="color: var(--crm-sidebar-text);">operación</p>
+                    <p class="text-[0.65rem] font-bold tracking-[0.06em] mb-1" style="color: var(--crm-sidebar-text);">ops</p>
                     <p class="text-sm font-medium" style="color: var(--crm-sidebar-text-active);">hola@grandeandgordo.com</p>
                     <p id="sidebar-user-name" class="mt-3 text-sm font-semibold" style="color: var(--crm-sidebar-text-active);">cargando...</p>
                     <p id="sidebar-user-email" class="text-xs" style="color: var(--crm-sidebar-text);"></p>
@@ -102,12 +130,12 @@ const navItems = [
             <main id="admin-main" class="crm-main flex-1 min-h-screen" style="background: var(--crm-bg);" role="main" aria-label="Contenido principal">
                 <!-- Mobile header -->
                 <div class="lg:hidden flex items-center gap-4 px-6 pt-6">
-                    <button id="sidebar-toggle" class="p-2 rounded-xl crm-button crm-button-secondary" aria-label="Abrir menú de navegación" style="min-height: 44px; min-width: 44px;">
+                    <button id="sidebar-toggle" class="p-2 rounded-md crm-button crm-button-secondary" aria-label="Abrir menú de navegación" style="min-height: 44px; min-width: 44px;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
-                    <span class="text-sm font-semibold" style="color: var(--crm-muted);">Admin</span>
+                    <span class="text-sm font-semibold" style="color: var(--crm-muted);">Operations</span>
                 </div>
-                <div class="mx-auto max-w-7xl px-6 py-8">
+                <div class="mx-auto max-w-crm px-6 py-8">
                     <slot />
                 </div>
             </main>
@@ -154,16 +182,22 @@ const navItems = [
                             html += `<a href="/admin/clients/detail?id=${encodeURIComponent(c.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(c.name)}</span>${c.company ? ` <span style="color: var(--crm-muted);">— ${escapeHtml(c.company)}</span>` : ''}</a>`;
                         }
                     }
+                    if (data.briefs.length > 0) {
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Briefs</div>';
+                        for (const b of data.briefs) {
+                            html += `<a href="/admin/briefs" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(b.clientName ?? b.email)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(b.tipo)}</span></a>`;
+                        }
+                    }
                     if (data.jobs.length > 0) {
                         html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Trabajos</div>';
                         for (const j of data.jobs) {
                             html += `<a href="/admin/jobs/detail?id=${encodeURIComponent(j.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(j.briefText ?? '(sin brief)')}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(j.clientName)}</span></a>`;
                         }
                     }
-                    if (data.briefs.length > 0) {
-                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Briefs</div>';
-                        for (const b of data.briefs) {
-                            html += `<a href="/admin/briefs" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(b.email)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(b.clientName ?? b.tipo)}</span></a>`;
+                    if (data.invoices.length > 0) {
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Facturas</div>';
+                        for (const invoice of data.invoices) {
+                            html += `<a href="/admin/invoices/detail?id=${encodeURIComponent(invoice.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(invoice.invoiceNumber)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(invoice.clientLegalName)}</span></a>`;
                         }
                     }
                     if (!html) {

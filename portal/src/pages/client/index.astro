@@ -22,11 +22,11 @@ import { siteLinks } from '../../lib/site-links';
               <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
                   <div>
                       <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Resumen cliente</p>
-                      <h1 id="client-heading" class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">
+                      <h1 id="client-heading" class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">
                         preparando tu resumen...
                       </h1>
                       <p id="client-subheading" class="mt-4 max-w-3xl text-sm leading-relaxed text-crm-muted md:text-base">
-                        estado de cuenta y trabajos.
+                        estado operativo, trabajos y facturacion.
                       </p>
                   </div>
 
@@ -38,9 +38,9 @@ import { siteLinks } from '../../lib/site-links';
                           </div>
                       </div>
                       <div class="crm-panel-soft p-5">
-                          <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">capa conectada</p>
+                          <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">contexto operativo</p>
                           <p class="mt-3 text-sm text-crm-muted">
-                            Web y CRM trabajan juntos: brief, onboarding, seguimiento y entregables.
+                            Brief, activacion, entregables y facturacion viven ya dentro del portal operativo.
                           </p>
                       </div>
                   </div>
@@ -50,19 +50,19 @@ import { siteLinks } from '../../lib/site-links';
           <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
               <div class="crm-metric-card">
                   <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Trabajos activos</p>
-                  <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                  <p id="metric-active-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
               </div>
               <div class="crm-metric-card">
                   <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Entregados</p>
-                  <p id="metric-delivered-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                  <p id="metric-delivered-jobs" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
               </div>
               <div class="crm-metric-card">
                   <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Assets</p>
-                  <p id="metric-assets" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                  <p id="metric-assets" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
               </div>
               <div class="crm-metric-card">
                   <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Unidades</p>
-                  <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+                  <p id="metric-units" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
                   <p id="metric-capacity" class="mt-3 text-xs text-crm-muted">—</p>
               </div>
               <div class="crm-metric-card">
@@ -77,7 +77,7 @@ import { siteLinks } from '../../lib/site-links';
                   <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
                           <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">siguiente paso</p>
-                          <h2 id="next-step-title" class="mt-3 text-2xl font-black tracking-tight text-crm-text">
+                          <h2 id="next-step-title" class="mt-3 text-2xl font-bold tracking-tight text-crm-text">
                             preparando tu siguiente paso.
                           </h2>
                           <p id="next-step-description" class="mt-4 max-w-2xl text-sm leading-relaxed text-crm-muted">
@@ -85,54 +85,50 @@ import { siteLinks } from '../../lib/site-links';
                           </p>
                       </div>
                       <span id="next-step-badge" class="inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted">
-                        Journey conectado
+                        Operativa
                       </span>
                   </div>
                   <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                       <a
                         id="next-step-link"
                         href={siteLinks.brief}
-                        target="_blank"
-                        rel="noreferrer"
                         class="crm-button crm-button-primary"
                       >
                         Abrir siguiente paso
                       </a>
                       <a
-                        href={siteLinks.portalHub}
-                        target="_blank"
-                        rel="noreferrer"
+                        href="/client/jobs"
                         class="crm-button crm-button-secondary"
                       >
-                        Ver centro de cliente
+                        Ver trabajos
                       </a>
                   </div>
               </section>
 
               <section class="crm-panel">
-                  <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">web + CRM</p>
-                  <h2 class="mt-3 text-2xl font-black tracking-tight text-crm-text">todo el journey, conectado</h2>
-                  <div class="mt-5 rounded-2xl border border-crm-border bg-crm-panel-soft p-4">
+                  <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">contexto operativo</p>
+                  <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">brief, activacion y billing</h2>
+                  <div class="mt-5 rounded-xl border border-crm-border bg-crm-panel-soft p-4">
                       <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">último brief recibido</p>
                       <p id="latest-brief-meta" class="mt-3 text-sm font-medium text-crm-text">
                         Aun no tenemos un brief reciente en tu cuenta.
                       </p>
                       <p id="latest-brief-description" class="mt-3 text-sm leading-relaxed text-crm-muted">
-                        Si cambian objetivos, referencias o necesidades, actualiza el brief desde la web y quedará conectado con tu operativa del CRM.
+                        Si cambian objetivos, referencias o necesidades, actualiza el brief desde tu cuenta y quedará unido al trabajo real.
                       </p>
                   </div>
                   <div class="mt-5 grid gap-3">
-                      <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-link-tile">
+                      <a href={siteLinks.brief} class="crm-link-tile">
                           <p class="text-sm font-semibold text-crm-text">brief de proyecto</p>
                           <p class="mt-2 text-sm text-crm-muted">Comparte referencias, producto, tono y necesidades nuevas.</p>
                       </a>
-                      <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-link-tile">
-                          <p class="text-sm font-semibold text-crm-text">onboarding y checklist</p>
-                          <p class="mt-2 text-sm text-crm-muted">Revisa preparacion de sesion, materiales y preguntas frecuentes.</p>
+                      <a href={siteLinks.onboarding} class="crm-link-tile">
+                          <p class="text-sm font-semibold text-crm-text">activacion y checklist</p>
+                          <p class="mt-2 text-sm text-crm-muted">Revisa preparacion de sesion, materiales y siguientes pasos.</p>
                       </a>
-                      <a href={siteLinks.home} target="_blank" rel="noreferrer" class="crm-link-tile">
-                          <p class="text-sm font-semibold text-crm-text">web pública</p>
-                          <p class="mt-2 text-sm text-crm-muted">Servicios, pricing y referencias de Grande&amp;Gordo cuando necesites contexto mas amplio.</p>
+                      <a href="/client/invoices" class="crm-link-tile">
+                          <p class="text-sm font-semibold text-crm-text">facturacion</p>
+                          <p class="mt-2 text-sm text-crm-muted">Consulta facturas, estado de pago y justificantes desde una sola vista.</p>
                       </a>
                   </div>
               </section>
@@ -143,7 +139,7 @@ import { siteLinks } from '../../lib/site-links';
               <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
                   <div>
                       <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">actividad del proyecto</p>
-                      <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">
+                      <h2 class="mt-3 text-xl font-bold tracking-tight text-crm-text">
                         tu timeline en tiempo real
                       </h2>
                   </div>
@@ -171,8 +167,8 @@ import { siteLinks } from '../../lib/site-links';
                           <p class="text-xs text-crm-muted">control de calidad interno · entregas puntuales · feedback directo con el equipo</p>
                       </div>
                   </div>
-                  <a href="/client/cases" class="inline-flex items-center gap-2 text-sm font-medium text-crm-success hover:text-crm-accent transition">
-                    Ver casos de éxito
+                  <a href="/client/vault" class="inline-flex items-center gap-2 text-sm font-medium text-crm-success hover:text-crm-accent transition">
+                    Abrir vault
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                   </a>
               </div>
@@ -219,7 +215,7 @@ import { siteLinks } from '../../lib/site-links';
           </div>
       </div>
 
-      <script define:vars={{ briefUrl: siteLinks.brief, onboardingUrl: siteLinks.onboarding, portalHubUrl: siteLinks.portalHub }}>
+      <script define:vars={{ briefUrl: siteLinks.brief, onboardingUrl: siteLinks.onboarding, jobsUrl: '/client/jobs' }}>
           (async () => {
            const {
              api,
@@ -245,47 +241,52 @@ import { siteLinks } from '../../lib/site-links';
            const nextStepForClient = (client, jobs) => {
              const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
              const datasetStatus = client?.datasetStatus ?? 'pending_capture';
+             const activationCompleted = Boolean(client?.onboardingCompletedAt);
 
              if (datasetStatus === 'pending_capture') {
                return {
                  badge: 'Preparacion',
                  title: 'completa el brief para acelerar la sesión.',
                  description:
-                    'aún estamos en fase de captura inicial. cuanto mejor contexto nos dejes en la web, mejor saldrá la preparación del proyecto y la primera sesión.',
+                    'aún estamos en fase de captura inicial. cuanto mejor contexto nos dejes en tu cuenta, mejor saldrá la preparación del proyecto y la primera sesión.',
                  href: briefUrl,
                  label: 'completar brief',
                 };
                }
 
-             if (datasetStatus === 'captured') {
+             if (datasetStatus === 'captured' && !activationCompleted) {
                return {
                  badge: 'Activacion',
-                 title: 'revisa el onboarding mientras activamos tu sistema visual.',
+                 title: 'confirma la activacion antes de arrancar la primera sesión.',
                  description:
-                    'tu captura ya está hecha. este es el mejor momento para revisar checklist, expectativas y siguientes pasos del proceso.',
+                    'ya tenemos la captura encaminada. ahora necesitamos disponibilidad, foco inicial y bloqueos reales para arrancar sin fricción.',
                  href: onboardingUrl,
-                 label: 'abrir onboarding',
+                 label: 'confirmar activacion',
                 };
                }
 
              if (activeJobs.length === 0) {
                return {
                  badge: 'Operacion',
-                 title: 'sin trabajos activos. prepara el siguiente contexto.',
+                 title: activationCompleted
+                   ? 'sin trabajos activos. deja listo el siguiente brief.'
+                   : 'sin trabajos activos. deja listo el siguiente contexto.',
                  description:
-                    'si quieres arrancar un nuevo trabajo o abrir una nueva línea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
+                    activationCompleted
+                      ? 'la activacion ya está confirmada. si quieres arrancar una nueva línea de trabajo, el brief es la puerta correcta.'
+                      : 'si quieres arrancar un nuevo trabajo o abrir una nueva línea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
                  href: briefUrl,
                  label: 'actualizar brief',
                 };
                }
 
-             return {
-               badge: 'Seguimiento',
-               title: 'tu operacion ya esta en marcha.',
-               description:
-                  'usa el crm para seguir entregables y mantennos alineados desde la web cuando necesites sumar contexto, referencias o nuevos objetivos.',
-               href: portalHubUrl,
-               label: 'ver centro de cliente',
+               return {
+                 badge: 'Seguimiento',
+                 title: 'tu operacion ya esta en marcha.',
+                 description:
+                  'usa el portal para seguir entregables y mantennos alineados desde el brief cuando necesites sumar contexto, referencias o nuevos objetivos.',
+               href: jobsUrl,
+               label: 'ver trabajos',
               };
             };
 
