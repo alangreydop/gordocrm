@@ -68,6 +68,74 @@ const marginOptions = [
         </div>
       </div>
 
+      <section class="crm-form-section" role="region" aria-label="Datos fiscales">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="crm-form-section__title">Datos fiscales</h2>
+            <p class="crm-form-section__text">Información tributaria y registrada del cliente.</p>
+          </div>
+          <div id="fiscal-save-success" class="hidden text-sm text-crm-success crm-alert crm-alert-success" role="status"></div>
+        </div>
+        <div id="fiscal-save-error" class="hidden crm-alert crm-alert-danger mb-4 text-sm" role="alert"></div>
+        <form id="fiscal-form" class="space-y-5" novalidate>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="fiscal-legalName" class="block text-sm font-medium text-crm-muted mb-1">Razón social</label>
+              <input type="text" id="fiscal-legalName" name="legalName" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-taxId" class="block text-sm font-medium text-crm-muted mb-1">CIF / NIF</label>
+              <input type="text" id="fiscal-taxId" name="taxId" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-taxIdType" class="block text-sm font-medium text-crm-muted mb-1">Tipo</label>
+              <select id="fiscal-taxIdType" name="taxIdType" class="crm-input">
+                <option value="">Sin definir</option>
+                <option value="NIF">NIF</option>
+                <option value="CIF">CIF</option>
+                <option value="NIE">NIE</option>
+                <option value="VIES">VIES</option>
+              </select>
+            </div>
+            <div>
+              <label for="fiscal-registrationNumber" class="block text-sm font-medium text-crm-muted mb-1">Registro mercantil</label>
+              <input type="text" id="fiscal-registrationNumber" name="registrationNumber" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-addressLine1" class="block text-sm font-medium text-crm-muted mb-1">Dirección</label>
+              <input type="text" id="fiscal-addressLine1" name="addressLine1" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-addressLine2" class="block text-sm font-medium text-crm-muted mb-1">Complemento</label>
+              <input type="text" id="fiscal-addressLine2" name="addressLine2" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-city" class="block text-sm font-medium text-crm-muted mb-1">Localidad</label>
+              <input type="text" id="fiscal-city" name="city" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-region" class="block text-sm font-medium text-crm-muted mb-1">Provincia / Región</label>
+              <input type="text" id="fiscal-region" name="region" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-postalCode" class="block text-sm font-medium text-crm-muted mb-1">Código postal</label>
+              <input type="text" id="fiscal-postalCode" name="postalCode" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-country" class="block text-sm font-medium text-crm-muted mb-1">País</label>
+              <input type="text" id="fiscal-country" name="country" maxlength="2" placeholder="ES" class="crm-input" />
+            </div>
+            <div>
+              <label for="fiscal-phone" class="block text-sm font-medium text-crm-muted mb-1">Teléfono fiscal</label>
+              <input type="text" id="fiscal-phone" name="phone" class="crm-input" />
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="crm-button crm-button-primary">Guardar datos fiscales</button>
+          </div>
+        </form>
+      </section>
+
       <div class="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
         <section class="crm-form-section" role="region" aria-label="Ficha cliente">
           <div class="flex items-center justify-between gap-4 mb-4">
@@ -408,6 +476,18 @@ const marginOptions = [
         setInputValue('nextReviewAt', dateInputValue(client.nextReviewAt));
         setInputValue('notes', client.notes ?? '');
 
+        setInputValue('fiscal-legalName', client.legalName ?? '');
+        setInputValue('fiscal-taxId', client.taxId ?? '');
+        setInputValue('fiscal-taxIdType', client.taxIdType ?? '');
+        setInputValue('fiscal-registrationNumber', client.registrationNumber ?? '');
+        setInputValue('fiscal-addressLine1', client.addressLine1 ?? '');
+        setInputValue('fiscal-addressLine2', client.addressLine2 ?? '');
+        setInputValue('fiscal-city', client.city ?? '');
+        setInputValue('fiscal-region', client.region ?? '');
+        setInputValue('fiscal-postalCode', client.postalCode ?? '');
+        setInputValue('fiscal-country', client.country ?? 'ES');
+        setInputValue('fiscal-phone', client.phone ?? '');
+
         setInputValue('portalName', portalUser?.name ?? client.name);
         setInputValue('portalEmail', portalUser?.email ?? client.email);
         setInputValue('portalPassword', '');
@@ -509,6 +589,55 @@ const marginOptions = [
             portalError.textContent =
               error instanceof Error ? error.message : 'no se pudo actualizar el acceso';
             portalError.classList.remove('hidden');
+           }
+         }
+       });
+
+      const fiscalForm = document.getElementById('fiscal-form');
+      const fiscalError = document.getElementById('fiscal-save-error');
+      const fiscalSuccess = document.getElementById('fiscal-save-success');
+
+      fiscalForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        fiscalError?.classList.add('hidden');
+        fiscalSuccess?.classList.add('hidden');
+
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/clients/${encodeURIComponent(clientId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              legalName: fieldValue('fiscal-legalName') || null,
+              taxId: fieldValue('fiscal-taxId') || null,
+              taxIdType: fieldValue('fiscal-taxIdType') || undefined,
+              registrationNumber: fieldValue('fiscal-registrationNumber') || null,
+              addressLine1: fieldValue('fiscal-addressLine1') || null,
+              addressLine2: fieldValue('fiscal-addressLine2') || null,
+              city: fieldValue('fiscal-city') || null,
+              region: fieldValue('fiscal-region') || null,
+              postalCode: fieldValue('fiscal-postalCode') || null,
+              country: fieldValue('fiscal-country') || 'ES',
+              phone: fieldValue('fiscal-phone') || null,
+             }),
+           });
+
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'no se pudieron guardar los datos fiscales');
+           }
+
+          await load();
+
+          if (fiscalSuccess instanceof HTMLDivElement) {
+            fiscalSuccess.textContent = 'Datos fiscales actualizados.';
+            fiscalSuccess.classList.remove('hidden');
+           }
+         } catch (error) {
+          if (fiscalError instanceof HTMLDivElement) {
+            fiscalError.textContent =
+              error instanceof Error ? error.message : 'no se pudieron guardar los datos fiscales';
+            fiscalError.classList.remove('hidden');
            }
          }
        });

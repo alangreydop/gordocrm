@@ -134,6 +134,76 @@ const marginOptions = [
 
       <section class="crm-form-section space-y-4">
         <div>
+          <h2 class="crm-form-section__title">Datos fiscales</h2>
+          <p class="crm-form-section__text">Información tributaria y registrada del cliente.</p>
+        </div>
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div>
+            <label for="legalName" class="block text-sm font-medium text-crm-muted mb-1">Razón social</label>
+            <input type="text" id="legalName" name="legalName"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="taxId" class="block text-sm font-medium text-crm-muted mb-1">CIF / NIF</label>
+            <input type="text" id="taxId" name="taxId"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="taxIdType" class="block text-sm font-medium text-crm-muted mb-1">Tipo</label>
+            <select id="taxIdType" name="taxIdType"
+              class="crm-input">
+              <option value="">Sin definir</option>
+              <option value="NIF">NIF</option>
+              <option value="CIF">CIF</option>
+              <option value="NIE">NIE</option>
+              <option value="VIES">VIES</option>
+            </select>
+          </div>
+          <div>
+            <label for="addressLine1" class="block text-sm font-medium text-crm-muted mb-1">Dirección</label>
+            <input type="text" id="addressLine1" name="addressLine1"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="addressLine2" class="block text-sm font-medium text-crm-muted mb-1">Complemento</label>
+            <input type="text" id="addressLine2" name="addressLine2"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="city" class="block text-sm font-medium text-crm-muted mb-1">Localidad</label>
+            <input type="text" id="city" name="city"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="region" class="block text-sm font-medium text-crm-muted mb-1">Provincia / Región</label>
+            <input type="text" id="region" name="region"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="postalCode" class="block text-sm font-medium text-crm-muted mb-1">Código postal</label>
+            <input type="text" id="postalCode" name="postalCode"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="country" class="block text-sm font-medium text-crm-muted mb-1">País</label>
+            <input type="text" id="country" name="country" maxlength="2" placeholder="ES"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium text-crm-muted mb-1">Teléfono fiscal</label>
+            <input type="text" id="phone" name="phone"
+              class="crm-input" />
+          </div>
+          <div>
+            <label for="registrationNumber" class="block text-sm font-medium text-crm-muted mb-1">Registro mercantil</label>
+            <input type="text" id="registrationNumber" name="registrationNumber"
+              class="crm-input" />
+          </div>
+        </div>
+      </section>
+
+      <section class="crm-form-section space-y-4">
+        <div>
           <h2 class="crm-form-section__title">Acceso al portal</h2>
           <p class="crm-form-section__text">Si defines una contrasena ahora, el cliente sale ya con acceso habilitado.</p>
         </div>
@@ -193,6 +263,17 @@ const marginOptions = [
             nextReviewAt: fieldValue('nextReviewAt') || undefined,
             notes: fieldValue('notes') || undefined,
             portalPassword: fieldValue('portalPassword') || undefined,
+            taxId: fieldValue('taxId') || undefined,
+            taxIdType: fieldValue('taxIdType') || undefined,
+            legalName: fieldValue('legalName') || undefined,
+            addressLine1: fieldValue('addressLine1') || undefined,
+            addressLine2: fieldValue('addressLine2') || undefined,
+            city: fieldValue('city') || undefined,
+            region: fieldValue('region') || undefined,
+            postalCode: fieldValue('postalCode') || undefined,
+            country: fieldValue('country') || undefined,
+            phone: fieldValue('phone') || undefined,
+            registrationNumber: fieldValue('registrationNumber') || undefined,
           }),
         });
 
