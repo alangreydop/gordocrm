@@ -1,10 +1,67 @@
 import { Hono } from 'hono';
 import { eq, like, and } from 'drizzle-orm';
+import { z } from 'zod';
 import { clients, users, briefSubmissions, clientActivities } from '../../../db/schema';
 import { verifyWebhookSignature } from '../../lib/webhook-signature.js';
 import { createUser } from '../../lib/auth.js';
 import { getPortalLoginUrl } from '../../lib/portal-url.js';
 import type { AppContext } from '../../types/index.js';
+
+// Zod schema for the incoming TransferPayload — acts as the cross-worker contract.
+// When adding fields to gordoleads TransferPayload, add them here too.
+const fiscalSchema = z.object({
+  taxId: z.string().nullable().optional(),
+  taxIdType: z.enum(['NIF', 'NIE', 'CIF']).nullable().optional(),
+  legalName: z.string().nullable().optional(),
+  addressLine1: z.string().nullable().optional(),
+  addressLine2: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  postalCode: z.string().nullable().optional(),
+  region: z.string().nullable().optional(),
+  country: z.string().default('ES'),
+});
+
+const transferDataSchema = z.object({
+  companyName: z.string(),
+  contactName: z.string().nullable().optional(),
+  contactTitle: z.string().nullable().optional(),
+  contactEmail: z.string().email(),
+  contactPhone: z.string().nullable().optional(),
+  websiteUrl: z.string().nullable().optional(),
+  sector: z.string().nullable().optional(),
+  subsector: z.string().nullable().optional(),
+  tier: z.enum(['T1', 'T2', 'T3']).nullable().optional(),
+  region: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  uspVerified: z.string().nullable().optional(),
+  painPoint: z.string().nullable().optional(),
+  productStar: z.string().nullable().optional(),
+  commercialAngle: z.string().nullable().optional(),
+  briefDescription: z.string().nullable().optional(),
+  productionType: z.enum(['foto', 'video', 'ambos']).nullable().optional(),
+  recommendedPlan: z.string().nullable().optional(),
+  recommendedSession: z.string().nullable().optional(),
+  assignedTo: z.string().nullable().optional(),
+  source: z.string(),
+  notes: z.string().nullable().optional(),
+  fiscal: fiscalSchema.optional(),
+  activities: z.array(
+    z.object({
+      type: z.string(),
+      content: z.string().nullable().optional(),
+      performedBy: z.string().nullable().optional(),
+      createdAt: z.number(),
+    }),
+  ).optional(),
+});
+
+const transferPayloadSchema = z.object({
+  event: z.literal('lead.won'),
+  leadId: z.string(),
+  timestamp: z.string(),
+  traceId: z.string().optional(),
+  data: transferDataSchema,
+});
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
@@ -51,8 +108,46 @@ leadWonWebhook.post('/lead-won', async (c) => {
   }
 
   const db = c.get('db');
-  const data = body.data;
-  const leadId = body.leadId;
+
+  // Parse and validate payload structure (runtime contract across worker boundary)
+  const parsed = transferPayloadSchema.safeParse(body);
+  if (!parsed.success) {
+    console.error(`[Lead Won Webhook] [${traceId}] Invalid payload:`, parsed.error.issues);
+    return c.json({ error: 'Invalid payload structure', issues: parsed.error.issues }, 400);
+  }
+
+  const raw = parsed.data.data;
+  const leadId = parsed.data.leadId;
+
+  // Normalize optional-nullable fields to string | null for exactOptionalPropertyTypes compat.
+  const data = {
+    ...raw,
+    contactName: raw.contactName ?? null,
+    contactTitle: raw.contactTitle ?? null,
+    contactPhone: raw.contactPhone ?? null,
+    websiteUrl: raw.websiteUrl ?? null,
+    sector: raw.sector ?? null,
+    subsector: raw.subsector ?? null,
+    tier: raw.tier ?? null,
+    region: raw.region ?? null,
+    address: raw.address ?? null,
+    uspVerified: raw.uspVerified ?? null,
+    painPoint: raw.painPoint ?? null,
+    productStar: raw.productStar ?? null,
+    commercialAngle: raw.commercialAngle ?? null,
+    briefDescription: raw.briefDescription ?? null,
+    productionType: raw.productionType ?? null,
+    recommendedPlan: raw.recommendedPlan ?? null,
+    recommendedSession: raw.recommendedSession ?? null,
+    assignedTo: raw.assignedTo ?? null,
+    notes: raw.notes ?? null,
+    activities: (raw.activities ?? []).map((a) => ({
+      type: a.type,
+      content: a.content ?? null,
+      performedBy: a.performedBy ?? null,
+      createdAt: a.createdAt,
+    })),
+  } as const;
 
   try {
     const tempPassword = generateTempPassword(data.companyName);
@@ -95,55 +190,67 @@ leadWonWebhook.post('/lead-won', async (c) => {
 
     let clientId: string;
 
+    const fiscalUpdates = data.fiscal
+      ? {
+          taxId: data.fiscal.taxId ?? undefined,
+          taxIdType: data.fiscal.taxIdType ?? undefined,
+          legalName: data.fiscal.legalName ?? undefined,
+          addressLine1: data.fiscal.addressLine1 ?? data.address ?? undefined,
+          addressLine2: data.fiscal.addressLine2 ?? undefined,
+          city: data.fiscal.city ?? undefined,
+          postalCode: data.fiscal.postalCode ?? undefined,
+          country: data.fiscal.country ?? 'ES',
+        }
+      : { addressLine1: data.address ?? undefined, country: 'ES' };
+
     if (existingByExternal) {
       clientId = existingByExternal.id;
       await db.update(clients).set({
         name: data.companyName,
         email: data.contactEmail,
-        phone: data.contactPhone,
-        region: data.region,
-        addressLine1: data.address,
-        leadTier: data.tier,
+        phone: data.contactPhone ?? undefined,
+        region: data.region ?? undefined,
+        leadTier: data.tier ?? undefined,
         leadSource: data.source,
-        websiteUrl: data.websiteUrl,
+        websiteUrl: data.websiteUrl ?? undefined,
         userId,
         notes: buildNotes(data),
         updatedAt: new Date(),
+        ...fiscalUpdates,
       }).where(eq(clients.id, clientId));
     } else if (existingByEmail) {
       clientId = existingByEmail.id;
       await db.update(clients).set({
         name: data.companyName,
-        phone: data.contactPhone,
-        region: data.region,
-        addressLine1: data.address,
-        leadTier: data.tier,
+        phone: data.contactPhone ?? undefined,
+        region: data.region ?? undefined,
+        leadTier: data.tier ?? undefined,
         leadSource: data.source,
-        websiteUrl: data.websiteUrl,
+        websiteUrl: data.websiteUrl ?? undefined,
         externalClientId: leadId,
         userId,
         notes: buildNotes(data),
         updatedAt: new Date(),
+        ...fiscalUpdates,
       }).where(eq(clients.id, clientId));
     } else {
       const newClient = {
         id: crypto.randomUUID(),
         name: data.companyName,
         email: data.contactEmail,
-        phone: data.contactPhone,
-        region: data.region,
-        addressLine1: data.address,
-        country: 'ES',
-        taxIdType: 'NIF',
-        leadTier: data.tier,
+        phone: data.contactPhone ?? undefined,
+        region: data.region ?? undefined,
+        taxIdType: 'NIF' as const,
+        leadTier: data.tier ?? undefined,
         leadSource: data.source,
-        websiteUrl: data.websiteUrl,
+        websiteUrl: data.websiteUrl ?? undefined,
         externalClientId: leadId,
         userId,
         notes: buildNotes(data),
-        datasetStatus: 'pending_capture',
+        datasetStatus: 'pending_capture' as const,
         createdAt: new Date(),
         updatedAt: new Date(),
+        ...fiscalUpdates,
       };
       await db.insert(clients).values(newClient);
       clientId = newClient.id;
@@ -180,7 +287,7 @@ leadWonWebhook.post('/lead-won', async (c) => {
       for (let i = 0; i < data.activities.length; i += batchSize) {
         const batch = data.activities.slice(i, i + batchSize);
         await db.insert(clientActivities).values(
-          batch.map((a: { type: string; content: string | null; performedBy: string | null; createdAt: number }) => ({
+          batch.map((a: { type: string; content?: string | null; performedBy?: string | null; createdAt: number }) => ({
             id: crypto.randomUUID(),
             clientId,
             type: a.type,
@@ -213,13 +320,13 @@ leadWonWebhook.post('/lead-won', async (c) => {
 });
 
 function buildNotes(data: {
-  contactName: string | null;
-  sector: string | null;
-  subsector: string | null;
-  painPoint: string | null;
-  commercialAngle: string | null;
-  assignedTo: string | null;
-  notes: string | null;
+  contactName?: string | null;
+  sector?: string | null;
+  subsector?: string | null;
+  painPoint?: string | null;
+  commercialAngle?: string | null;
+  assignedTo?: string | null;
+  notes?: string | null;
 }): string {
   const parts: string[] = [];
   if (data.notes) parts.push(`[Lead Notes]\n${data.notes}`);
@@ -230,7 +337,7 @@ function buildNotes(data: {
   return parts.join('\n\n');
 }
 
-function buildObjective(data: { painPoint: string | null; commercialAngle: string | null }): string {
+function buildObjective(data: { painPoint?: string | null; commercialAngle?: string | null }): string {
   const parts: string[] = [];
   if (data.painPoint) parts.push(`Problema: ${data.painPoint}`);
   if (data.commercialAngle) parts.push(`Enfoque: ${data.commercialAngle}`);

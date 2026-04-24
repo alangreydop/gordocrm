@@ -310,6 +310,9 @@ export const invoices = sqliteTable('invoices', {
   terms: text('terms'),
   footer: text('footer'),
 
+  /** URL to the Billing Pro document — set by admin to let client view/download. */
+  billingProUrl: text('billing_pro_url'),
+
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 }, (table) => [
