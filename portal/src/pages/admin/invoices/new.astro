@@ -2,435 +2,245 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
-<AdminLayout title="Nueva Factura">
-  <div class="space-y-6" role="region" aria-label="Contenido principal">
-    <!-- Header -->
-    <section class="flex items-center gap-4">
-      <a href="/admin/invoices" class="text-crm-muted hover:text-crm-text transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </a>
+<AdminLayout title="Nuevo registro de factura">
+  <div class="space-y-6" role="region" aria-label="Nuevo registro de factura">
+    <section class="crm-page-header" aria-labelledby="invoice-register-title">
+      <a href="/admin/invoices" class="inline-block text-sm text-crm-muted transition hover:text-crm-text">&larr; Facturas</a>
       <div>
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Facturación</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-crm-text">Nueva factura</h1>
-        <p class="mt-2 text-sm text-crm-muted">Crea una nueva factura para un cliente</p>
+        <p class="crm-kicker">Billing Pro</p>
+        <h1 id="invoice-register-title" class="mt-3 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">
+          Nuevo registro de factura
+        </h1>
+        <p class="crm-page-header__meta mt-4">
+          Guarda en CRM la factura emitida fuera del sistema. El PDF y el envío siguen viviendo en Billing Pro.
+        </p>
       </div>
     </section>
 
-    <!-- Form -->
-    <form id="invoice-form" class="space-y-6" role="region" aria-label="Contenido principal">
-      <!-- Cliente -->
-      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
-        <h2 class="text-xl font-bold text-crm-text mb-4">Cliente</h2>
-        <div class="space-y-4">
+    <form id="invoice-register-form" class="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]" novalidate>
+      <section class="crm-form-section space-y-5" aria-label="Datos de factura">
+        <div>
+          <h2 class="crm-form-section__title">Factura emitida</h2>
+          <p class="crm-form-section__text">Valores fiscales y estado operativo que se sincronizan con el cliente.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="client-id" class="block text-sm font-medium text-crm-muted mb-2">
-              Cliente <span class="text-crm-danger">*</span>
-            </label>
-            <select
-              id="client-id"
-              name="clientId"
-              required
-              class="crm-input"
-            >
+            <label for="client-id" class="block text-sm font-medium text-crm-muted mb-1">Cliente</label>
+            <select id="client-id" name="clientId" required class="crm-input">
               <option value="">Selecciona un cliente...</option>
             </select>
             <p id="client-fiscal-info" class="mt-2 text-sm text-crm-muted"></p>
           </div>
-        </div>
-      </section>
-
-      <!-- Líneas de factura -->
-      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-crm-text">Líneas de factura</h2>
-          <button
-            type="button"
-            id="add-line-btn"
-            class="crm-button crm-button-secondary"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Añadir línea
-          </button>
-        </div>
-
-        <div id="lines-container" class="space-y-3">
-          <!-- Las líneas se añaden dinámicamente -->
-        </div>
-
-        <!-- Totales -->
-        <div class="mt-6 border-t border-crm-border pt-6">
-          <div class="space-y-2">
-            <div class="flex justify-between text-sm">
-              <span class="text-crm-muted">Subtotal</span>
-              <span id="subtotal-display" class="text-crm-text">€0,00</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-crm-muted">IVA (21%)</span>
-              <span id="tax-display" class="text-crm-text">€0,00</span>
-            </div>
-            <div class="flex justify-between text-lg font-bold">
-              <span class="text-crm-text">Total</span>
-              <span id="total-display" class="text-crm-text">€0,00</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Detalles de pago -->
-      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
-        <h2 class="text-xl font-bold text-crm-text mb-4">Detalles de pago</h2>
-        <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label for="due-date" class="block text-sm font-medium text-crm-muted mb-2">
-              Fecha de vencimiento
-            </label>
-            <input
-              type="date"
-              id="due-date"
-              name="dueDate"
-              class="crm-input"
-            />
+            <label for="invoice-number" class="block text-sm font-medium text-crm-muted mb-1">Número Billing Pro</label>
+            <input id="invoice-number" name="invoiceNumber" class="crm-input" placeholder="F-2026-001" />
           </div>
           <div>
-            <label for="payment-method" class="block text-sm font-medium text-crm-muted mb-2">
-              Método de pago
-            </label>
-            <select
-              id="payment-method"
-              name="paymentMethod"
-              class="crm-input"
-            >
-              <option value="transferencia">Transferencia bancaria</option>
-              <option value="tarjeta">Tarjeta</option>
-              <option value="efectivo">Efectivo</option>
-              <option value="bizum">Bizum</option>
+            <label for="issue-date" class="block text-sm font-medium text-crm-muted mb-1">Fecha de emisión</label>
+            <input id="issue-date" name="issueDate" type="date" class="crm-input" />
+          </div>
+          <div>
+            <label for="due-date" class="block text-sm font-medium text-crm-muted mb-1">Fecha de vencimiento</label>
+            <input id="due-date" name="dueDate" type="date" class="crm-input" />
+          </div>
+          <div>
+            <label for="subtotal-euros" class="block text-sm font-medium text-crm-muted mb-1">Subtotal (€)</label>
+            <input id="subtotal-euros" name="subtotalEuros" type="number" min="0" step="0.01" required class="crm-input" placeholder="1200.00" />
+          </div>
+          <div>
+            <label for="tax-rate" class="block text-sm font-medium text-crm-muted mb-1">IVA</label>
+            <input id="tax-rate" name="taxRate" type="number" min="0" max="1" step="0.01" value="0.21" class="crm-input" />
+          </div>
+          <div>
+            <label for="status" class="block text-sm font-medium text-crm-muted mb-1">Estado</label>
+            <select id="status" name="status" class="crm-input">
+              <option value="draft">Borrador</option>
+              <option value="issued">Emitida</option>
+              <option value="sent">Enviada</option>
+              <option value="paid">Pagada</option>
+              <option value="cancelled">Cancelada</option>
+              <option value="overdue">Vencida</option>
             </select>
           </div>
+          <div>
+            <label for="billing-pro-url" class="block text-sm font-medium text-crm-muted mb-1">Enlace Billing Pro</label>
+            <input id="billing-pro-url" name="billingProUrl" type="url" class="crm-input" placeholder="https://..." />
+          </div>
         </div>
-        <div class="mt-4">
-          <label for="payment-notes" class="block text-sm font-medium text-crm-muted mb-2">
-            Notas de pago (ej: cuenta bancaria)
-          </label>
-          <textarea
-            id="payment-notes"
-            name="paymentNotes"
-            rows="2"
-            class="w-full rounded-xl border border-crm-border bg-crm-panel px-4 py-3 text-crm-text focus:border-crm-accent focus:outline-none"
-            placeholder="Transferencia a ES00 0000 0000 0000 0000 0000 - Banco XXX"
-          ></textarea>
+
+        <div>
+          <label for="notes" class="block text-sm font-medium text-crm-muted mb-1">Notas internas</label>
+          <textarea id="notes" name="notes" rows="4" class="crm-input" placeholder="Contexto de cobro, enlace interno o referencia del envío."></textarea>
+        </div>
+
+        <div id="form-error" class="hidden crm-alert crm-alert-danger text-sm" role="alert"></div>
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <button type="submit" class="crm-button crm-button-primary flex-1">Guardar registro</button>
+          <a href="/admin/invoices" class="crm-button crm-button-secondary flex-1">Cancelar</a>
         </div>
       </section>
 
-      <!-- Descripción y notas -->
-      <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
-        <h2 class="text-xl font-bold text-crm-text mb-4">Descripción y notas</h2>
-        <div class="space-y-4">
-          <div>
-            <label for="description" class="block text-sm font-medium text-crm-muted mb-2">
-              Descripción (opcional)
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows="2"
-              class="crm-input"
-              placeholder="Descripción general de la factura"
-            ></textarea>
-          </div>
-          <div>
-            <label for="notes" class="block text-sm font-medium text-crm-muted mb-2">
-              Notas internas
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              rows="2"
-              class="crm-input"
-              placeholder="Notas que solo verá el admin"
-            ></textarea>
-          </div>
-        </div>
-      </section>
+      <aside class="space-y-6">
+        <section class="crm-form-section" aria-label="Resumen">
+          <h2 class="crm-form-section__title">Resumen</h2>
+          <dl class="mt-5 space-y-3 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-crm-muted">Subtotal</dt>
+              <dd id="summary-subtotal" class="font-medium text-crm-text">0,00 €</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-crm-muted">IVA</dt>
+              <dd id="summary-tax" class="font-medium text-crm-text">0,00 €</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-t border-crm-border pt-3 text-base">
+              <dt class="font-semibold text-crm-text">Total</dt>
+              <dd id="summary-total" class="font-semibold text-crm-text">0,00 €</dd>
+            </div>
+          </dl>
+        </section>
 
-      <!-- Submit -->
-      <div class="sticky bottom-4 z-10 flex gap-3">
-        <button
-          type="button"
-          id="save-draft-btn"
-          class="crm-button crm-button-secondary flex-1"
-        >
-          Guardar borrador
-        </button>
-        <button
-          type="submit"
-          id="create-btn"
-          class="crm-button crm-button-primary flex-1"
-        >
-          Crear factura
-        </button>
-      </div>
+        <section class="crm-alert crm-alert-info" aria-label="Nota de flujo">
+          Este formulario no genera PDF ni envía email. Solo registra la factura que ya existe en Billing Pro.
+        </section>
+      </aside>
     </form>
   </div>
 
   <script>
     (async () => {
-    const { api } = await import('../../../lib/api-client');
-    const { showToast } = await import('../../../lib/crm-ui');
-    (window as any).__showToast = showToast;
+      const { api, escapeHtml } = await import('../../../lib/api-client');
+      const { showToast } = await import('../../../lib/crm-ui');
 
-    let lineCount = 0;
-    let clients = [];
+      const form = document.getElementById('invoice-register-form');
+      const clientSelect = document.getElementById('client-id');
+      const fiscalInfo = document.getElementById('client-fiscal-info');
+      const errorEl = document.getElementById('form-error');
+      const subtotalInput = document.getElementById('subtotal-euros');
+      const taxRateInput = document.getElementById('tax-rate');
+      const issueDateInput = document.getElementById('issue-date');
+      const dueDateInput = document.getElementById('due-date');
+      let clients = [];
 
-    // Template de línea de factura
-    const createLineTemplate = (index = 0) => `
-      <div class="line-item grid grid-cols-12 gap-3 items-start p-4 rounded-xl border border-crm-border bg-crm-panel" data-line="${index}">
-        <div class="col-span-5">
-          <label class="block text-xs font-medium text-crm-muted mb-1">Descripción</label>
-          <input
-            type="text"
-            name="lines[${index}][description]"
-            required
-            class="crm-input"
-            placeholder="Concepto del servicio"
-          />
-        </div>
-        <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-muted mb-1">Cantidad</label>
-          <input
-            type="number"
-            name="lines[${index}][quantity]"
-            value="1"
-            min="0.01"
-            step="0.01"
-            required
-            class="crm-input"
-          />
-        </div>
-        <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-muted mb-1">Precio (€)</label>
-          <input
-            type="number"
-            name="lines[${index}][unitPrice]"
-            value=""
-            min="0"
-            step="0.01"
-            required
-            class="crm-input line-price"
-            placeholder="0.00"
-          />
-        </div>
-        <div class="col-span-2">
-          <label class="block text-xs font-medium text-crm-muted mb-1">Subtotal</label>
-          <div class="rounded-lg border border-crm-border bg-crm-bg-alt px-3 py-2 text-sm text-crm-muted line-subtotal">
-            €0,00
-          </div>
-        </div>
-        <div class="col-span-1 flex items-end">
-          <button
-            type="button"
-            class="remove-line crm-button crm-button-danger"
-          >
-            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    `;
+      const money = (amount) => new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+      }).format(amount);
 
-    const addLine = () => {
-      const container = document.getElementById('lines-container');
-      const template = createLineTemplate(lineCount);
-      container.insertAdjacentHTML('beforeend', template);
-
-      const newLine = container.lastElementChild;
-      attachLineEvents(newLine);
-      lineCount++;
-    };
-
-    const removeLine = (btn) => {
-      const lineItem = btn.closest('.line-item');
-      lineItem.remove();
-      calculateTotals();
-    };
-
-    const attachLineEvents = (lineItem) => {
-      const priceInput = lineItem.querySelector('.line-price');
-      const quantityInput = lineItem.querySelector('input[name*="[quantity]"]');
-      const subtotalDisplay = lineItem.querySelector('.line-subtotal');
-
-      const updateSubtotal = () => {
-        const price = parseFloat(priceInput.value) || 0;
-        const quantity = parseFloat(quantityInput.value) || 0;
-        const subtotal = price * quantity;
-        subtotalDisplay.textContent = `€${subtotal.toFixed(2)}`;
-        calculateTotals();
+      const toIsoDate = (value) => {
+        if (!value) return undefined;
+        return new Date(value + 'T00:00:00').toISOString();
       };
 
-      priceInput.addEventListener('input', updateSubtotal);
-      quantityInput.addEventListener('input', updateSubtotal);
+      const readNumber = (input, fallback = 0) => {
+        const value = Number(input?.value ?? fallback);
+        return Number.isFinite(value) ? value : fallback;
+      };
 
-      lineItem.querySelector('.remove-line').addEventListener('click', (e) => {
-        removeLine(e.currentTarget);
-      });
-    };
+      const updateSummary = () => {
+        const subtotal = readNumber(subtotalInput);
+        const taxRate = readNumber(taxRateInput, 0.21);
+        const tax = subtotal * taxRate;
+        const total = subtotal + tax;
+        document.getElementById('summary-subtotal').textContent = money(subtotal);
+        document.getElementById('summary-tax').textContent = money(tax);
+        document.getElementById('summary-total').textContent = money(total);
+      };
 
-    const calculateTotals = () => {
-      let subtotal = 0;
+      const setDefaultDates = () => {
+        const now = new Date();
+        const due = new Date(now);
+        due.setDate(due.getDate() + 30);
+        const asInput = (date) => date.toISOString().slice(0, 10);
+        if (issueDateInput) issueDateInput.value = asInput(now);
+        if (dueDateInput) dueDateInput.value = asInput(due);
+      };
 
-      document.querySelectorAll('.line-item').forEach((line) => {
-        const priceInput = line.querySelector('.line-price');
-        const quantityInput = line.querySelector('input[name*="[quantity]"]');
-        const price = parseFloat(priceInput.value) || 0;
-        const quantity = parseFloat(quantityInput.value) || 0;
-        subtotal += price * quantity;
-      });
+      const renderFiscalInfo = () => {
+        const client = clients.find((item) => item.id === clientSelect?.value);
+        if (!fiscalInfo) return;
+        if (!client) {
+          fiscalInfo.textContent = '';
+          return;
+        }
+        const missing = !client.taxId || !client.legalName || !client.addressLine1 || !client.city || !client.postalCode;
+        fiscalInfo.innerHTML = `
+          <span class="font-medium text-crm-text">${escapeHtml(client.legalName || client.name || client.company || 'Cliente')}</span><br>
+          NIF/CIF: ${escapeHtml(client.taxId || 'Sin dato')} · ${escapeHtml(client.postalCode || 'CP pendiente')} ${escapeHtml(client.city || '')}
+          ${missing ? `<br><a href="/admin/clients/detail?id=${encodeURIComponent(client.id)}" class="text-crm-warning underline hover:text-crm-accent">Completar datos fiscales</a>` : ''}
+        `;
+      };
 
-      const tax = subtotal * 0.21;
-      const total = subtotal + tax;
-
-      document.getElementById('subtotal-display').textContent = `€${subtotal.toFixed(2)}`;
-      document.getElementById('tax-display').textContent = `€${tax.toFixed(2)}`;
-      document.getElementById('total-display').textContent = `€${total.toFixed(2)}`;
-    };
-
-    const loadClients = async () => {
-      try {
+      const loadClients = async () => {
         const data = await api('/api/portal/clients');
-        clients = data.clients || [];
-
-        const select = document.getElementById('client-id');
-        select.innerHTML = '<option value="">Selecciona un cliente...</option>';
-
+        clients = Array.isArray(data.clients) ? data.clients : [];
+        if (!clientSelect) return;
+        clientSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
         clients.forEach((client) => {
           const option = document.createElement('option');
           option.value = client.id;
-          option.textContent = `${client.legalName || client.name || client.company} (${client.taxId || 'Sin NIF'})`;
-          option.dataset.taxId = client.taxId || '';
-          option.dataset.legalName = client.legalName || client.name || '';
-          option.dataset.address = client.addressLine1 || '';
-          option.dataset.city = client.city || '';
-          option.dataset.postalCode = client.postalCode || '';
-          option.dataset.email = client.email || '';
-          select.appendChild(option);
+          option.textContent = `${client.legalName || client.name || client.company || client.email} (${client.taxId || 'sin NIF/CIF'})`;
+          clientSelect.appendChild(option);
         });
-
-        select.addEventListener('change', (e) => {
-          const option = e.target.selectedOptions[0];
-          const infoEl = document.getElementById('client-fiscal-info');
-
-          if (option.value) {
-            const taxId = option.dataset.taxId || 'Sin NIF';
-            const address = option.dataset.address || 'Dirección no disponible en esta vista';
-            const city = option.dataset.city || '';
-            const postalCode = option.dataset.postalCode || '';
-
-            infoEl.innerHTML = `
-              <strong>NIF:</strong> ${taxId}<br>
-              <strong>Dirección:</strong> ${address}, ${postalCode} ${city}
-            `;
-
-            // Warn if missing fiscal data
-            if (!option.dataset.taxId || !option.dataset.legalName || !option.dataset.address) {
-              infoEl.innerHTML += `
-                <p class="mt-2 text-crm-warning">
-                  <span class="text-crm-warning">Atención:</span> Este cliente no tiene completos los datos fiscales.
-                  <a href="/admin/clients/detail?id=${option.value}" class="underline hover:text-crm-accent">
-                    Completar ahora →
-                  </a>
-                </p>
-              `;
-            }
-          } else {
-            infoEl.textContent = '';
-          }
-        });
-      } catch (error) {
-        console.error('Error loading clients:', error);
-      }
-    };
-
-    const collectLineData = () => {
-      const lines = [];
-      document.querySelectorAll('.line-item').forEach((line) => {
-        const descriptionInput = line.querySelector('input[name*="[description]"]');
-        const quantityInput = line.querySelector('input[name*="[quantity]"]');
-        const priceInput = line.querySelector('.line-price');
-
-        lines.push({
-          description: descriptionInput.value,
-          quantity: parseFloat(quantityInput.value) || 1,
-          unitPriceCents: Math.round((parseFloat(priceInput.value) || 0) * 100),
-        });
-      });
-      return lines;
-    };
-
-    const submitInvoice = async (status = 'draft') => {
-      const clientId = document.getElementById('client-id').value;
-      const dueDate = document.getElementById('due-date').value;
-      const paymentMethod = document.getElementById('payment-method').value;
-      const paymentNotes = document.getElementById('payment-notes').value;
-      const description = document.getElementById('description').value;
-      const notes = document.getElementById('notes').value;
-
-      if (!clientId) {
-        (window as any).__showToast?.('selecciona un cliente', 'warning');
-        return;
-      }
-
-      const lines = collectLineData();
-      if (lines.length === 0) {
-        (window as any).__showToast?.('añade al menos una línea', 'warning');
-        return;
-      }
-
-      const payload = {
-        clientId,
-        dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
-        paymentMethod,
-        paymentNotes,
-        description: description || undefined,
-        notes: notes || undefined,
-        items: lines,
       };
 
-      try {
-        const data = await api('/api/admin/invoices', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorEl?.classList.add('hidden');
 
-        // Redirect to detail
-        window.location.href = `/admin/invoices/detail?id=${data.invoice.id}`;
-      } catch (error) {
-        console.error('Error creating invoice:', error);
-        (window as any).__showToast?.(error.message || 'error al crear la factura', 'error');
-      }
-    };
+        const clientId = clientSelect?.value ?? '';
+        const subtotalEuros = readNumber(subtotalInput);
+        const taxRate = readNumber(taxRateInput, 0.21);
+        const invoiceNumber = document.getElementById('invoice-number')?.value.trim();
+        const billingProUrl = document.getElementById('billing-pro-url')?.value.trim();
+        const notes = document.getElementById('notes')?.value.trim();
+        const status = document.getElementById('status')?.value || 'draft';
 
-    // Event listeners
-    document.getElementById('add-line-btn').addEventListener('click', addLine);
-    document.getElementById('invoice-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      submitInvoice('draft');
-    });
-    document.getElementById('save-draft-btn').addEventListener('click', () => {
-      submitInvoice('draft');
-    });
+        if (!clientId) {
+          showToast('Selecciona un cliente', 'warning');
+          return;
+        }
+        if (!subtotalEuros || subtotalEuros <= 0) {
+          showToast('Introduce un subtotal válido', 'warning');
+          return;
+        }
 
-    // Set default due date (30 days from now)
-    const defaultDueDate = new Date();
-    defaultDueDate.setDate(defaultDueDate.getDate() + 30);
-    document.getElementById('due-date').value = defaultDueDate.toISOString().split('T')[0];
+        const payload = {
+          clientId,
+          invoiceNumber: invoiceNumber || undefined,
+          issueDate: toIsoDate(issueDateInput?.value),
+          dueDate: toIsoDate(dueDateInput?.value),
+          subtotalCents: Math.round(subtotalEuros * 100),
+          taxRate,
+          status,
+          billingProUrl: billingProUrl || undefined,
+          notes: notes || undefined,
+        };
 
-    // Initialize
-    loadClients();
-    addLine(); // Add first line by default
+        try {
+          const data = await api('/api/admin/invoices', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+          const invoice = data.invoice || data;
+          showToast('Registro de factura guardado', 'success');
+          window.location.href = `/admin/invoices/detail?id=${encodeURIComponent(invoice.id)}`;
+        } catch (error) {
+          if (errorEl) {
+            errorEl.textContent = error instanceof Error ? error.message : 'No se pudo guardar el registro.';
+            errorEl.classList.remove('hidden');
+          }
+        }
+      });
+
+      clientSelect?.addEventListener('change', renderFiscalInfo);
+      subtotalInput?.addEventListener('input', updateSummary);
+      taxRateInput?.addEventListener('input', updateSummary);
+
+      setDefaultDates();
+      updateSummary();
+      await loadClients();
     })();
   </script>
 </AdminLayout>

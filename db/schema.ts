@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, foreignKey, index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { check, foreignKey, index, uniqueIndex, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 const timestampNow = () => new Date();
 const randomId = () => crypto.randomUUID();
@@ -258,7 +258,7 @@ export const sessions = sqliteTable(
 
 export const invoices = sqliteTable('invoices', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceNumber: text('invoice_number').notNull().unique(),
+  invoiceNumber: text('invoice_number').notNull(),
   series: text('series').notNull().default('F'),
   fiscalYear: integer('fiscal_year').notNull(),
 
@@ -321,6 +321,7 @@ export const invoices = sqliteTable('invoices', {
     foreignColumns: [table.id],
     name: 'fk_invoices_original_invoice',
   }),
+  uniqueIndex('invoices_client_number_unique').on(table.clientId, table.invoiceNumber),
 ]);
 
 export const invoiceItems = sqliteTable('invoice_items', {

@@ -425,6 +425,28 @@ a, button, input, select, textarea {
   color: var(--gg-text-white);
 }
 
+.crm-button-success {
+  background: var(--crm-success);
+  color: var(--gg-text-white);
+  border-color: var(--crm-success);
+}
+
+.crm-button-success:hover {
+  background: #0f9f6e;
+  border-color: #0f9f6e;
+}
+
+.crm-button-danger {
+  background: var(--crm-danger);
+  color: var(--gg-text-white);
+  border-color: var(--crm-danger);
+}
+
+.crm-button-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
 /* ── Tables (official spec) ── */
 
 .crm-table-wrap {
@@ -504,6 +526,72 @@ a, button, input, select, textarea {
   background: var(--gg-surface);
   color: var(--gg-text-muted);
   border: 1px solid var(--gg-border);
+}
+
+.crm-badge-invoice-draft,
+.crm-badge-payment-none {
+  background: var(--gg-surface);
+  color: var(--gg-text-muted);
+  border: 1px solid var(--gg-border);
+}
+
+.crm-badge-invoice-issued {
+  background: var(--crm-info-soft);
+  color: var(--crm-info);
+  border: 1px solid var(--crm-info-border);
+}
+
+.crm-badge-invoice-sent {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4f46e5;
+  border: 1px solid rgba(79, 70, 229, 0.25);
+}
+
+.crm-badge-invoice-paid,
+.crm-badge-payment-paid {
+  background: var(--crm-success-soft);
+  color: var(--crm-success);
+  border: 1px solid var(--crm-success-border);
+}
+
+.crm-badge-invoice-cancelled {
+  background: rgba(185, 28, 28, 0.06);
+  color: #991b1b;
+  border: 1px solid rgba(185, 28, 28, 0.18);
+}
+
+.crm-badge-invoice-overdue,
+.crm-badge-payment-overdue {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.32);
+}
+
+.crm-badge-payment-pending {
+  background: var(--crm-warning-soft);
+  color: var(--crm-warning);
+  border: 1px solid var(--crm-warning-border);
+}
+
+.client-fiscal-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.client-fiscal-summary::-webkit-details-marker,
+.client-fiscal-optional summary::-webkit-details-marker {
+  display: none;
+}
+
+.client-fiscal-optional summary {
+  cursor: pointer;
+  color: var(--crm-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
 }
 
 /* ── Alerts ── */

@@ -1,10 +1,15 @@
 import { Hono } from 'hono';
-import { eq, like, and } from 'drizzle-orm';
+import { and, desc, eq, like } from 'drizzle-orm';
 import { z } from 'zod';
-import { clients, users, briefSubmissions, clientActivities } from '../../../db/schema';
+import { clients, users, briefSubmissions, clientActivities, invoices } from '../../../db/schema';
 import { verifyWebhookSignature } from '../../lib/webhook-signature.js';
 import { createUser } from '../../lib/auth.js';
 import { getPortalLoginUrl } from '../../lib/portal-url.js';
+import {
+  computeClientPaymentStatus,
+  INVOICE_STATUS,
+  type InvoiceSummary,
+} from '../../lib/invoice-status.js';
 import type { AppContext } from '../../types/index.js';
 
 // Zod schema for the incoming TransferPayload — acts as the cross-worker contract.
@@ -77,6 +82,52 @@ function isRateLimited(ip: string): boolean {
 }
 
 export const leadWonWebhook = new Hono<AppContext>();
+
+leadWonWebhook.get('/clients/:id/payment-status', async (c) => {
+  const clientId = c.req.param('id');
+  const signature = c.req.header('X-Webhook-Signature');
+  const timestamp = c.req.header('X-Webhook-Timestamp');
+  const secret = c.env.LEAD_TRANSFER_SECRET;
+
+  if (!signature || !timestamp || !secret) {
+    return c.json({ error: 'Missing auth headers' }, 401);
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const ts = parseInt(timestamp, 10);
+  if (Math.abs(now - ts) > 300) {
+    return c.json({ error: 'Timestamp expired' }, 401);
+  }
+
+  const valid = await verifyWebhookSignature(c.req.path + timestamp, signature, secret);
+  if (!valid) {
+    return c.json({ error: 'Invalid signature' }, 401);
+  }
+
+  const db = c.get('db');
+  const [client] = await db.select({ id: clients.id }).from(clients).where(eq(clients.id, clientId)).limit(1);
+  if (!client) return c.json({ error: 'Client not found' }, 404);
+
+  const rows = await db
+    .select({
+      status: invoices.status,
+      dueDate: invoices.dueDate,
+    })
+    .from(invoices)
+    .where(eq(invoices.clientId, clientId))
+    .orderBy(desc(invoices.createdAt));
+
+  const summaries: InvoiceSummary[] = rows.map((invoice) => ({
+    status: invoice.status as (typeof INVOICE_STATUS)[keyof typeof INVOICE_STATUS],
+    dueDate: invoice.dueDate,
+  }));
+
+  return c.json({
+    clientId,
+    paymentStatus: computeClientPaymentStatus(summaries),
+    invoiceCount: rows.length,
+  });
+});
 
 leadWonWebhook.post('/lead-won', async (c) => {
   const clientIp = c.req.header('CF-Connecting-IP') ?? 'unknown';
@@ -193,7 +244,7 @@ leadWonWebhook.post('/lead-won', async (c) => {
     const fiscalUpdates = data.fiscal
       ? {
           taxId: data.fiscal.taxId ?? undefined,
-          taxIdType: data.fiscal.taxIdType ?? undefined,
+          taxIdType: data.fiscal.taxIdType ?? 'NIF',
           legalName: data.fiscal.legalName ?? undefined,
           addressLine1: data.fiscal.addressLine1 ?? data.address ?? undefined,
           addressLine2: data.fiscal.addressLine2 ?? undefined,

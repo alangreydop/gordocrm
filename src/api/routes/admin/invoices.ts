@@ -36,16 +36,23 @@ const createInvoiceSchema = z.object({
   clientId: z.string().uuid(),
   /** Free-text invoice number as printed by Billing Pro. When omitted, auto-generated (legacy). */
   invoiceNumber: z.string().trim().min(1).optional(),
-  issueDate: z.string().datetime().optional(),
-  dueDate: z.string().datetime().optional(),
+  issueDate: z.string().optional(),
+  dueDate: z.string().optional(),
   description: z.string().trim().optional(),
-  items: z.array(invoiceItemSchema).min(1),
+  /** Simplified Billing Pro register flow: one subtotal entered from the external invoice. */
+  subtotalCents: z.number().int().min(0).optional(),
+  taxRate: z.number().min(0).max(1).optional().default(0.21),
+  status: z.enum(INVOICE_STATUS_VALUES).optional().default('draft'),
+  items: z.array(invoiceItemSchema).min(1).optional(),
   paymentMethod: z.string().optional(),
   paymentNotes: z.string().optional(),
   notes: z.string().optional(),
   relatedJobIds: z.array(z.string()).optional(),
   /** Link to the Billing Pro document URL if Alan wants to expose it. */
   billingProUrl: z.string().url().optional().nullable(),
+}).refine((data) => data.items?.length || data.subtotalCents !== undefined, {
+  message: 'items or subtotalCents is required',
+  path: ['subtotalCents'],
 });
 
 const updateInvoiceSchema = z.object({
@@ -53,6 +60,7 @@ const updateInvoiceSchema = z.object({
   description: z.string().trim().optional(),
   paymentMethod: z.string().optional(),
   paymentNotes: z.string().optional(),
+  paidAt: z.string().optional().nullable(),
   notes: z.string().optional(),
   footer: z.string().optional(),
   billingProUrl: z.string().url().optional().nullable(),
@@ -313,6 +321,9 @@ invoiceRoutes.post('/', async (c) => {
   const {
     clientId,
     items,
+    subtotalCents,
+    taxRate,
+    status,
     issueDate,
     dueDate,
     description,
@@ -365,21 +376,39 @@ invoiceRoutes.post('/', async (c) => {
     );
   }
 
+  // Fechas
+  const now = new Date();
+  const issued = issueDate ? new Date(issueDate) : now;
+  const due = dueDate ? new Date(dueDate) : new Date(issued.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días por defecto
+
+  if (Number.isNaN(issued.getTime()) || Number.isNaN(due.getTime())) {
+    return c.json({ error: 'Fechas inválidas' }, 400);
+  }
+
   // Use provided invoice number (Billing Pro free-text) or auto-generate as fallback
-  const currentYear = new Date().getFullYear();
+  const currentYear = issued.getFullYear();
   const invoiceNumber =
     body.data.invoiceNumber ?? (await generateInvoiceNumber(db, currentYear));
 
+  const invoiceItems =
+    items ??
+    [{
+      description: description || `Registro Billing Pro ${invoiceNumber}`,
+      quantity: 1,
+      unitPriceCents: subtotalCents ?? 0,
+      jobId: undefined,
+    }];
+
   // Calcular importes de las líneas
-  const itemRows = items.map((item, index) => {
-    const amounts = calculateItemAmounts(item.quantity, item.unitPriceCents, 0.21);
+  const itemRows = invoiceItems.map((item, index) => {
+    const amounts = calculateItemAmounts(item.quantity, item.unitPriceCents, taxRate);
     return {
       id: crypto.randomUUID(),
       description: item.description,
       quantity: item.quantity,
       unitPriceCents: item.unitPriceCents,
       subtotalCents: amounts.subtotalCents,
-      taxRate: 0.21,
+      taxRate,
       taxAmountCents: amounts.taxAmountCents,
       irpfRate: null,
       irpfAmountCents: 0,
@@ -393,11 +422,6 @@ invoiceRoutes.post('/', async (c) => {
 
   // Calcular totales
   const totals = calculateInvoiceTotals(itemRows);
-
-  // Fechas
-  const now = new Date();
-  const issued = issueDate ? new Date(issueDate) : now;
-  const due = dueDate ? new Date(dueDate) : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días por defecto
 
   // Crear factura
   const invoiceId = crypto.randomUUID();
@@ -426,15 +450,15 @@ invoiceRoutes.post('/', async (c) => {
     issuerEmail: issuer.email,
     issueDate: issued,
     dueDate: due,
-    paidAt: null,
+    paidAt: status === 'paid' ? now : null,
     description: description || null,
     subtotalCents: totals.subtotalCents,
-    taxRate: 0.21,
+    taxRate,
     taxAmountCents: totals.taxAmountCents,
     irpfRate: null,
     irpfAmountCents: null,
     totalCents: totals.totalCents,
-    status: 'draft',
+    status,
     paymentMethod: paymentMethod || issuer.defaultPaymentMethod || null,
     paymentNotes: paymentNotes || issuer.defaultPaymentNotes || null,
     notes: notes || null,
@@ -454,7 +478,7 @@ invoiceRoutes.post('/', async (c) => {
   }
 
   // Log de auditoría
-  await logInvoiceAction(db, invoiceId, 'created', user.id, { invoiceNumber });
+  await logInvoiceAction(db, invoiceId, 'created', user.id, { invoiceNumber, status });
 
   const [createdInvoice] = await db
     .select()
@@ -770,13 +794,14 @@ invoiceRoutes.patch('/:id', async (c) => {
   }
 
   const updates: Record<string, unknown> = { updatedAt: new Date() };
-  const { status, description, paymentMethod, paymentNotes, notes, footer, billingProUrl } =
+  const { status, description, paymentMethod, paymentNotes, paidAt, notes, footer, billingProUrl } =
     body.data;
 
   if (status !== undefined) {
     updates.status = status;
     if (status === 'paid') updates.paidAt = new Date();
   }
+  if (paidAt !== undefined) updates.paidAt = paidAt ? new Date(paidAt) : null;
   if (description !== undefined) updates.description = description;
   if (paymentMethod !== undefined) updates.paymentMethod = paymentMethod;
   if (paymentNotes !== undefined) updates.paymentNotes = paymentNotes;

@@ -176,16 +176,16 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         sent: 'Enviada',
         paid: 'Pagada',
         cancelled: 'Cancelada',
-        overdue: 'Vencida',
+        overdue: '⚠ Vencida',
       };
 
       const statusClasses = {
-        draft: 'crm-badge-default',
-        issued: 'crm-badge-warning',
-        sent: 'crm-badge-info',
-        paid: 'crm-badge-success',
-        cancelled: 'crm-badge-danger',
-        overdue: 'crm-badge-warning',
+        draft: 'crm-badge-invoice-draft',
+        issued: 'crm-badge-invoice-issued',
+        sent: 'crm-badge-invoice-sent',
+        paid: 'crm-badge-invoice-paid',
+        cancelled: 'crm-badge-invoice-cancelled',
+        overdue: 'crm-badge-invoice-overdue',
       };
 
       const formatMoney = (cents) =>
@@ -208,13 +208,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       const renderActionButtons = (invoice) => {
         const container = document.getElementById('action-buttons');
         const buttons = [];
-        const invoicePdfUrl = `/api/admin/invoices/${encodeURIComponent(invoice.id)}/pdf?download=1`;
 
-        buttons.push(`
-          <a href="${invoicePdfUrl}" class="crm-button crm-button-secondary">
-            Descargar PDF
-          </a>
-        `);
+        if (invoice.billingProUrl) {
+          buttons.push(`
+            <a href="${escapeHtml(invoice.billingProUrl)}" target="_blank" rel="noopener" class="crm-button crm-button-secondary">
+              Abrir Billing Pro
+            </a>
+          `);
+        }
 
         if (invoice.status === 'draft') {
           buttons.push(`
@@ -227,7 +228,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (['issued', 'sent'].includes(invoice.status)) {
           buttons.push(`
             <button onclick="sendInvoice()" class="crm-button crm-button-primary">
-              Enviar por email
+              Marcar enviada
             </button>
           `);
         }
@@ -258,8 +259,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (!confirm('¿Emitir esta factura? Una vez emitida, el número de factura es definitivo.')) return;
 
         try {
-          await api(`/api/admin/invoices/${invoiceId}/issue`, {
-            method: 'POST',
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'issued' }),
           });
 
           window.location.reload();
@@ -269,25 +271,24 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       };
 
       const sendInvoice = async () => {
-        if (!confirm('¿Enviar factura por email al cliente?')) return;
-
         try {
-          await api(`/api/admin/invoices/${invoiceId}/send`, {
-            method: 'POST',
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'sent' }),
           });
 
-          (window as any).__showToast?.('factura enviada correctamente', 'success');
+          (window as any).__showToast?.('factura marcada como enviada', 'success');
           window.location.reload();
         } catch (error) {
-          (window as any).__showToast?.(error instanceof Error ? error.message : 'error al enviar', 'error');
+          (window as any).__showToast?.(error instanceof Error ? error.message : 'error al actualizar', 'error');
         }
       };
 
       const markAsPaid = async (paymentMethod) => {
         try {
-          await api(`/api/admin/invoices/${invoiceId}/pay`, {
-            method: 'POST',
-            body: JSON.stringify({ paymentMethod: paymentMethod || 'transferencia' }),
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'paid', paymentMethod: paymentMethod || 'transferencia' }),
           });
 
           window.location.reload();
@@ -300,9 +301,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         if (!reason) return;
 
         try {
-          await api(`/api/admin/invoices/${invoiceId}/cancel`, {
-            method: 'POST',
-            body: JSON.stringify({ reason }),
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'cancelled', notes: reason }),
           });
 
           window.location.reload();

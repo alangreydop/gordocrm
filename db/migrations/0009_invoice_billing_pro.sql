@@ -13,10 +13,7 @@ ALTER TABLE invoices ADD COLUMN billing_pro_url TEXT;
 -- When the invoices table is next recreated, add:
 --   CHECK (status IN ('draft','issued','sent','paid','cancelled','overdue'))
 
--- Note on invoice_number uniqueness:
--- The current UNIQUE index on invoice_number is enforced at the schema level.
--- Drizzle does not support DROP INDEX + CREATE INDEX via ALTER TABLE in D1.
--- This is handled at the application layer in the PATCH /invoices endpoint
--- by checking for duplicate (client_id, invoice_number) before insert/update.
--- The global unique constraint remains in place; enforce scoped uniqueness via
--- application-level check until the table can be migrated in a future release.
+-- Scope invoice_number uniqueness to (client_id, invoice_number) instead of global.
+-- This allows different clients to have the same Billing Pro sequence numbers.
+DROP INDEX IF EXISTS invoices_invoice_number_unique;
+CREATE UNIQUE INDEX invoices_client_number_unique ON invoices(client_id, invoice_number);
