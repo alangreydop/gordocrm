@@ -3,6 +3,11 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { clearSessionsForUser, createUser, hashPassword, requireAdmin } from '../../../lib/auth.js';
+import {
+  computeClientPaymentStatus,
+  type InvoiceSummary,
+  INVOICE_STATUS,
+} from '../../../lib/invoice-status.js';
 import type { AppContext } from '../../../types/index.js';
 
 const clientSubscriptionStatuses = ['active', 'inactive', 'cancelled'] as const;
@@ -200,7 +205,7 @@ clientRoutes.get('/:id', async (c) => {
     return c.json({ error: 'Client not found' }, 404);
   }
 
-  const [portalUser, summary, jobs] = await Promise.all([
+  const [portalUser, summary, jobs, invoiceSummaries] = await Promise.all([
     client.userId
       ? db
           .select({
@@ -254,7 +259,20 @@ clientRoutes.get('/:id', async (c) => {
       .from(schema.jobs)
       .where(eq(schema.jobs.clientId, id))
       .orderBy(desc(schema.jobs.createdAt)),
+    db
+      .select({
+        status: schema.invoices.status,
+        dueDate: schema.invoices.dueDate,
+      })
+      .from(schema.invoices)
+      .where(eq(schema.invoices.clientId, id)),
   ]);
+
+  const paymentStatusSummaries: InvoiceSummary[] = invoiceSummaries.map((inv) => ({
+    status: inv.status as (typeof INVOICE_STATUS)[keyof typeof INVOICE_STATUS],
+    dueDate: inv.dueDate,
+  }));
+  const paymentStatus = computeClientPaymentStatus(paymentStatusSummaries);
 
   return c.json({
     client: {
@@ -272,6 +290,7 @@ clientRoutes.get('/:id', async (c) => {
       phone: client.phone,
       registrationNumber: client.registrationNumber,
     },
+    paymentStatus,
     portalUser,
     summary,
     jobs,
