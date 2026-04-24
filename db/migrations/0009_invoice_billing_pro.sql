@@ -13,7 +13,8 @@ ALTER TABLE invoices ADD COLUMN billing_pro_url TEXT;
 -- When the invoices table is next recreated, add:
 --   CHECK (status IN ('draft','issued','sent','paid','cancelled','overdue'))
 
--- Scope invoice_number uniqueness to (client_id, invoice_number) instead of global.
+-- Scope invoiceNumber uniqueness to (clientId, invoiceNumber) instead of global.
 -- This allows different clients to have the same Billing Pro sequence numbers.
+-- Note: column names in this table are camelCase as created by Drizzle.
 DROP INDEX IF EXISTS invoices_invoice_number_unique;
-CREATE UNIQUE INDEX invoices_client_number_unique ON invoices(client_id, invoice_number);
+CREATE UNIQUE INDEX IF NOT EXISTS invoices_client_number_unique ON invoices(clientId, invoiceNumber);
