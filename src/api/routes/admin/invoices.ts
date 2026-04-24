@@ -14,9 +14,12 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema, type Database } from '../../../../db/index.js';
 import { requireAdmin } from '../../../lib/auth.js';
-import { sendEmail } from '../../../lib/email.js';
-import { bytesToBase64, generateInvoicePdfBytes, invoicePdfFilename } from '../../../lib/invoice-pdf.js';
+import { INVOICE_STATUS_VALUES } from '../../../lib/invoice-status.js';
 import type { AppContext } from '../../../types/index.js';
+
+// PDF generation and email delivery are NOT used in the Billing Pro workflow.
+// Alan creates invoices in Billing Pro and records status here.
+// Imports removed: sendEmail, generateInvoicePdfBytes, bytesToBase64, invoicePdfFilename.
 
 // ============================================
 // Schemas
@@ -31,6 +34,9 @@ const invoiceItemSchema = z.object({
 
 const createInvoiceSchema = z.object({
   clientId: z.string().uuid(),
+  /** Free-text invoice number as printed by Billing Pro. When omitted, auto-generated (legacy). */
+  invoiceNumber: z.string().trim().min(1).optional(),
+  issueDate: z.string().datetime().optional(),
   dueDate: z.string().datetime().optional(),
   description: z.string().trim().optional(),
   items: z.array(invoiceItemSchema).min(1),
@@ -38,15 +44,18 @@ const createInvoiceSchema = z.object({
   paymentNotes: z.string().optional(),
   notes: z.string().optional(),
   relatedJobIds: z.array(z.string()).optional(),
+  /** Link to the Billing Pro document URL if Alan wants to expose it. */
+  billingProUrl: z.string().url().optional().nullable(),
 });
 
 const updateInvoiceSchema = z.object({
-  status: z.enum(['draft', 'issued', 'sent', 'paid', 'cancelled', 'overdue']).optional(),
+  status: z.enum(INVOICE_STATUS_VALUES).optional(),
   description: z.string().trim().optional(),
   paymentMethod: z.string().optional(),
   paymentNotes: z.string().optional(),
   notes: z.string().optional(),
   footer: z.string().optional(),
+  billingProUrl: z.string().url().optional().nullable(),
 });
 
 const addItemsSchema = z.object({
@@ -304,12 +313,14 @@ invoiceRoutes.post('/', async (c) => {
   const {
     clientId,
     items,
+    issueDate,
     dueDate,
     description,
     paymentMethod,
     paymentNotes,
     notes,
     relatedJobIds,
+    billingProUrl,
   } = body.data;
 
   // Obtener datos del cliente
@@ -354,9 +365,10 @@ invoiceRoutes.post('/', async (c) => {
     );
   }
 
-  // Generar número de factura
+  // Use provided invoice number (Billing Pro free-text) or auto-generate as fallback
   const currentYear = new Date().getFullYear();
-  const invoiceNumber = await generateInvoiceNumber(db, currentYear);
+  const invoiceNumber =
+    body.data.invoiceNumber ?? (await generateInvoiceNumber(db, currentYear));
 
   // Calcular importes de las líneas
   const itemRows = items.map((item, index) => {
@@ -384,6 +396,7 @@ invoiceRoutes.post('/', async (c) => {
 
   // Fechas
   const now = new Date();
+  const issued = issueDate ? new Date(issueDate) : now;
   const due = dueDate ? new Date(dueDate) : new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 días por defecto
 
   // Crear factura
@@ -411,7 +424,7 @@ invoiceRoutes.post('/', async (c) => {
     issuerPostalCode: issuer.postalCode,
     issuerCountry: issuer.country,
     issuerEmail: issuer.email,
-    issueDate: now,
+    issueDate: issued,
     dueDate: due,
     paidAt: null,
     description: description || null,
@@ -425,6 +438,7 @@ invoiceRoutes.post('/', async (c) => {
     paymentMethod: paymentMethod || issuer.defaultPaymentMethod || null,
     paymentNotes: paymentNotes || issuer.defaultPaymentNotes || null,
     notes: notes || null,
+    billingProUrl: billingProUrl || null,
     isRectificative: false,
     relatedJobIds: relatedJobIds ? JSON.stringify(relatedJobIds) : null,
     createdAt: now,
@@ -592,119 +606,28 @@ invoiceRoutes.post('/:id/issue', async (c) => {
   return c.json({ invoice: updatedInvoice });
 });
 
-// ENVIAR factura por email
-invoiceRoutes.post('/:id/send', async (c) => {
-  const id = c.req.param('id');
-  const db = c.get('db');
-  const user = c.get('user');
-  const env = c.env;
-
-  const [invoice] = await db
-    .select()
-    .from(schema.invoices)
-    .where(eq(schema.invoices.id, id))
-    .limit(1);
-
-  if (!invoice) {
-    return c.json({ error: 'Factura no encontrada' }, 404);
-  }
-
-  if (invoice.status === 'draft') {
-    return c.json({ error: 'Debes emitir la factura antes de enviarla' }, 400);
-  }
-
-  if (invoice.status === 'paid' || invoice.status === 'cancelled') {
-    return c.json({ error: `No se puede enviar una factura en estado "${invoice.status}"` }, 400);
-  }
-
-  // Generar HTML de la factura para el email
-  const invoiceHtml = generateInvoiceEmailHtml(invoice);
-
-  // Enviar email
-  const emailResult = await sendEmail(env, {
-    to: invoice.clientEmail,
-    subject: `Factura ${invoice.invoiceNumber} - ${invoice.issuerLegalName}`,
-    html: invoiceHtml,
-    text: generateInvoiceEmailText(invoice),
-  });
-
-  if (!emailResult.ok) {
-    return c.json(
-      {
-        error: 'No se pudo enviar el email',
-        skipped: emailResult.skipped,
-      },
-      500,
-    );
-  }
-
-  // Actualizar estado a "sent" si estaba en "issued"
-  if (invoice.status === 'issued') {
-    await db
-      .update(schema.invoices)
-      .set({
-        status: 'sent',
-        updatedAt: new Date(),
-      })
-      .where(eq(schema.invoices.id, id));
-  }
-
-  await logInvoiceAction(db, id, 'emailed', user.id, {
-    email: invoice.clientEmail,
-    emailId: emailResult.id,
-  });
-
-  const [updatedInvoice] = await db
-    .select()
-    .from(schema.invoices)
-    .where(eq(schema.invoices.id, id))
-    .limit(1);
-
-  return c.json({ invoice: updatedInvoice, emailId: emailResult.id });
+// ENVIAR factura por email — DISABLED (Billing Pro workflow)
+// Alan sends invoices from Billing Pro directly. Email delivery via gordocrm is not used.
+invoiceRoutes.post('/:id/send', (c) => {
+  return c.json(
+    {
+      error: 'Email delivery via gordocrm is disabled. Send invoices from Billing Pro.',
+      hint: 'Use PATCH /:id to update status to "sent" after sending from Billing Pro.',
+    },
+    410,
+  );
 });
 
-// GENERAR PDF de factura
-invoiceRoutes.get('/:id/pdf', async (c) => {
-  const id = c.req.param('id');
-  const db = c.get('db');
-
-  const [invoice] = await db
-    .select()
-    .from(schema.invoices)
-    .where(eq(schema.invoices.id, id))
-    .limit(1);
-
-  if (!invoice) {
-    return c.json({ error: 'Factura no encontrada' }, 404);
-  }
-
-  // Obtener líneas para incluir en el PDF
-  const items = await db
-    .select()
-    .from(schema.invoiceItems)
-    .where(eq(schema.invoiceItems.invoiceId, id))
-    .orderBy(schema.invoiceItems.sortOrder);
-
-  const pdfBytes = await generateInvoicePdfBytes(invoice, items);
-  const filename = invoicePdfFilename(invoice.invoiceNumber);
-
-  if (c.req.query('download') === '1') {
-    return new Response(pdfBytes, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="${filename}"`,
-        'Cache-Control': 'private, no-store',
-      },
-    });
-  }
-
-  return c.json({
-    pdf: bytesToBase64(pdfBytes),
-    mimeType: 'application/pdf',
-    invoiceNumber: invoice.invoiceNumber,
-    filename,
-    generatedAt: new Date().toISOString(),
-  });
+// GENERAR PDF de factura — DISABLED (Billing Pro workflow)
+// PDFs are generated by Billing Pro. Store the Billing Pro document URL in billingProUrl instead.
+invoiceRoutes.get('/:id/pdf', (c) => {
+  return c.json(
+    {
+      error: 'PDF generation via gordocrm is disabled. Use Billing Pro to generate PDFs.',
+      hint: 'Store the Billing Pro document URL in the billingProUrl field via PATCH /:id.',
+    },
+    410,
+  );
 });
 
 // MARCAR como pagada
@@ -824,106 +747,55 @@ invoiceRoutes.post('/:id/cancel', async (c) => {
   return c.json({ invoice: updatedInvoice });
 });
 
-// ============================================
-// Helpers para emails
-// ============================================
+// ACTUALIZAR factura (status, notes, billingProUrl, etc.)
+invoiceRoutes.patch('/:id', async (c) => {
+  const id = c.req.param('id');
+  const db = c.get('db');
+  const user = c.get('user');
+  const payload: unknown = await c.req.json();
+  const body = updateInvoiceSchema.safeParse(payload);
 
-function generateInvoiceEmailHtml(invoice: typeof schema.invoices.$inferSelect): string {
-  const formatMoney = (cents: number) => `€${(cents / 100).toFixed(2)}`;
-
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #1f2937; }
-    .header { border-bottom: 2px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 24px; }
-    .logo { font-size: 20px; font-weight: bold; color: #111827; }
-    .invoice-meta { text-align: right; font-size: 14px; color: #6b7280; }
-    .section { margin-bottom: 24px; }
-    .section-title { font-size: 14px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .data-card { background: #f9fafb; padding: 16px; border-radius: 8px; }
-    .data-label { font-size: 12px; color: #6b7280; }
-    .data-value { font-size: 14px; font-weight: 500; color: #111827; margin-top: 4px; }
-    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-    th { text-align: left; padding: 12px 8px; font-size: 12px; font-weight: 600; color: #6b7280; border-bottom: 2px solid #e5e7eb; }
-    td { padding: 12px 8px; font-size: 14px; border-bottom: 1px solid #e5e7eb; }
-    .totals { margin-left: auto; width: 280px; }
-    .total-row { display: flex; justify-content: space-between; padding: 8px 12px; font-size: 14px; }
-    .total-row.final { background: #111827; color: white; border-radius: 4px; font-weight: 600; }
-    .footer { margin-top: 32px; padding-top: 16px; border-top: 2px solid #e5e7eb; font-size: 12px; color: #6b7280; }
-    .cta-button { display: inline-block; background: #111827; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500; margin-top: 16px; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="logo">${invoice.issuerLegalName}</div>
-    <div class="invoice-meta">
-      <div>Factura ${invoice.invoiceNumber}</div>
-      <div>Fecha: ${new Date(invoice.issueDate!).toLocaleDateString('es-ES')}</div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Facturar a</div>
-    <div class="data-card">
-      <div class="data-value">${invoice.clientLegalName}</div>
-      <div class="data-label">NIF: ${invoice.clientTaxId}</div>
-      <div class="data-label">${invoice.clientAddressLine1}</div>
-      <div class="data-label">${invoice.clientPostalCode} ${invoice.clientCity}</div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Detalles de pago</div>
-    <div class="data-grid">
-      <div class="data-card">
-        <div class="data-label">Vencimiento</div>
-        <div class="data-value">${new Date(invoice.dueDate!).toLocaleDateString('es-ES')}</div>
-      </div>
-      <div class="data-card">
-        <div class="data-label">Método de pago</div>
-        <div class="data-value">${invoice.paymentMethod || 'Transferencia bancaria'}</div>
-      </div>
-    </div>
-  </div>
-
-  ${
-    invoice.description
-      ? `
-  <div class="section">
-    <div class="section-title">Descripción</div>
-    <p>${invoice.description}</p>
-  </div>
-  `
-      : ''
+  if (!body.success) {
+    return c.json({ error: 'Datos inválidos', details: body.error.issues }, 400);
   }
 
-  <div class="footer">
-    <p>Para cualquier duda sobre esta factura, por favor contacta con nosotros en ${invoice.issuerEmail}</p>
-  </div>
-</body>
-</html>
-  `.trim();
-}
+  const [invoice] = await db
+    .select({ status: schema.invoices.status })
+    .from(schema.invoices)
+    .where(eq(schema.invoices.id, id))
+    .limit(1);
 
-function generateInvoiceEmailText(invoice: typeof schema.invoices.$inferSelect): string {
-  return `
-Factura ${invoice.invoiceNumber} - ${invoice.issuerLegalName}
+  if (!invoice) {
+    return c.json({ error: 'Factura no encontrada' }, 404);
+  }
 
-Fecha: ${new Date(invoice.issueDate!).toLocaleDateString('es-ES')}
-Vencimiento: ${new Date(invoice.dueDate!).toLocaleDateString('es-ES')}
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  const { status, description, paymentMethod, paymentNotes, notes, footer, billingProUrl } =
+    body.data;
 
-Facturar a:
-${invoice.clientLegalName}
-NIF: ${invoice.clientTaxId}
-${invoice.clientAddressLine1}
-${invoice.clientPostalCode} ${invoice.clientCity}
+  if (status !== undefined) {
+    updates.status = status;
+    if (status === 'paid') updates.paidAt = new Date();
+  }
+  if (description !== undefined) updates.description = description;
+  if (paymentMethod !== undefined) updates.paymentMethod = paymentMethod;
+  if (paymentNotes !== undefined) updates.paymentNotes = paymentNotes;
+  if (notes !== undefined) updates.notes = notes;
+  if (footer !== undefined) updates.footer = footer;
+  if (billingProUrl !== undefined) updates.billingProUrl = billingProUrl;
 
-Total: €${(invoice.totalCents! / 100).toFixed(2)}
+  await db.update(schema.invoices).set(updates).where(eq(schema.invoices.id, id));
 
-Para cualquier duda, contacta en ${invoice.issuerEmail}
-  `.trim();
-}
+  await logInvoiceAction(db, id, 'updated', user.id, { changes: Object.keys(updates) });
+
+  const [updatedInvoice] = await db
+    .select()
+    .from(schema.invoices)
+    .where(eq(schema.invoices.id, id))
+    .limit(1);
+
+  return c.json({ invoice: updatedInvoice });
+});
+
+// Email helpers removed — send endpoint disabled (Billing Pro workflow).
+// If email delivery is needed in future, restore from git history.
