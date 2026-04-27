@@ -19,6 +19,64 @@ import PageHeader from '../../components/PageHeader.astro';
         <div class="crm-form-section">
           <div class="grid gap-5 md:grid-cols-2">
             <div>
+              <label for="brand-id" class="brief-label">brand ID</label>
+              <input
+                id="brand-id"
+                type="text"
+                maxlength="128"
+                class="crm-input w-full"
+                placeholder="Ej: mi-marca"
+              />
+            </div>
+            <div>
+              <label for="sku" class="brief-label">SKU / referencia</label>
+              <input
+                id="sku"
+                type="text"
+                maxlength="256"
+                class="crm-input w-full"
+                placeholder="Ej: SKU-001"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-5 md:grid-cols-2">
+            <div>
+              <label for="aspect-ratio" class="brief-label">proporcion</label>
+              <select id="aspect-ratio" class="crm-input w-full">
+                <option value="1:1">1:1</option>
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+                <option value="4:5">4:5</option>
+                <option value="3:4">3:4</option>
+              </select>
+            </div>
+            <div>
+              <label for="modality" class="brief-label">modalidad</label>
+              <select id="modality" class="crm-input w-full">
+                <option value="image">Imagen</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <label class="brief-label">URLs de producto</label>
+            <div id="product-urls" class="space-y-2">
+              <input
+                type="url"
+                name="productImageUrls"
+                class="crm-input w-full"
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+            <button type="button" id="add-url-btn" class="mt-2 text-xs font-bold text-crm-accent underline">
+              + Añadir otro URL
+            </button>
+            <p class="mt-1 text-xs text-crm-muted">Pega aquí los enlaces HTTPS de las imágenes del producto (mín 1, máx 10).</p>
+          </div>
+          <div class="grid gap-5 md:grid-cols-2">
+            <div>
               <label for="content-type" class="brief-label">formato</label>
               <select id="content-type" class="crm-input w-full">
                 <option value="ambos">Foto + video</option>
@@ -149,7 +207,50 @@ import PageHeader from '../../components/PageHeader.astro';
         audience: document.getElementById('audience'),
         cta: document.getElementById('cta'),
         description: document.getElementById('description'),
+        brandId: document.getElementById('brand-id'),
+        sku: document.getElementById('sku'),
+        aspectRatio: document.getElementById('aspect-ratio'),
+        modality: document.getElementById('modality'),
       };
+
+      const MAX_URLS = 10;
+      const urlList = document.getElementById('product-urls');
+      const addUrlBtn = document.getElementById('add-url-btn');
+
+      function urlCount() {
+        return urlList.querySelectorAll('input[name="productImageUrls"]').length;
+      }
+
+      function updateAddButton() {
+        if (addUrlBtn) addUrlBtn.style.display = urlCount() >= MAX_URLS ? 'none' : '';
+      }
+
+      function getProductUrls() {
+        const inputs = urlList.querySelectorAll('input[name="productImageUrls"]');
+        return Array.from(inputs)
+          .map(inp => inp instanceof HTMLInputElement ? inp.value.trim() : '')
+          .filter(Boolean);
+      }
+
+      addUrlBtn?.addEventListener('click', () => {
+        if (urlCount() >= MAX_URLS) return;
+        const row = document.createElement('div');
+        row.className = 'flex gap-2 items-center';
+        const input = document.createElement('input');
+        input.type = 'url';
+        input.name = 'productImageUrls';
+        input.className = 'crm-input flex-1';
+        input.placeholder = 'https://ejemplo.com/imagen.jpg';
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'text-xs text-red-600 font-bold';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => { row.remove(); updateAddButton(); });
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        urlList.appendChild(row);
+        updateAddButton();
+      });
 
       const setLoading = (loading) => {
         if (!(submitBtn instanceof HTMLButtonElement) || !(submitLabel instanceof HTMLElement)) {
@@ -240,6 +341,11 @@ import PageHeader from '../../components/PageHeader.astro';
           audience: fields.audience instanceof HTMLInputElement ? fields.audience.value.trim() : '',
           cta: fields.cta instanceof HTMLInputElement ? fields.cta.value.trim() : '',
           description: fields.description instanceof HTMLTextAreaElement ? fields.description.value.trim() : '',
+          brandId: fields.brandId instanceof HTMLInputElement ? fields.brandId.value.trim() : '',
+          sku: fields.sku instanceof HTMLInputElement ? fields.sku.value.trim() : '',
+          aspectRatio: fields.aspectRatio instanceof HTMLSelectElement ? fields.aspectRatio.value : '1:1',
+          modality: fields.modality instanceof HTMLSelectElement ? fields.modality.value : 'image',
+          productImageUrls: getProductUrls(),
         };
 
         try {

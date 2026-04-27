@@ -18,6 +18,11 @@ const briefFormSchema = z.object({
   audience: z.string().trim().max(300).default(''),
   cta: z.string().trim().max(300).default(''),
   description: z.string().trim().max(2000).default(''),
+  brandId: z.string().trim().max(128).default(''),
+  sku: z.string().trim().max(256).default(''),
+  aspectRatio: z.enum(['1:1', '16:9', '9:16', '4:5', '3:4']).default('1:1'),
+  modality: z.enum(['image', 'video']).default('image'),
+  productImageUrls: z.array(z.string().url()).max(10).default([]),
 });
 
 const BRIEFING_STAGES = ['OBJECTIVE', 'HOOK', 'STYLE', 'AUDIENCE', 'CTA'] as const;
@@ -160,6 +165,11 @@ assistant.post('/submit', async (c) => {
     audience: body.data.audience,
     cta: body.data.cta,
     description: body.data.description,
+    brandId: body.data.brandId,
+    sku: body.data.sku,
+    aspectRatio: body.data.aspectRatio,
+    modality: body.data.modality,
+    productImageUrls: body.data.productImageUrls,
     generatedAt: new Date().toISOString(),
   });
 
