@@ -5,7 +5,15 @@ import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
 import { sendFeedbackConfirmationEmail, sendJobCompletionEmail } from '../../../lib/email.js';
 import { resolvePipelineId } from './pipeline-mappings.js';
-import type { AppContext } from '../../../types/index.js';
+import type { AppContext, AppBindings } from '../../../types/index.js';
+import {
+  buildPromptFromBrief,
+  extractAspectRatio,
+  extractBriefImageUrls,
+  extractBriefSku,
+  parseOptimizedBrief,
+  resolveOrchestratorBase,
+} from '../../lib/brief-helpers.js';
 
 // Helper para crear JWT compatible con AI Engine
 async function createAIEngineJWT(user: {
@@ -273,7 +281,7 @@ jobRoutes.get('/', async (c) => {
 
   // Get asset counts for each job (approved assets only)
   const jobIds = rows.map((row) => row.id);
-  let assetCounts: { jobId: string; count: number }[] = [];
+  let assetCounts: { jobId: string | null; count: number }[] = [];
   if (jobIds.length > 0) {
     assetCounts = await db
       .select({
@@ -550,6 +558,7 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
       },
       external_job_id: job.id, // Referencia al CRM
     }),
+    redirect: 'error',
   });
 
   if (!response.ok) {
@@ -838,3 +847,183 @@ jobRoutes.post('/:id/feedback', async (c) => {
 
   return c.json({ success: true, message: 'Feedback recibido' });
 });
+
+// POST /api/portal/jobs/create-from-brief
+// Creates a CRM job from a brief submission AND a production_job in the orchestrator
+const createFromBriefSchema = z.object({
+  briefId: z.string().uuid(),
+});
+
+jobRoutes.post('/create-from-brief', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  const payload: unknown = await c.req.json().catch(() => null);
+  const body = createFromBriefSchema.safeParse(payload);
+  if (!body.success) {
+    return c.json({ error: 'Invalid payload', details: body.error.issues }, 400);
+  }
+
+  const { briefId } = body.data;
+  const db = c.get('db');
+
+  // Fetch brief with client info
+  const [brief] = await db
+    .select({
+      id: schema.briefSubmissions.id,
+      clientId: schema.briefSubmissions.clientId,
+      email: schema.briefSubmissions.email,
+      contentType: schema.briefSubmissions.contentType,
+      description: schema.briefSubmissions.description,
+      objective: schema.briefSubmissions.objective,
+      style: schema.briefSubmissions.style,
+      audience: schema.briefSubmissions.audience,
+      cta: schema.briefSubmissions.cta,
+      status: schema.briefSubmissions.status,
+      clientName: schema.clients.name,
+      clientSegment: schema.clients.segment,
+      marginProfile: schema.clients.marginProfile,
+      externalClientId: schema.clients.externalClientId,
+      optimizedBrief: schema.briefSubmissions.optimizedBrief,
+    })
+    .from(schema.briefSubmissions)
+    .leftJoin(schema.clients, eq(schema.clients.id, schema.briefSubmissions.clientId))
+    .where(eq(schema.briefSubmissions.id, briefId))
+    .limit(1);
+
+  if (!brief) {
+    return c.json({ error: 'Brief not found' }, 404);
+  }
+  if (!brief.clientId) {
+    return c.json({ error: 'Brief must be linked to a client before creating a job' }, 400);
+  }
+
+  // Create CRM job
+  const now = new Date();
+  const jobId = crypto.randomUUID();
+  const mapBriefType = (tipo: string | null): 'image' | 'video' => {
+    if (tipo === 'video') return 'video';
+    return 'image';
+  };
+  const briefLabel = brief.contentType === 'ambos' ? 'foto + video' : brief.contentType;
+
+  await db.insert(schema.jobs).values({
+    id: jobId,
+    clientId: brief.clientId,
+    status: 'pending',
+    briefText: '[Brief web · ' + (briefLabel ?? 'foto') + '] ' + (brief.description ?? ''),
+    type: mapBriefType(brief.contentType),
+    turnaround: 'normal',
+    clientSegment: brief.clientSegment ?? null,
+    marginProfile: brief.marginProfile ?? null,
+    clientGoal: 'Responder brief web recibido desde ' + brief.email,
+    internalNotes: 'Trabajo creado desde brief ' + brief.id,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  // Update brief status
+  await db
+    .update(schema.briefSubmissions)
+    .set({
+      status: brief.status === 'archived' ? 'archived' : 'reviewed',
+      updatedAt: now,
+    })
+    .where(eq(schema.briefSubmissions.id, brief.id));
+
+  // Create production_job in orchestrator (non-blocking on failure)
+  let orchestratorJobId: string | null = null;
+  let orchestratorRunId: string | null = null;
+  const orchestratorBaseUrl = resolveOrchestratorBase(c.env);
+  const orchestratorAdminKey = c.env.ORCHESTRATOR_ADMIN_KEY;
+
+  if (orchestratorBaseUrl && orchestratorAdminKey) {
+    try {
+      const ob = parseOptimizedBrief(brief.optimizedBrief);
+      const prompt = buildPromptFromBrief(brief, ob);
+      const realSku = extractBriefSku(ob);
+      const imageUrls = extractBriefImageUrls(ob);
+      const aspectRatio = extractAspectRatio(ob);
+
+      const url = orchestratorBaseUrl + '/api/jobs';
+      const orchestratorRes = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': orchestratorAdminKey,
+        },
+        body: JSON.stringify({
+          brandId: brief.externalClientId ?? brief.clientId,
+          sku: realSku,
+          modality: mapBriefType(brief.contentType),
+          prompt,
+          imageUrls,
+          aspectRatio,
+          productName: realSku || prompt.slice(0, 60),
+          productDescription: prompt || undefined,
+          source: 'crm',
+          sourceRef: jobId,
+          requiresHitl: true,
+          priority: brief.marginProfile === 'alto' ? 1 : 0,
+        }),
+        redirect: 'error',
+      });
+
+      if (orchestratorRes.ok) {
+        const orchestratorData: unknown = await orchestratorRes.json();
+        const data = typeof orchestratorData === 'object' && orchestratorData !== null
+          ? (orchestratorData as Record<string, unknown>)
+          : {};
+        orchestratorJobId = String(data.jobId ?? data.id ?? '');
+        orchestratorRunId = String(data.runId ?? '');
+
+        if (orchestratorJobId) {
+          await db
+            .update(schema.jobs)
+            .set({
+              externalJobId: orchestratorJobId,
+              internalNotes: 'Trabajo creado desde brief ' + brief.id + '. Orchestrator: job=' + orchestratorJobId + (orchestratorRunId ? ' run=' + orchestratorRunId : ''),
+              updatedAt: new Date(),
+            })
+            .where(eq(schema.jobs.id, jobId));
+        }
+      } else {
+        const errBody = await orchestratorRes.text().catch(() => '');
+        console.error('Orchestrator job creation failed [' + orchestratorRes.status + ']: ' + errBody);
+      }
+    } catch (err) {
+      console.error('Orchestrator job creation error:', err);
+    }
+  }
+
+  const [job] = await db
+    .select({
+      id: schema.jobs.id,
+      clientId: schema.jobs.clientId,
+      externalJobId: schema.jobs.externalJobId,
+      status: schema.jobs.status,
+      briefText: schema.jobs.briefText,
+      type: schema.jobs.type,
+      turnaround: schema.jobs.turnaround,
+      createdAt: schema.jobs.createdAt,
+    })
+    .from(schema.jobs)
+    .where(eq(schema.jobs.id, jobId))
+    .limit(1);
+
+  return c.json({
+    ok: true,
+    job,
+    brief: {
+      id: brief.id,
+      status: brief.status === 'archived' ? 'archived' : 'reviewed',
+      clientId: brief.clientId,
+      clientName: brief.clientName ?? null,
+    },
+    orchestratorJobId,
+    orchestratorRunId,
+  }, 201);
+});
+
