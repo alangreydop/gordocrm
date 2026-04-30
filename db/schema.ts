@@ -129,13 +129,18 @@ export const jobs = sqliteTable(
     stackSnapshot: text('stack_snapshot'),
     clientGoal: text('client_goal'),
     internalNotes: text('internal_notes'),
+    deliveryUrl: text('deliveryUrl'),
+    startedAt: integer('started_at', { mode: 'timestamp_ms' }),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+    failedAt: integer('failed_at', { mode: 'timestamp_ms' }),
+    failureReason: text('failure_reason'),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
   (table) => [
     check(
       'jobs_status_check',
-      sql`${table.status} IN ('pending', 'processing', 'completed', 'failed', 'delivered')`,
+      sql`${table.status} IN ('pending', 'processing', 'plan_generated', 'asset_factory_dispatched', 'asset_generated', 'qa_pending', 'qa_evaluation', 'qa_hitl_review', 'approved', 'rejected', 'plan_rejected', 'delivery_ready', 'crm_notified', 'completed', 'failed', 'delivered', 'timeout', 'cancelled')`,
     ),
     check(
       'jobs_platform_check',
@@ -264,7 +269,7 @@ export const invoices = sqliteTable('invoices', {
   series: text('series').notNull().default('F'),
   fiscalYear: integer('fiscalYear').notNull(),
 
-  clientId: text('client_id')
+  clientId: text('clientId')
     .notNull()
     .references(() => clients.id),
   clientTaxId: text('clientTaxId').notNull(),
@@ -315,8 +320,8 @@ export const invoices = sqliteTable('invoices', {
   /** URL to the Billing Pro document — set by admin to let client view/download. */
   billingProUrl: text('billing_pro_url'),
 
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  updatedAt: integer('updatedAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 }, (table) => [
   foreignKey({
     columns: [table.originalInvoiceId],
@@ -449,5 +454,114 @@ export const notifications = sqliteTable(
     index('idx_notifications_user_id').on(table.userId),
     index('idx_notifications_read').on(table.read),
     index('idx_notifications_created_at').on(table.createdAt),
+  ],
+);
+
+// Brand Graph vectors — vector representations of client visual identity
+export const brandGraphVectors = sqliteTable(
+  'brand_graph_vectors',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    vectorType: text('vector_type').notNull(), // 'color' | 'style' | 'composition' | 'typography' | 'lighting' | 'mood' | 'reference_image'
+    label: text('label').notNull(),             // Human-readable label
+    value: text('value').notNull(),              // JSON: hex color, description, or embedding array
+    confidence: real('confidence').notNull().default(1.0), // 0-1
+    source: text('source').notNull().default('manual'),   // 'manual' | 'ai_generated' | 'asset_derived'
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_bgv_client_id').on(table.clientId),
+    index('idx_bgv_client_type').on(table.clientId, table.vectorType),
+    index('idx_bgv_confidence').on(table.clientId, table.confidence),
+  ],
+);
+
+// Brand Graph coverage — per-dimension coverage scores per client
+export const brandGraphCoverage = sqliteTable(
+  'brand_graph_coverage',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    dimension: text('dimension').notNull(), // 'color' | 'typography' | 'composition' | 'lighting' | 'style'
+    coverageScore: real('coverage_score').notNull().default(0.0), // 0-1
+    lastAssessedAt: integer('last_assessed_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_bgc_client_id').on(table.clientId),
+  ],
+);
+
+// Agent invocation audit trail — RGPD/EU AI Act compliance
+export const agentInvocations = sqliteTable(
+  'agent_invocations',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    jobId: text('job_id')
+      .notNull()
+      .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    agentName: text('agent_name').notNull(),           // e.g., 'visual-production-planner'
+    invocationType: text('invocation_type').notNull(),  // 'plan' | 'generate' | 'qa' | 'enrich' | 'curate'
+    contextHash: text('context_hash').notNull(),         // SHA-256 hash of context envelope
+    outputHash: text('output_hash'),                     // SHA-256 hash of agent output (null if failed)
+    confidence: real('confidence'),                      // Agent confidence score (0-1)
+    decision: text('decision').notNull(),                 // 'approved' | 'rejected' | 'hitl_review' | 'error'
+    humanOverride: text('human_override'),               // 'approved' | 'rejected' | null
+    humanOverrideBy: text('human_override_by'),         // User ID who overrode
+    errorMessage: text('error_message'),                 // Error message if invocation failed
+    tokenCount: integer('token_count'),                  // Approximate token count for cost tracking
+    durationMs: integer('duration_ms'),                 // Invocation duration in ms
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_ai_job_id').on(table.jobId),
+    index('idx_ai_client_id').on(table.clientId),
+    index('idx_ai_agent_name').on(table.agentName),
+    index('idx_ai_decision').on(table.decision),
+    index('idx_ai_created_at').on(table.createdAt),
+    index('idx_ai_client_created').on(table.clientId, table.createdAt),
+  ],
+);
+
+// HITL (Human-in-the-Loop) reviews
+export const hitlReviews = sqliteTable(
+  'hitl_reviews',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    jobId: text('job_id')
+      .notNull()
+      .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    invocationId: text('invocation_id')
+      .references(() => agentInvocations.id),
+    reviewType: text('review_type').notNull(),       // 'plan_approval' | 'qa_override' | 'brand_graph_override'
+    status: text('status').notNull().default('pending'), // 'pending' | 'approved' | 'rejected' | 'timed_out'
+    contextSummary: text('context_summary').notNull(), // JSON: what the reviewer sees
+    reviewerId: text('reviewer_id'),                   // User ID of reviewer
+    reviewerAction: text('reviewer_action'),           // 'approved' | 'rejected' | 'override_brand_graph'
+    reviewerNote: text('reviewer_note'),               // Optional note from reviewer
+    confidenceScore: real('confidence_score'),         // Agent confidence that triggered HITL
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    reviewedAt: integer('reviewed_at', { mode: 'timestamp_ms' }),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_hitl_job_id').on(table.jobId),
+    index('idx_hitl_client_id').on(table.clientId),
+    index('idx_hitl_status').on(table.status),
+    index('idx_hitl_created_at').on(table.createdAt),
+    index('idx_hitl_pending').on(table.status, table.createdAt),
   ],
 );
