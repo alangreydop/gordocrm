@@ -1,12 +1,149 @@
-import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte, or, sql } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { schema } from '../../../../db/index.js';
-import { requireAdmin } from '../../../lib/auth.js';
+import { requireAuth } from '../../../lib/auth.js';
 import type { AppContext } from '../../../types/index.js';
 
 export const dashboardRoutes = new Hono<AppContext>();
 
-dashboardRoutes.use('*', requireAdmin);
+dashboardRoutes.use('*', requireAuth);
+
+// Client cockpit — unified dashboard data in a single request
+// Replaces 6 parallel client-side calls with one server-side join
+dashboardRoutes.get('/client', async (c) => {
+  const user = c.get('user');
+  const db = c.get('db');
+
+  if (user.role !== 'client') {
+    return c.json({ error: 'Client access only' }, 403);
+  }
+
+  const [clientRecord] = await db
+    .select()
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, user.id))
+    .limit(1);
+
+  if (!clientRecord) {
+    return c.json({ error: 'Client not found' }, 404);
+  }
+
+  const now = new Date();
+  const clientId = clientRecord.id;
+
+  const [
+    jobsResult,
+    latestBriefResult,
+    activitiesResult,
+    notificationsResult,
+    assetsResult,
+    brandAssetsResult,
+  ] = await Promise.all([
+    db
+      .select({
+        id: schema.jobs.id,
+        status: schema.jobs.status,
+        briefText: schema.jobs.briefText,
+        platform: schema.jobs.platform,
+        type: schema.jobs.type,
+        dueAt: schema.jobs.dueAt,
+        unitsPlanned: schema.jobs.unitsPlanned,
+        unitsConsumed: schema.jobs.unitsConsumed,
+        updatedAt: schema.jobs.updatedAt,
+      })
+      .from(schema.jobs)
+      .where(eq(schema.jobs.clientId, clientId))
+      .orderBy(desc(schema.jobs.updatedAt))
+      .limit(20),
+    db
+      .select({
+        id: schema.briefSubmissions.id,
+        contentType: schema.briefSubmissions.contentType,
+        description: schema.briefSubmissions.description,
+        status: schema.briefSubmissions.status,
+        createdAt: schema.briefSubmissions.createdAt,
+      })
+      .from(schema.briefSubmissions)
+      .where(eq(schema.briefSubmissions.clientId, clientId))
+      .orderBy(desc(schema.briefSubmissions.createdAt))
+      .limit(1),
+    db
+      .select()
+      .from(schema.clientActivities)
+      .where(eq(schema.clientActivities.clientId, clientId))
+      .orderBy(desc(schema.clientActivities.createdAt))
+      .limit(20),
+    db
+      .select()
+      .from(schema.notifications)
+      .where(eq(schema.notifications.userId, user.id))
+      .orderBy(desc(schema.notifications.createdAt))
+      .limit(10),
+    db
+      .select({ count: sql<number>`cast(count(*) as integer)` })
+      .from(schema.assets)
+      .where(
+        and(
+          eq(schema.assets.clientId, clientId),
+          or(eq(schema.assets.status, 'approved'), eq(schema.assets.status, 'pending')),
+        ),
+      ),
+    db
+      .select({ r2Key: schema.assets.r2Key })
+      .from(schema.assets)
+      .where(
+        and(
+          eq(schema.assets.clientId, clientId),
+          eq(schema.assets.category, 'brand-assets'),
+        ),
+      ),
+  ]);
+
+  const REQUIRED_TYPES = ['logo', 'palette', 'identity_manual'];
+  const foundTypes = new Set<string>();
+  for (const asset of brandAssetsResult) {
+    if (!asset.r2Key) continue;
+    const parts = asset.r2Key.split('/');
+    const assetsIdx = parts.indexOf('assets');
+    if (assetsIdx !== -1 && assetsIdx + 1 < parts.length) {
+      const filename = parts[assetsIdx + 1];
+      if (!filename) continue;
+      const typePrefix = filename.split('_')[0];
+      const normalized = typePrefix === 'identity-manual' ? 'identity_manual' : typePrefix;
+      if (normalized && REQUIRED_TYPES.includes(normalized)) {
+        foundTypes.add(normalized);
+      }
+    }
+  }
+  const missingBrandAssets = REQUIRED_TYPES.filter((t) => !foundTypes.has(t));
+
+  const unreadCount = notificationsResult.filter((n) => !n.read).length;
+
+  return c.json({
+    client: {
+      id: clientRecord.id,
+      name: clientRecord.name,
+      company: clientRecord.company,
+      plan: clientRecord.plan,
+      subscriptionStatus: clientRecord.subscriptionStatus,
+      datasetStatus: clientRecord.datasetStatus,
+      monthlyUnitCapacity: clientRecord.monthlyUnitCapacity,
+      accountManager: clientRecord.accountManager,
+      nextReviewAt: clientRecord.nextReviewAt,
+      onboardingCompletedAt: clientRecord.onboardingCompletedAt,
+    },
+    jobs: jobsResult,
+    latestBrief: latestBriefResult[0] ?? null,
+    activities: activitiesResult,
+    notifications: notificationsResult,
+    unreadCount,
+    assetCount: assetsResult[0]?.count ?? 0,
+    brandReadiness: {
+      ready: missingBrandAssets.length === 0,
+      missing: missingBrandAssets,
+    },
+  });
+});
 
 dashboardRoutes.get('/stats', async (c) => {
   const db = c.get('db');
