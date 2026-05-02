@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { schema } from '../../../../db/index.js';
+import { requireAdmin } from '../../../lib/auth.js';
 import type { AppContext } from '../../../types/index.js';
 
 const clients = schema.clients;
@@ -8,6 +9,8 @@ const jobs = schema.jobs;
 const assets = schema.assets;
 
 const kanban = new Hono<AppContext>();
+
+kanban.use('*', requireAdmin);
 
 // Production stages for kanban
 const PRODUCTION_STAGES = {

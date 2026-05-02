@@ -1,0 +1,291 @@
+/* ============================================================
+   CRM REFINEMENTS — Grande&Gordo Design System
+   Append-only overrides. Import at end of global.css:
+   @import './crm-refinements.css';
+   ============================================================ */
+
+/* ── Sidebar: tighten brand block, remove old eyebrow text ── */
+.crm-sidebar__brand {
+  border-bottom: 1px solid var(--crm-sidebar-border);
+  text-align: center;
+  justify-items: center;
+}
+
+/* Logo in sidebar — sized to match brand hierarchy */
+.crm-sidebar__brand img {
+  height: 32px;
+  width: auto;
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
+.crm-sidebar__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  color: var(--crm-sidebar-text-active);
+  margin-bottom: 0.4rem;
+}
+
+.crm-sidebar__copy {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--crm-sidebar-text);
+  max-width: 24ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Nav links — tighten padding, sharper letter-spacing */
+.crm-sidebar-link {
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--crm-sidebar-text);
+  display: block;
+  width: 100%;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.crm-sidebar-link:hover {
+  background: var(--crm-sidebar-hover);
+  color: var(--crm-sidebar-text-active);
+}
+
+.crm-sidebar-link--active {
+  background: var(--crm-sidebar-accent-bg);
+  color: var(--gg-accent-bright);
+}
+
+/* Sidebar nav gap */
+.crm-sidebar__nav {
+  display: grid;
+  gap: 0.2rem;
+}
+
+/* Meta block sits at bottom naturally via margin-top: auto */
+.crm-sidebar__meta {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--crm-sidebar-border);
+  display: grid;
+  gap: 0;
+}
+
+.crm-sidebar__meta-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--crm-sidebar-text);
+  margin-bottom: 0.4rem;
+}
+
+.crm-sidebar__meta-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--crm-sidebar-text-active);
+}
+
+/* ── Main frame: slightly more breathing room ── */
+.crm-main-frame {
+  width: min(100% - 2rem, var(--container-max));
+  margin: 0 auto;
+  padding: 1.75rem 0 4rem;
+}
+
+/* ── Topbar ── */
+.crm-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Panels: rounder, more padding ── */
+.crm-panel {
+  border: 1px solid var(--gg-border);
+  border-radius: var(--radius-xl);
+  background: var(--gg-surface-strong);
+  box-shadow: var(--shadow-soft);
+  padding: 1.75rem;
+}
+
+.crm-panel-soft {
+  border: 1px solid var(--gg-border);
+  border-radius: var(--radius-lg);
+  background: var(--gg-surface);
+  padding: 1.25rem;
+}
+
+/* ── Metric cards: more generous, serif value ── */
+.crm-metric-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.96));
+  border: 1px solid var(--crm-border);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-metric-card__value {
+  margin-top: 0.75rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--crm-accent);
+}
+
+.crm-metric-card__meta {
+  margin-top: 0.35rem;
+  color: var(--crm-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+/* ── Link tiles: hover lift ── */
+.crm-link-tile {
+  display: block;
+  border: 1px solid var(--gg-border);
+  border-radius: var(--radius-md);
+  background: var(--gg-surface);
+  padding: 0.9rem 1.1rem;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
+}
+
+.crm-link-tile:hover {
+  border-color: var(--gg-accent);
+  background: rgba(196,22,90,0.02);
+  transform: translateY(-1px);
+}
+
+/* ── Table wrap: fully rounded ── */
+.crm-table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(255,255,255,0.76), rgba(255,255,255,0.96));
+  box-shadow: var(--shadow-soft);
+}
+
+/* Table header area */
+.crm-table-wrap > div:first-child {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--crm-border);
+}
+
+/* Table cells */
+.crm-table th {
+  padding: 0.7rem 1.25rem;
+}
+
+.crm-table td {
+  padding: 0.85rem 1.25rem;
+}
+
+/* ── Guarantee / trust strip ── */
+.crm-guarantee {
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.75rem;
+  background: linear-gradient(135deg, rgba(16,122,67,0.05), rgba(16,122,67,0.01));
+  border: 1px solid rgba(16,122,67,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* ── Topbar button: cleaner hover ── */
+.crm-topbar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--crm-border);
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.72);
+  color: var(--crm-text);
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast),
+              background var(--duration-fast);
+}
+
+.crm-topbar-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--crm-accent);
+  background: var(--crm-panel);
+}
+
+/* ── Kicker: slightly tighter ── */
+.crm-kicker {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--gg-text-muted);
+  margin: 0;
+}
+
+.crm-kicker--accent {
+  color: var(--gg-accent);
+}
+
+/* ── Page header title ── */
+.crm-page-header__title {
+  color: var(--crm-text);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+/* ── Button small variant ── */
+.crm-button-sm {
+  min-height: 2.5rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.82rem;
+}
+
+/* ── Notification dropdown ── */
+.crm-notification-dropdown {
+  width: min(24rem, calc(100vw - 3rem));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--crm-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,1));
+  box-shadow: var(--shadow-strong);
+  overflow: hidden;
+}
+
+/* ── Content grid gap ── */
+.crm-main-content {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* ── Responsive: sidebar full-width mobile ── */
+@media (max-width: 1023px) {
+  .crm-sidebar {
+    width: min(20rem, calc(100vw - 1rem));
+  }
+
+  .crm-main-frame {
+    width: min(100% - 1.25rem, var(--container-max));
+    padding-top: 1rem;
+  }
+
+  .crm-topbar {
+    margin-bottom: 1.5rem;
+  }
+}

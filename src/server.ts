@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { getDb } from '../db/index.js';
 import { schema } from '../db/index.js';
 import { authRoutes } from './api/routes/portal/auth.js';
+import { requireAuth } from './lib/auth.js';
 import { assetsRoutes } from './api/routes/portal/assets.js';
 import { briefRoutes } from './api/routes/portal/briefs.js';
 import { clientRoutes } from './api/routes/portal/clients.js';
@@ -21,14 +22,18 @@ import { uploadRoutes } from './api/routes/portal/upload.js';
 import { invoiceRoutes } from './api/routes/admin/invoices.js';
 import { vaultRoutes } from './api/routes/portal/vault.js';
 import { invoiceRoutes as clientInvoiceRoutes } from './api/routes/portal/invoices.js';
+import { adminClientRoutes } from './api/routes/admin/clients.js';
 import { kanbanRoutes } from './api/routes/admin/kanban.js';
 import { pipelineMappingRoutes } from './api/routes/portal/pipeline-mappings.js';
 import { brandGraphRoutes } from './api/routes/portal/brand-graphs.js';
+import { hitlRoutes } from './api/routes/portal/hitl.js';
 import { getAllowedOrigins, getConfig } from './lib/config.js';
 import { sendQuarterlyReviewReminderEmail } from './lib/email.js';
-import { leadWonWebhook } from './api/routes/webhooks/lead-won.js';
+import { getPortalBaseUrl } from './lib/portal-url.js';
+import { leadWonWebhook } from './api/routes/lead-won-webhook.js';
 import { getPendingQaJobs, markQaComplete, markQaFailed, markQaProcessing } from './lib/qa-queue.js';
 import { scoreAsset } from './lib/qa-engine.js';
+import { processPendingBrandCaptures } from './lib/brand-dna-capture.js';
 import type { AppBindings, AppContext } from './types/index.js';
 
 const app = new Hono<AppContext>();
@@ -48,7 +53,7 @@ app.use('*', async (c, next) => {
       'Content-Security-Policy',
       [
         "default-src 'self'",
-        "script-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' https: data:",
         "font-src 'self' https:",
@@ -85,7 +90,7 @@ app.use(
   '/api/*',
   cors({
     credentials: true,
-    allowMethods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     origin: (origin, c) => {
       if (!origin) return undefined;
@@ -122,11 +127,13 @@ app.route('/api/portal/vault', vaultRoutes);
 app.route('/api/portal/invoices', clientInvoiceRoutes);
 app.route('/api/public/briefs', publicBriefRoutes);
 app.route('/api/ai', aiProxyRoutes);
+app.route('/api/admin/clients', adminClientRoutes);
 app.route('/api/admin/invoices', invoiceRoutes);
 app.route('/api/admin/kanban', kanbanRoutes);
 app.route('/api/webhooks', leadWonWebhook);
 app.route('/api/portal/pipeline-mappings', pipelineMappingRoutes);
 app.route('/api/portal/brand-graphs', brandGraphRoutes);
+app.route('/api/portal/hitl', hitlRoutes);
 
 // Shared cron logic: quarterly review reminders
 async function runQuarterlyReviewReminders(db: ReturnType<typeof getDb>, env: AppBindings) {
@@ -171,7 +178,7 @@ async function runQuarterlyReviewReminders(db: ReturnType<typeof getDb>, env: Ap
       clientEmail: user.email,
       clientName: client.name,
       clientCompany: client.company,
-      portalUrl: 'https://crm.grandeandgordo.com',
+      portalUrl: getPortalBaseUrl(env),
       reviewDate,
     });
 
@@ -187,8 +194,12 @@ async function runQuarterlyReviewReminders(db: ReturnType<typeof getDb>, env: Ap
   return { sent: sentCount, total: clientsDue.length };
 }
 
-// Manual trigger endpoint (backward compat / debugging)
-app.get('/__scheduled', async (c) => {
+// Manual trigger endpoint — admin only
+app.get('/__scheduled', requireAuth, async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+     }
   const db = c.get('db');
   const env = c.env as AppBindings;
   const result = await runQuarterlyReviewReminders(db, env);
@@ -257,11 +268,16 @@ async function processQaQueue(db: ReturnType<typeof getDb>, env: AppBindings) {
 
       await markQaComplete(db, qaItem.id, scores, autoApproved);
 
-      // If auto-approved, update asset status
+      // If auto-approved, update asset status; otherwise mark as rejected
       if (autoApproved) {
         await db
           .update(schema.assets)
           .set({ status: 'approved', updatedAt: new Date() })
+          .where(eq(schema.assets.id, qaItem.assetId));
+      } else {
+        await db
+          .update(schema.assets)
+          .set({ status: 'rejected', updatedAt: new Date() })
           .where(eq(schema.assets.id, qaItem.assetId));
       }
 
@@ -289,4 +305,5 @@ export const scheduled = async (event: ScheduledEvent, env: AppBindings, ctx: Ex
 
   // Always process QA queue on every cron tick (rate-limited internally)
   ctx.waitUntil(processQaQueue(db, env));
+  ctx.waitUntil(processPendingBrandCaptures(db, env));
 };

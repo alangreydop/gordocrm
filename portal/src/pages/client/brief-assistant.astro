@@ -1,107 +1,423 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
-import { siteLinks } from '../../../lib/site-links';
+import PageHeader from '../../components/PageHeader.astro';
 ---
 
-<ClientLayout title="AI Briefing Assistant">
-  <div class="max-w-3xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
-    <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-crm-text">Conceptualizador de Contenido</h1>
-      <p class="text-crm-muted">Diseñemos juntos la estrategia de tu próximo video. No es un formulario, es una conversación.</p>
-    </section>
+<ClientLayout title="Actualizar Brief">
+  <div class="max-w-5xl space-y-6" role="region" aria-label="Actualizar brief de proyecto">
+    <PageHeader
+      kicker="brief"
+      title="actualiza el contexto del trabajo"
+      description="este paso ya no es conversacional. deja por escrito qué hay que conseguir, dónde va a vivir la pieza y qué límites o referencias hay que respetar."
+    />
 
-    <div id="chat-container" class="flex flex-col gap-4 h-[600px] overflow-y-auto p-4 rounded-3xl border border-crm-border bg-crm-bg-alt shadow-2xl">
-      <div class="flex flex-col gap-4" id="messages">
-        <!-- Messages will be injected here -->
+    <div id="brief-success" class="hidden crm-alert crm-alert-success" role="status" aria-live="polite"></div>
+    <div id="brief-error" class="hidden crm-alert crm-alert-danger" role="alert"></div>
+
+    <section class="brief-page">
+      <form id="brief-form" class="space-y-6">
+        <div class="crm-form-section">
+          <div class="grid gap-5 md:grid-cols-2">
+            <div>
+              <label for="brand-id" class="brief-label">brand ID</label>
+              <input
+                id="brand-id"
+                type="text"
+                maxlength="128"
+                class="crm-input w-full"
+                placeholder="Ej: mi-marca"
+              />
+            </div>
+            <div>
+              <label for="sku" class="brief-label">SKU / referencia</label>
+              <input
+                id="sku"
+                type="text"
+                maxlength="256"
+                class="crm-input w-full"
+                placeholder="Ej: SKU-001"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-5 md:grid-cols-2">
+            <div>
+              <label for="aspect-ratio" class="brief-label">proporcion</label>
+              <select id="aspect-ratio" class="crm-input w-full">
+                <option value="1:1">1:1</option>
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+                <option value="4:5">4:5</option>
+                <option value="3:4">3:4</option>
+              </select>
+            </div>
+            <div>
+              <label for="modality" class="brief-label">modalidad</label>
+              <select id="modality" class="crm-input w-full">
+                <option value="image">Imagen</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <label class="brief-label">URLs de producto</label>
+            <div id="product-urls" class="space-y-2">
+              <input
+                type="url"
+                name="productImageUrls"
+                class="crm-input w-full"
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+            <button type="button" id="add-url-btn" class="mt-2 text-xs font-bold text-crm-accent underline">
+              + Añadir otro URL
+            </button>
+            <p class="mt-1 text-xs text-crm-muted">Pega aquí los enlaces HTTPS de las imágenes del producto (mín 1, máx 10).</p>
+          </div>
+          <div class="grid gap-5 md:grid-cols-2">
+            <div>
+              <label for="content-type" class="brief-label">formato</label>
+              <select id="content-type" class="crm-input w-full">
+                <option value="ambos">Foto + video</option>
+                <option value="foto">Foto</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+            <div>
+              <label for="audience" class="brief-label">audiencia</label>
+              <input
+                id="audience"
+                type="text"
+                maxlength="300"
+                class="crm-input w-full"
+                placeholder="Ej: compradores Amazon, retail premium, paid social"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <label for="objective" class="brief-label">objetivo</label>
+            <textarea
+              id="objective"
+              rows="4"
+              maxlength="500"
+              class="crm-input w-full"
+              placeholder="Qué hay que conseguir con esta pieza o este bloque de trabajo."
+            ></textarea>
+          </div>
+
+          <div class="mt-5">
+            <label for="usage-context" class="brief-label">canal o uso</label>
+            <textarea
+              id="usage-context"
+              rows="3"
+              maxlength="500"
+              class="crm-input w-full"
+              placeholder="Dónde va a vivir: PDP, Amazon, paid, redes, catálogo, lanzamiento..."
+            ></textarea>
+          </div>
+
+          <div class="mt-5">
+            <label for="style" class="brief-label">referencias, tono y límites</label>
+            <textarea
+              id="style"
+              rows="4"
+              maxlength="600"
+              class="crm-input w-full"
+              placeholder="Qué estilo encaja, qué referencias ayudan y qué no debería pasar."
+            ></textarea>
+          </div>
+
+          <div class="mt-5">
+            <label for="cta" class="brief-label">cta o acción esperada</label>
+            <input
+              id="cta"
+              type="text"
+              maxlength="300"
+              class="crm-input w-full"
+              placeholder="Ej: ir a ficha, pedir muestra, clicar en campaña, guardar referencia"
+            />
+          </div>
+
+          <div class="mt-5">
+            <label for="description" class="brief-label">notas operativas</label>
+            <textarea
+              id="description"
+              rows="5"
+              maxlength="2000"
+              class="crm-input w-full"
+              placeholder="Bloqueos, fechas clave, packaging pendiente, materiales o cualquier matiz operativo."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="sticky bottom-4 z-10">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="crm-button crm-button-primary w-full"
+          >
+            <span id="submit-label">Guardar brief</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="space-y-6">
+        <section class="crm-form-section">
+          <p class="crm-kicker">qué necesitamos</p>
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Dato útil, no teatro</h2>
+          <div class="mt-4 space-y-3 text-sm text-crm-muted">
+            <p>Cuanto más concreto sea el objetivo, menos ida y vuelta habrá en producción.</p>
+            <p>Usa notas operativas para fechas, bloqueos o condiciones reales del trabajo.</p>
+            <p>Si ya hay una línea visual en marcha, actualiza solo lo que cambió.</p>
+          </div>
+        </section>
+
+        <section class="crm-form-section">
+          <p class="crm-kicker">último brief</p>
+          <h2 id="latest-brief-title" class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Sin brief reciente</h2>
+          <p id="latest-brief-meta" class="mt-3 text-sm text-crm-muted">Todavía no hay un contexto reciente guardado en tu cuenta.</p>
+          <p id="latest-brief-description" class="mt-4 text-sm leading-relaxed text-crm-muted">
+            Cuando guardes un nuevo brief, esta vista te mostrará el último contexto operativo recibido.
+          </p>
+        </section>
       </div>
-    </div>
-
-    <div class="flex gap-3">
-      <input
-        type="text"
-        id="chat-input"
-        placeholder="Escribe tu idea aquí..."
-        class="flex-1 rounded-2xl border border-crm-border bg-crm-bg-alt px-6 py-4 text-crm-text outline-none transition focus:border-crm-accent"
-      />
-      <button
-        id="send-btn"
-        class="crm-button crm-button-primary"
-      >
-        Enviar
-      </button>
-    </div>
+    </section>
   </div>
 
   <script>
     (async () => {
-      const { api } = await import('../../lib/api-client');
-      const messagesEl = document.getElementById('messages');
-      const inputEl = document.getElementById('chat-input');
-      const sendBtn = document.getElementById('send-btn');
+      const { api, formatDate, getSessionContext } = await import('../../lib/api-client');
 
-      let history = [];
-      let currentStage = 'OBJECTIVE';
+      const form = document.getElementById('brief-form');
+      const successBox = document.getElementById('brief-success');
+      const errorBox = document.getElementById('brief-error');
+      const submitBtn = document.getElementById('submit-btn');
+      const submitLabel = document.getElementById('submit-label');
+      const latestBriefTitle = document.getElementById('latest-brief-title');
+      const latestBriefMeta = document.getElementById('latest-brief-meta');
+      const latestBriefDescription = document.getElementById('latest-brief-description');
 
-      const addMessage = (text, isUser = false) => {
-        const msg = document.createElement('div');
-        msg.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
-        msg.innerHTML = `
-          <div class="max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
-            isUser
-            ? 'bg-crm-panel text-crm-text font-medium'
-            : 'bg-crm-panel-soft text-crm-text-secondary border border-crm-border-strong'
-          }">
-            ${text}
-          </div>
-        `;
-        messagesEl?.appendChild(msg);
-        messagesEl?.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+      const fields = {
+        contentType: document.getElementById('content-type'),
+        objective: document.getElementById('objective'),
+        usageContext: document.getElementById('usage-context'),
+        style: document.getElementById('style'),
+        audience: document.getElementById('audience'),
+        cta: document.getElementById('cta'),
+        description: document.getElementById('description'),
+        brandId: document.getElementById('brand-id'),
+        sku: document.getElementById('sku'),
+        aspectRatio: document.getElementById('aspect-ratio'),
+        modality: document.getElementById('modality'),
       };
 
-      const sendMessage = async () => {
-        const text = inputEl?.value.trim();
-        if (!text) return;
+      const MAX_URLS = 10;
+      const urlList = document.getElementById('product-urls');
+      const addUrlBtn = document.getElementById('add-url-btn');
 
-        inputEl!.value = '';
-        addMessage(text, true);
+      function urlCount() {
+        return urlList.querySelectorAll('input[name="productImageUrls"]').length;
+      }
 
-        try {
-          const response = await api('/api/portal/brief/assistant/chat', {
-            method: 'POST',
-            body: JSON.stringify({
-              message: text,
-              history: history,
-              stage: currentStage,
-            }),
-          });
+      function updateAddButton() {
+        if (addUrlBtn) addUrlBtn.style.display = urlCount() >= MAX_URLS ? 'none' : '';
+      }
 
-          if (response.stage) {
-            currentStage = response.stage;
+      function getProductUrls() {
+        const inputs = urlList.querySelectorAll('input[name="productImageUrls"]');
+        return Array.from(inputs)
+          .map(inp => inp instanceof HTMLInputElement ? inp.value.trim() : '')
+          .filter(Boolean);
+      }
+
+      addUrlBtn?.addEventListener('click', () => {
+        if (urlCount() >= MAX_URLS) return;
+        const row = document.createElement('div');
+        row.className = 'flex gap-2 items-center';
+        const input = document.createElement('input');
+        input.type = 'url';
+        input.name = 'productImageUrls';
+        input.className = 'crm-input flex-1';
+        input.placeholder = 'https://ejemplo.com/imagen.jpg';
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'text-xs text-red-600 font-bold';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', () => { row.remove(); updateAddButton(); });
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        urlList.appendChild(row);
+        updateAddButton();
+      });
+
+      const setLoading = (loading) => {
+        if (!(submitBtn instanceof HTMLButtonElement) || !(submitLabel instanceof HTMLElement)) {
+          return;
+        }
+
+        submitBtn.disabled = loading;
+        submitLabel.textContent = loading ? 'Guardando brief...' : 'Guardar brief';
+      };
+
+      const applyLatestBrief = (brief) => {
+        if (!brief) return;
+
+        let structured = null;
+        if (typeof brief.optimizedBrief === 'string' && brief.optimizedBrief.trim()) {
+          try {
+            structured = JSON.parse(brief.optimizedBrief);
+          } catch (error) {
+            console.error('Failed to parse structured brief payload', error);
           }
+        }
 
-          if (response.isComplete) {
-            addMessage(response.message);
-            inputEl!.disabled = true;
-            sendBtn!.disabled = true;
-            sendBtn!.textContent = '¡Completado!';
-            return;
-          }
+        if (latestBriefTitle) {
+          latestBriefTitle.textContent = brief.tipo ? `Último brief: ${brief.tipo}` : 'Último brief guardado';
+        }
 
-          history.push({ stage: response.stage, answer: text });
-          addMessage(response.message);
-        } catch (e) {
-          console.error(e);
-          addMessage('Lo siento, hubo un error en la conexión. Intenta de nuevo.');
+        if (latestBriefMeta) {
+          latestBriefMeta.textContent = `Recibido ${formatDate(brief.createdAt)} · estado ${brief.status ?? 'new'}`;
+        }
+
+        if (latestBriefDescription) {
+          const summary = String(brief.description ?? '').trim();
+          latestBriefDescription.textContent =
+            summary.length > 320 ? `${summary.slice(0, 317)}...` : summary || 'Brief recibido correctamente.';
+        }
+
+        if (fields.contentType instanceof HTMLSelectElement && typeof brief.tipo === 'string' && brief.tipo) {
+          fields.contentType.value = brief.tipo;
+        }
+
+        if (fields.objective instanceof HTMLTextAreaElement) {
+          fields.objective.value = structured?.objective ?? brief.objective ?? '';
+        }
+        if (fields.usageContext instanceof HTMLTextAreaElement) {
+          fields.usageContext.value = structured?.usageContext ?? brief.hook ?? '';
+        }
+        if (fields.style instanceof HTMLTextAreaElement) {
+          fields.style.value = structured?.style ?? brief.style ?? '';
+        }
+        if (fields.audience instanceof HTMLInputElement) {
+          fields.audience.value = structured?.audience ?? brief.audience ?? '';
+        }
+        if (fields.cta instanceof HTMLInputElement) {
+          fields.cta.value = structured?.cta ?? brief.cta ?? '';
+        }
+        if (fields.description instanceof HTMLTextAreaElement) {
+          fields.description.value = structured?.description ?? '';
         }
       };
 
-      sendBtn?.addEventListener('click', sendMessage);
-      inputEl?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-      });
+      try {
+        const [session, latestData] = await Promise.all([
+          getSessionContext(),
+          api('/api/portal/briefs/latest').catch(() => ({ brief: null })),
+        ]);
 
-      // Init conversation
-      addMessage('¡Hola! Soy tu asistente de conceptualización. Para empezar, ¿cuál es el objetivo principal de tu video? (Ej: Ventas, Awareness, Tutorial)');
+        if (!session?.client) {
+          window.location.href = '/login';
+          return;
+        }
+
+        applyLatestBrief(latestData?.brief ?? null);
+
+        // Pre-fill brandId from client company name if available
+        if (session.client.company && fields.brandId instanceof HTMLInputElement) {
+          fields.brandId.value = session.client.company.toLowerCase().replace(/\s+/g, "-");
+        }
+      } catch (error) {
+        console.error('Failed to load brief context', error);
+      }
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorBox?.classList.add('hidden');
+        successBox?.classList.add('hidden');
+        setLoading(true);
+
+        const payload = {
+          contentType: fields.contentType instanceof HTMLSelectElement ? fields.contentType.value : 'ambos',
+          objective: fields.objective instanceof HTMLTextAreaElement ? fields.objective.value.trim() : '',
+          usageContext: fields.usageContext instanceof HTMLTextAreaElement ? fields.usageContext.value.trim() : '',
+          style: fields.style instanceof HTMLTextAreaElement ? fields.style.value.trim() : '',
+          audience: fields.audience instanceof HTMLInputElement ? fields.audience.value.trim() : '',
+          cta: fields.cta instanceof HTMLInputElement ? fields.cta.value.trim() : '',
+          description: fields.description instanceof HTMLTextAreaElement ? fields.description.value.trim() : '',
+          brandId: fields.brandId instanceof HTMLInputElement ? fields.brandId.value.trim() : '',
+          sku: fields.sku instanceof HTMLInputElement ? fields.sku.value.trim() : '',
+          aspectRatio: fields.aspectRatio instanceof HTMLSelectElement ? fields.aspectRatio.value : '1:1',
+          modality: fields.modality instanceof HTMLSelectElement ? fields.modality.value : 'image',
+          productImageUrls: getProductUrls(),
+        };
+
+        try {
+          const response = await api('/api/portal/brief/assistant/submit', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          });
+
+          if (successBox instanceof HTMLDivElement) {
+            successBox.textContent =
+              typeof response.message === 'string'
+                ? response.message
+                : 'Brief guardado en tu cuenta.';
+            successBox.classList.remove('hidden');
+          }
+
+          applyLatestBrief({
+            ...payload,
+            tipo: payload.contentType,
+            status: 'new',
+            createdAt: new Date().toISOString(),
+            description: [
+              payload.objective ? `Objetivo: ${payload.objective}` : null,
+              payload.usageContext ? `Canal / uso: ${payload.usageContext}` : null,
+              payload.style ? `Referencias y tono: ${payload.style}` : null,
+              payload.audience ? `Audiencia: ${payload.audience}` : null,
+              payload.cta ? `CTA: ${payload.cta}` : null,
+              payload.description ? `Notas operativas: ${payload.description}` : null,
+            ].filter(Boolean).join('\n'),
+          });
+        } catch (error) {
+          if (errorBox instanceof HTMLDivElement) {
+            errorBox.textContent =
+              error instanceof Error
+                ? error.message
+                : 'No se pudo guardar el brief.';
+            errorBox.classList.remove('hidden');
+          }
+        } finally {
+          setLoading(false);
+        }
+      });
     })();
   </script>
+
+  <style>
+    .brief-page {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: minmax(0, 1.12fr) minmax(18rem, 0.88fr);
+      align-items: start;
+    }
+
+    .brief-label {
+      display: block;
+      margin-bottom: 0.55rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--crm-muted);
+      text-transform: lowercase;
+    }
+
+    @media (max-width: 1023px) {
+      .brief-page {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </ClientLayout>

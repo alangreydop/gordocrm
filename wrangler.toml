@@ -7,6 +7,7 @@ compatibility_date = "2026-04-04"
 APP_ENV = "development"
 CORS_ORIGIN = "http://localhost:4321"
 AI_ENGINE_URL = "http://localhost:8000"
+ORCHESTRATOR_BASE_URL = "http://localhost:8788"
 # CRON_SECRET y SESSION_SECRET deben configurarse con `wrangler secret put`
 
 [triggers]
@@ -21,20 +22,47 @@ database_name = "gordocrm"
 database_id = "557ac4b2-6aa6-4b77-9607-d6b347d54512"
 migrations_dir = "db/migrations"
 
+# R2 Buckets
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "assets"
+
+[[r2_buckets]]
+binding = "BRANDS"
+bucket_name = "brands"
+
+# Agent markdown store for Reasoning Worker
+[[r2_buckets]]
+binding = "AGENT_STORE"
+bucket_name = "agent-store"
+
 # Producción - variables NO sensibles
 [env.production.vars]
 APP_ENV = "production"
-CORS_ORIGIN = "https://gordocrm-api-production.alangreydop.workers.dev,https://grandeandgordo.com,https://www.grandeandgordo.com"
+CORS_ORIGIN = "https://gordocrm-api-production.alangreydop.workers.dev,https://grandeandgordo.com,https://www.grandeandgordo.com,https://crm.grandeandgordo.com"
 AI_ENGINE_URL = "https://ai-engine.grandeandgordo.com"
+ORCHESTRATOR_BASE_URL = "https://production-orchestrator.alangreydop.workers.dev"
+R2_PUBLIC_URL = "https://brands.grandeandgordo.com"
+R2_BUCKET_NAME = "brands"
+R2_ACCOUNT_ID = "ddca599bc0cee2659e3f64f5acc05eb4"
 # Secrets requeridos (configurar con wrangler secret put):
 # - SESSION_SECRET (min 32 caracteres, cryptographically secure)
 # - CRON_SECRET (min 8 caracteres)
 # - WEBHOOK_SECRET (min 16 caracteres, para verificar webhooks de AI Engine)
 # - AI_ENGINE_JWT_SECRET (min 32 caracteres, para firmar JWTs hacia AI Engine)
 # - LEAD_TRANSFER_SECRET (min 16 caracteres, para verificar webhooks de lead transfer)
+# - ORCHESTRATOR_ADMIN_KEY (min 32 caracteres, para autenticar con el production-orchestrator)
 
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "gordocrm"
 database_id = "557ac4b2-6aa6-4b77-9607-d6b347d54512"
 migrations_dir = "db/migrations"
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "assets"
+
+[[env.production.r2_buckets]]
+binding = "BRANDS"
+bucket_name = "brands"

@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, foreignKey, index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { check, foreignKey, index, uniqueIndex, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 const timestampNow = () => new Date();
 const randomId = () => crypto.randomUUID();
@@ -48,6 +48,8 @@ export const clients = sqliteTable(
     leadTier: text('lead_tier'),
     leadSource: text('lead_source'),
     websiteUrl: text('website_url'),
+    clientNumber: integer('client_number'),
+    brandFolder: text('brand_folder'), // Canonical R2 prefix for this client, e.g. puki_001
 
     // Campos fiscales (B2B)
     taxId: text('tax_id'), // CIF/NIF
@@ -70,6 +72,7 @@ export const clients = sqliteTable(
     index('idx_clients_next_review_at').on(table.nextReviewAt),
     index('idx_clients_tax_id').on(table.taxId),
     index('idx_clients_country').on(table.country),
+    uniqueIndex('idx_clients_brand_folder').on(table.brandFolder),
   ],
 );
 
@@ -128,13 +131,20 @@ export const jobs = sqliteTable(
     stackSnapshot: text('stack_snapshot'),
     clientGoal: text('client_goal'),
     internalNotes: text('internal_notes'),
+    retryCount: integer('retry_count').notNull().default(0),
+    qaRetryCount: integer('qa_retry_count').notNull().default(0),
+    deliveryUrl: text('delivery_url'),
+    startedAt: integer('started_at', { mode: 'timestamp_ms' }),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+    failedAt: integer('failed_at', { mode: 'timestamp_ms' }),
+    failureReason: text('failure_reason'),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
   },
   (table) => [
     check(
       'jobs_status_check',
-      sql`${table.status} IN ('pending', 'processing', 'completed', 'failed', 'delivered')`,
+      sql`${table.status} IN ('pending', 'processing', 'plan_generated', 'asset_factory_dispatched', 'asset_generated', 'qa_pending', 'qa_evaluation', 'qa_hitl_review', 'approved', 'rejected', 'plan_rejected', 'delivery_ready', 'crm_notified', 'completed', 'failed', 'delivered', 'timeout', 'cancelled')`,
     ),
     check(
       'jobs_platform_check',
@@ -153,7 +163,6 @@ export const assets = sqliteTable(
   {
     id: text('id').primaryKey().$defaultFn(randomId),
     jobId: text('job_id')
-      .notNull()
       .references(() => jobs.id),
     clientId: text('client_id')
       .notNull()
@@ -165,6 +174,8 @@ export const assets = sqliteTable(
     deliveryUrl: text('delivery_url'),
     status: text('status').notNull().default('pending'), // pending, approved, rejected
     metadata: text('metadata'), // JSON string con metadata del asset
+    sku: text('sku'), // Product SKU for brand-scoped folder structure
+    category: text('category'), // 'inputs' or 'assets'
 
     // The Vault - Semantic search fields
     description: text('description'), // AI-generated description
@@ -189,6 +200,35 @@ export const assets = sqliteTable(
     index('idx_assets_client_visible').on(table.clientVisible),
     index('idx_assets_created_at').on(table.createdAt),
     index('idx_assets_job_r2').on(table.jobId, table.r2Key),
+  ],
+);
+
+export const brandCaptureRuns = sqliteTable(
+  'brand_capture_runs',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    triggerAssetId: text('trigger_asset_id').references(() => assets.id),
+    status: text('status').notNull().default('queued'),
+    sourceHash: text('source_hash'),
+    resultVersion: integer('result_version'),
+    snapshotR2Key: text('snapshot_r2_key'),
+    error: text('error'),
+    processingStartedAt: integer('processing_started_at', { mode: 'timestamp_ms' }),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    check(
+      'brand_capture_runs_status_check',
+      sql`${table.status} IN ('queued', 'processing', 'completed', 'failed')`,
+    ),
+    index('idx_brand_capture_runs_client').on(table.clientId),
+    index('idx_brand_capture_runs_status').on(table.status),
+    index('idx_brand_capture_runs_source_hash').on(table.sourceHash),
   ],
 );
 
@@ -258,89 +298,93 @@ export const sessions = sqliteTable(
 
 export const invoices = sqliteTable('invoices', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceNumber: text('invoice_number').notNull().unique(),
+  invoiceNumber: text('invoiceNumber').notNull(),
   series: text('series').notNull().default('F'),
-  fiscalYear: integer('fiscal_year').notNull(),
+  fiscalYear: integer('fiscalYear').notNull(),
 
-  clientId: text('client_id')
+  clientId: text('clientId')
     .notNull()
     .references(() => clients.id),
-  clientTaxId: text('client_tax_id').notNull(),
-  clientLegalName: text('client_legal_name').notNull(),
-  clientAddressLine1: text('client_address_line_1').notNull(),
-  clientAddressLine2: text('client_address_line_2'),
-  clientCity: text('client_city').notNull(),
-  clientRegion: text('client_region'),
-  clientPostalCode: text('client_postal_code').notNull(),
-  clientCountry: text('client_country').default('ES'),
-  clientEmail: text('client_email').notNull(),
+  clientTaxId: text('clientTaxId').notNull(),
+  clientLegalName: text('clientLegalName').notNull(),
+  clientAddressLine1: text('clientAddressLine1').notNull(),
+  clientAddressLine2: text('clientAddressLine2'),
+  clientCity: text('clientCity').notNull(),
+  clientRegion: text('clientRegion'),
+  clientPostalCode: text('clientPostalCode').notNull(),
+  clientCountry: text('clientCountry').default('ES'),
+  clientEmail: text('clientEmail').notNull(),
 
-  issuerTaxId: text('issuer_tax_id').notNull(),
-  issuerLegalName: text('issuer_legal_name').notNull(),
-  issuerAddressLine1: text('issuer_address_line_1').notNull(),
-  issuerCity: text('issuer_city').notNull(),
-  issuerPostalCode: text('issuer_postal_code').notNull(),
-  issuerCountry: text('issuer_country').default('ES'),
-  issuerEmail: text('issuer_email').notNull(),
+  issuerTaxId: text('issuerTaxId').notNull(),
+  issuerLegalName: text('issuerLegalName').notNull(),
+  issuerAddressLine1: text('issuerAddressLine1').notNull(),
+  issuerCity: text('issuerCity').notNull(),
+  issuerPostalCode: text('issuerPostalCode').notNull(),
+  issuerCountry: text('issuerCountry').default('ES'),
+  issuerEmail: text('issuerEmail').notNull(),
 
-  issueDate: integer('issue_date', { mode: 'timestamp_ms' }).notNull(),
-  dueDate: integer('due_date', { mode: 'timestamp_ms' }).notNull(),
-  paidAt: integer('paid_at', { mode: 'timestamp_ms' }),
+  issueDate: integer('issueDate', { mode: 'timestamp_ms' }).notNull(),
+  dueDate: integer('dueDate', { mode: 'timestamp_ms' }).notNull(),
+  paidAt: integer('paidAt', { mode: 'timestamp_ms' }),
 
   description: text('description'),
 
-  subtotalCents: integer('subtotal_cents').notNull().default(0),
-  taxRate: real('tax_rate').notNull().default(0.21),
-  taxAmountCents: integer('tax_amount_cents').notNull().default(0),
-  irpfRate: real('irpf_rate'),
-  irpfAmountCents: integer('irpf_amount_cents'),
-  totalCents: integer('total_cents').notNull().default(0),
+  subtotalCents: integer('subtotalCents').notNull().default(0),
+  taxRate: real('taxRate').notNull().default(0.21),
+  taxAmountCents: integer('taxAmountCents').notNull().default(0),
+  irpfRate: real('irpfRate'),
+  irpfAmountCents: integer('irpfAmountCents'),
+  totalCents: integer('totalCents').notNull().default(0),
 
   status: text('status').notNull().default('draft'),
-  paymentMethod: text('payment_method'),
-  paymentNotes: text('payment_notes'),
+  paymentMethod: text('paymentMethod'),
+  paymentNotes: text('paymentNotes'),
 
-  isRectificative: integer('is_rectificative', { mode: 'boolean' }).default(false),
-  rectificativeReason: text('rectificative_reason'),
-  originalInvoiceId: text('original_invoice_id'),
+  isRectificative: integer('isRectificative', { mode: 'boolean' }).default(false),
+  rectificativeReason: text('rectificativeReason'),
+  originalInvoiceId: text('originalInvoiceId'),
 
-  relatedJobIds: text('related_job_ids'),
+  relatedJobIds: text('relatedJobIds'),
 
   notes: text('notes'),
   terms: text('terms'),
   footer: text('footer'),
 
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  /** URL to the Billing Pro document — set by admin to let client view/download. */
+  billingProUrl: text('billing_pro_url'),
+
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  updatedAt: integer('updatedAt', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
 }, (table) => [
   foreignKey({
     columns: [table.originalInvoiceId],
     foreignColumns: [table.id],
     name: 'fk_invoices_original_invoice',
   }),
+  uniqueIndex('invoices_client_number_unique').on(table.clientId, table.invoiceNumber),
 ]);
 
 export const invoiceItems = sqliteTable('invoice_items', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceId: text('invoice_id')
+  invoiceId: text('invoiceId')
     .notNull()
     .references(() => invoices.id, { onDelete: 'cascade' }),
 
   // Concepto
   description: text('description').notNull(),
   quantity: real('quantity').notNull().default(1),
-  unitPriceCents: integer('unit_price_cents').notNull(),
+  unitPriceCents: integer('unitPriceCents').notNull(),
 
   // Importes
-  subtotalCents: integer('subtotal_cents').notNull(),
-  taxRate: real('tax_rate').notNull().default(0.21),
-  taxAmountCents: integer('tax_amount_cents').notNull(),
-  irpfRate: real('irpf_rate'),
-  irpfAmountCents: integer('irpf_amount_cents'),
-  totalCents: integer('total_cents').notNull(),
+  subtotalCents: integer('subtotalCents').notNull(),
+  taxRate: real('taxRate').notNull().default(0.21),
+  taxAmountCents: integer('taxAmountCents').notNull(),
+  irpfRate: real('irpfRate'),
+  irpfAmountCents: integer('irpfAmountCents'),
+  totalCents: integer('totalCents').notNull(),
 
   // Orden
-  sortOrder: integer('sort_order').notNull().default(0),
+  sortOrder: integer('sortOrder').notNull().default(0),
 
   // Metadata
   jobId: text('job_id').references(() => jobs.id),
@@ -351,7 +395,7 @@ export const invoiceItems = sqliteTable('invoice_items', {
 
 export const invoiceLogs = sqliteTable('invoice_logs', {
   id: text('id').primaryKey().$defaultFn(randomId),
-  invoiceId: text('invoice_id')
+  invoiceId: text('invoiceId')
     .notNull()
     .references(() => invoices.id, { onDelete: 'cascade' }),
   action: text('action').notNull(), // created, issued, sent, paid, cancelled, modified, emailed
@@ -443,5 +487,114 @@ export const notifications = sqliteTable(
     index('idx_notifications_user_id').on(table.userId),
     index('idx_notifications_read').on(table.read),
     index('idx_notifications_created_at').on(table.createdAt),
+  ],
+);
+
+// Brand Graph vectors — vector representations of client visual identity
+export const brandGraphVectors = sqliteTable(
+  'brand_graph_vectors',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    vectorType: text('vector_type').notNull(), // 'color' | 'style' | 'composition' | 'typography' | 'lighting' | 'mood' | 'reference_image'
+    label: text('label').notNull(),             // Human-readable label
+    value: text('value').notNull(),              // JSON: hex color, description, or embedding array
+    confidence: real('confidence').notNull().default(1.0), // 0-1
+    source: text('source').notNull().default('manual'),   // 'manual' | 'ai_generated' | 'asset_derived'
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_bgv_client_id').on(table.clientId),
+    index('idx_bgv_client_type').on(table.clientId, table.vectorType),
+    index('idx_bgv_confidence').on(table.clientId, table.confidence),
+  ],
+);
+
+// Brand Graph coverage — per-dimension coverage scores per client
+export const brandGraphCoverage = sqliteTable(
+  'brand_graph_coverage',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    dimension: text('dimension').notNull(), // 'color' | 'typography' | 'composition' | 'lighting' | 'style'
+    coverageScore: real('coverage_score').notNull().default(0.0), // 0-1
+    lastAssessedAt: integer('last_assessed_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_bgc_client_id').on(table.clientId),
+  ],
+);
+
+// Agent invocation audit trail — RGPD/EU AI Act compliance
+export const agentInvocations = sqliteTable(
+  'agent_invocations',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    jobId: text('job_id')
+      .notNull()
+      .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    agentName: text('agent_name').notNull(),           // e.g., 'visual-production-planner'
+    invocationType: text('invocation_type').notNull(),  // 'plan' | 'generate' | 'qa' | 'enrich' | 'curate'
+    contextHash: text('context_hash').notNull(),         // SHA-256 hash of context envelope
+    outputHash: text('output_hash'),                     // SHA-256 hash of agent output (null if failed)
+    confidence: real('confidence'),                      // Agent confidence score (0-1)
+    decision: text('decision').notNull(),                 // 'approved' | 'rejected' | 'hitl_review' | 'error'
+    humanOverride: text('human_override'),               // 'approved' | 'rejected' | null
+    humanOverrideBy: text('human_override_by'),         // User ID who overrode
+    errorMessage: text('error_message'),                 // Error message if invocation failed
+    tokenCount: integer('token_count'),                  // Approximate token count for cost tracking
+    durationMs: integer('duration_ms'),                 // Invocation duration in ms
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_ai_job_id').on(table.jobId),
+    index('idx_ai_client_id').on(table.clientId),
+    index('idx_ai_agent_name').on(table.agentName),
+    index('idx_ai_decision').on(table.decision),
+    index('idx_ai_created_at').on(table.createdAt),
+    index('idx_ai_client_created').on(table.clientId, table.createdAt),
+  ],
+);
+
+// HITL (Human-in-the-Loop) reviews
+export const hitlReviews = sqliteTable(
+  'hitl_reviews',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    jobId: text('job_id')
+      .notNull()
+      .references(() => jobs.id),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    invocationId: text('invocation_id')
+      .references(() => agentInvocations.id),
+    reviewType: text('review_type').notNull(),       // 'plan_approval' | 'qa_override' | 'brand_graph_override'
+    status: text('status').notNull().default('pending'), // 'pending' | 'approved' | 'rejected' | 'timed_out'
+    contextSummary: text('context_summary').notNull(), // JSON: what the reviewer sees
+    reviewerId: text('reviewer_id'),                   // User ID of reviewer
+    reviewerAction: text('reviewer_action'),           // 'approved' | 'rejected' | 'override_brand_graph'
+    reviewerNote: text('reviewer_note'),               // Optional note from reviewer
+    confidenceScore: real('confidence_score'),         // Agent confidence that triggered HITL
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    reviewedAt: integer('reviewed_at', { mode: 'timestamp_ms' }),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    index('idx_hitl_job_id').on(table.jobId),
+    index('idx_hitl_client_id').on(table.clientId),
+    index('idx_hitl_status').on(table.status),
+    index('idx_hitl_created_at').on(table.createdAt),
+    index('idx_hitl_pending').on(table.status, table.createdAt),
   ],
 );

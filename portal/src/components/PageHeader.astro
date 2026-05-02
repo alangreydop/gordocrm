@@ -9,13 +9,13 @@ const { kicker, title, description } = Astro.props;
 ---
 
 <section class="crm-page-header" role="region">
-  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-    <div>
+  <div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+    <div class="grid gap-3">
       {kicker && <p class="crm-kicker crm-kicker--accent">{kicker}</p>}
-      <h1 class="mt-1 text-2xl md:text-3xl font-black tracking-tight" style="color: var(--crm-text);">{title}</h1>
-      {description && <p class="crm-page-header__meta mt-2">{description}</p>}
+      <h1 class="crm-page-header__title">{title}</h1>
+      {description && <p class="crm-page-header__meta">{description}</p>}
     </div>
-    <div class="flex-shrink-0">
+    <div class="crm-page-header__actions flex-shrink-0">
       <slot name="actions" />
     </div>
   </div>

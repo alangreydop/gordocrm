@@ -1,179 +1,303 @@
 ---
 import ClientLayout from '../../../layouts/ClientLayout.astro';
+import MetricCard from '../../../components/MetricCard.astro';
 import { siteLinks } from '../../../lib/site-links';
 ---
 
 <ClientLayout title="Detalle trabajo">
-   <div class="space-y-6" role="region" aria-label="Detalle del trabajo">
-     <section class="crm-panel-strong p-6 md:p-8">
-       <a href="/client" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Resumen</a>
-       <div class="mt-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-         <div>
-           <p class="crm-kicker">Detalle de trabajo</p>
-           <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Cargando trabajo...</h1>
-           <p id="job-subtitle" class="mt-4 text-sm leading-relaxed text-crm-text-secondary">Estamos cargando el detalle y los assets aprobados.</p>
-          </div>
-          <span id="job-status-pill" class="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-crm-text-secondary" role="status">—</span>
+  <div class="space-y-6" role="region" aria-label="Detalle del trabajo">
+    <section class="crm-panel-strong p-6 md:p-8">
+      <a href="/client" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Resumen</a>
+      <div class="mt-5 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+        <div class="grid gap-3">
+          <p class="crm-kicker crm-kicker--accent">Detalle del trabajo</p>
+          <h1 id="job-title" class="crm-page-header__title">Cargando trabajo...</h1>
+          <p id="job-subtitle" class="crm-page-header__meta">
+            Estamos reuniendo el estado del encargo, el historial de revisión y los assets ya aprobados.
+          </p>
         </div>
-      </section>
-
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div class="crm-panel p-5" role="region" aria-label="Plataforma">
-          <p class="crm-kicker">Plataforma</p>
-          <p id="job-platform" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
-        </div>
-        <div class="crm-panel p-5" role="region" aria-label="Tipo">
-          <p class="crm-kicker">Tipo</p>
-          <p id="job-type" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
-        </div>
-        <div class="crm-panel p-5" role="region" aria-label="Due date">
-          <p class="crm-kicker">Due</p>
-          <p id="job-due" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
-        </div>
-        <div class="crm-panel p-5" role="region" aria-label="Unidades">
-          <p class="crm-kicker">Units</p>
-          <p id="job-units" class="mt-4 text-3xl font-black tracking-tight text-crm-text">—</p>
-        </div>
+        <span id="job-status-pill" class="crm-badge crm-badge-default self-start" role="status">Sin estado</span>
       </div>
+    </section>
 
-      <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-        <section class="crm-panel p-6 md:p-7" role="region" aria-label="Assets aprobados">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-crm-text">Assets aprobados</h2>
-            <button id="download-all-btn" class="crm-button crm-button-secondary text-sm">
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <MetricCard kicker="Plataforma">
+        <p id="job-platform" class="crm-metric-card__value">—</p>
+        <p class="crm-metric-card__meta">Canal principal del encargo</p>
+      </MetricCard>
+      <MetricCard kicker="Tipo">
+        <p id="job-type" class="crm-metric-card__value">—</p>
+        <p class="crm-metric-card__meta">Formato y naturaleza de la entrega</p>
+      </MetricCard>
+      <MetricCard kicker="Entrega prevista">
+        <p id="job-due" class="crm-metric-card__value">—</p>
+        <p class="crm-metric-card__meta">Fecha comprometida para la siguiente salida</p>
+      </MetricCard>
+      <MetricCard kicker="Consumo">
+        <p id="job-units" class="crm-metric-card__value">—</p>
+        <p class="crm-metric-card__meta">Unidades consumidas frente al plan</p>
+      </MetricCard>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+      <section class="crm-panel p-6 md:p-7" role="region" aria-label="Assets aprobados">
+        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div class="space-y-2">
+            <p class="crm-kicker">Entregables</p>
+            <h2 class="text-2xl font-bold tracking-tight text-crm-text">Assets aprobados y material de apoyo</h2>
+            <p class="text-sm leading-relaxed text-crm-text-secondary">
+              Aquí verás las piezas listas para descargar y también podrás subir material nuevo si el equipo necesita más contexto.
+            </p>
+          </div>
+          <button id="download-all-btn" class="crm-button crm-button-secondary text-sm">
             Descargar todo
-            </button>
-          </div>
-          <div id="assets-grid" class="grid gap-4 md:grid-cols-2">
-            <p class="text-crm-muted">Cargando assets...</p>
-          </div>
+          </button>
+        </div>
 
-          <!-- Client Upload -->
-          <div class="mt-6 border-t border-crm-border pt-6">
-            <p class="crm-kicker mb-3">Subir material</p>
-            <div id="quota-info" class="mb-3 text-xs text-crm-muted" aria-live="polite">
-            Cargando quota...
-            </div>
-            <form id="upload-form" class="flex flex-col gap-3">
-              <input
+        <div id="assets-grid" class="mt-6 grid gap-4 md:grid-cols-2">
+          <p class="text-crm-muted">Cargando assets...</p>
+        </div>
+
+        <div class="mt-6 border-t border-crm-border pt-6">
+          <div class="space-y-2">
+            <p class="crm-kicker">Subir material</p>
+            <h3 class="text-lg font-semibold tracking-tight text-crm-text">Añadir contexto al trabajo</h3>
+            <p class="text-sm leading-relaxed text-crm-text-secondary">
+              Comparte referencias, archivos fuente o piezas del cliente para acelerar la siguiente revisión.
+            </p>
+          </div>
+          <div id="quota-info" class="mt-4 text-xs text-crm-muted" aria-live="polite">Cargando quota...</div>
+          <form id="upload-form" class="mt-4 flex flex-col gap-3">
+            <input
               type="file"
               id="upload-file"
               accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
               class="crm-input text-sm"
-              />
-              <div class="flex items-center gap-3">
-                <button type="submit" id="upload-btn" class="crm-button crm-button-primary text-sm">
+            />
+            <div class="flex flex-wrap items-center gap-3">
+              <button type="submit" id="upload-btn" class="crm-button crm-button-primary text-sm">
                 Subir archivo
-                </button>
-                <span id="upload-status" class="hidden text-xs" aria-live="polite"></span>
-              </div>
-              <p class="text-xs text-crm-muted">Max 50MB. JPG, PNG, WebP, MP4, MOV.</p>
-            </form>
-          </div>
-        </section>
-
-        <section class="space-y-6">
-          <div id="progress-box" class="hidden rounded-[1.4rem] border p-6" style="border-color: color-mix(in srgb, var(--crm-info) 20%, transparent); background-color: color-mix(in srgb, var(--crm-info) 10%, transparent); color: var(--crm-info);" role="status">
-            <h2 class="font-semibold text-crm-text">Trabajo en marcha</h2>
-            <p class="mt-2 text-sm leading-relaxed">Estamos trabajando en ello. Los assets apareceran aqui en cuanto esten listos y aprobados.</p>
-          </div>
-
-          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Timeline del trabajo">
-            <p class="crm-kicker">Timeline del trabajo</p>
-            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Seguimiento paso a paso</h2>
-            <div id="job-timeline" class="mt-5 space-y-4" aria-live="polite">
-              <div class="flex items-start gap-3">
-                <div class="h-2 w-2 mt-2 rounded-full bg-crm-muted"></div>
-                <div>
-                  <p class="text-sm font-medium text-crm-text-secondary">Cargando timeline...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Feedback del asset">
-            <p class="crm-kicker">Feedback del asset</p>
-            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">¿Necesitas cambios?</h2>
-            <div class="mt-4 space-y-3">
-              <textarea id="feedback-text" rows="3" class="crm-input text-sm" placeholder="Describe los cambios o ajustes que necesitas..."></textarea>
-              <button id="send-feedback-btn" class="crm-button crm-button-primary w-full text-sm">
-              Enviar feedback
               </button>
-              <p class="text-xs text-crm-muted">Tu feedback llegará directamente al equipo de producción.</p>
+              <span id="upload-status" class="hidden text-xs" aria-live="polite"></span>
             </div>
-          </div>
+            <p class="text-xs text-crm-muted">Máximo 20 MB. JPG, PNG, WebP.</p>
+          </form>
+        </div>
+      </section>
 
-          <!-- Feedback History -->
-          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Historial de feedback">
-            <p class="crm-kicker">Historial</p>
-            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Feedback enviado</h2>
-            <div id="feedback-history" class="mt-4 space-y-3" aria-live="polite">
-              <p class="text-sm text-crm-muted">Cargando historial...</p>
-            </div>
-          </div>
+      <section class="space-y-6">
+        <div
+          id="progress-box"
+          class="hidden rounded-[1.4rem] border p-6"
+          style="border-color: color-mix(in srgb, var(--crm-info) 20%, transparent); background-color: color-mix(in srgb, var(--crm-info) 10%, transparent); color: var(--crm-info);"
+          role="status"
+        >
+          <h2 class="font-semibold text-crm-text">Trabajo en marcha</h2>
+          <p class="mt-2 text-sm leading-relaxed">Seguimos trabajando. Los assets aparecerán aquí en cuanto queden revisados y aprobados.</p>
+        </div>
 
-          <!-- Team Messages -->
-          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Mensajes del equipo">
-            <p class="crm-kicker">Comunicación</p>
-            <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">Mensajes del equipo</h2>
-            <div id="team-messages" class="mt-4 space-y-3" aria-live="polite">
-              <p class="text-sm text-crm-muted">Cargando mensajes...</p>
+        <div class="crm-panel p-6 md:p-7" role="region" aria-label="Timeline del trabajo">
+          <p class="crm-kicker">Timeline</p>
+          <h2 class="mt-3 text-xl font-bold tracking-tight text-crm-text">Dónde está ahora el trabajo</h2>
+          <div id="job-timeline" class="mt-5 space-y-4" aria-live="polite">
+            <div class="flex items-start gap-3">
+              <div class="mt-2 h-2 w-2 rounded-full bg-crm-muted"></div>
+              <div>
+                <p class="text-sm font-medium text-crm-text-secondary">Cargando timeline...</p>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="crm-panel p-6 md:p-7" role="region" aria-label="Soporte y contexto">
-            <p class="crm-kicker">Soporte y contexto</p>
-            <h2 class="mt-3 text-2xl font-black tracking-tight text-crm-text">Todo alineado alrededor del trabajo</h2>
-            <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
-              <p><span class="font-medium text-crm-text">Contacto:</span> hola@grandeandgordo.com</p>
-              <p><span class="font-medium text-crm-text">Si necesitas algo urgente:</span> responde por email indicando el trabajo y el objetivo del cambio.</p>
-            </div>
-            <div class="mt-5 grid gap-3">
-              <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
-              Actualizar brief
-              </a>
-              <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
-              Ver onboarding
-              </a>
-              <a href={siteLinks.portalHub} target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
-              Abrir centro de cliente
-              </a>
-            </div>
+        <div class="crm-panel p-6 md:p-7" role="region" aria-label="Feedback del asset">
+          <p class="crm-kicker">Revisión</p>
+          <h2 class="mt-3 text-xl font-bold tracking-tight text-crm-text">Pide cambios con contexto claro</h2>
+          <div class="mt-4 space-y-3">
+            <textarea id="feedback-text" rows="4" class="crm-input text-sm" placeholder="Describe el ajuste, el motivo y la intención del cambio..."></textarea>
+            <button id="send-feedback-btn" class="crm-button crm-button-primary w-full text-sm">
+              Enviar feedback
+            </button>
+            <p class="text-xs text-crm-muted">Tu feedback entra directo en el flujo de producción del equipo.</p>
           </div>
-        </section>
-      </div>
+        </div>
+
+        <div class="crm-panel p-6 md:p-7" role="region" aria-label="Historial de feedback">
+          <p class="crm-kicker">Historial</p>
+          <h2 class="mt-3 text-xl font-bold tracking-tight text-crm-text">Feedback enviado</h2>
+          <div id="feedback-history" class="mt-4 space-y-3" aria-live="polite">
+            <p class="text-sm text-crm-muted">Cargando historial...</p>
+          </div>
+        </div>
+
+        <div class="crm-panel p-6 md:p-7" role="region" aria-label="Mensajes del equipo">
+          <p class="crm-kicker">Equipo</p>
+          <h2 class="mt-3 text-xl font-bold tracking-tight text-crm-text">Mensajes y aclaraciones</h2>
+          <div id="team-messages" class="mt-4 space-y-3" aria-live="polite">
+            <p class="text-sm text-crm-muted">Cargando mensajes...</p>
+          </div>
+        </div>
+
+        <div class="crm-panel p-6 md:p-7" role="region" aria-label="Soporte y contexto">
+          <p class="crm-kicker">Contexto</p>
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-crm-text">Todo alineado alrededor del encargo</h2>
+          <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
+            <p><span class="font-medium text-crm-text">Contacto:</span> hola@grandeandgordo.com</p>
+            <p><span class="font-medium text-crm-text">Si necesitas algo urgente:</span> responde por email indicando el trabajo y el objetivo del cambio.</p>
+          </div>
+          <div class="mt-5 grid gap-3">
+            <a href={siteLinks.brief} class="crm-button crm-button-secondary">Actualizar brief</a>
+            <a href={siteLinks.onboarding} class="crm-button crm-button-secondary">Ver activación</a>
+            <a href={siteLinks.portalHub} class="crm-button crm-button-secondary">Abrir centro de cliente</a>
+          </div>
+        </div>
+      </section>
     </div>
+  </div>
 
-    <script>
-      (async () => {
+  <script>
+    (async () => {
       const {
         API_BASE,
         api,
         escapeHtml,
         formatDate,
         formatNumber,
-        } = await import('../../../lib/api-client');
-      const { jobStatusClass } = await import('../../../lib/ui-helpers');
+      } = await import('../../../lib/api-client');
+      const { jobStatusClass, jobStatusLabel } = await import('../../../lib/ui-helpers');
 
       const jobId = new URLSearchParams(window.location.search).get('id');
       if (!jobId) {
         window.location.href = '/client';
         return;
-        }
+      }
 
       const jobStatusSteps = {
         pending: { label: 'Pendiente', step: 1 },
         processing: { label: 'En producción', step: 2 },
         completed: { label: 'Completado', step: 3 },
         delivered: { label: 'Entregado', step: 4 },
-        };
+      };
 
       const timelineSteps = [
-          { step: 1, label: 'Brief recibido', description: 'El trabajo fue creado y está en cola' },
-          { step: 2, label: 'En producción', description: 'Estamos creando tus assets' },
-          { step: 3, label: 'QA completado', description: 'Los assets fueron aprobados internamente' },
-          { step: 4, label: 'Entregado', description: 'Assets disponibles para descarga' },
-        ];
+        { step: 1, label: 'Brief recibido', description: 'El trabajo se abrió y quedó listo para producción.' },
+        { step: 2, label: 'En producción', description: 'Estamos desarrollando las piezas y revisando materiales.' },
+        { step: 3, label: 'QA completado', description: 'Los assets ya superaron la revisión interna.' },
+        { step: 4, label: 'Entregado', description: 'Las versiones finales están listas para descarga.' },
+      ];
+
+      const assetsGrid = document.getElementById('assets-grid');
+      let lightboxEl;
+      let lightboxKeyHandler;
+
+      const closeLightbox = () => {
+        if (lightboxEl) {
+          lightboxEl.remove();
+          lightboxEl = undefined;
+        }
+        if (lightboxKeyHandler) {
+          document.removeEventListener('keydown', lightboxKeyHandler);
+          lightboxKeyHandler = undefined;
+        }
+      };
+
+      const showLightbox = (url, type) => {
+        closeLightbox();
+
+        lightboxEl = document.createElement('div');
+        lightboxEl.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md';
+        lightboxEl.style.background = 'rgba(11, 6, 8, 0.84)';
+        lightboxEl.innerHTML = `
+          <button class="absolute right-4 top-4 z-10 text-[rgba(255,253,253,0.76)] transition hover:text-[rgba(255,253,253,1)]" type="button" aria-label="Cerrar preview">
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg>
+          </button>
+          <div class="max-h-[85vh] max-w-5xl">
+            ${type === 'video'
+              ? `<video src="${url}" controls class="max-h-[85vh] max-w-full rounded-2xl"></video>`
+              : `<img src="${url}" alt="Asset preview" class="max-h-[85vh] max-w-full rounded-2xl object-contain" decoding="async" />`
+            }
+            <div class="mt-4 flex flex-wrap justify-center gap-3">
+              <a href="${url}" download class="crm-button crm-button-primary">Descargar</a>
+              <a href="${url}" target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">Abrir aparte</a>
+            </div>
+          </div>
+        `;
+
+        const closeButton = lightboxEl.querySelector('button');
+        closeButton?.addEventListener('click', closeLightbox);
+        lightboxEl.addEventListener('click', (event) => {
+          if (event.target === lightboxEl) closeLightbox();
+        });
+
+        lightboxKeyHandler = (event) => {
+          if (event.key === 'Escape') closeLightbox();
+        };
+        document.addEventListener('keydown', lightboxKeyHandler);
+
+        document.body.appendChild(lightboxEl);
+      };
+
+      const renderAssetsMarkup = (assets) => {
+        if (!assets.length) {
+          return '<div class="crm-empty md:col-span-2">Todavía no hay assets aprobados para este trabajo.</div>';
+        }
+
+        return assets.map((asset, index) => `
+          <article class="crm-panel-soft cursor-pointer overflow-hidden p-4 group" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
+            <div class="relative mb-4 overflow-hidden rounded-[1.2rem] bg-[rgba(255,248,251,0.92)]">
+              ${asset.type === 'video'
+                ? `<div class="aspect-video flex items-center justify-center bg-[rgba(255,248,251,0.92)]">
+                     <svg class="h-12 w-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0 0 10 9.87v4.263a1 1 0 0 0 1.555.832l3.197-2.132a1 1 0 0 0 0-1.664Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                   </div>`
+                : `<img src="${asset.deliveryUrl || '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                   <div class="hidden aspect-video items-center justify-center bg-[rgba(255,248,251,0.92)]">
+                     <svg class="h-12 w-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2 1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"/></svg>
+                   </div>`
+              }
+              <div class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-3 opacity-0 transition-opacity group-hover:opacity-100" style="background: linear-gradient(180deg, rgba(11, 6, 8, 0), rgba(11, 6, 8, 0.44));">
+                <span class="crm-badge ${asset.type === 'video' ? 'crm-badge-accent' : 'crm-badge-default'}">
+                  ${asset.type === 'video' ? 'Video' : 'Imagen'}
+                </span>
+                <span class="text-xs font-medium text-[rgba(255,253,253,0.92)]">Ver preview</span>
+              </div>
+            </div>
+            <p class="text-base font-semibold text-crm-text">${escapeHtml(asset.label ?? `Asset ${index + 1}`)}</p>
+            <p class="mt-1 text-xs text-crm-muted">${escapeHtml(asset.type ?? 'asset')}</p>
+            <div class="mt-4 flex gap-2">
+              ${asset.deliveryUrl
+                ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>`
+                : '<p class="text-xs text-crm-muted">Preparando entrega...</p>'
+              }
+              ${asset.deliveryUrl
+                ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">Descargar</a>`
+                : ''
+              }
+            </div>
+          </article>
+        `).join('');
+      };
+
+      const bindAssetPreviews = () => {
+        if (!assetsGrid) return;
+
+        assetsGrid.querySelectorAll('[data-asset-url]').forEach((card) => {
+          card.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target instanceof HTMLElement && target.closest('a')) return;
+
+            const url = card.getAttribute('data-asset-url');
+            const type = card.getAttribute('data-asset-type');
+            if (!url) return;
+
+            showLightbox(url, type);
+          });
+        });
+      };
+
+      const renderAssetsGrid = (assets) => {
+        if (!assetsGrid) return;
+        assetsGrid.innerHTML = renderAssetsMarkup(assets);
+        bindAssetPreviews();
+      };
 
       try {
         const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
@@ -183,7 +307,6 @@ import { siteLinks } from '../../../lib/site-links';
         const title = document.getElementById('job-title');
         const subtitle = document.getElementById('job-subtitle');
         const statusPill = document.getElementById('job-status-pill');
-        const assetsGrid = document.getElementById('assets-grid');
         const progressBox = document.getElementById('progress-box');
         const timelineContainer = document.getElementById('job-timeline');
         const downloadAllBtn = document.getElementById('download-all-btn');
@@ -194,135 +317,44 @@ import { siteLinks } from '../../../lib/site-links';
         if (subtitle) {
           const assetCount = assets.length;
           const assetText = assetCount > 0
-              ? `${assetCount} asset${assetCount !== 1 ? 's' : ''} completado${assetCount !== 1 ? 's' : ''} y disponible${assetCount !== 1 ? 's' : ''} para descarga.`
-              : 'assets visibles solo cuando estan aprobados.';
-          subtitle.textContent = `Actualizado ${formatDate(job.updatedAt)} · ${assetText}`;
-          }
+            ? `${assetCount} asset${assetCount !== 1 ? 's' : ''} ya aprobado${assetCount !== 1 ? 's' : ''} y disponible${assetCount !== 1 ? 's' : ''} para descarga.`
+            : 'Los assets aparecerán aquí cuando superen revisión.';
+          subtitle.textContent = `Actualizado ${formatDate(job.updatedAt)}. ${assetText}`;
+        }
         if (statusPill) {
-          statusPill.textContent = job.status ?? 'pending';
-          statusPill.className = `inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}`;
-          }
+          statusPill.textContent = jobStatusLabel(job.status ?? 'pending');
+          statusPill.className = jobStatusClass(job.status ?? 'pending');
+        }
 
         const setText = (id, value) => {
           const element = document.getElementById(id);
           if (element) element.textContent = value;
-          };
+        };
 
         setText('job-platform', job.platform ?? '—');
         setText('job-type', job.type ?? '—');
         setText('job-due', formatDate(job.dueAt));
         setText('job-units', `${formatNumber(job.unitsConsumed ?? 0)} / ${formatNumber(job.unitsPlanned ?? 0)}`);
 
-          // Build timeline
         if (timelineContainer) {
           const currentStep = jobStatusSteps[job.status]?.step ?? 1;
-          timelineContainer.innerHTML = timelineSteps.map((step, idx) => {
+          timelineContainer.innerHTML = timelineSteps.map((step) => {
             const isCompleted = step.step <= currentStep;
             const isCurrent = step.step === currentStep;
             return `
               <div class="flex items-start gap-3">
-                <div class="h-2 w-2 mt-2 rounded-full" style="background: ${isCompleted ? 'var(--crm-success)' : 'var(--crm-muted)'}"></div>
-                <div class="${isCurrent ? 'opacity-100' : 'opacity-60'}">
+                <div class="mt-2 h-2 w-2 rounded-full" style="background: ${isCompleted ? 'var(--crm-success)' : 'var(--crm-muted)'}"></div>
+                <div class="${isCurrent ? 'opacity-100' : 'opacity-70'}">
                   <p class="text-sm font-medium ${isCompleted ? 'text-crm-text' : 'text-crm-muted'}">${escapeHtml(step.label)}</p>
-                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(step.description)}</p>
+                  <p class="mt-0.5 text-xs text-crm-muted">${escapeHtml(step.description)}</p>
                 </div>
               </div>
             `;
           }).join('');
-          }
+        }
 
-        if (assetsGrid) {
-          assetsGrid.innerHTML = assets.length === 0
-              ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
-              : assets.map((asset, idx) => `
-                <article class="crm-panel-soft p-4 group cursor-pointer" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
-                  <div class="relative overflow-hidden rounded-lg bg-crm-panel mb-4">
-                    ${asset.type === 'video'
-                      ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
-                           <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                         </div>`
-                      : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
-                         <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
-                           <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                         </div>`
-                   }
-                   <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                     <span class="text-xs font-medium text-crm-text">Ver en grande</span>
-                   </div>
-                 </div>
-                 <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? `Asset ${idx + 1}`)}</p>
-                 <p class="mt-1 text-xs text-crm-muted">${escapeHtml(asset.type ?? 'asset')}</p>
-                 <div class="mt-3 flex gap-2">
-                   ${
-                    asset.deliveryUrl
-                        ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>`
-                        : '<p class="text-xs text-crm-muted">Preparando entrega...</p>'
-                   }
-                   ${
-                    asset.deliveryUrl
-                        ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">↓</a>`
-                        : ''
-                   }
-                 </div>
-               </article>
-             `).join('');
+        renderAssetsGrid(assets);
 
-            // Asset click - lightbox
-          assetsGrid.querySelectorAll('[data-asset-url]').forEach((card) => {
-            card.addEventListener('click', (e) => {
-              const target = e.target;
-              if (target.tagName === 'A') return; // Don't trigger on buttons
-
-              const url = card.getAttribute('data-asset-url');
-              const type = card.getAttribute('data-asset-type');
-              if (!url) return;
-
-              showLightbox(url, type);
-            });
-          });
-          }
-
-        // Lightbox for asset preview
-        let lightboxEl;
-        const showLightbox = (url, type) => {
-          if (lightboxEl) lightboxEl.remove();
-
-          lightboxEl = document.createElement('div');
-          lightboxEl.className = 'fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4';
-          lightboxEl.innerHTML = `
-              <button class="absolute top-4 right-4 text-crm-text/70 hover:text-crm-text z-10">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>
-              <div class="max-w-5xl max-h-[85vh]">
-                ${type === 'video'
-                  ? `<video src="${url}" controls class="max-w-full max-h-[85vh] rounded-lg"></video>`
-                  : `<img src="${url}" alt="Asset preview" class="max-w-full max-h-[85vh] rounded-lg object-contain" decoding="async"/>`
-                }
-                <div class="mt-4 flex justify-center gap-4">
-                  <a href="${url}" download class="crm-button crm-button-primary">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    Descargar
-                  </a>
-                  <a href="${url}" target="_blank" rel="noreferrer" class="crm-button crm-button-secondary">
-                    Abrir en nueva pestaña
-                  </a>
-                </div>
-              </div>
-            `;
-
-          const closeBtn = lightboxEl.querySelector('button');
-          closeBtn.addEventListener('click', () => lightboxEl.remove());
-          lightboxEl.addEventListener('click', (e) => {
-            if (e.target === lightboxEl) lightboxEl.remove();
-            });
-          document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') lightboxEl.remove();
-            });
-
-          document.body.appendChild(lightboxEl);
-          };
-
-        // Bulk Download Assets using JSZip
         if (downloadAllBtn && assets.length > 0) {
           downloadAllBtn.addEventListener('click', async () => {
             try {
@@ -333,56 +365,55 @@ import { siteLinks } from '../../../lib/site-links';
               downloadAllBtn.disabled = true;
               downloadAllBtn.textContent = 'Empaquetando...';
 
-              const downloadPromises = assets.map(async (asset, idx) => {
+              const downloadPromises = assets.map(async (asset, index) => {
                 if (!asset.deliveryUrl) return;
                 try {
                   const response = await fetch(asset.deliveryUrl);
                   if (!response.ok) throw new Error(`HTTP ${response.status}`);
                   const blob = await response.blob();
-                  const filename = `${asset.label ?? 'asset_' + idx}${asset.type === 'video' ? '.mp4' : '.jpg'}`;
-                  folder.file(filename, blob);
+                  const filename = `${asset.label ?? `asset_${index}`}${asset.type === 'video' ? '.mp4' : '.jpg'}`;
+                  folder?.file(filename, blob);
                 } catch {
-                  // Skip failed downloads — zip continues with available assets
+                  // Continue with the rest of the zip.
                 }
-               });
+              });
 
               await Promise.all(downloadPromises);
 
               const content = await zip.generateAsync({ type: 'blob' });
               const url = URL.createObjectURL(content);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `assets_trabajo_${jobId.slice(0,8)}.zip`;
-              a.click();
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `assets_trabajo_${jobId.slice(0, 8)}.zip`;
+              link.click();
               URL.revokeObjectURL(url);
 
-              downloadAllBtn.textContent = '¡Descargado!';
+              downloadAllBtn.textContent = 'Descargado';
               setTimeout(() => {
                 downloadAllBtn.disabled = false;
                 downloadAllBtn.textContent = 'Descargar todo';
-                }, 2000);
-              } catch (error) {
+              }, 2000);
+            } catch (error) {
               console.error('Bulk download failed:', error);
-              downloadAllBtn.textContent = 'error al descargar';
+              downloadAllBtn.textContent = 'Error al descargar';
               setTimeout(() => {
                 downloadAllBtn.disabled = false;
                 downloadAllBtn.textContent = 'Descargar todo';
-                }, 2000);
-              }
-            });
-          } else if (downloadAllBtn) {
+              }, 2000);
+            }
+          });
+        } else if (downloadAllBtn) {
           downloadAllBtn.disabled = true;
           downloadAllBtn.classList.add('opacity-50', 'cursor-not-allowed');
-          }
+        }
 
-        // Feedback functionality
-        if (sendFeedbackBtn && feedbackText) {
+        if (sendFeedbackBtn && feedbackText instanceof HTMLTextAreaElement) {
           sendFeedbackBtn.addEventListener('click', async () => {
             const feedback = feedbackText.value.trim();
             if (!feedback) {
               feedbackText.focus();
               return;
-             }
+            }
 
             sendFeedbackBtn.disabled = true;
             sendFeedbackBtn.textContent = 'Enviando...';
@@ -391,26 +422,25 @@ import { siteLinks } from '../../../lib/site-links';
               await api(`/api/portal/jobs/${encodeURIComponent(jobId)}/feedback`, {
                 method: 'POST',
                 body: JSON.stringify({ feedback }),
-                });
+              });
 
               feedbackText.value = '';
-              sendFeedbackBtn.textContent = '¡Feedback enviado!';
-              // Reload to show new feedback in history
+              sendFeedbackBtn.textContent = 'Feedback enviado';
               setTimeout(() => {
                 sendFeedbackBtn.textContent = 'Enviar feedback';
                 sendFeedbackBtn.disabled = false;
-                }, 2000);
-              } catch (error) {
-              sendFeedbackBtn.textContent = 'error al enviar';
+              }, 2000);
+            } catch (error) {
+              console.error('Feedback failed:', error);
+              sendFeedbackBtn.textContent = 'Error al enviar';
               setTimeout(() => {
                 sendFeedbackBtn.textContent = 'Enviar feedback';
                 sendFeedbackBtn.disabled = false;
-                }, 2000);
-              }
-            });
-          }
+              }, 2000);
+            }
+          });
+        }
 
-        // Parse and render feedback history from job.internalNotes
         const feedbackHistoryEl = document.getElementById('feedback-history');
         if (feedbackHistoryEl) {
           const feedbackRegex = /\[Feedback ([^\]]+)\] ([^:]+): ([\s\S]*?)(?=\n\[Feedback|$)/g;
@@ -423,26 +453,25 @@ import { siteLinks } from '../../../lib/site-links';
                 timestamp: match[1],
                 author: match[2],
                 text: match[3].trim(),
-                });
-              }
-            }
-
-          if (feedbacks.length === 0) {
-            feedbackHistoryEl.innerHTML = '<p class="text-sm text-crm-muted">Aún no has enviado feedback para este trabajo.</p>';
-            } else {
-            feedbackHistoryEl.innerHTML = feedbacks.reverse().map((fb) => `
-              <div class="rounded-lg border border-crm-border bg-crm-bg-alt p-4">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-xs font-medium text-crm-success">Enviado</span>
-                  <span class="text-xs text-crm-text-secondary">${escapeHtml(fb.timestamp)}</span>
-                </div>
-                <p class="text-sm text-crm-text-secondary whitespace-pre-wrap">${escapeHtml(fb.text)}</p>
-              </div>
-            `).join('');
+              });
             }
           }
 
-        // Parse and render team messages from job.internalNotes
+          if (feedbacks.length === 0) {
+            feedbackHistoryEl.innerHTML = '<p class="text-sm text-crm-muted">Aún no has enviado feedback para este trabajo.</p>';
+          } else {
+            feedbackHistoryEl.innerHTML = feedbacks.reverse().map((feedback) => `
+              <div class="rounded-[1.1rem] border border-crm-border bg-[rgba(255,248,251,0.92)] p-4">
+                <div class="mb-2 flex items-center justify-between gap-3">
+                  <span class="crm-badge crm-badge-success">Enviado</span>
+                  <span class="text-xs text-crm-text-secondary">${escapeHtml(feedback.timestamp)}</span>
+                </div>
+                <p class="text-sm whitespace-pre-wrap text-crm-text-secondary">${escapeHtml(feedback.text)}</p>
+              </div>
+            `).join('');
+          }
+        }
+
         const teamMessagesEl = document.getElementById('team-messages');
         if (teamMessagesEl) {
           const teamMessageRegex = /\[TeamMessage ([^\]]+)\] ([^:]+): ([\s\S]*?)(?=\n\[Feedback|\[TeamMessage|$)/g;
@@ -455,38 +484,32 @@ import { siteLinks } from '../../../lib/site-links';
                 timestamp: match[1],
                 author: match[2],
                 text: match[3].trim(),
-                });
-              }
+              });
             }
+          }
 
           if (teamMessages.length === 0) {
-            teamMessagesEl.innerHTML = '<p class="text-sm text-crm-muted">No hay mensajes del equipo todavía. Tu account manager se comunicará aquí si necesita información.</p>';
-            } else {
-            teamMessagesEl.innerHTML = teamMessages.reverse().map((msg) => `
-              <div class="rounded-lg border p-4" style="border-color: color-mix(in srgb, var(--crm-info) 50%, transparent); background-color: color-mix(in srgb, var(--crm-info) 20%, transparent);">
-                <div class="flex items-center justify-between mb-2">
+            teamMessagesEl.innerHTML = '<p class="text-sm text-crm-muted">Todavía no hay mensajes del equipo. Si hace falta información, aparecerá aquí.</p>';
+          } else {
+            teamMessagesEl.innerHTML = teamMessages.reverse().map((message) => `
+              <div class="rounded-[1.1rem] border p-4" style="border-color: color-mix(in srgb, var(--crm-info) 45%, transparent); background-color: color-mix(in srgb, var(--crm-info) 12%, transparent);">
+                <div class="mb-2 flex items-center justify-between gap-3">
                   <div class="flex items-center gap-2">
-                    <span class="text-xs font-medium text-crm-info">Equipo Grande & Gordo</span>
-                    <span class="text-xs text-crm-info opacity-70">${escapeHtml(msg.author)}</span>
+                    <span class="crm-badge crm-badge-info">Equipo</span>
+                    <span class="text-xs text-crm-info opacity-80">${escapeHtml(message.author)}</span>
                   </div>
-                  <span class="text-xs text-crm-text-secondary">${escapeHtml(msg.timestamp)}</span>
+                  <span class="text-xs text-crm-text-secondary">${escapeHtml(message.timestamp)}</span>
                 </div>
-                <p class="text-sm text-crm-text-secondary whitespace-pre-wrap">${escapeHtml(msg.text)}</p>
+                <p class="text-sm whitespace-pre-wrap text-crm-text-secondary">${escapeHtml(message.text)}</p>
               </div>
             `).join('');
-            }
           }
+        }
 
-        if (
-          progressBox &&
-          assets.length === 0 &&
-          job.status !== 'completed' &&
-          job.status !== 'delivered'
-          ) {
+        if (progressBox && assets.length === 0 && job.status !== 'completed' && job.status !== 'delivered') {
           progressBox.classList.remove('hidden');
-          }
+        }
 
-        // Load and display quota
         const quotaInfo = document.getElementById('quota-info');
         try {
           const quota = await api('/api/portal/upload/quota');
@@ -494,110 +517,79 @@ import { siteLinks } from '../../../lib/site-links';
             const usedMB = (quota.storageUsed / (1024 * 1024)).toFixed(1);
             const maxMB = (quota.storageMax / (1024 * 1024)).toFixed(0);
             const remainingMB = (quota.storageRemaining / (1024 * 1024)).toFixed(1);
-            quotaInfo.innerHTML = `
-              <span class="text-crm-text-secondary">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB usados · ${remainingMB} MB libres</span>
-            `;
-            }
-          } catch {
-          if (quotaInfo) quotaInfo.textContent = '';
+            quotaInfo.innerHTML = `<span class="text-crm-text-secondary">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB usados · ${remainingMB} MB libres</span>`;
           }
+        } catch {
+          if (quotaInfo) quotaInfo.textContent = '';
+        }
 
-        // Upload handler
         const uploadForm = document.getElementById('upload-form');
         const uploadFile = document.getElementById('upload-file');
         const uploadBtn = document.getElementById('upload-btn');
         const uploadStatus = document.getElementById('upload-status');
 
-        uploadForm?.addEventListener('submit', async (e) => {
-          e.preventDefault();
+        uploadForm?.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
           if (!(uploadFile instanceof HTMLInputElement) || !uploadFile.files?.length) {
             uploadFile?.focus();
             return;
-            }
+          }
 
           const file = uploadFile.files[0];
           const formData = new FormData();
           formData.append('file', file);
 
-          if (uploadBtn) {
+          if (uploadBtn instanceof HTMLButtonElement) {
             uploadBtn.disabled = true;
             uploadBtn.textContent = 'Subiendo...';
-            }
+          }
           if (uploadStatus) {
             uploadStatus.className = 'text-xs text-crm-info';
             uploadStatus.textContent = 'Subiendo...';
             uploadStatus.classList.remove('hidden');
-            }
+          }
 
           try {
-            const res = await fetch(`${API_BASE}/api/portal/upload/jobs/${encodeURIComponent(jobId)}/upload`, {
+            const response = await fetch(`${API_BASE}/api/portal/upload/jobs/${encodeURIComponent(jobId)}/upload`, {
               method: 'POST',
               body: formData,
               credentials: 'include',
-              });
+            });
 
-            if (!res.ok) {
-              const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
-              throw new Error(data.error || 'error al subir archivo');
-              }
+            if (!response.ok) {
+              const payload = await response.json().catch(() => ({ error: 'Error desconocido' }));
+              throw new Error(payload.error || 'Error al subir archivo');
+            }
 
             uploadFile.value = '';
-            if (uploadBtn) {
+            if (uploadBtn instanceof HTMLButtonElement) {
               uploadBtn.disabled = false;
               uploadBtn.textContent = 'Subir archivo';
-              }
+            }
             if (uploadStatus) {
               uploadStatus.className = 'text-xs text-crm-success';
-              uploadStatus.textContent = '¡Subido correctamente!';
-              }
+              uploadStatus.textContent = 'Subido correctamente';
+            }
 
-              // Reload assets
-            const data = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
-            const newAssets = Array.isArray(data.assets) ? data.assets : [];
-              // Trigger re-render of assets grid
-            if (assetsGrid) {
-              assetsGrid.innerHTML = newAssets.length === 0
-                  ? '<div class="crm-empty md:col-span-2">Todavia no hay assets aprobados para este trabajo.</div>'
-                  : newAssets.map((asset, idx) => `
-                    <article class="crm-panel-soft p-4 group cursor-pointer" data-asset-url="${escapeHtml(asset.deliveryUrl || '')}" data-asset-type="${escapeHtml(asset.type || 'image')}">
-                      <div class="relative overflow-hidden rounded-lg bg-crm-panel mb-4">
-                        ${asset.type === 'video'
-                          ? `<div class="aspect-video flex items-center justify-center bg-crm-bg-alt">
-                               <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                             </div>`
-                          : `<img src="${asset.deliveryUrl ? asset.deliveryUrl : '/placeholder-asset.jpg'}" alt="${escapeHtml(asset.label || 'Asset')}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
-                             <div class="hidden aspect-video items-center justify-center bg-crm-bg-alt">
-                               <svg class="w-12 h-12 text-crm-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                             </div>`
-                       }
-                       <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                         <span class="text-xs font-medium text-crm-text">Ver en grande</span>
-                       </div>
-                     </div>
-                     <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? `Asset ${idx + 1}`)}</p>
-                     <p class="mt-1 text-xs text-crm-muted">${escapeHtml(asset.type ?? 'asset')}</p>
-                     <div class="mt-3 flex gap-2">
-                       ${asset.deliveryUrl ? `<a href="${escapeHtml(asset.deliveryUrl)}" target="_blank" rel="noreferrer" class="crm-button crm-button-primary text-xs flex-1 text-center">Abrir</a>` : '<p class="text-xs text-crm-muted">Preparando entrega...</p>'}
-                       ${asset.deliveryUrl ? `<a href="${escapeHtml(asset.deliveryUrl)}" download class="crm-button crm-button-secondary text-xs">↓</a>` : ''}
-                     </div>
-                   </article>
-                 `).join('');
-              }
-            } catch (error) {
+            const refreshed = await api(`/api/portal/jobs/${encodeURIComponent(jobId)}`);
+            const refreshedAssets = Array.isArray(refreshed.assets) ? refreshed.assets : [];
+            renderAssetsGrid(refreshedAssets);
+          } catch (error) {
             console.error('Upload failed:', error);
-            if (uploadBtn) {
+            if (uploadBtn instanceof HTMLButtonElement) {
               uploadBtn.disabled = false;
               uploadBtn.textContent = 'Subir archivo';
-              }
+            }
             if (uploadStatus) {
               uploadStatus.className = 'text-xs text-crm-danger';
-              uploadStatus.textContent = error instanceof Error ? error.message : 'error al subir';
-              }
+              uploadStatus.textContent = error instanceof Error ? error.message : 'Error al subir';
             }
-          });
-          } catch {
-        window.location.href = '/client';
           }
-       })();
-    </script>
+        });
+      } catch {
+        window.location.href = '/client';
+      }
+    })();
+  </script>
 </ClientLayout>

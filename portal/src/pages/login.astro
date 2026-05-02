@@ -4,206 +4,308 @@ import { siteLinks } from '../lib/site-links';
 ---
 
 <BaseLayout title="Login">
-       <div class="crm-body min-h-screen bg-white" role="region" aria-label="Contenido principal">
-           <div class="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
-               <section class="relative overflow-hidden border-b border-crm-border bg-white px-6 py-14 lg:border-b-0 lg:border-r">
-                   <div class="relative mx-auto flex h-full max-w-2xl flex role="region" aria-label="Contenido principal"-col">
-                       <a href={siteLinks.home} class="inline-flex items-center gap-2 text-sm font-semibold text-crm-muted transition hover:text-crm-accent">
-                           <span aria-hidden="true">&larr;</span>
-                           Volver a grandeandgordo.com
-                       </a>
+  <div class="login-shell">
+    <div class="login-grid">
 
-                       <div class="mt-14 max-w-xl">
-                           <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">portal cliente</p>
-                           <h1 class="mt-5 text-4xl font-black leading-tight text-crm-text md:text-6xl">
-                               misma marca.
-                               <br />
-                               mismo cliente.
-                               <br />
-                               mejor continuidad.
-                           </h1>
-                           <p class="mt-6 text-lg leading-relaxed text-crm-muted">
-                               la web pública te acompaña con onboarding, brief y recursos. este crm
-                               concentra seguimiento, trabajos, entregables y cuenta. los dos forman
-                               parte del mismo journey.
-                           </p>
-                       </div>
+      <!-- Left: dark panel with logo -->
+      <section class="login-intro">
+        <a href={siteLinks.home} class="login-back">grandeandgordo.com</a>
 
-                       <div class="mt-10 grid gap-4 md:grid-cols-3">
-                           <a href={siteLinks.portalHub} class="crm-link-tile">
-                               <p class="text-sm font-semibold text-crm-text">Centro de cliente</p>
-                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
-                                   Vista general para moverte entre portal, brief y onboarding.
-                               </p>
-                           </a>
-                           <a href={siteLinks.brief} class="crm-link-tile">
-                               <p class="text-sm font-semibold text-crm-text">Brief</p>
-                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
-                                   Comparte contexto de marca, referencias y necesidades del proyecto.
-                               </p>
-                           </a>
-                           <a href={siteLinks.onboarding} class="crm-link-tile">
-                               <p class="text-sm font-semibold text-crm-text">Onboarding</p>
-                               <p class="mt-2 text-sm leading-relaxed text-crm-muted">
-                                   Revisa checklist, preparacion de sesion y preguntas frecuentes.
-                               </p>
-                           </a>
-                       </div>
+        <img
+          src="/logo-blanco.png"
+          alt="Grande&Gordo"
+          width="160"
+          height="60"
+          style="width: min(58%, 220px); height: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem;"
+          loading="eager"
+          decoding="async"
+        />
 
-                       <div class="mt-10 grid gap-4 md:grid-cols-3">
-                           <div class="crm-panel-soft p-5">
-                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Journey</p>
-                               <p class="mt-3 text-3xl font-black text-crm-accent">01</p>
-                               <p class="mt-2 text-sm text-crm-muted">La web captura contexto y reduce friccion.</p>
-                           </div>
-                           <div class="crm-panel-soft p-5">
-                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Operacion</p>
-                               <p class="mt-3 text-3xl font-black text-crm-accent">02</p>
-                               <p class="mt-2 text-sm text-crm-muted">El CRM concentra trabajos, estados y entregables.</p>
-                           </div>
-                           <div class="crm-panel-soft p-5">
-                               <p class="text-xs font-bold uppercase tracking-[0.24em] text-crm-subtle">Continuidad</p>
-                               <p class="mt-3 text-3xl font-black text-crm-accent">03</p>
-                               <p class="mt-2 text-sm text-crm-muted">El cliente se mueve sin notar la frontera entre capas.</p>
-                           </div>
-                       </div>
+        <p class="crm-kicker crm-kicker--accent" style="margin-top: 0.25rem;">portal operativo</p>
+        <h1 class="login-title">
+          entra en tu espacio de <em>trabajo.</em>
+        </h1>
+        <p class="login-copy">
+          brief, activación, entregables, vault y facturación viven aquí. Sin brochure. Sin ruido.
+        </p>
 
-                       <div class="mt-auto pt-10 text-sm text-crm-muted">
-                           Si aun no tienes acceso o tu equipo necesita soporte, escribe a
-                           {' '}
-                           <a href={siteLinks.supportMailto} class="font-semibold text-crm-text underline decoration-crm-border underline-offset-4 transition hover:decoration-crm-accent">
-                               {siteLinks.supportEmail}
-                           </a>
-                           .
-                       </div>
-                   </div>
-               </section>
+        <div class="login-notes">
+          <div class="login-note">
+            <span class="login-note__index">01</span>
+            <div>
+              <p class="login-note__title">cliente</p>
+              <p class="login-note__text">sigue briefs, trabajos, activos y billing desde una sola vista.</p>
+            </div>
+          </div>
+          <div class="login-note">
+            <span class="login-note__index">02</span>
+            <div>
+              <p class="login-note__title">admin</p>
+              <p class="login-note__text">entra en operaciones, capacidad, briefs y jobs con el mismo acceso.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-               <section class="flex items-center px-6 py-14">
-                   <div class="mx-auto w-full max-w-md rounded-3xl border border-crm-border bg-crm-panel p-8 crm-panel">
-                       <div class="mb-8">
-                           <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">acceso seguro</p>
-                           <h2 class="mt-3 text-3xl font-black text-crm-text">entrar al CRM</h2>
-                           <p class="mt-3 text-sm leading-relaxed text-crm-muted">
-                               email y contraseña. si vienes desde la web, este es el siguiente paso para ver trabajos y entregables.
-                           </p>
-                       </div>
+      <!-- Right: form panel -->
+      <section class="login-panel">
+        <div class="login-panel__head">
+          <p class="crm-kicker">acceso</p>
+          <h2 class="login-panel__title">
+            email y <em>contraseña</em>
+          </h2>
+          <p class="login-panel__copy">usa el usuario vinculado a tu cuenta del portal.</p>
+        </div>
 
-                       <div id="login-error" class="mb-4 hidden rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600" role="alert" aria-live="polite"></div>
+        <div id="login-error" class="hidden crm-alert crm-alert-danger" role="alert" aria-live="polite"></div>
 
-                       <form id="login-form" class="space-y-4" novalidate>
-                           <div>
-                               <label for="email" class="mb-2 block text-sm font-medium text-crm-text">Email</label>
-                               <input
-                                   type="email"
-                                   id="email"
-                                   name="email"
-                                   required
-                                   autocomplete="email"
-                                   class="crm-input"
-                                   placeholder="cliente@tumarca.com"
-                                   aria-describedby="email-hint"
-                               />
-                               <p id="email-hint" class="mt-1 text-xs text-crm-muted">el email de tu cuenta de cliente</p>
-                           </div>
-                           <div>
-                               <label for="password" class="mb-2 block text-sm font-medium text-crm-text">Contrasena</label>
-                               <input
-                                   type="password"
-                                   id="password"
-                                   name="password"
-                                   required
-                                   autocomplete="current-password"
-                                   class="crm-input"
-                                   aria-describedby="password-hint"
-                               />
-                               <p id="password-hint" class="mt-1 text-xs text-crm-muted">tu contrasena de acceso al portal</p>
-                           </div>
-                           <button
-                               type="submit"
-                               class="crm-button crm-button-primary w-full py-3.5"
-                               id="login-submit"
-                           >
-                               Iniciar sesion
-                           </button>
-                       </form>
+        <form id="login-form" class="login-form" novalidate>
+          <div class="login-field">
+            <label for="email">email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              class="crm-input w-full"
+              placeholder="cliente@tumarca.com"
+            />
+          </div>
+          <div class="login-field">
+            <label for="password">contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autocomplete="current-password"
+              class="crm-input w-full"
+            />
+          </div>
+          <button
+            type="submit"
+            class="crm-button crm-button-primary w-full"
+            id="login-submit"
+            style="min-height: 3.25rem; font-size: 1rem;"
+          >
+            entrar
+          </button>
+        </form>
+      </section>
 
-                       <div class="mt-6 rounded-2xl border border-crm-border bg-crm-panel-soft p-4 text-sm text-crm-muted">
-                           <p class="font-semibold text-crm-text">antes o después de entrar</p>
-                           <div class="mt-3 flex flex-wrap gap-3">
-                               <a href={siteLinks.brief} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
-                                   Brief
-                               </a>
-                               <a href={siteLinks.onboarding} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
-                                   Onboarding
-                               </a>
-                               <a href={siteLinks.portalHub} class="font-medium text-crm-muted underline decoration-crm-border underline-offset-4 transition hover:text-crm-text hover:decoration-crm-accent">
-                                   Centro de cliente
-                               </a>
-                           </div>
-                       </div>
-                   </div>
-               </section>
-           </div>
-       </div>
+    </div>
+  </div>
 
-       <script>
-           (async () => {
-           const { API_BASE, getSessionUser } = await import('../lib/api-client');
+  <script>
+    (async () => {
+      const { API_BASE, getSessionUser } = await import('../lib/api-client');
 
-           const existingUser = await getSessionUser();
-           if (existingUser) {
-               window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
-           }
+      const existingUser = await getSessionUser();
+      if (existingUser) {
+        window.location.href = existingUser.role === 'admin' ? '/admin' : '/client';
+      }
 
-           const form = document.getElementById('login-form');
-           const errorDiv = document.getElementById('login-error');
-           const submitBtn = document.getElementById('login-submit');
+      const form = document.getElementById('login-form');
+      const errorDiv = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit');
 
-           form?.addEventListener('submit', async (event) => {
-               event.preventDefault();
-               if (errorDiv) errorDiv.classList.add('hidden');
-               if (submitBtn) {
-                   const originalText = submitBtn.textContent;
-                   submitBtn.textContent = 'Entrando...';
-                   submitBtn.disabled = true;
-               }
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (errorDiv) errorDiv.classList.add('hidden');
+        if (submitBtn) {
+          submitBtn.textContent = 'entrando...';
+          submitBtn.disabled = true;
+        }
 
-               const email = document.getElementById('email');
-               const password = document.getElementById('password');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
 
-               try {
-                   const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
-                       method: 'POST',
-                       headers: { 'Content-Type': 'application/json' },
-                       credentials: 'include',
-                       body: JSON.stringify({
-                           email: email instanceof HTMLInputElement ? email.value : '',
-                           password: password instanceof HTMLInputElement ? password.value : '',
-                       }),
-                   });
+        try {
+          const res = await fetch(`${API_BASE}/api/portal/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: email instanceof HTMLInputElement ? email.value : '',
+              password: password instanceof HTMLInputElement ? password.value : '',
+            }),
+          });
 
-                   if (!res.ok) {
-                       const data = await res.json().catch(() => ({}));
-                       throw new Error(data.error ?? 'Login failed');
-                   }
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error ?? 'login failed');
+          }
 
-                   const data = await res.json();
-                   window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
-               } catch (error) {
-                   const { showToast } = await import('../lib/crm-ui');
-                   const msg = error instanceof Error ? error.message : 'error al iniciar sesión';
-                   showToast(msg, 'error');
-                   if (errorDiv instanceof HTMLDivElement) {
-                       errorDiv.textContent = msg;
-                       errorDiv.classList.remove('hidden');
-                   }
-                   if (submitBtn) {
-                       submitBtn.textContent = 'Iniciar sesion';
-                       submitBtn.disabled = false;
-                   }
-               }
-           });
-           })();
-       </script>
+          const data = await res.json();
+          window.location.href = data.user.role === 'admin' ? '/admin' : '/client';
+        } catch (error) {
+          const msg = error instanceof Error ? error.message : 'error al iniciar sesión';
+          if (errorDiv instanceof HTMLDivElement) {
+            errorDiv.textContent = msg;
+            errorDiv.classList.remove('hidden');
+          }
+          if (submitBtn) {
+            submitBtn.textContent = 'entrar';
+            submitBtn.disabled = false;
+          }
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    .login-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+    }
+
+    .login-grid {
+      width: min(100%, 72rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .login-intro {
+      border-radius: var(--radius-xl);
+      padding: clamp(1.75rem, 3vw, 2.5rem);
+      background:
+        linear-gradient(180deg, rgba(22, 13, 17, 0.96), rgba(11, 6, 8, 1)),
+        var(--gg-dark);
+      color: var(--gg-text-white);
+      box-shadow: var(--shadow-strong);
+      display: grid;
+      align-content: start;
+      justify-items: center;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .login-back {
+      width: fit-content;
+      font-size: var(--text-sm);
+      color: rgba(255, 253, 253, 0.55);
+      letter-spacing: 0.04em;
+      transition: color var(--duration-fast) var(--ease-out);
+      justify-self: center;
+    }
+    .login-back:hover { color: var(--gg-text-white); }
+
+    .login-title {
+      font-size: clamp(2.3rem, 5vw, 4.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      max-width: 9ch;
+      color: var(--gg-text-white);
+      text-align: center;
+    }
+
+    .login-title em,
+    .login-panel__title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .login-copy {
+      color: rgba(255, 253, 253, 0.72);
+      max-width: 34ch;
+      line-height: 1.75;
+      font-size: 0.9375rem;
+      text-align: center;
+    }
+
+    .login-notes {
+      margin-top: auto;
+      display: grid;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      width: 100%;
+    }
+
+    .login-note {
+      display: grid;
+      grid-template-columns: 2.25rem 1fr;
+      gap: 0 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      align-items: start;
+      text-align: center;
+    }
+    .login-note:last-child { border-bottom: 0; }
+
+    .login-note__index {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: rgba(196, 22, 90, 0.7);
+      font-size: 0.85rem;
+      padding-top: 0.15rem;
+    }
+
+    .login-note__title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--gg-text-white);
+      margin: 0 0 0.2rem;
+    }
+
+    .login-note__text {
+      margin: 0;
+      font-size: 0.875rem;
+      color: rgba(255, 253, 253, 0.62);
+      line-height: 1.6;
+    }
+
+    .login-panel {
+      border-radius: var(--radius-xl);
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.98));
+      border: 1px solid var(--gg-border);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      align-content: center;
+      gap: 1.5rem;
+    }
+
+    .login-panel__head { display: grid; gap: 0.6rem; }
+
+    .login-panel__title {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      color: var(--gg-text);
+      margin: 0;
+    }
+
+    .login-panel__copy {
+      color: var(--gg-text-muted);
+      line-height: 1.65;
+      margin: 0;
+      font-size: 0.9375rem;
+    }
+
+    .login-form { display: grid; gap: 1rem; }
+
+    .login-field { display: grid; gap: 0.45rem; }
+
+    .login-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--gg-text-muted);
+    }
+
+    @media (max-width: 900px) {
+      .login-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .login-shell { padding: 1rem; }
+      .login-grid { gap: 1rem; }
+    }
+  </style>
 </BaseLayout>

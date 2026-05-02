@@ -2,45 +2,49 @@
 import ClientLayout from '../../../layouts/ClientLayout.astro';
 ---
 
-<ClientLayout title="Mis Facturas">
-  <div class="max-w-5xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
-    <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-crm-text">Mis Facturas</h1>
-      <p class="text-crm-muted">Gestiona tus facturas y pagos. Método de pago: Transferencia bancaria.</p>
-    </section>
+<ClientLayout title="Mis facturas">
+  <div class="max-w-5xl space-y-6" role="region" aria-label="Contenido principal">
 
-    <!-- Bank info card -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6">
-      <h2 class="text-lg font-bold text-crm-text mb-4">Datos para transferencia</h2>
-      <div class="grid md:grid-cols-2 gap-4 text-sm">
-        <div>
-          <span class="text-crm-text-secondary">Titular:</span>
-          <p class="text-crm-text font-medium">Grande & Gordo S.L.</p>
+    <!-- Header -->
+    <div>
+      <p class="crm-kicker crm-kicker--accent">Facturación</p>
+      <h1 class="crm-page-header__title mt-3">
+        Mis <em class="baskerville-italic" style="font-weight: 400;">facturas</em>
+      </h1>
+      <p class="crm-page-header__meta mt-3">
+        Gestiona tus facturas y pagos.
+      </p>
+    </div>
+
+    <!-- Bank info -->
+    <div id="payment-info-panel" class="crm-panel" style="max-width: 600px;">
+      <p class="crm-kicker" style="margin-bottom: 1rem;">Datos para transferencia</p>
+      <div class="grid md:grid-cols-2 gap-3 text-sm">
+        <div class="crm-panel-soft p-4">
+          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Titular</p>
+          <p id="pay-title" class="mt-2 font-semibold" style="color: var(--gg-text);">Cargando...</p>
         </div>
-        <div>
-          <span class="text-crm-text-secondary">Banco:</span>
-          <p class="text-crm-text font-medium">Abanca</p>
+        <div class="crm-panel-soft p-4 md:col-span-2">
+          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Datos de pago</p>
+          <p id="pay-details" class="mt-2 font-semibold font-mono tracking-wide" style="color: var(--gg-text);">Cargando...</p>
         </div>
-        <div>
-          <span class="text-crm-text-secondary">IBAN:</span>
-          <p class="text-crm-text font-medium font-mono">ESXX XXXX XXXX XXXX XXXX</p>
-        </div>
-        <div>
-          <span class="text-crm-text-secondary">Concepto:</span>
-          <p class="text-crm-text font-medium">Número de factura</p>
+        <div class="crm-panel-soft p-4 md:col-span-2">
+          <p class="crm-kicker" style="font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;">Método / Concepto</p>
+          <p id="pay-method" class="mt-2 font-semibold" style="color: var(--gg-text);">Cargando...</p>
         </div>
       </div>
     </div>
 
     <!-- Invoices list -->
-    <div class="space-y-4" id="invoices-list">
-      <div class="text-center text-crm-text-secondary py-12">Cargando facturas...</div>
+    <div id="invoices-list">
+      <div class="text-center text-crm-muted py-12">Cargando facturas...</div>
     </div>
+
   </div>
 
   <script>
     (async () => {
-      const { api } = await import('../../../lib/api-client');
+      const { api, escapeHtml } = await import('../../../lib/api-client');
       const { showToast } = await import('../../../lib/crm-ui');
       const listEl = document.getElementById('invoices-list');
 
@@ -48,12 +52,12 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
       const getStatusBadge = (status: string) => {
         const badges: Record<string, string> = {
-          draft: 'bg-crm-panel-soft text-crm-muted',
-          issued: 'bg-crm-warning/20 text-crm-warning',
-          sent: 'bg-crm-info/20 text-crm-info',
-          paid: 'bg-crm-success/20 text-crm-success',
-          cancelled: 'bg-crm-danger/20 text-crm-danger',
-          overdue: 'bg-crm-danger/20 text-crm-danger',
+          draft: 'crm-badge-default',
+          issued: 'crm-badge-warning',
+          sent: 'crm-badge-info',
+          paid: 'crm-badge-success',
+          cancelled: 'crm-badge-danger',
+          overdue: 'crm-badge-danger',
         };
         const labels: Record<string, string> = {
           draft: 'Borrador',
@@ -63,7 +67,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
           cancelled: 'Cancelada',
           overdue: 'Vencida',
         };
-        return `<span class="px-3 py-1 rounded-full text-xs font-bold ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
+        return `<span class="crm-badge ${badges[status] || badges.draft}">${escapeHtml(labels[status] || status)}</span>`;
       };
 
       const loadInvoices = async () => {
@@ -73,59 +77,63 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
           if (!invoices || invoices.length === 0) {
             listEl!.innerHTML = `
-              <div class="text-center text-crm-text-secondary py-12">
-                <p>No tienes facturas todavía.</p>
+              <div class="crm-empty">
+                <p class="font-medium" style="color: var(--gg-text);">No tienes facturas todavía.</p>
                 <p class="text-sm mt-2">Contacta con nosotros para más información.</p>
               </div>
             `;
             return;
           }
 
-          listEl!.innerHTML = invoices
-            .map(
-              (inv: any) => `
-            <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 hover:border-crm-accent transition">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-2">
-                    <h3 class="text-lg font-bold text-crm-text">${inv.invoiceNumber}</h3>
-                    ${getStatusBadge(inv.status)}
-                  </div>
-                  <p class="text-sm text-crm-muted">
-                    Emitida: ${new Date(inv.issueDate).toLocaleDateString('es-ES')}
-                    ${inv.dueDate ? `· Vence: ${new Date(inv.dueDate).toLocaleDateString('es-ES')}` : ''}
-                  </p>
-                  ${inv.description ? `<p class="text-sm text-crm-text-secondary mt-2">${inv.description}</p>` : ''}
-                </div>
-                <div class="text-right">
-                  <div class="text-2xl font-bold text-crm-text">${formatMoney(inv.totalCents)}</div>
-                  <div class="flex gap-2 mt-3 justify-end">
-                    <a
-                      href="/client/invoices/detail?id=${inv.id}"
-                      class="crm-button crm-button-secondary text-sm"
-                    >
-                      Ver detalle
-                    </a>
-                    ${inv.status !== 'paid' ? `
-                      <button
-                        onclick="uploadProof('${inv.id}')"
-                        class="crm-button crm-button-primary text-sm"
-                      >
-                        Subir justificante
-                      </button>
-                    ` : ''}
-                  </div>
-                </div>
+          listEl!.innerHTML = `
+            <div class="crm-table-wrap">
+              <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gg-border);">
+                <p class="crm-kicker">Historial</p>
+                <h2 style="font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 0.35rem; color: var(--gg-text);">Tus facturas</h2>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="crm-table min-w-full text-sm">
+                  <thead>
+                    <tr>
+                      <th>Factura</th>
+                      <th>Descripción</th>
+                      <th>Importe</th>
+                      <th>Fecha</th>
+                      <th>Estado</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${invoices.map((inv: any) => `
+                      <tr>
+                        <td><p class="font-semibold" style="color: var(--gg-text);">${escapeHtml(inv.invoiceNumber)}</p></td>
+                        <td class="text-crm-muted">${escapeHtml(inv.description || '—')}</td>
+                        <td><span class="font-bold" style="color: var(--gg-text);">${formatMoney(inv.totalCents)}</span></td>
+                        <td class="text-crm-muted">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</td>
+                        <td>${getStatusBadge(inv.status)}</td>
+                        <td style="text-align: right;">
+                          <div class="flex gap-2 justify-end">
+                            <a href="/client/invoices/detail?id=${encodeURIComponent(inv.id)}" class="crm-button crm-button-secondary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">Ver detalle</a>
+                            <a href="/api/portal/invoices/${encodeURIComponent(inv.id)}/pdf?download=1" class="crm-button crm-button-secondary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">PDF</a>
+                            ${inv.status !== 'paid' ? `
+                              <button onclick="uploadProof('${inv.id}')" class="crm-button crm-button-primary" style="min-height: 2.25rem; padding: 0.5rem 0.85rem; font-size: 0.8rem;">
+                                Subir justificante
+                              </button>
+                            ` : ''}
+                          </div>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
               </div>
             </div>
-          `,
-            )
-            .join('');
+          `;
         } catch (e) {
           console.error('Failed to load invoices:', e);
           listEl!.innerHTML = `
-            <div class="text-center text-crm-danger py-12">
-              error cargando facturas. Intenta de nuevo.
+            <div class="crm-alert crm-alert-danger">
+              Error cargando facturas. Intenta de nuevo.
             </div>
           `;
         }
@@ -134,29 +142,50 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
       const uploadProof = (invoiceId: string) => {
         const proofUrl = prompt('Introduce la URL del justificante (opcional):');
         const notes = prompt('Añadir nota (opcional):');
-
         if (notes === null) return;
 
         api(`/api/portal/invoices/${invoiceId}/payment-proof`, {
           method: 'POST',
           body: JSON.stringify({
             paymentDate: new Date().toISOString(),
-            notes: notes || null,
-            proofUrl: proofUrl || null,
+            notes: notes || undefined,
+            proofUrl: proofUrl || undefined,
           }),
         })
           .then(() => {
-            showToast('justificante enviado. verificaremos el pago pronto.', 'success');
+            showToast('Justificante enviado. Verificaremos el pago pronto.', 'success');
             loadInvoices();
           })
           .catch((e) => {
-            showToast('error al subir justificante: ' + e.message, 'error');
+            showToast('Error al subir justificante: ' + e.message, 'error');
           });
       };
 
-      // Make uploadProof global
       (window as any).uploadProof = uploadProof;
 
+      const loadPaymentInfo = async () => {
+        try {
+          const { api: apiCall } = await import('../../../lib/api-client');
+          const data = await apiCall('/api/portal/invoices/payment-info');
+
+          const titleEl = document.getElementById('pay-title');
+          const detailsEl = document.getElementById('pay-details');
+          const methodEl = document.getElementById('pay-method');
+
+          if (titleEl) titleEl.textContent = data.issuerLegalName || '—';
+          if (detailsEl) detailsEl.textContent = data.defaultPaymentNotes || '—';
+          if (methodEl) methodEl.textContent = data.defaultPaymentMethod || 'Transferencia bancaria';
+        } catch {
+          const titleEl = document.getElementById('pay-title');
+          const detailsEl = document.getElementById('pay-details');
+          const methodEl = document.getElementById('pay-method');
+          if (titleEl) titleEl.textContent = '—';
+          if (detailsEl) detailsEl.textContent = '—';
+          if (methodEl) methodEl.textContent = '—';
+        }
+      };
+
+      await loadPaymentInfo();
       await loadInvoices();
     })();
   </script>

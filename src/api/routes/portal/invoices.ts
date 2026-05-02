@@ -12,11 +12,81 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import { bytesToBase64, generateInvoicePdfBytes, invoicePdfFilename } from '../../../lib/invoice-pdf.js';
 import type { AppContext } from '../../../types/index.js';
 
 export const invoiceRoutes = new Hono<AppContext>();
 
 invoiceRoutes.use('*', requireAuth);
+
+// RECOGER info de pago del emisor (IBAN, banco, titular)
+invoiceRoutes.get('/payment-info', async (c) => {
+  const db = c.get('db');
+
+  const rows = await db.select({ key: schema.config.key, value: schema.config.value }).from(schema.config);
+  const cfg = Object.fromEntries(rows.map((r: { key: string; value: string }) => [r.key, r.value]));
+
+  return c.json({
+    issuerLegalName: cfg['issuer_legal_name'] || '',
+    issuerTaxId: cfg['issuer_tax_id'] || '',
+    defaultPaymentMethod: cfg['default_payment_method'] || 'Transferencia bancaria',
+    defaultPaymentNotes: cfg['default_payment_notes'] || '',
+  });
+});
+
+// DESCARGAR PDF de factura del cliente
+invoiceRoutes.get('/:id/pdf', async (c) => {
+  const id = c.req.param('id');
+  const db = c.get('db');
+  const user = c.get('user');
+
+  const [client] = await db
+    .select({ id: schema.clients.id })
+    .from(schema.clients)
+    .where(eq(schema.clients.userId, user.id))
+    .limit(1);
+
+  if (!client) {
+    return c.json({ error: 'Cliente no encontrado' }, 404);
+  }
+
+  const [invoice] = await db
+    .select()
+    .from(schema.invoices)
+    .where(and(eq(schema.invoices.id, id), eq(schema.invoices.clientId, client.id)))
+    .limit(1);
+
+  if (!invoice) {
+    return c.json({ error: 'Factura no encontrada' }, 404);
+  }
+
+  const items = await db
+    .select()
+    .from(schema.invoiceItems)
+    .where(eq(schema.invoiceItems.invoiceId, id))
+    .orderBy(schema.invoiceItems.sortOrder);
+
+  const pdfBytes = await generateInvoicePdfBytes(invoice, items);
+  const filename = invoicePdfFilename(invoice.invoiceNumber);
+
+  if (c.req.query('download') === '1') {
+    return new Response(pdfBytes, {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${filename}"`,
+        'Cache-Control': 'private, no-store',
+      },
+    });
+  }
+
+  return c.json({
+    pdf: bytesToBase64(pdfBytes),
+    mimeType: 'application/pdf',
+    invoiceNumber: invoice.invoiceNumber,
+    filename,
+    generatedAt: new Date().toISOString(),
+  });
+});
 
 // LISTAR facturas del cliente
 invoiceRoutes.get('/', async (c) => {
@@ -130,8 +200,8 @@ invoiceRoutes.post('/:id/payment-proof', async (c) => {
   const body: unknown = await c.req.json();
   const proofSchema = z.object({
     paymentDate: z.string().optional(),
-    notes: z.string().optional(),
-    proofUrl: z.string().url().optional(), // URL del justificante en R2
+    notes: z.string().nullable().optional(),
+    proofUrl: z.string().url().nullable().optional(), // URL del justificante en R2
   });
 
   const parsed = proofSchema.safeParse(body);

@@ -1,20 +1,17 @@
 ---
-layout: '../../../layouts/AdminLayout.astro'
-title: 'Facturas'
+import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<div class="max-w-7xl mx-auto space-y-8" role="region" aria-label="Contenido principal">
+<AdminLayout title="Facturas">
+<div class="max-w-crm mx-auto space-y-8" role="region" aria-label="Contenido principal">
   <div class="flex items-center justify-between">
     <div>
       <h1 class="text-3xl font-bold text-crm-text">Facturas</h1>
       <p class="text-crm-muted mt-1">Todas las facturas de tus clientes</p>
     </div>
-    <button
-      onclick="openCreateModal()"
-      class="crm-button crm-button-primary"
-    >
-      + Nueva factura
-    </button>
+    <a href="/admin/invoices/new" class="crm-button crm-button-primary">
+      Nuevo registro de factura
+    </a>
   </div>
 
   <!-- Filters -->
@@ -26,11 +23,12 @@ title: 'Facturas'
       <option value="sent">Enviada</option>
       <option value="paid">Pagada</option>
       <option value="cancelled">Cancelada</option>
+      <option value="overdue">Vencida</option>
     </select>
   </div>
 
   <!-- Invoices table -->
-  <div class="rounded-3xl border border-crm-border bg-crm-bg-alt overflow-hidden">
+  <div class="rounded-xl border border-crm-border bg-crm-bg-alt overflow-hidden">
     <table class="w-full text-sm">
       <thead class="bg-crm-bg-alt border-b border-crm-border">
         <tr>
@@ -49,7 +47,7 @@ title: 'Facturas'
 
 <!-- Create Modal -->
 <div id="create-modal" class="fixed inset-0 hidden items-center justify-center z-50" style="background-color: rgba(0,0,0,0.8);">
-  <div class="bg-crm-bg-alt rounded-3xl border border-crm-border p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+  <div class="bg-crm-bg-alt rounded-xl border border-crm-border p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl font-bold text-crm-text">Nueva factura</h2>
       <button onclick="closeCreateModal()" class="text-crm-muted hover:text-crm-text">✕</button>
@@ -83,7 +81,7 @@ title: 'Facturas'
       </div>
 
       <div id="items-container" class="space-y-3">
-        <h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>
+        <h3 class="text-sm font-semibold text-crm-muted uppercase">Conceptos</h3>
       </div>
 
       <button type="button" onclick="addItem()" class="w-full rounded-xl border border-dashed border-crm-border-strong py-3 text-crm-muted hover:text-crm-text hover:border-crm-accent transition">
@@ -102,9 +100,9 @@ title: 'Facturas'
   </div>
 </div>
 
-<script>
+  <script>
   (async () => {
-    const { api } = await import('../../lib/api-client');
+    const { api, escapeHtml } = await import('../../lib/api-client');
     const { showToast } = await import('../../lib/crm-ui');
 
     let allInvoices = [];
@@ -132,12 +130,12 @@ title: 'Facturas'
 
     const getStatusBadge = (status: string) => {
       const badges: Record<string, string> = {
-        draft: 'crm-badge-default',
-        issued: 'crm-badge-warning',
-        sent: 'crm-badge-info',
-        paid: 'crm-badge-success',
-        cancelled: 'crm-badge-danger',
-        overdue: 'crm-badge-warning',
+        draft: 'crm-badge-invoice-draft',
+        issued: 'crm-badge-invoice-issued',
+        sent: 'crm-badge-invoice-sent',
+        paid: 'crm-badge-invoice-paid',
+        cancelled: 'crm-badge-invoice-cancelled',
+        overdue: 'crm-badge-invoice-overdue',
       };
       const labels: Record<string, string> = {
         draft: 'Borrador',
@@ -145,9 +143,9 @@ title: 'Facturas'
         sent: 'Enviada',
         paid: 'Pagada',
         cancelled: 'Cancelada',
-        overdue: 'Vencida',
+        overdue: '⚠ Vencida',
       };
-      return `<span class="crm-badge ${badges[status] || badges.draft}">${labels[status] || status}</span>`;
+      return `<span class="crm-badge ${badges[status] || badges.draft}">${escapeHtml(labels[status] || status)}</span>`;
     };
 
     const formatMoney = (cents: number) => `€${(cents / 100).toFixed(2)}`;
@@ -165,12 +163,12 @@ title: 'Facturas'
           (inv: any) => `
           <tr class="border-b border-crm-border last:border-0 hover:bg-crm-panel-soft/50">
             <td class="py-4 px-6">
-              <div class="font-medium text-crm-text">${inv.invoiceNumber}</div>
-              <div class="text-xs text-crm-text-secondary">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
+              <div class="font-medium text-crm-text">${escapeHtml(inv.invoiceNumber)}</div>
+              <div class="text-xs text-crm-muted">${new Date(inv.issueDate).toLocaleDateString('es-ES')}</div>
             </td>
             <td class="py-4 px-6">
-              <div class="text-crm-text">${inv.clientLegalName || 'Sin cliente'}</div>
-              <div class="text-xs text-crm-text-secondary">${inv.clientTaxId || ''}</div>
+              <div class="text-crm-text">${escapeHtml(inv.clientLegalName || 'Sin cliente')}</div>
+              <div class="text-xs text-crm-muted">${escapeHtml(inv.clientTaxId || '')}</div>
             </td>
             <td class="py-4 px-6 text-center">${getStatusBadge(inv.status)}</td>
             <td class="py-4 px-6 text-right font-medium text-crm-text">${formatMoney(inv.totalCents)}</td>
@@ -181,9 +179,12 @@ title: 'Facturas'
             </td>
             <td class="py-4 px-6 text-right">
               <div class="flex gap-2 justify-end">
-                <a href="/admin/invoices/${inv.id}" class="text-crm-muted hover:text-crm-text text-sm">Ver</a>
+                <a href="/admin/invoices/detail?id=${encodeURIComponent(inv.id)}" class="text-crm-muted hover:text-crm-text text-sm">Ver</a>
                 ${inv.status === 'draft' ? `
                   <button onclick="issueInvoice('${inv.id}')" class="text-crm-warning hover:text-crm-accent text-sm">Emitir</button>
+                ` : ''}
+                ${inv.status === 'issued' ? `
+                  <button onclick="markAsSent('${inv.id}')" class="text-crm-muted hover:text-crm-text text-sm">Enviada</button>
                 ` : ''}
                 ${inv.status === 'sent' || inv.status === 'issued' ? `
                   <button onclick="markAsPaid('${inv.id}')" class="text-crm-success hover:text-crm-success text-sm">Pagar</button>
@@ -217,7 +218,7 @@ title: 'Facturas'
       document.getElementById('create-modal')!.classList.add('hidden');
       document.getElementById('create-modal')!.classList.remove('flex');
       document.getElementById('create-form')?.reset();
-      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-crm-text-secondary uppercase">Conceptos</h3>';
+      document.getElementById('items-container')!.innerHTML = '<h3 class="text-sm font-semibold text-crm-muted uppercase">Conceptos</h3>';
     };
 
     const addItem = () => {
@@ -274,7 +275,7 @@ title: 'Facturas'
           body: JSON.stringify({
             clientId,
             description,
-            dueDate: new Date(dueDate).toISOString(),
+            dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
             paymentMethod,
             items,
           }),
@@ -291,8 +292,24 @@ title: 'Facturas'
     const issueInvoice = async (id: string) => {
       if (!confirm('¿Emitir esta factura?')) return;
       try {
-        await api(`/api/admin/invoices/${id}/issue`, { method: 'POST' });
+        await api(`/api/admin/invoices/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'issued' }),
+        });
         showToast('factura emitida', 'success');
+        loadInvoices();
+      } catch (e) {
+        showToast('error: ' + e.message, 'error');
+      }
+    };
+
+    const markAsSent = async (id: string) => {
+      try {
+        await api(`/api/admin/invoices/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'sent' }),
+        });
+        showToast('factura marcada como enviada', 'success');
         loadInvoices();
       } catch (e) {
         showToast('error: ' + e.message, 'error');
@@ -302,9 +319,9 @@ title: 'Facturas'
     const markAsPaid = async (id: string) => {
       if (!confirm('¿Marcar como pagada?')) return;
       try {
-        await api(`/api/admin/invoices/${id}/pay`, {
-          method: 'POST',
-          body: JSON.stringify({ paymentMethod: 'Transferencia bancaria' }),
+        await api(`/api/admin/invoices/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'paid' }),
         });
         showToast('factura marcada como pagada', 'success');
         loadInvoices();
@@ -319,6 +336,7 @@ title: 'Facturas'
     (window as any).addItem = addItem;
     (window as any).createInvoice = createInvoice;
     (window as any).issueInvoice = issueInvoice;
+    (window as any).markAsSent = markAsSent;
     (window as any).markAsPaid = markAsPaid;
 
     document.getElementById('create-form')?.addEventListener('submit', createInvoice);
@@ -333,3 +351,4 @@ title: 'Facturas'
     await Promise.all([loadInvoices(), loadClients()]);
   })();
 </script>
+</AdminLayout>

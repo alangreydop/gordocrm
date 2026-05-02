@@ -64,7 +64,7 @@ const stackLaneOptions = [
   <div class="max-w-6xl space-y-6" role="region" aria-label="Contenido principal">
     <section class="crm-page-header">
       <p class="crm-kicker">Nueva produccion</p>
-      <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Nuevo trabajo</h1>
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Nuevo trabajo</h1>
       <p class="crm-page-header__meta mt-4">
         Abre un trabajo con todo el contexto operativo desde el principio:
         plataforma, urgencia, margen, riesgo y stack.
@@ -81,19 +81,19 @@ const stackLaneOptions = [
         </div>
         <div class="grid md:grid-cols-[1.1fr_.9fr] gap-4">
           <div>
-            <label for="clientId" class="block text-sm font-medium text-crm-text-secondary mb-1">Cliente</label>
+            <label for="clientId" class="block text-sm font-medium text-crm-muted mb-1">Cliente</label>
             <select id="clientId" name="clientId" required class="crm-input">
               <option value="">Cargando clientes...</option>
             </select>
             <p id="selected-client-hint" class="text-xs text-crm-muted mt-2">Selecciona el cliente para cargar contexto comercial.</p>
           </div>
           <div>
-            <label for="dueAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Due date</label>
+            <label for="dueAt" class="block text-sm font-medium text-crm-muted mb-1">Due date</label>
             <input type="date" id="dueAt" name="dueAt" class="crm-input" />
           </div>
         </div>
         <div>
-          <label for="briefText" class="block text-sm font-medium text-crm-text-secondary mb-1">Brief</label>
+          <label for="briefText" class="block text-sm font-medium text-crm-muted mb-1">Brief</label>
           <textarea id="briefText" name="briefText" rows="4" class="crm-input" placeholder="Que hay que producir, para que plataforma y con que objetivo"></textarea>
         </div>
       </section>
@@ -105,50 +105,50 @@ const stackLaneOptions = [
         </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div>
-            <label for="platform" class="block text-sm font-medium text-crm-text-secondary mb-1">Plataforma</label>
+            <label for="platform" class="block text-sm font-medium text-crm-muted mb-1">Plataforma</label>
             <select id="platform" name="platform" class="crm-input">
               <option value="">Sin definir</option>
               {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="type" class="block text-sm font-medium text-crm-text-secondary mb-1">Tipo</label>
+            <label for="type" class="block text-sm font-medium text-crm-muted mb-1">Tipo</label>
             <select id="type" name="type" class="crm-input">
               <option value="">Sin definir</option>
               {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="turnaround" class="block text-sm font-medium text-crm-text-secondary mb-1">Turnaround</label>
+            <label for="turnaround" class="block text-sm font-medium text-crm-muted mb-1">Turnaround</label>
             <select id="turnaround" name="turnaround" class="crm-input">
               <option value="">Sin definir</option>
               {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="assetDominant" class="block text-sm font-medium text-crm-text-secondary mb-1">Dominante</label>
+            <label for="assetDominant" class="block text-sm font-medium text-crm-muted mb-1">Dominante</label>
             <select id="assetDominant" name="assetDominant" class="crm-input">
               <option value="">Sin definir</option>
               {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="unitsPlanned" class="block text-sm font-medium text-crm-text-secondary mb-1">Units planned</label>
+            <label for="unitsPlanned" class="block text-sm font-medium text-crm-muted mb-1">Units planned</label>
             <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" value="0" class="crm-input" />
           </div>
           <div>
-            <label for="unitsConsumed" class="block text-sm font-medium text-crm-text-secondary mb-1">Units consumed</label>
+            <label for="unitsConsumed" class="block text-sm font-medium text-crm-muted mb-1">Units consumed</label>
             <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" value="0" class="crm-input" />
           </div>
           <div>
-            <label for="portabilityRequired" class="block text-sm font-medium text-crm-text-secondary mb-1">Portabilidad</label>
+            <label for="portabilityRequired" class="block text-sm font-medium text-crm-muted mb-1">Portabilidad</label>
             <select id="portabilityRequired" name="portabilityRequired" class="crm-input">
               <option value="">Sin definir</option>
               {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="structuralDemand" class="block text-sm font-medium text-crm-text-secondary mb-1">Demanda estructural</label>
+            <label for="structuralDemand" class="block text-sm font-medium text-crm-muted mb-1">Demanda estructural</label>
             <select id="structuralDemand" name="structuralDemand" class="crm-input">
               <option value="">Sin definir</option>
               {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
@@ -164,47 +164,47 @@ const stackLaneOptions = [
         </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div>
-            <label for="clientSegment" class="block text-sm font-medium text-crm-text-secondary mb-1">Segmento</label>
+            <label for="clientSegment" class="block text-sm font-medium text-crm-muted mb-1">Segmento</label>
             <select id="clientSegment" name="clientSegment" class="crm-input">
               <option value="">Sin definir</option>
               {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="marginProfile" class="block text-sm font-medium text-crm-text-secondary mb-1">Perfil margen</label>
+            <label for="marginProfile" class="block text-sm font-medium text-crm-muted mb-1">Perfil margen</label>
             <select id="marginProfile" name="marginProfile" class="crm-input">
               <option value="">Sin definir</option>
               {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="grossMarginEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Margen bruto estimado</label>
+            <label for="grossMarginEstimated" class="block text-sm font-medium text-crm-muted mb-1">Margen bruto estimado</label>
             <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="crm-input" />
           </div>
           <div>
-            <label for="legalRisk" class="block text-sm font-medium text-crm-text-secondary mb-1">Riesgo legal</label>
+            <label for="legalRisk" class="block text-sm font-medium text-crm-muted mb-1">Riesgo legal</label>
             <select id="legalRisk" name="legalRisk" class="crm-input">
               <option value="">Sin definir</option>
               {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="aiCostEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI estimado</label>
+            <label for="aiCostEstimated" class="block text-sm font-medium text-crm-muted mb-1">Coste AI estimado</label>
             <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="crm-input" />
           </div>
           <div>
-            <label for="aiCostReal" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI real</label>
+            <label for="aiCostReal" class="block text-sm font-medium text-crm-muted mb-1">Coste AI real</label>
             <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="crm-input" />
           </div>
           <div>
-            <label for="benchmarkLevel" class="block text-sm font-medium text-crm-text-secondary mb-1">Nivel benchmark</label>
+            <label for="benchmarkLevel" class="block text-sm font-medium text-crm-muted mb-1">Nivel benchmark</label>
             <select id="benchmarkLevel" name="benchmarkLevel" class="crm-input">
               <option value="">Sin definir</option>
               {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
             </select>
           </div>
           <div>
-            <label for="stackLane" class="block text-sm font-medium text-crm-text-secondary mb-1">Stack lane</label>
+            <label for="stackLane" class="block text-sm font-medium text-crm-muted mb-1">Stack lane</label>
             <select id="stackLane" name="stackLane" class="crm-input">
               <option value="">Sin definir</option>
               {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
@@ -220,34 +220,34 @@ const stackLaneOptions = [
         </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
           <div>
-            <label for="stackCandidate1" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 1</label>
+            <label for="stackCandidate1" class="block text-sm font-medium text-crm-muted mb-1">Candidate 1</label>
             <input type="text" id="stackCandidate1" name="stackCandidate1" class="crm-input" />
           </div>
           <div>
-            <label for="stackCandidate2" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 2</label>
+            <label for="stackCandidate2" class="block text-sm font-medium text-crm-muted mb-1">Candidate 2</label>
             <input type="text" id="stackCandidate2" name="stackCandidate2" class="crm-input" />
           </div>
           <div>
-            <label for="stackCandidate3" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 3</label>
+            <label for="stackCandidate3" class="block text-sm font-medium text-crm-muted mb-1">Candidate 3</label>
             <input type="text" id="stackCandidate3" name="stackCandidate3" class="crm-input" />
           </div>
           <div>
-            <label for="stackWinner" class="block text-sm font-medium text-crm-text-secondary mb-1">Ganador</label>
+            <label for="stackWinner" class="block text-sm font-medium text-crm-muted mb-1">Ganador</label>
             <input type="text" id="stackWinner" name="stackWinner" class="crm-input" />
           </div>
         </div>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label for="stackSnapshot" class="block text-sm font-medium text-crm-text-secondary mb-1">Snapshot stack</label>
+            <label for="stackSnapshot" class="block text-sm font-medium text-crm-muted mb-1">Snapshot stack</label>
             <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="crm-input" placeholder="Motivo de la decision, tradeoffs y stack elegido"></textarea>
           </div>
           <div>
-            <label for="clientGoal" class="block text-sm font-medium text-crm-text-secondary mb-1">Objetivo del cliente</label>
+            <label for="clientGoal" class="block text-sm font-medium text-crm-muted mb-1">Objetivo del cliente</label>
             <textarea id="clientGoal" name="clientGoal" rows="4" class="crm-input" placeholder="Conversion, velocidad, catalogo, ads, PDP..."></textarea>
           </div>
         </div>
         <div>
-          <label for="internalNotes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas internas</label>
+          <label for="internalNotes" class="block text-sm font-medium text-crm-muted mb-1">Notas internas</label>
           <textarea id="internalNotes" name="internalNotes" rows="4" class="crm-input" placeholder="Dependencias, riesgos o instrucciones internas"></textarea>
         </div>
       </section>

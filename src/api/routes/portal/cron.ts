@@ -1,6 +1,7 @@
 import { and, eq, isNull, lt, or } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { schema } from '../../../../db/index.js';
+import { processPendingBrandCaptures } from '../../../lib/brand-dna-capture.js';
 import { sendQuarterlyReviewReminderEmail } from '../../../lib/email.js';
 import type { AppContext } from '../../../types/index.js';
 
@@ -92,4 +93,25 @@ cronRoutes.get('/quarterly-reviews', async (c) => {
     skipped: skippedCount,
     total: clientsDue.length,
   });
+});
+
+// POST /api/portal/cron/brand-captures
+// Process queued brand DNA capture jobs.
+cronRoutes.post('/brand-captures', async (c) => {
+  const db = c.get('db');
+  const env = c.env;
+
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const token = authHeader.slice(7);
+  const expectedToken = env.CRON_SECRET;
+  if (!expectedToken || token !== expectedToken) {
+    return c.json({ error: 'Invalid token' }, 401);
+  }
+
+  const result = await processPendingBrandCaptures(db, env);
+  return c.json({ ok: true, ...result });
 });

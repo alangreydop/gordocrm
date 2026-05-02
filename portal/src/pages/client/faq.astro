@@ -5,14 +5,13 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 <ClientLayout title="Preguntas Frecuentes">
   <div class="max-w-4xl mx-auto space-y-8">
     <section class="text-center space-y-4">
-      <h1 class="text-4xl font-black tracking-tight text-crm-text">Preguntas Frecuentes</h1>
+      <h1 class="text-4xl font-bold tracking-tight text-crm-text">Preguntas Frecuentes</h1>
       <p class="text-crm-muted">Todo lo que necesitas saber sobre el proceso de producción.</p>
     </section>
 
     <!-- Proceso -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">📋</span>
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6">
         Proceso de producción
       </h2>
       <div class="space-y-6" role="region" aria-label="Contenido principal">
@@ -45,7 +44,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             </svg>
           </summary>
           <div class="mt-4 text-crm-muted">
-            <p class="mb-3">Consulta nuestra <a href="/client/onboarding" class="text-crm-text underline hover:text-crm-text-secondary">checklist de onboarding</a> completa. Lo esencial:</p>
+            <p class="mb-3">Consulta nuestra <a href="/client/onboarding" class="text-crm-text underline hover:text-crm-muted">checklist de onboarding</a> completa. Lo esencial:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
               <li>Producto limpio y preparado (sin polvo, huellas)</li>
               <li>Logo en vector (SVG/AI) y PNG transparente</li>
@@ -64,7 +63,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             </svg>
           </summary>
           <div class="mt-4 text-crm-muted">
-            <p class="mb-2"><strong>Sí, revisiones ilimitadas</strong> mientras estén dentro del scope del brief aprobado.</p>
+            <p class="mb-2"><strong>Sí, revisiones incluidas</strong> mientras estén dentro del scope del brief aprobado.</p>
             <p class="text-sm">Si el feedback requiere cambios sustanciales no contemplados en el brief original (ej: cambiar concepto, tono, o plataformas), se consumirá como nuevo trabajo.</p>
           </div>
         </details>
@@ -84,9 +83,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Unidades y consumo -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">⚡</span>
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6">
         Unidades y consumo
       </h2>
       <div class="space-y-6" role="region" aria-label="Contenido principal">
@@ -117,7 +115,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             </svg>
           </summary>
           <div class="mt-4 text-crm-muted">
-            <p>Puedes contratar unidades adicionales o esperar al reseteo mensual según tu plan. Contacta con tu account manager en <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-text-secondary">hola@grandeandgordo.com</a>.</p>
+            <p>Puedes contratar unidades adicionales o esperar al reseteo mensual según tu plan. Contacta con tu account manager en <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-muted">hola@grandeandgordo.com</a>.</p>
           </div>
         </details>
 
@@ -136,9 +134,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Assets y entregables -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">📦</span>
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6">
         Assets y entregables
       </h2>
       <div class="space-y-6" role="region" aria-label="Contenido principal">
@@ -199,9 +196,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Facturación y pagos -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">💳</span>
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6">
         Facturación y pagos
       </h2>
       <div class="space-y-6" role="region" aria-label="Contenido principal">
@@ -244,9 +240,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- Soporte y contacto -->
-    <div class="rounded-3xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
-      <h2 class="text-2xl font-bold text-crm-text mb-6 flex items-center gap-3">
-        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-crm-panel-soft text-sm">💬</span>
+    <div class="rounded-xl border border-crm-border bg-crm-bg-alt p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-crm-text mb-6">
         Soporte y contacto
       </h2>
       <div class="space-y-6" role="region" aria-label="Contenido principal">
@@ -258,7 +253,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             </svg>
           </summary>
           <div class="mt-4 text-crm-muted">
-            <p>Tu account manager aparece en el sidebar y en tu perfil. El canal principal es email: <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-text-secondary">hola@grandeandgordo.com</a></p>
+            <p>Tu account manager aparece en el sidebar y en tu perfil. El canal principal es email: <a href="mailto:hola@grandeandgordo.com" class="text-crm-text underline hover:text-crm-muted">hola@grandeandgordo.com</a></p>
             <p class="text-sm mt-2">Tiempo de respuesta típico: 24-48 horas laborables.</p>
           </div>
         </details>
@@ -290,8 +285,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <!-- CTA final -->
-    <div class="rounded-3xl border border-crm-border bg-crm-panel p-6 md:p-8 text-center">
-      <h2 class="text-2xl font-black text-crm-text mb-4">¿No encuentras lo que buscas?</h2>
+    <div class="rounded-xl border border-crm-border bg-crm-panel p-6 md:p-8 text-center">
+      <h2 class="text-2xl font-bold text-crm-text mb-4">¿No encuentras lo que buscas?</h2>
       <p class="text-crm-muted mb-6">
         Si tu pregunta no está en esta lista, contacta directamente y te responderemos encantados.
       </p>

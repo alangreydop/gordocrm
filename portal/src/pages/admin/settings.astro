@@ -2,58 +2,58 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
 
-<AdminLayout title="Settings">
+<AdminLayout title="Cuenta interna">
   <div class="max-w-4xl space-y-6" role="region" aria-label="Contenido principal">
-    <section class="crm-page-header" aria-labelledby="page-title">
-      <p class="crm-kicker">Cuenta interna</p>
-      <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Settings</h1>
+    <section class="crm-panel" aria-labelledby="page-title" style="background: linear-gradient(135deg, rgba(196, 22, 90, 0.04), rgba(247, 240, 243, 0));">
+      <p class="crm-kicker crm-kicker--accent">sistema</p>
+      <h1 class="crm-page-header__title mt-3">Cuenta <em class="baskerville-italic">interna</em></h1>
       <p class="crm-page-header__meta mt-4">
-        Gestiona tu acceso al CRM y la identidad operativa con la misma capa visual
-        que el resto del sistema.
+        Gestiona tu acceso al CRM y la identidad operativa sin salir de la consola.
       </p>
     </section>
 
     <div class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-      <section class="crm-form-section">
+      <section class="crm-panel">
         <h2 class="text-lg font-semibold text-crm-text mb-4">Tu cuenta</h2>
         <dl class="grid sm:grid-cols-2 gap-4 text-sm">
           <div class="crm-panel-soft p-4">
-            <dt class="text-crm-muted">Nombre</dt>
+            <dt class="crm-kicker" style="font-size: 0.75rem;">Nombre</dt>
             <dd id="settings-name" class="font-medium text-crm-text mt-1">Cargando...</dd>
           </div>
           <div class="crm-panel-soft p-4">
-            <dt class="text-crm-muted">Email</dt>
+            <dt class="crm-kicker" style="font-size: 0.75rem;">Email</dt>
             <dd id="settings-email" class="font-medium text-crm-text mt-1">—</dd>
           </div>
           <div class="crm-panel-soft p-4">
-            <dt class="text-crm-muted">Rol</dt>
+            <dt class="crm-kicker" style="font-size: 0.75rem;">Rol</dt>
             <dd id="settings-role" class="font-medium text-crm-text mt-1">—</dd>
           </div>
           <div class="crm-panel-soft p-4">
-            <dt class="text-crm-muted">Empresa</dt>
+            <dt class="crm-kicker" style="font-size: 0.75rem;">Empresa</dt>
             <dd id="settings-company" class="font-medium text-crm-text mt-1">—</dd>
           </div>
         </dl>
       </section>
 
-      <section class="crm-form-section">
-        <h2 class="text-lg font-semibold text-crm-text mb-4">Cambiar contrasena</h2>
+      <section class="crm-panel">
+        <h2 class="text-lg font-semibold text-crm-text mb-4">Cambiar contraseña</h2>
+        <p class="mb-4 text-sm text-crm-muted">Usa una contraseña distinta a la anterior y reservada para acceso interno.</p>
         <div id="password-success" class="hidden crm-alert crm-alert-success mb-4"></div>
         <div id="password-error" class="hidden crm-alert crm-alert-danger mb-4"></div>
 
         <form id="password-form" class="space-y-4">
           <div>
-            <label for="currentPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Contraseña actual</label>
+            <label for="currentPassword" class="block text-sm font-medium text-crm-muted mb-1">Contraseña actual</label>
             <input type="password" id="currentPassword" name="currentPassword" required
               class="crm-input" />
           </div>
           <div>
-            <label for="newPassword" class="block text-sm font-medium text-crm-text-secondary mb-1">Nueva contraseña</label>
+            <label for="newPassword" class="block text-sm font-medium text-crm-muted mb-1">Nueva contraseña</label>
             <input type="password" id="newPassword" name="newPassword" required minlength="8"
               class="crm-input" />
           </div>
           <button type="submit" class="crm-button crm-button-primary">
-            Actualizar contrasena
+            actualizar contraseña
           </button>
         </form>
       </section>

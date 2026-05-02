@@ -1,7 +1,5 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-
-const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
 ---
 
 <AdminLayout title="Detalle de Factura">
@@ -15,8 +13,8 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
           </svg>
         </a>
         <div>
-          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-text-secondary">Factura</p>
-          <h1 id="invoice-number" class="mt-2 text-3xl font-black tracking-tight text-crm-text">
+          <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-muted">Factura</p>
+          <h1 id="invoice-number" class="mt-2 text-3xl font-bold tracking-tight text-crm-text">
             Cargando...
           </h1>
           <p id="invoice-status" class="mt-2 text-sm"></p>
@@ -32,7 +30,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Client Info -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Cliente</h2>
           <div id="client-info" class="text-sm text-crm-muted">
             Cargando...
@@ -40,7 +38,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </section>
 
         <!-- Issuer Info -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Emisor</h2>
           <div id="issuer-info" class="text-sm text-crm-muted">
             Cargando...
@@ -48,23 +46,23 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </section>
 
         <!-- Lines -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Líneas de factura</h2>
           <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
               <thead class="border-b border-crm-border">
                 <tr>
-                  <th class="py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Descripción</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Cant.</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Precio</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Subtotal</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">IVA</th>
-                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-text-secondary">Total</th>
+                  <th class="py-3 text-left text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">Descripción</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">Cant.</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">Precio</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">Subtotal</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">IVA</th>
+                  <th class="py-3 text-right text-xs font-bold uppercase tracking-[0.2em] text-crm-muted">Total</th>
                 </tr>
               </thead>
               <tbody id="lines-body" class="divide-y divide-crm-border">
                 <tr>
-                  <td colspan="6" class="py-4 text-center text-crm-text-secondary">Cargando líneas...</td>
+                  <td colspan="6" class="py-4 text-center text-crm-muted">Cargando líneas...</td>
                 </tr>
               </tbody>
             </table>
@@ -75,7 +73,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
       <!-- Sidebar -->
       <div class="space-y-6" role="region" aria-label="Contenido principal">
         <!-- Totals -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Importes</h2>
           <div class="space-y-3">
             <div class="flex justify-between text-sm">
@@ -98,7 +96,7 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </section>
 
         <!-- Payment Info -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Pago</h2>
           <div class="space-y-3 text-sm">
             <div>
@@ -111,13 +109,13 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
             </div>
             <div>
               <span class="text-crm-muted">Notas</span>
-              <p id="payment-notes-display" class="mt-1 text-crm-text-secondary">—</p>
+              <p id="payment-notes-display" class="mt-1 text-crm-muted">—</p>
             </div>
           </div>
         </section>
 
         <!-- Metadata -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Metadata</h2>
           <div class="space-y-3 text-sm">
             <div>
@@ -136,285 +134,334 @@ const API_BASE = import.meta.env.PUBLIC_API_BASE || 'http://127.0.0.1:8787';
         </section>
 
         <!-- Audit Log -->
-        <section class="rounded-2xl border border-crm-border bg-crm-bg-alt p-6">
+        <section class="rounded-xl border border-crm-border bg-crm-bg-alt p-6">
           <h2 class="text-lg font-semibold text-crm-text mb-4">Actividad</h2>
           <div id="audit-log" class="space-y-2 text-sm">
-            <p class="text-crm-text-secondary">Cargando actividad...</p>
+            <p class="text-crm-muted">Cargando actividad...</p>
           </div>
         </section>
       </div>
     </div>
+
+    <div id="invoice-action-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background: rgba(11, 6, 8, 0.58);">
+      <form id="invoice-action-form" class="crm-panel w-full max-w-md space-y-4" role="dialog" aria-modal="true" aria-labelledby="invoice-action-title">
+        <div>
+          <p class="crm-kicker">acción de factura</p>
+          <h2 id="invoice-action-title" class="mt-2 text-xl font-semibold text-crm-text">Confirmar acción</h2>
+          <p id="invoice-action-copy" class="mt-2 text-sm text-crm-muted"></p>
+        </div>
+
+        <div id="invoice-action-field" class="space-y-2">
+          <label id="invoice-action-label" for="invoice-action-input" class="block text-sm font-medium text-crm-muted">Detalle</label>
+          <input id="invoice-action-input" class="crm-input" />
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="invoice-action-cancel" class="crm-button crm-button-secondary flex-1">cancelar</button>
+          <button type="submit" id="invoice-action-submit" class="crm-button crm-button-primary flex-1">confirmar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
-    const API_BASE = 'http://127.0.0.1:8787';
     (async () => {
+      const { api, escapeHtml, formatDate: sharedFormatDate, getQueryParam } = await import('../../../lib/api-client');
       const { showToast } = await import('../../../lib/crm-ui');
       (window as any).__showToast = showToast;
+
+      const statusLabels = {
+        draft: 'Borrador',
+        issued: 'Emitida',
+        sent: 'Enviada',
+        paid: 'Pagada',
+        cancelled: 'Cancelada',
+        overdue: '⚠ Vencida',
+      };
+
+      const statusClasses = {
+        draft: 'crm-badge-invoice-draft',
+        issued: 'crm-badge-invoice-issued',
+        sent: 'crm-badge-invoice-sent',
+        paid: 'crm-badge-invoice-paid',
+        cancelled: 'crm-badge-invoice-cancelled',
+        overdue: 'crm-badge-invoice-overdue',
+      };
+
+      const formatMoney = (cents) =>
+        new Intl.NumberFormat('es-ES', {
+          style: 'currency',
+          currency: 'EUR',
+        }).format((Number(cents) || 0) / 100);
+
+      const formatDate = (dateString) => {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        if (Number.isNaN(date.getTime())) return '—';
+        return new Intl.DateTimeFormat('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }).format(date);
+      };
+
+      const renderActionButtons = (invoice) => {
+        const container = document.getElementById('action-buttons');
+        const buttons = [];
+
+        if (invoice.billingProUrl) {
+          buttons.push(`
+            <a href="${escapeHtml(invoice.billingProUrl)}" target="_blank" rel="noopener" class="crm-button crm-button-secondary">
+              Abrir Billing Pro
+            </a>
+          `);
+        }
+
+        if (invoice.status === 'draft') {
+          buttons.push(`
+            <button onclick="issueInvoice()" class="crm-button crm-button-primary">
+              Emitir factura
+            </button>
+          `);
+        }
+
+        if (['issued', 'sent'].includes(invoice.status)) {
+          buttons.push(`
+            <button onclick="sendInvoice()" class="crm-button crm-button-primary">
+              Marcar enviada
+            </button>
+          `);
+        }
+
+        if (['issued', 'sent', 'overdue'].includes(invoice.status)) {
+          buttons.push(`
+            <button onclick="openInvoiceAction('pay')" class="crm-button crm-button-success">
+              Marcar como pagada
+            </button>
+          `);
+        }
+
+        if (['draft', 'issued', 'sent'].includes(invoice.status)) {
+          buttons.push(`
+            <button onclick="openInvoiceAction('cancel')" class="crm-button crm-button-danger">
+              Cancelar
+            </button>
+          `);
+        }
+
+        container.innerHTML = buttons.join('');
+      };
+
+      let invoiceId = '';
+      let pendingAction = null;
+
+      const issueInvoice = async () => {
+        if (!confirm('¿Emitir esta factura? Una vez emitida, el número de factura es definitivo.')) return;
+
+        try {
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'issued' }),
+          });
+
+          window.location.reload();
+        } catch (error) {
+          (window as any).__showToast?.(error instanceof Error ? error.message : 'Error al emitir', 'error');
+        }
+      };
+
+      const sendInvoice = async () => {
+        try {
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'sent' }),
+          });
+
+          (window as any).__showToast?.('factura marcada como enviada', 'success');
+          window.location.reload();
+        } catch (error) {
+          (window as any).__showToast?.(error instanceof Error ? error.message : 'error al actualizar', 'error');
+        }
+      };
+
+      const markAsPaid = async (paymentMethod) => {
+        try {
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'paid', paymentMethod: paymentMethod || 'transferencia' }),
+          });
+
+          window.location.reload();
+        } catch (error) {
+          (window as any).__showToast?.(error instanceof Error ? error.message : 'Error al marcar como pagada', 'error');
+        }
+      };
+
+      const cancelInvoice = async (reason) => {
+        if (!reason) return;
+
+        try {
+          await api(`/api/admin/invoices/${invoiceId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: 'cancelled', notes: reason }),
+          });
+
+          window.location.reload();
+        } catch (error) {
+          (window as any).__showToast?.(error instanceof Error ? error.message : 'Error al cancelar', 'error');
+        }
+      };
+
+      const modal = document.getElementById('invoice-action-modal');
+      const modalForm = document.getElementById('invoice-action-form');
+      const modalTitle = document.getElementById('invoice-action-title');
+      const modalCopy = document.getElementById('invoice-action-copy');
+      const modalLabel = document.getElementById('invoice-action-label');
+      const modalInput = document.getElementById('invoice-action-input');
+      const modalCancel = document.getElementById('invoice-action-cancel');
+
+      const closeInvoiceAction = () => {
+        pendingAction = null;
+        modal?.classList.add('hidden');
+        modal?.classList.remove('flex');
+        if (modalInput instanceof HTMLInputElement) {
+          modalInput.value = '';
+        }
+      };
+
+      const openInvoiceAction = (action) => {
+        pendingAction = action;
+        if (modalTitle) {
+          modalTitle.textContent = action === 'pay' ? 'Marcar como pagada' : 'Cancelar factura';
+        }
+        if (modalCopy) {
+          modalCopy.textContent = action === 'pay'
+            ? 'Registra el método de pago usado por el cliente.'
+            : 'Indica el motivo interno de cancelación antes de continuar.';
+        }
+        if (modalLabel) {
+          modalLabel.textContent = action === 'pay' ? 'Método de pago' : 'Motivo de cancelación';
+        }
+        if (modalInput instanceof HTMLInputElement) {
+          modalInput.value = action === 'pay' ? 'transferencia' : '';
+          modalInput.placeholder = action === 'pay' ? 'transferencia, tarjeta...' : 'motivo interno';
+          modalInput.required = action === 'cancel';
+        }
+        modal?.classList.remove('hidden');
+        modal?.classList.add('flex');
+        modalInput?.focus();
+      };
+
+      (window as any).issueInvoice = issueInvoice;
+      (window as any).sendInvoice = sendInvoice;
+      (window as any).openInvoiceAction = openInvoiceAction;
+
+      modalCancel?.addEventListener('click', closeInvoiceAction);
+      modal?.addEventListener('click', (event) => {
+        if (event.target === modal) closeInvoiceAction();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal?.classList.contains('hidden')) {
+          closeInvoiceAction();
+        }
+      });
+      modalForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const value = modalInput instanceof HTMLInputElement ? modalInput.value.trim() : '';
+        if (pendingAction === 'pay') {
+          await markAsPaid(value);
+        } else if (pendingAction === 'cancel') {
+          await cancelInvoice(value);
+        }
+      });
+
+      const loadInvoice = async () => {
+        invoiceId = getQueryParam('id') ?? '';
+
+        if (!invoiceId) {
+          (window as any).__showToast?.('ID de factura no válido', 'warning');
+          window.location.href = '/admin/invoices';
+          return;
+        }
+
+        try {
+          const data = await api(`/api/admin/invoices/${invoiceId}`);
+          const invoice = data.invoice;
+          const items = data.items || [];
+
+          document.getElementById('invoice-number').textContent = invoice.invoiceNumber;
+          document.getElementById('invoice-status').innerHTML = `
+            <span class="crm-badge ${statusClasses[invoice.status]}">
+              ${statusLabels[invoice.status]}
+            </span>
+          `;
+
+          renderActionButtons(invoice);
+
+          document.getElementById('client-info').innerHTML = `
+            <p class="font-medium text-crm-text">${escapeHtml(invoice.clientLegalName)}</p>
+            <p>NIF: ${escapeHtml(invoice.clientTaxId)}</p>
+            <p>${escapeHtml(invoice.clientAddressLine1)}</p>
+            <p>${escapeHtml(invoice.clientPostalCode)} ${escapeHtml(invoice.clientCity)}</p>
+            <p class="mt-2 text-crm-muted">${escapeHtml(invoice.clientEmail)}</p>
+          `;
+
+          document.getElementById('issuer-info').innerHTML = `
+            <p class="font-medium text-crm-text">${escapeHtml(invoice.issuerLegalName)}</p>
+            <p>NIF: ${escapeHtml(invoice.issuerTaxId)}</p>
+            <p>${escapeHtml(invoice.issuerAddressLine1)}</p>
+            <p>${escapeHtml(invoice.issuerPostalCode)} ${escapeHtml(invoice.issuerCity)}</p>
+          `;
+
+          const linesBody = document.getElementById('lines-body');
+          linesBody.innerHTML = items.length > 0
+            ? items.map((item) => `
+              <tr>
+                <td class="py-4 text-crm-text">${escapeHtml(item.description)}</td>
+                <td class="py-4 text-right text-crm-muted">${escapeHtml(item.quantity)}</td>
+                <td class="py-4 text-right text-crm-muted">${formatMoney(item.unitPriceCents)}</td>
+                <td class="py-4 text-right text-crm-muted">${formatMoney(item.subtotalCents)}</td>
+                <td class="py-4 text-right text-crm-muted">${formatMoney(item.taxAmountCents)}</td>
+                <td class="py-4 text-right font-medium text-crm-text">${formatMoney(item.totalCents)}</td>
+              </tr>
+            `).join('')
+            : `
+              <tr>
+                <td colspan="6" class="py-4 text-center text-crm-muted">No hay líneas asociadas a esta factura</td>
+              </tr>
+            `;
+
+          document.getElementById('subtotal-display').textContent = formatMoney(invoice.subtotalCents);
+          document.getElementById('tax-display').textContent = formatMoney(invoice.taxAmountCents);
+          document.getElementById('irpf-display').textContent = formatMoney(invoice.irpfAmountCents || 0);
+          document.getElementById('total-display').textContent = formatMoney(invoice.totalCents);
+
+          document.getElementById('due-date-display').textContent = formatDate(invoice.dueDate);
+          document.getElementById('payment-method-display').textContent = invoice.paymentMethod || '—';
+          document.getElementById('payment-notes-display').textContent = invoice.paymentNotes || '—';
+
+          document.getElementById('issue-date-display').textContent = formatDate(invoice.issueDate);
+          document.getElementById('fiscal-year-display').textContent = String(invoice.fiscalYear ?? '—');
+          document.getElementById('series-display').textContent = invoice.series;
+
+          if (data.logs && data.logs.length > 0) {
+            document.getElementById('audit-log').innerHTML = data.logs.map((log) => `
+              <div class="flex items-center gap-2 text-crm-muted">
+                <span class="w-2 h-2 rounded-full bg-crm-surface-hover"></span>
+                <span>${escapeHtml(log.action)} - ${formatDate(log.createdAt ?? sharedFormatDate(log.createdAt))}</span>
+              </div>
+            `).join('');
+          } else {
+            document.getElementById('audit-log').innerHTML = '<p class="text-crm-muted">Sin actividad registrada</p>';
+          }
+        } catch (error) {
+          console.error('Error loading invoice:', error);
+          (window as any).__showToast?.('error al cargar la factura', 'error');
+          window.location.href = '/admin/invoices';
+        }
+      };
+
+      loadInvoice();
     })();
-
-    const statusLabels = {
-      draft: 'Borrador',
-      issued: 'Emitida',
-      sent: 'Enviada',
-      paid: 'Pagada',
-      cancelled: 'Cancelada',
-      overdue: 'Vencida',
-    };
-
-    const statusClasses = {
-      draft: 'crm-badge-default',
-      issued: 'crm-badge-warning',
-      sent: 'crm-badge-info',
-      paid: 'crm-badge-success',
-      cancelled: 'crm-badge-danger',
-      overdue: 'crm-badge-warning',
-    };
-
-    const formatMoney = (cents) => {
-      return new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR',
-      }).format(cents / 100);
-    };
-
-    const formatDate = (dateString) => {
-      if (!dateString) return '—';
-      const date = new Date(dateString);
-      return new Intl.DateTimeFormat('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }).format(date);
-    };
-
-    const escapeHtml = (value) => {
-      if (!value) return '';
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    };
-
-    const renderActionButtons = (invoice) => {
-      const container = document.getElementById('action-buttons');
-      const buttons = [];
-
-      if (invoice.status === 'draft') {
-        buttons.push(`
-          <button onclick="issueInvoice()" class="crm-button crm-button-primary">
-            Emitir factura
-          </button>
-        `);
-      }
-
-      if (['issued', 'sent'].includes(invoice.status)) {
-        buttons.push(`
-          <button onclick="sendInvoice()" class="crm-button crm-button-primary">
-            Enviar por email
-          </button>
-        `);
-      }
-
-      if (['issued', 'sent', 'overdue'].includes(invoice.status)) {
-        buttons.push(`
-          <button onclick="markAsPaid()" class="crm-button crm-button-success">
-            Marcar como pagada
-          </button>
-        `);
-      }
-
-      if (['draft', 'issued', 'sent'].includes(invoice.status)) {
-        buttons.push(`
-          <button onclick="cancelInvoice()" class="crm-button crm-button-danger">
-            Cancelar
-          </button>
-        `);
-      }
-
-      container.innerHTML = buttons.join('');
-    };
-
-    const issueInvoice = async () => {
-      if (!confirm('¿Emitir esta factura? Una vez emitida, el número de factura es definitivo.')) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/issue`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'Error al emitir');
-        }
-
-        window.location.reload();
-      } catch (error) {
-        (window as any).__showToast?.(error.message, 'error');
-      }
-    };
-
-    const sendInvoice = async () => {
-      if (!confirm('¿Enviar factura por email al cliente?')) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/send`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'error al enviar');
-        }
-
-        (window as any).__showToast?.('factura enviada correctamente', 'success');
-        window.location.reload();
-      } catch (error) {
-        (window as any).__showToast?.(error.message, 'error');
-      }
-    };
-
-    const markAsPaid = async () => {
-      const paymentMethod = prompt('Método de pago:', 'transferencia');
-      if (paymentMethod === null) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/pay`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ paymentMethod }),
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'Error al marcar como pagada');
-        }
-
-        window.location.reload();
-      } catch (error) {
-        (window as any).__showToast?.(error.message, 'error');
-      }
-    };
-
-    const cancelInvoice = async () => {
-      const reason = prompt('Motivo de la cancelación:');
-      if (!reason) return;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}/cancel`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ reason }),
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || 'Error al cancelar');
-        }
-
-        window.location.reload();
-      } catch (error) {
-        (window as any).__showToast?.(error.message, 'error');
-      }
-    };
-
-    let invoiceId = '';
-
-    const loadInvoice = async () => {
-      const params = new URLSearchParams(window.location.search);
-      invoiceId = params.get('id');
-
-      if (!invoiceId) {
-        (window as any).__showToast?.('ID de factura no válido', 'warning');
-        window.location.href = '/admin/invoices';
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/invoices/${invoiceId}`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Factura no encontrada');
-        const data = await res.json();
-        const invoice = data.invoice;
-
-        // Render header
-        document.getElementById('invoice-number').textContent = invoice.invoiceNumber;
-        document.getElementById('invoice-status').innerHTML = `
-          <span class="crm-badge ${statusClasses[invoice.status]}">
-            ${statusLabels[invoice.status]}
-          </span>
-        `;
-
-        // Render action buttons
-        renderActionButtons(invoice);
-
-        // Render client info
-        document.getElementById('client-info').innerHTML = `
-          <p class="font-medium text-crm-text">${escapeHtml(invoice.clientLegalName)}</p>
-          <p>NIF: ${escapeHtml(invoice.clientTaxId)}</p>
-          <p>${escapeHtml(invoice.clientAddressLine1)}</p>
-          <p>${escapeHtml(invoice.clientPostalCode)} ${escapeHtml(invoice.clientCity)}</p>
-          <p class="mt-2 text-crm-text-secondary">${escapeHtml(invoice.clientEmail)}</p>
-        `;
-
-        // Render issuer info
-        document.getElementById('issuer-info').innerHTML = `
-          <p class="font-medium text-crm-text">${escapeHtml(invoice.issuerLegalName)}</p>
-          <p>NIF: ${escapeHtml(invoice.issuerTaxId)}</p>
-          <p>${escapeHtml(invoice.issuerAddressLine1)}</p>
-          <p>${escapeHtml(invoice.issuerPostalCode)} ${escapeHtml(invoice.issuerCity)}</p>
-        `;
-
-        // Render lines (using same data since items are included)
-        const linesBody = document.getElementById('lines-body');
-        // For now, show placeholder - items would need separate endpoint or include
-        linesBody.innerHTML = `
-          <tr>
-            <td colspan="6" class="py-4 text-center text-crm-muted">Líneas no disponibles en esta vista</td>
-          </tr>
-        `;
-
-        // Render totals
-        document.getElementById('subtotal-display').textContent = formatMoney(invoice.subtotalCents);
-        document.getElementById('tax-display').textContent = formatMoney(invoice.taxAmountCents);
-        document.getElementById('irpf-display').textContent = formatMoney(invoice.irpfAmountCents || 0);
-        document.getElementById('total-display').textContent = formatMoney(invoice.totalCents);
-
-        // Render payment info
-        document.getElementById('due-date-display').textContent = formatDate(invoice.dueDate);
-        document.getElementById('payment-method-display').textContent = invoice.paymentMethod || '—';
-        document.getElementById('payment-notes-display').textContent = invoice.paymentNotes || '—';
-
-        // Render metadata
-        document.getElementById('issue-date-display').textContent = formatDate(invoice.issueDate);
-        document.getElementById('fiscal-year-display').textContent = invoice.fiscalYear;
-        document.getElementById('series-display').textContent = invoice.series;
-
-        // Render audit log
-        if (data.logs && data.logs.length > 0) {
-          document.getElementById('audit-log').innerHTML = data.logs.map(log => `
-            <div class="flex items-center gap-2 text-crm-muted">
-              <span class="w-2 h-2 rounded-full bg-crm-surface-hover"></span>
-              <span>${escapeHtml(log.action)} - ${formatDate(log.createdAt)}</span>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('audit-log').innerHTML = '<p class="text-crm-text-secondary">Sin actividad registrada</p>';
-        }
-
-      } catch (error) {
-        console.error('Error loading invoice:', error);
-        (window as any).__showToast?.('error al cargar la factura', 'error');
-        window.location.href = '/admin/invoices';
-      }
-    };
-
-    // Initialize
-    loadInvoice();
   </script>
 </AdminLayout>

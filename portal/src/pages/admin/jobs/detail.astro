@@ -77,15 +77,15 @@ const qaOptions = [
      <section class="crm-page-header" aria-labelledby="job-title">
        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
          <div>
-           <a href="/admin/jobs" class="inline-block text-sm text-crm-text-secondary transition hover:text-crm-text">&larr; Trabajos</a>
-           <h1 id="job-title" class="mt-3 text-3xl font-black tracking-tight text-crm-text md:text-5xl">Cargando trabajo...</h1>
-           <p class="mt-3 text-sm text-crm-text-secondary">
+           <a href="/admin/jobs" class="inline-block text-sm text-crm-muted transition hover:text-crm-text">&larr; Trabajos</a>
+           <h1 id="job-title" class="mt-3 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">Cargando trabajo...</h1>
+           <p class="mt-3 text-sm text-crm-muted">
             Cliente: <a id="job-client-link" href="/admin/clients" class="font-medium text-crm-accent transition hover:text-crm-text">—</a>
            </p>
          </div>
          <div class="flex flex-wrap gap-2">
-           <span id="job-status-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-text-secondary">—</span>
-           <span id="job-lane-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-text-secondary">—</span>
+           <span id="job-status-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-muted">—</span>
+           <span id="job-lane-pill" class="inline-flex rounded-full border border-crm-border bg-crm-surface-hover px-3 py-1 text-xs font-medium text-crm-muted">—</span>
          </div>
          <div class="flex flex-wrap items-center gap-2">
            <span id="ai-engine-status" class="hidden crm-badge">—</span>
@@ -93,7 +93,7 @@ const qaOptions = [
              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
              </svg>
-            Ejecutar en AI Engine
+            Aprobar orchestrator
            </button>
          </div>
        </div>
@@ -102,22 +102,22 @@ const qaOptions = [
      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
        <div class="crm-metric-card" role="region" aria-label="Due date">
          <p class="crm-kicker">Due</p>
-         <p id="metric-due" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-due" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
          <p id="metric-turnaround" class="text-sm text-crm-muted mt-2">—</p>
        </div>
        <div class="crm-metric-card" role="region" aria-label="Unidades">
          <p class="crm-kicker">Units</p>
-         <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-units" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
          <p id="metric-platform" class="text-sm text-crm-muted mt-2">—</p>
        </div>
        <div class="crm-metric-card" role="region" aria-label="Margen y coste">
          <p class="crm-kicker">Margen y coste</p>
-         <p id="metric-margin" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-margin" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
          <p id="metric-ai-cost" class="text-sm text-crm-muted mt-2">—</p>
        </div>
        <div class="crm-metric-card" role="region" aria-label="Assets">
          <p class="crm-kicker">Assets</p>
-         <p id="metric-assets" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
+         <p id="metric-assets" class="mt-4 text-4xl font-bold tracking-tight text-crm-text">—</p>
          <p id="metric-updated" class="text-sm text-crm-muted mt-2">—</p>
        </div>
      </div>
@@ -144,113 +144,113 @@ const qaOptions = [
 
          <form id="job-form" class="space-y-5" novalidate>
            <div>
-             <label for="briefText" class="block text-sm font-medium text-crm-text-secondary mb-1">Brief</label>
+             <label for="briefText" class="block text-sm font-medium text-crm-muted mb-1">Brief</label>
              <textarea id="briefText" name="briefText" rows="4" class="crm-input"></textarea>
            </div>
 
            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
              <div>
-               <label for="status" class="block text-sm font-medium text-crm-text-secondary mb-1">Estado</label>
+               <label for="status" class="block text-sm font-medium text-crm-muted mb-1">Estado</label>
                <select id="status" name="status" class="crm-input">
                  {statusOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="platform" class="block text-sm font-medium text-crm-text-secondary mb-1">Plataforma</label>
+               <label for="platform" class="block text-sm font-medium text-crm-muted mb-1">Plataforma</label>
                <select id="platform" name="platform" class="crm-input">
                  <option value="">Sin definir</option>
                  {platformOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="type" class="block text-sm font-medium text-crm-text-secondary mb-1">Tipo</label>
+               <label for="type" class="block text-sm font-medium text-crm-muted mb-1">Tipo</label>
                <select id="type" name="type" class="crm-input">
                  <option value="">Sin definir</option>
                  {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="dueAt" class="block text-sm font-medium text-crm-text-secondary mb-1">Due date</label>
+               <label for="dueAt" class="block text-sm font-medium text-crm-muted mb-1">Due date</label>
                <input type="date" id="dueAt" name="dueAt" class="crm-input" />
              </div>
              <div>
-               <label for="unitsPlanned" class="block text-sm font-medium text-crm-text-secondary mb-1">Units planned</label>
+               <label for="unitsPlanned" class="block text-sm font-medium text-crm-muted mb-1">Units planned</label>
                <input type="number" min="0" id="unitsPlanned" name="unitsPlanned" class="crm-input" />
              </div>
              <div>
-               <label for="unitsConsumed" class="block text-sm font-medium text-crm-text-secondary mb-1">Units consumed</label>
+               <label for="unitsConsumed" class="block text-sm font-medium text-crm-muted mb-1">Units consumed</label>
                <input type="number" min="0" id="unitsConsumed" name="unitsConsumed" class="crm-input" />
              </div>
              <div>
-               <label for="turnaround" class="block text-sm font-medium text-crm-text-secondary mb-1">Turnaround</label>
+               <label for="turnaround" class="block text-sm font-medium text-crm-muted mb-1">Turnaround</label>
                <select id="turnaround" name="turnaround" class="crm-input">
                  <option value="">Sin definir</option>
                  {turnaroundOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="assetDominant" class="block text-sm font-medium text-crm-text-secondary mb-1">Dominante</label>
+               <label for="assetDominant" class="block text-sm font-medium text-crm-muted mb-1">Dominante</label>
                <select id="assetDominant" name="assetDominant" class="crm-input">
                  <option value="">Sin definir</option>
                  {assetDominantOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="clientSegment" class="block text-sm font-medium text-crm-text-secondary mb-1">Segmento</label>
+               <label for="clientSegment" class="block text-sm font-medium text-crm-muted mb-1">Segmento</label>
                <select id="clientSegment" name="clientSegment" class="crm-input">
                  <option value="">Sin definir</option>
                  {segmentOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="marginProfile" class="block text-sm font-medium text-crm-text-secondary mb-1">Perfil margen</label>
+               <label for="marginProfile" class="block text-sm font-medium text-crm-muted mb-1">Perfil margen</label>
                <select id="marginProfile" name="marginProfile" class="crm-input">
                  <option value="">Sin definir</option>
                  {marginOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="grossMarginEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Margen bruto estimado</label>
+               <label for="grossMarginEstimated" class="block text-sm font-medium text-crm-muted mb-1">Margen bruto estimado</label>
                <input type="number" min="0" step="0.1" id="grossMarginEstimated" name="grossMarginEstimated" class="crm-input" />
              </div>
              <div>
-               <label for="legalRisk" class="block text-sm font-medium text-crm-text-secondary mb-1">Riesgo legal</label>
+               <label for="legalRisk" class="block text-sm font-medium text-crm-muted mb-1">Riesgo legal</label>
                <select id="legalRisk" name="legalRisk" class="crm-input">
                  <option value="">Sin definir</option>
                  {legalRiskOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="aiCostEstimated" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI estimado</label>
+               <label for="aiCostEstimated" class="block text-sm font-medium text-crm-muted mb-1">Coste AI estimado</label>
                <input type="number" min="0" step="0.01" id="aiCostEstimated" name="aiCostEstimated" class="crm-input" />
              </div>
              <div>
-               <label for="aiCostReal" class="block text-sm font-medium text-crm-text-secondary mb-1">Coste AI real</label>
+               <label for="aiCostReal" class="block text-sm font-medium text-crm-muted mb-1">Coste AI real</label>
                <input type="number" min="0" step="0.01" id="aiCostReal" name="aiCostReal" class="crm-input" />
              </div>
              <div>
-               <label for="portabilityRequired" class="block text-sm font-medium text-crm-text-secondary mb-1">Portabilidad</label>
+               <label for="portabilityRequired" class="block text-sm font-medium text-crm-muted mb-1">Portabilidad</label>
                <select id="portabilityRequired" name="portabilityRequired" class="crm-input">
                  <option value="">Sin definir</option>
                  {portabilityOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="structuralDemand" class="block text-sm font-medium text-crm-text-secondary mb-1">Demanda estructural</label>
+               <label for="structuralDemand" class="block text-sm font-medium text-crm-muted mb-1">Demanda estructural</label>
                <select id="structuralDemand" name="structuralDemand" class="crm-input">
                  <option value="">Sin definir</option>
                  {structuralDemandOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="benchmarkLevel" class="block text-sm font-medium text-crm-text-secondary mb-1">Nivel benchmark</label>
+               <label for="benchmarkLevel" class="block text-sm font-medium text-crm-muted mb-1">Nivel benchmark</label>
                <select id="benchmarkLevel" name="benchmarkLevel" class="crm-input">
                  <option value="">Sin definir</option>
                  {benchmarkOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                </select>
              </div>
              <div>
-               <label for="stackLane" class="block text-sm font-medium text-crm-text-secondary mb-1">Stack lane</label>
+               <label for="stackLane" class="block text-sm font-medium text-crm-muted mb-1">Stack lane</label>
                <select id="stackLane" name="stackLane" class="crm-input">
                  <option value="">Sin definir</option>
                  {stackLaneOptions.map(([value, label]) => <option value={value}>{label}</option>)}
@@ -260,33 +260,33 @@ const qaOptions = [
 
            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
              <div>
-               <label for="stackCandidate1" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 1</label>
+               <label for="stackCandidate1" class="block text-sm font-medium text-crm-muted mb-1">Candidate 1</label>
                <input type="text" id="stackCandidate1" name="stackCandidate1" class="crm-input" />
              </div>
              <div>
-               <label for="stackCandidate2" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 2</label>
+               <label for="stackCandidate2" class="block text-sm font-medium text-crm-muted mb-1">Candidate 2</label>
                <input type="text" id="stackCandidate2" name="stackCandidate2" class="crm-input" />
              </div>
              <div>
-               <label for="stackCandidate3" class="block text-sm font-medium text-crm-text-secondary mb-1">Candidate 3</label>
+               <label for="stackCandidate3" class="block text-sm font-medium text-crm-muted mb-1">Candidate 3</label>
                <input type="text" id="stackCandidate3" name="stackCandidate3" class="crm-input" />
              </div>
              <div>
-               <label for="stackWinner" class="block text-sm font-medium text-crm-text-secondary mb-1">Ganador</label>
+               <label for="stackWinner" class="block text-sm font-medium text-crm-muted mb-1">Ganador</label>
                <input type="text" id="stackWinner" name="stackWinner" class="crm-input" />
              </div>
            </div>
 
            <div>
-             <label for="stackSnapshot" class="block text-sm font-medium text-crm-text-secondary mb-1">Snapshot stack</label>
+             <label for="stackSnapshot" class="block text-sm font-medium text-crm-muted mb-1">Snapshot stack</label>
              <textarea id="stackSnapshot" name="stackSnapshot" rows="4" class="crm-input"></textarea>
            </div>
            <div>
-             <label for="clientGoal" class="block text-sm font-medium text-crm-text-secondary mb-1">Objetivo del cliente</label>
+             <label for="clientGoal" class="block text-sm font-medium text-crm-muted mb-1">Objetivo del cliente</label>
              <textarea id="clientGoal" name="clientGoal" rows="3" class="crm-input"></textarea>
            </div>
            <div>
-             <label for="internalNotes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas internas</label>
+             <label for="internalNotes" class="block text-sm font-medium text-crm-muted mb-1">Notas internas</label>
              <textarea id="internalNotes" name="internalNotes" rows="4" class="crm-input"></textarea>
            </div>
 
@@ -310,33 +310,33 @@ const qaOptions = [
 
            <form id="asset-form" class="space-y-4">
              <div>
-               <label for="assetLabel" class="block text-sm font-medium text-crm-text-secondary mb-1">Label</label>
+               <label for="assetLabel" class="block text-sm font-medium text-crm-muted mb-1">Label</label>
                <input type="text" id="assetLabel" name="assetLabel" class="crm-input" />
              </div>
              <div class="grid md:grid-cols-2 gap-4">
                <div>
-                 <label for="assetType" class="block text-sm font-medium text-crm-text-secondary mb-1">Tipo</label>
+                 <label for="assetType" class="block text-sm font-medium text-crm-muted mb-1">Tipo</label>
                  <select id="assetType" name="assetType" class="crm-input">
                    {typeOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                  </select>
                </div>
                <div>
-                 <label for="assetQaStatus" class="block text-sm font-medium text-crm-text-secondary mb-1">QA</label>
+                 <label for="assetQaStatus" class="block text-sm font-medium text-crm-muted mb-1">QA</label>
                  <select id="assetQaStatus" name="assetQaStatus" class="crm-input">
                    {qaOptions.map(([value, label]) => <option value={value}>{label}</option>)}
                  </select>
                </div>
              </div>
              <div>
-               <label for="assetR2Key" class="block text-sm font-medium text-crm-text-secondary mb-1">R2 key</label>
+               <label for="assetR2Key" class="block text-sm font-medium text-crm-muted mb-1">R2 key</label>
                <input type="text" id="assetR2Key" name="assetR2Key" class="crm-input" />
              </div>
              <div>
-               <label for="assetDeliveryUrl" class="block text-sm font-medium text-crm-text-secondary mb-1">Delivery URL</label>
+               <label for="assetDeliveryUrl" class="block text-sm font-medium text-crm-muted mb-1">Delivery URL</label>
                <input type="url" id="assetDeliveryUrl" name="assetDeliveryUrl" class="crm-input" />
              </div>
              <div>
-               <label for="assetQaNotes" class="block text-sm font-medium text-crm-text-secondary mb-1">Notas QA</label>
+               <label for="assetQaNotes" class="block text-sm font-medium text-crm-muted mb-1">Notas QA</label>
                <textarea id="assetQaNotes" name="assetQaNotes" rows="3" class="crm-input"></textarea>
              </div>
              <button type="submit" class="crm-button crm-button-primary w-full">
@@ -362,7 +362,7 @@ const qaOptions = [
                   Subir a R2
                  </button>
                </div>
-               <p class="text-xs text-crm-muted">Max 50MB. JPG, PNG, WebP, MP4, MOV.</p>
+               <p class="text-xs text-crm-muted">Max 20MB. JPG, PNG, WebP.</p>
                <div id="upload-status" class="hidden text-xs"></div>
              </form>
            </div>
@@ -370,7 +370,7 @@ const qaOptions = [
 
          <div class="crm-form-section" role="region" aria-label="Operacion">
            <h2 class="crm-form-section__title">Operacion</h2>
-           <div class="mt-4 space-y-3 text-sm text-crm-text-secondary">
+           <div class="mt-4 space-y-3 text-sm text-crm-muted">
              <p><span class="font-medium text-crm-text">Email operativo:</span> hola@grandeandgordo.com</p>
              <p><span class="font-medium text-crm-text">Recomendacion:</span> usa QA aprobado para lo que deba ver el cliente y deja notas internas si algo cambia.</p>
            </div>
@@ -382,7 +382,7 @@ const qaOptions = [
        <div class="flex items-center justify-between gap-4 mb-4">
          <div>
            <h2 id="assets-heading" class="text-lg font-semibold text-crm-text">Assets</h2>
-           <p class="mt-2 text-sm text-crm-text-secondary">Edita metadata, links de entrega y estado de QA sin salir del trabajo.</p>
+           <p class="mt-2 text-sm text-crm-muted">Edita metadata, links de entrega y estado de QA sin salir del trabajo.</p>
          </div>
          <div id="asset-update-success" class="hidden text-sm crm-alert crm-alert-success" role="status"></div>
        </div>
@@ -407,8 +407,9 @@ const qaOptions = [
         formatNumber,
         formatPercent,
         numberInputValue,
+       } = await import('../../../lib/api-client');
+      const {
         setText,
-        isDueSoon,
         showToast,
        } = await import('../../../lib/crm-ui');
       const {
@@ -462,6 +463,34 @@ const qaOptions = [
         return '';
       };
 
+      const parseAssetMetadata = (asset) => {
+        if (!asset?.metadata) return {};
+        if (typeof asset.metadata === 'object') return asset.metadata;
+        try {
+          const parsed = JSON.parse(asset.metadata);
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch {
+          return {};
+        }
+      };
+
+      const assetQaNotes = (asset) => {
+        const metadata = parseAssetMetadata(asset);
+        return metadata.qaNotes ?? metadata.qa_notes ?? '';
+      };
+
+      const assetMetadataWithQaNotes = (asset, notes) => {
+        const metadata = parseAssetMetadata(asset);
+        const trimmed = String(notes ?? '').trim();
+        if (trimmed) {
+          metadata.qaNotes = trimmed;
+        } else {
+          delete metadata.qaNotes;
+          delete metadata.qa_notes;
+        }
+        return Object.keys(metadata).length > 0 ? JSON.stringify(metadata) : null;
+      };
+
       const renderAssets = () => {
         if (!assetsGrid) return;
         if (assetsHeading) assetsHeading.textContent = `Assets (${currentAssets.length})`;
@@ -478,8 +507,8 @@ const qaOptions = [
                  <p class="font-medium text-crm-text">${escapeHtml(asset.label ?? asset.type)}</p>
                  <p class="text-xs text-crm-muted mt-1">${escapeHtml(asset.r2Key ?? 'Sin key')}</p>
                </div>
-               <span class="${qaStatusClass(asset.qaStatus ?? 'pending')}">
-                 ${escapeHtml(asset.qaStatus ?? 'pending')}
+               <span class="${qaStatusClass(asset.status ?? 'pending')}">
+                 ${escapeHtml(asset.status ?? 'pending')}
                </span>
              </div>
 
@@ -498,10 +527,10 @@ const qaOptions = [
                  </div>
                  <div>
                    <label class="block text-xs font-medium text-crm-muted mb-1">QA</label>
-                   <select data-field="qaStatus" class="crm-input">
-                     <option value="pending" ${asset.qaStatus === 'pending' ? 'selected' : ''}>Pending</option>
-                     <option value="approved" ${asset.qaStatus === 'approved' ? 'selected' : ''}>Approved</option>
-                     <option value="rejected" ${asset.qaStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
+                   <select data-field="status" class="crm-input">
+                     <option value="pending" ${asset.status === 'pending' ? 'selected' : ''}>Pending</option>
+                     <option value="approved" ${asset.status === 'approved' ? 'selected' : ''}>Approved</option>
+                     <option value="rejected" ${asset.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                    </select>
                  </div>
                </div>
@@ -515,7 +544,7 @@ const qaOptions = [
                </div>
                <div>
                  <label class="block text-xs font-medium text-crm-muted mb-1">QA notes</label>
-                 <textarea data-field="qaNotes" rows="3" class="crm-input">${escapeHtml(asset.qaNotes ?? '')}</textarea>
+                 <textarea data-field="qaNotes" rows="3" class="crm-input">${escapeHtml(assetQaNotes(asset))}</textarea>
                </div>
              </div>
 
@@ -698,13 +727,20 @@ const qaOptions = [
         if (payload?.job) {
           await fetchAIEngineStatus(payload.job);
         }
-      } catch {
-        window.location.href = '/admin/jobs';
+      } catch (error) {
+        const title = document.getElementById('job-title');
+        if (title) title.textContent = 'No se pudo cargar el trabajo';
+        if (jobError instanceof HTMLDivElement) {
+          jobError.textContent = error instanceof Error ? error.message : 'No se pudo cargar el detalle del trabajo';
+          jobError.classList.remove('hidden');
+        }
+        if (executeAiBtn instanceof HTMLButtonElement) executeAiBtn.disabled = true;
+        if (assetsGrid) assetsGrid.innerHTML = '<div class="crm-empty md:col-span-2 xl:col-span-3">No se pudieron cargar los assets.</div>';
         return;
       }
 
       executeAiBtn?.addEventListener('click', async () => {
-        if (!confirm('¿Enviar este job a AI Engine para ejecución?')) return;
+        if (!confirm('¿Aprobar este trabajo en el orchestrator?')) return;
 
         executeAiBtn.disabled = true;
         executeAiBtn.innerHTML = `
@@ -712,33 +748,33 @@ const qaOptions = [
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
           </svg>
-         Enviando...
+         Aprobando...
         `;
 
         try {
-          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}/execute-ai`, {
+          const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(jobId)}/approve-orchestrator`, {
             method: 'POST',
             credentials: 'include',
           });
 
           if (!res.ok) {
             const data = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            throw new Error(data.error || 'error al ejecutar el trabajo');
+            throw new Error(data.error || 'error al aprobar el trabajo');
           }
 
           const result = await res.json();
-          showToast(`trabajo enviado a AI Engine. ID: ${result.ai_job_id}`, 'success');
+          showToast(`trabajo aprobado en orchestrator. ID: ${result.job?.externalJobId ?? currentJob?.externalJobId ?? jobId}`, 'success');
           await load(); // Recargar para ver estado actualizado
         } catch (error) {
-          console.error('Execute AI error:', error);
-          showToast(error instanceof Error ? error.message : 'no se pudo ejecutar el trabajo', 'error');
+          console.error('Approve orchestrator error:', error);
+          showToast(error instanceof Error ? error.message : 'no se pudo aprobar el trabajo', 'error');
         } finally {
           executeAiBtn.disabled = false;
           executeAiBtn.innerHTML = `
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
-           Ejecutar en AI Engine
+           Aprobar orchestrator
          `;
         }
       });
@@ -817,8 +853,8 @@ const qaOptions = [
               type: fieldValue('assetType'),
               r2Key: fieldValue('assetR2Key'),
               deliveryUrl: fieldValue('assetDeliveryUrl') || null,
-              qaStatus: fieldValue('assetQaStatus') || 'pending',
-              qaNotes: fieldValue('assetQaNotes') || null,
+              status: fieldValue('assetQaStatus') || 'pending',
+              metadata: assetMetadataWithQaNotes(null, fieldValue('assetQaNotes')),
             }),
           });
 
@@ -884,8 +920,8 @@ const qaOptions = [
               type: readField('type') || null,
               r2Key: readField('r2Key') || null,
               deliveryUrl: readField('deliveryUrl') || null,
-              qaStatus: readField('qaStatus') || null,
-              qaNotes: readField('qaNotes') || null,
+              status: readField('status') || null,
+              metadata: assetMetadataWithQaNotes(currentAssets.find((asset) => asset.id === assetId), readField('qaNotes')),
             }),
           });
 
@@ -923,7 +959,7 @@ const qaOptions = [
             const usedMB = (quota.storageUsed / (1024 * 1024)).toFixed(1);
             const maxMB = (quota.storageMax / (1024 * 1024)).toFixed(0);
             const remainingMB = (quota.storageRemaining / (1024 * 1024)).toFixed(1);
-            uploadQuotaInfo.innerHTML = `<span class="text-crm-text-secondary">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB · ${remainingMB} MB libres</span>`;
+            uploadQuotaInfo.innerHTML = `<span class="text-crm-muted">${quota.filesUsed}/${quota.filesMax} archivos · ${usedMB}/${maxMB} MB · ${remainingMB} MB libres</span>`;
           }
         } catch {
           if (uploadQuotaInfo) uploadQuotaInfo.textContent = '';

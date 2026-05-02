@@ -4,554 +4,519 @@ import { siteLinks } from '../../lib/site-links';
 ---
 
 <ClientLayout title="Resumen">
-      <div class="space-y-6" role="region" aria-label="Contenido principal">
-          <section class="crm-panel">
-              <!-- Review Due Alert -->
-              <div id="review-alert" class="hidden crm-alert crm-alert-warning mb-6">
-                  <div class="flex items-start gap-3">
-                      <svg class="w-5 h-5 text-crm-warning mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      <div>
-                          <h3 class="text-sm font-semibold text-crm-text">Review pendiente</h3>
-                          <p id="review-alert-text" class="text-xs text-crm-muted mt-1">Tu revisión trimestral está próxima. Contacta con tu account manager.</p>
-                      </div>
-                  </div>
-              </div>
+  <script id="__brief-url" type="application/json" set:html={JSON.stringify(siteLinks.newBrief)} />
+  <script id="__onboarding-url" type="application/json" set:html={JSON.stringify(siteLinks.onboarding)} />
+  <script id="__jobs-url" type="application/json" set:html={JSON.stringify('/client/jobs')} />
+  <div class="space-y-6" role="region" aria-label="Contenido principal">
 
-              <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-                  <div>
-                      <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Resumen cliente</p>
-                      <h1 id="client-heading" class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">
-                        preparando tu resumen...
-                      </h1>
-                      <p id="client-subheading" class="mt-4 max-w-3xl text-sm leading-relaxed text-crm-muted md:text-base">
-                        estado de cuenta y trabajos.
-                      </p>
-                  </div>
+    <!-- Brand assets readiness alert -->
+    <div id="brand-readiness-alert" class="hidden crm-alert crm-alert-warning">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <h3 class="text-sm font-semibold" style="color: var(--gg-text);">Brand assets incompletos</h3>
+          <p id="brand-readiness-text" class="text-xs text-crm-muted mt-1">Faltan activos de marca necesarios para producción.</p>
+          <a href="/client/brand-assets" class="text-xs font-medium mt-1 inline-block" style="color: var(--gg-accent);">Subir brand assets →</a>
+        </div>
+      </div>
+    </div>
 
-                  <div class="grid gap-4 sm:grid-cols-2">
-                      <div class="crm-panel-soft p-5">
-                          <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">soporte operativo</p>
-                          <div id="client-contact" class="mt-3 text-sm leading-relaxed text-crm-muted">
-                              <span class="font-medium text-crm-text">hola@grandeandgordo.com</span>
-                          </div>
-                      </div>
-                      <div class="crm-panel-soft p-5">
-                          <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">capa conectada</p>
-                          <p class="mt-3 text-sm text-crm-muted">
-                            Web y CRM trabajan juntos: brief, onboarding, seguimiento y entregables.
-                          </p>
-                      </div>
-                  </div>
-              </div>
-          </section>
+    <!-- Review alert -->
+    <div id="review-alert" class="hidden crm-alert crm-alert-warning">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <h3 class="text-sm font-semibold" style="color: var(--gg-text);">Revisión pendiente</h3>
+          <p id="review-alert-text" class="text-xs text-crm-muted mt-1">Tu revisión trimestral está próxima. Contacta con tu account manager.</p>
+        </div>
+      </div>
+    </div>
 
-          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-              <div class="crm-metric-card">
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Trabajos activos</p>
-                  <p id="metric-active-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-              </div>
-              <div class="crm-metric-card">
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Entregados</p>
-                  <p id="metric-delivered-jobs" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-              </div>
-              <div class="crm-metric-card">
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Assets</p>
-                  <p id="metric-assets" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-              </div>
-              <div class="crm-metric-card">
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Consumo</p>
-                  <p id="metric-units" class="mt-4 text-4xl font-black tracking-tight text-crm-text">—</p>
-                  <p id="metric-capacity" class="mt-3 text-xs text-crm-muted">—</p>
-              </div>
-              <div class="crm-metric-card">
-                  <p class="text-xs font-bold uppercase tracking-[0.28em] text-crm-subtle">Estado operativo</p>
-                  <p id="metric-plan" class="mt-4 inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-text">—</p>
-                  <p id="metric-dataset" class="mt-3 inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-text">—</p>
-              </div>
+    <!-- Hero panel: resumen + info cards -->
+    <div class="crm-panel" style="padding: 2rem;">
+      <div class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
+        <div>
+          <p class="crm-kicker crm-kicker--accent">Resumen cliente</p>
+          <h1 id="client-heading" class="crm-page-header__title mt-3">Preparando tu resumen...</h1>
+          <p id="client-subheading" class="crm-page-header__meta mt-3">Estado operativo, trabajos y facturación.</p>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="crm-panel-soft p-4">
+            <p class="crm-kicker">Soporte operativo</p>
+            <div id="client-contact" class="mt-3 text-sm leading-relaxed text-crm-muted">
+              <span class="font-medium" style="color: var(--gg-text);">hola@grandeandgordo.com</span>
+            </div>
           </div>
-
-          <div class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-              <section class="crm-panel">
-                  <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <div>
-                          <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">siguiente paso</p>
-                          <h2 id="next-step-title" class="mt-3 text-2xl font-black tracking-tight text-crm-text">
-                            preparando tu siguiente paso.
-                          </h2>
-                          <p id="next-step-description" class="mt-4 max-w-2xl text-sm leading-relaxed text-crm-muted">
-                            Vamos a usar tu estado de cuenta y el momento del proyecto para recomendarte la accion mas util ahora mismo.
-                          </p>
-                      </div>
-                      <span id="next-step-badge" class="inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted">
-                        Journey conectado
-                      </span>
-                  </div>
-                  <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                      <a
-                        id="next-step-link"
-                        href={siteLinks.brief}
-                        target="_blank"
-                        rel="noreferrer"
-                        class="crm-button crm-button-primary"
-                      >
-                        Abrir siguiente paso
-                      </a>
-                      <a
-                        href={siteLinks.portalHub}
-                        target="_blank"
-                        rel="noreferrer"
-                        class="crm-button crm-button-secondary"
-                      >
-                        Ver centro de cliente
-                      </a>
-                  </div>
-              </section>
-
-              <section class="crm-panel">
-                  <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">web + CRM</p>
-                  <h2 class="mt-3 text-2xl font-black tracking-tight text-crm-text">todo el journey, conectado</h2>
-                  <div class="mt-5 rounded-2xl border border-crm-border bg-crm-panel-soft p-4">
-                      <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">último brief recibido</p>
-                      <p id="latest-brief-meta" class="mt-3 text-sm font-medium text-crm-text">
-                        Aun no tenemos un brief reciente en tu cuenta.
-                      </p>
-                      <p id="latest-brief-description" class="mt-3 text-sm leading-relaxed text-crm-muted">
-                        Si cambian objetivos, referencias o necesidades, actualiza el brief desde la web y quedará conectado con tu operativa del CRM.
-                      </p>
-                  </div>
-                  <div class="mt-5 grid gap-3">
-                      <a href={siteLinks.brief} target="_blank" rel="noreferrer" class="crm-link-tile">
-                          <p class="text-sm font-semibold text-crm-text">brief de proyecto</p>
-                          <p class="mt-2 text-sm text-crm-muted">Comparte referencias, producto, tono y necesidades nuevas.</p>
-                      </a>
-                      <a href={siteLinks.onboarding} target="_blank" rel="noreferrer" class="crm-link-tile">
-                          <p class="text-sm font-semibold text-crm-text">onboarding y checklist</p>
-                          <p class="mt-2 text-sm text-crm-muted">Revisa preparacion de sesion, materiales y preguntas frecuentes.</p>
-                      </a>
-                      <a href={siteLinks.home} target="_blank" rel="noreferrer" class="crm-link-tile">
-                          <p class="text-sm font-semibold text-crm-text">web pública</p>
-                          <p class="mt-2 text-sm text-crm-muted">Servicios, pricing y referencias de Grande&amp;Gordo cuando necesites contexto mas amplio.</p>
-                      </a>
-                  </div>
-              </section>
+          <div class="crm-panel-soft p-4">
+            <p class="crm-kicker">Contexto operativo</p>
+            <p class="mt-3 text-sm text-crm-muted">
+              Brief, activación, entregables y facturación viven ya dentro del portal operativo.
+            </p>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <!-- Activity Timeline -->
-          <section class="crm-panel">
-              <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
-                  <div>
-                      <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">actividad del proyecto</p>
-                      <h2 class="mt-3 text-xl font-black tracking-tight text-crm-text">
-                        tu timeline en tiempo real
-                      </h2>
-                  </div>
-                  <span id="activity-badge" class="hidden inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted">
-                    Sin actividad
-                  </span>
-              </div>
+    <!-- Metric cards -->
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Trabajos activos</p>
+        <p id="metric-active-jobs" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Entregados</p>
+        <p id="metric-delivered-jobs" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Assets</p>
+        <p id="metric-assets" class="crm-metric-card__value">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Unidades</p>
+        <p id="metric-units" class="crm-metric-card__value">—</p>
+        <p id="metric-capacity" class="crm-metric-card__meta">—</p>
+      </div>
+      <div class="crm-metric-card">
+        <p class="crm-kicker">Estado operativo</p>
+        <p id="metric-plan" class="mt-4 inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-text">—</p>
+        <p id="metric-dataset" class="mt-3 inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-text">—</p>
+      </div>
+    </div>
 
-              <div id="client-timeline" class="relative pl-8 border-l-2 border-crm-border space-y-6">
-                  <p class="text-sm text-crm-muted">Cargando actividad...</p>
-              </div>
-          </section>
+    <!-- Siguiente paso + Contexto -->
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
 
-          <!-- Trust Badge -->
-          <section class="crm-panel">
-              <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div class="flex items-center gap-4">
-                      <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: color-mix(in srgb, var(--crm-success) 10%, transparent);">
-                          <svg class="w-6 h-6 text-crm-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                          </svg>
-                      </div>
-                      <div>
-                          <p class="text-sm font-semibold text-crm-text">producción segura</p>
-                          <p class="text-xs text-crm-muted">control de calidad interno · entregas puntuales · feedback directo con el equipo</p>
-                      </div>
-                  </div>
-                  <a href="/client/cases" class="inline-flex items-center gap-2 text-sm font-medium text-crm-success hover:text-crm-accent transition">
-                    Ver casos de éxito
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                  </a>
-              </div>
-          </section>
-
-          <!-- Activity Feed -->
-          <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
-              <div class="crm-table-wrap">
-                  <div class="border-b border-crm-border px-6 py-5">
-                      <h2 class="text-lg font-semibold text-crm-text">tus trabajos</h2>
-                      <p class="mt-2 text-sm text-crm-muted">estado de entrega y detalle de assets aprobados.</p>
-                  </div>
-                  <div class="overflow-x-auto">
-                      <table class="min-w-full text-sm">
-                          <thead class="crm-table-head">
-                              <tr>
-                                  <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">brief</th>
-                                  <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">estado</th>
-                                  <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">due</th>
-                                  <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">units</th>
-                                  <th class="px-6 py-3 text-left text-xs font-medium tracking-[0.02em] text-crm-subtle">actualizado</th>
-                                  <th class="px-6 py-3"></th>
-                              </tr>
-                          </thead>
-                          <tbody id="jobs-body" class="divide-y divide-crm-border">
-                              <tr>
-                                  <td colspan="6" class="px-6 py-8 text-center text-crm-muted">buscando trabajos...</td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-
-              <!-- Notifications Sidebar -->
-              <div class="crm-panel">
-                  <div class="flex items-center justify-between mb-4">
-                      <p class="text-xs font-bold tracking-[0.06em] text-crm-subtle">notificaciones</p>
-                      <span id="unread-badge" class="hidden crm-badge crm-badge-accent text-xs"></span>
-                  </div>
-                  <div id="notifications-feed" class="space-y-4">
-                      <p class="text-sm text-crm-muted">buscando notificaciones...</p>
-                  </div>
-              </div>
+      <section class="crm-panel">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p class="crm-kicker crm-kicker--accent">Siguiente paso</p>
+            <h2 id="next-step-title" class="mt-3 text-2xl font-bold tracking-tight" style="letter-spacing: -0.03em; color: var(--gg-text);">
+              Preparando tu siguiente paso.
+            </h2>
+            <p id="next-step-description" class="mt-3 max-w-2xl text-sm leading-relaxed text-crm-muted">
+              Vamos a usar tu estado de cuenta y el momento del proyecto para recomendarte la acción más útil ahora mismo.
+            </p>
           </div>
+          <span id="next-step-badge" class="inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted">
+            Operativa
+          </span>
+        </div>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a id="next-step-link" href={siteLinks.newBrief} class="crm-button crm-button-primary">
+            Abrir siguiente paso
+          </a>
+          <a href="/client/jobs" class="crm-button crm-button-secondary">
+            Ver trabajos
+          </a>
+        </div>
+      </section>
+
+      <section class="crm-panel">
+        <p class="crm-kicker">Contexto operativo</p>
+        <h2 class="mt-3 text-xl font-bold tracking-tight" style="letter-spacing: -0.03em; color: var(--gg-text);">
+          Brief, activación y <em class="baskerville-italic" style="font-weight: 400;">billing</em>
+        </h2>
+        <div class="mt-4 crm-panel-soft p-4" style="border-radius: var(--radius-lg);">
+          <p class="crm-kicker" style="font-size: 0.8rem;">Último brief recibido</p>
+          <p id="latest-brief-meta" class="mt-2 text-sm font-medium" style="color: var(--gg-text);">
+            Aún no tenemos un brief reciente en tu cuenta.
+          </p>
+          <p id="latest-brief-description" class="mt-2 text-sm leading-relaxed text-crm-muted">
+            Si cambian objetivos, referencias o necesidades, actualiza el brief desde tu cuenta y quedará unido al trabajo real.
+          </p>
+        </div>
+        <div class="mt-4 grid gap-3">
+          <a href={siteLinks.newBrief} class="crm-link-tile">
+            <p class="text-sm font-semibold" style="color: var(--gg-text);">Brief de proyecto</p>
+            <p class="mt-1 text-sm text-crm-muted">Comparte referencias, producto, tono y necesidades nuevas.</p>
+          </a>
+          <a href={siteLinks.onboarding} class="crm-link-tile">
+            <p class="text-sm font-semibold" style="color: var(--gg-text);">Activación y checklist</p>
+            <p class="mt-1 text-sm text-crm-muted">Revisa preparación de sesión, materiales y siguientes pasos.</p>
+          </a>
+          <a href="/client/invoices" class="crm-link-tile">
+            <p class="text-sm font-semibold" style="color: var(--gg-text);">Facturación</p>
+            <p class="mt-1 text-sm text-crm-muted">Consulta facturas, estado de pago y justificantes desde una sola vista.</p>
+          </a>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Timeline -->
+    <section class="crm-panel">
+      <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
+        <div>
+          <p class="crm-kicker">Actividad del proyecto</p>
+          <h2 class="mt-3 text-xl font-bold tracking-tight" style="letter-spacing: -0.03em; color: var(--gg-text);">
+            Tu <em class="baskerville-italic" style="font-weight: 400;">timeline</em> en tiempo real
+          </h2>
+        </div>
+        <span id="activity-badge" class="hidden inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted">
+          Sin actividad
+        </span>
+      </div>
+      <div id="client-timeline" class="relative pl-8 border-l-2 border-crm-border space-y-6">
+        <p class="text-sm text-crm-muted">Cargando actividad...</p>
+      </div>
+    </section>
+
+    <!-- Producción segura -->
+    <div class="crm-guarantee flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <p class="crm-kicker">Producción segura</p>
+        <p class="mt-2 text-sm text-crm-muted">Control de calidad interno · entregas puntuales · feedback directo con el equipo</p>
+      </div>
+      <a href="/client/vault" class="inline-flex items-center gap-2 text-sm font-semibold transition" style="color: var(--crm-success); white-space: nowrap;">
+        Abrir vault
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Trabajos + Notificaciones -->
+    <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
+
+      <div class="crm-table-wrap">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gg-border);">
+          <p class="crm-kicker">Trabajos</p>
+          <h2 class="mt-2 text-lg font-semibold" style="color: var(--gg-text);">Tus trabajos</h2>
+          <p class="mt-1 text-sm text-crm-muted">Estado de entrega y detalle de assets aprobados.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="crm-table min-w-full text-sm">
+            <thead class="crm-table-head">
+              <tr>
+                <th>Brief</th>
+                <th>Estado</th>
+                <th>Due</th>
+                <th>Unidades</th>
+                <th>Actualizado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="jobs-body" class="divide-y divide-crm-border">
+              <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-crm-muted">Buscando trabajos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <script define:vars={{ briefUrl: siteLinks.brief, onboardingUrl: siteLinks.onboarding, portalHubUrl: siteLinks.portalHub }}>
-          (async () => {
-           const {
-             api,
-             escapeHtml,
-             formatDate,
-             formatNumber,
-             getSessionContext,
-            } = await import('../../lib/api-client');
-           const {
-             datasetStatusClass,
-             jobStatusClass,
-             subscriptionClass,
-            } = await import('../../lib/ui-helpers');
+      <div class="crm-panel">
+        <div class="flex items-center justify-between mb-4">
+          <p class="crm-kicker">Notificaciones</p>
+          <span id="unread-badge" class="hidden crm-badge crm-badge-accent text-xs"></span>
+        </div>
+        <div id="notifications-feed" class="space-y-4">
+          <p class="text-sm text-crm-muted">Buscando notificaciones...</p>
+        </div>
+      </div>
 
-           const tbody = document.getElementById('jobs-body');
-           const nextStepTitle = document.getElementById('next-step-title');
-           const nextStepDescription = document.getElementById('next-step-description');
-           const nextStepBadge = document.getElementById('next-step-badge');
-           const nextStepLink = document.getElementById('next-step-link');
-           const latestBriefMeta = document.getElementById('latest-brief-meta');
-           const latestBriefDescription = document.getElementById('latest-brief-description');
+    </div>
 
-           const nextStepForClient = (client, jobs) => {
-             const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
-             const datasetStatus = client?.datasetStatus ?? 'pending_capture';
+  </div>
 
-             if (datasetStatus === 'pending_capture') {
-               return {
-                 badge: 'Preparacion',
-                 title: 'completa el brief para acelerar la sesión.',
-                 description:
-                    'aún estamos en fase de captura inicial. cuanto mejor contexto nos dejes en la web, mejor saldrá la preparación del proyecto y la primera sesión.',
-                 href: briefUrl,
-                 label: 'completar brief',
-                };
-               }
+  <script>
+    const __briefUrl = JSON.parse(document.getElementById('__brief-url')?.textContent ?? '""');
+    const __onboardingUrl = JSON.parse(document.getElementById('__onboarding-url')?.textContent ?? '""');
+    const __jobsUrl = JSON.parse(document.getElementById('__jobs-url')?.textContent ?? '"/client/jobs"');
+    (async () => {
+      const {
+        api,
+        escapeHtml,
+        formatDate,
+        formatNumber,
+        getSessionContext,
+      } = await import('../../lib/api-client');
+      const {
+        datasetStatusClass,
+        jobStatusClass,
+        jobStatusLabel,
+        subscriptionClass,
+      } = await import('../../lib/ui-helpers');
 
-             if (datasetStatus === 'captured') {
-               return {
-                 badge: 'Activacion',
-                 title: 'revisa el onboarding mientras activamos tu sistema visual.',
-                 description:
-                    'tu captura ya está hecha. este es el mejor momento para revisar checklist, expectativas y siguientes pasos del proceso.',
-                 href: onboardingUrl,
-                 label: 'abrir onboarding',
-                };
-               }
+      const tbody = document.getElementById('jobs-body');
+      const nextStepTitle = document.getElementById('next-step-title');
+      const nextStepDescription = document.getElementById('next-step-description');
+      const nextStepBadge = document.getElementById('next-step-badge');
+      const nextStepLink = document.getElementById('next-step-link');
+      const latestBriefMeta = document.getElementById('latest-brief-meta');
+      const latestBriefDescription = document.getElementById('latest-brief-description');
 
-             if (activeJobs.length === 0) {
-               return {
-                 badge: 'Operacion',
-                 title: 'sin trabajos activos. prepara el siguiente contexto.',
-                 description:
-                    'si quieres arrancar un nuevo trabajo o abrir una nueva línea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
-                 href: briefUrl,
-                 label: 'actualizar brief',
-                };
-               }
+     const nextStepForClient = (client, jobs, brandReady) => {
+       const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
+       const datasetStatus = client?.datasetStatus ?? 'pending_capture';
+       const activationCompleted = Boolean(client?.onboardingCompletedAt);
 
-             return {
-               badge: 'Seguimiento',
-               title: 'tu operacion ya esta en marcha.',
-               description:
-                  'usa el crm para seguir entregables y mantennos alineados desde la web cuando necesites sumar contexto, referencias o nuevos objetivos.',
-               href: portalHubUrl,
-               label: 'ver centro de cliente',
-              };
-            };
+        // Onboarding first: without activation, production can't start
+        if (!activationCompleted) {
+          return {
+            badge: 'Activación',
+            title: 'Confirma la activación para que el equipo pueda arrancar.',
+            description: 'Necesitamos confirmar tu preparación, foco inicial y disponibilidad antes de entrar en producción. Toma 2 minutos.',
+            href: __onboardingUrl,
+            label: 'Confirmar activación',
+          };
+        }
 
-           const setText = (id, value) => {
-             const element = document.getElementById(id);
-             if (element) element.textContent = value;
-            };
+        // Brand assets before brief
+        if (!brandReady) {
+          return {
+            badge: 'Preparación',
+            title: 'Completa tus brand assets antes de crear un brief.',
+            description: 'Necesitamos tu logo, paleta de colores y manual de identidad para poder producir contenido alineado con tu marca.',
+            href: '/client/brand-assets',
+            label: 'Subir brand assets',
+          };
+        }
 
-           try {
-             const [session, jobsData, briefData, activitiesData, notificationsData, assetsData] = await Promise.all([
-               getSessionContext(),
-               api('/api/portal/jobs'),
-               api('/api/portal/briefs/latest').catch(() => ({ brief: null })),
-               api('/api/portal/client/activities').catch(() => ({ activities: [] })),
-               api('/api/portal/notifications').catch(() => ({ notifications: [], unreadCount: 0 })),
-               api('/api/portal/assets').catch(() => ({ assets: [] })),
-              ]);
+        if (datasetStatus === 'pending_capture') {
+          return {
+            badge: 'Preparación',
+            title: 'Completa el brief para acelerar la sesión.',
+            description: 'Aún estamos en fase de captura inicial. Cuanto mejor contexto nos dejes en tu cuenta, mejor saldrá la preparación del proyecto y la primera sesión.',
+            href: __briefUrl,
+            label: 'Completar brief',
+          };
+        }
 
-             const client = session?.client;
-             const jobs = Array.isArray(jobsData.jobs) ? jobsData.jobs : [];
-             const latestBrief = briefData?.brief ?? null;
-             const activities = Array.isArray(activitiesData.activities) ? activitiesData.activities : [];
-             const notifications = Array.isArray(notificationsData.notifications) ? notificationsData.notifications : [];
-             const unreadCount = notificationsData.unreadCount ?? 0;
-             const assets = Array.isArray(assetsData.assets) ? assetsData.assets : [];
+        if (activeJobs.length === 0) {
+          return {
+            badge: 'Operación',
+            title: activationCompleted
+              ? 'Sin trabajos activos. Deja listo el siguiente brief.'
+              : 'Sin trabajos activos. Deja listo el siguiente contexto.',
+            description: activationCompleted
+              ? 'La activación ya está confirmada. Si quieres arrancar una nueva línea de trabajo, el brief es la puerta correcta.'
+              : 'Si quieres arrancar un nuevo trabajo o abrir una nueva línea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
+            href: __briefUrl,
+            label: 'Actualizar brief',
+          };
+        }
 
-             if (client) {
-               const heading = document.getElementById('client-heading');
-               const subheading = document.getElementById('client-subheading');
-               const contact = document.getElementById('client-contact');
+        return {
+          badge: 'Seguimiento',
+          title: 'Tu operación ya está en marcha.',
+          description: 'Usa el portal para seguir entregables y mantennos alineados desde el brief cuando necesites sumar contexto, referencias o nuevos objetivos.',
+          href: __jobsUrl,
+          label: 'Ver trabajos',
+        };
+      };
 
-               if (heading) heading.textContent = client.company ?? client.name;
-               if (subheading) {
-                 subheading.textContent =
-                    `${client.plan ?? 'Sin plan definido'} · ${client.subscriptionStatus ?? 'inactive'} · review ${formatDate(client.nextReviewAt)}`;
-                }
+      const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      };
 
-               if (contact) {
-                 const accountManager = client.accountManager ?? 'hola@grandeandgordo.com';
-                 contact.innerHTML = `Tu contacto operativo: <span class="font-medium text-crm-text">${escapeHtml(accountManager)}</span>`;
-                }
+      try {
+        const cockpit = await api('/api/portal/dashboard/client').catch(() => null);
+        const client = cockpit?.client ?? null;
+        const jobs = Array.isArray(cockpit?.jobs) ? cockpit.jobs : [];
+        const latestBrief = cockpit?.latestBrief ?? null;
+        const activities = Array.isArray(cockpit?.activities) ? cockpit.activities : [];
+        const notifications = Array.isArray(cockpit?.notifications) ? cockpit.notifications : [];
+        const unreadCount = cockpit?.unreadCount ?? 0;
+        const assetCount = cockpit?.assetCount ?? 0;
+        const readinessData = cockpit?.brandReadiness ?? { ready: true, missing: [] };
 
-               const datasetMetric = document.getElementById('metric-dataset');
-               if (datasetMetric) {
-                 datasetMetric.textContent = `Dataset ${client.datasetStatus ?? 'pending_capture'}`;
-                 datasetMetric.className = `text-sm mt-2 inline-flex px-2 py-1 rounded font-medium ${datasetStatusClass(client.datasetStatus ?? '')}`;
-                }
+        if (client) {
+          const heading = document.getElementById('client-heading');
+          const subheading = document.getElementById('client-subheading');
+          const contact = document.getElementById('client-contact');
 
-               const planMetric = document.getElementById('metric-plan');
-               if (planMetric) {
-                 planMetric.textContent = client.plan ?? 'Sin plan definido';
-                 planMetric.className = `text-lg font-semibold mt-2 inline-flex px-2 py-1 rounded ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}`;
-                }
+          if (heading) heading.textContent = client.company ?? client.name;
+          if (subheading) {
+            subheading.textContent = `${client.plan ?? 'Sin plan definido'} · ${client.subscriptionStatus ?? 'inactive'} · review ${formatDate(client.nextReviewAt)}`;
+          }
+          if (contact) {
+            const accountManager = client.accountManager ?? 'hola@grandeandgordo.com';
+            contact.innerHTML = `Tu contacto operativo: <span class="font-medium" style="color: var(--gg-text);">${escapeHtml(accountManager)}</span>`;
+          }
 
-               setText('metric-capacity', `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)} unidades`);
+          const datasetMetric = document.getElementById('metric-dataset');
+          if (datasetMetric) {
+            datasetMetric.textContent = `Dataset ${client.datasetStatus ?? 'pending_capture'}`;
+            datasetMetric.className = `text-sm mt-2 inline-flex px-2 py-1 rounded font-medium ${datasetStatusClass(client.datasetStatus ?? '')}`;
+          }
 
-                // Review due alert
-               const reviewAlert = document.getElementById('review-alert');
-               const reviewAlertText = document.getElementById('review-alert-text');
-               if (reviewAlert && reviewAlertText && client.nextReviewAt) {
-                 const reviewDate = new Date(client.nextReviewAt);
-                 const now = new Date();
-                 const daysUntilReview = Math.ceil((reviewDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          const planMetric = document.getElementById('metric-plan');
+          if (planMetric) {
+            planMetric.textContent = client.plan ?? 'Sin plan definido';
+            planMetric.className = `text-lg font-semibold mt-2 inline-flex px-2 py-1 rounded ${subscriptionClass(client.subscriptionStatus ?? 'inactive')}`;
+          }
 
-                 if (daysUntilReview <= 30 && daysUntilReview >= -7) {
-                   reviewAlert.classList.remove('hidden');
-                   if (daysUntilReview < 0) {
-                     reviewAlertText.textContent = `Tu revisión trimestral está vencida desde hace ${Math.abs(daysUntilReview)} días. Contacta con tu account manager.`;
-                    } else if (daysUntilReview === 0) {
-                     reviewAlertText.textContent = `Tu revisión trimestral es hoy. Contacta con tu account manager.`;
-                    } else {
-                     reviewAlertText.textContent = `Tu revisión trimestral es en ${daysUntilReview} días. Contacta con tu account manager.`;
-                    }
-                  }
-                }
-               }
+          setText('metric-capacity', `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)} unidades`);
 
-             const nextStep = nextStepForClient(client, jobs);
-             if (nextStepTitle) nextStepTitle.textContent = nextStep.title;
-             if (nextStepDescription) nextStepDescription.textContent = nextStep.description;
-             if (nextStepBadge) nextStepBadge.textContent = nextStep.badge;
-             if (nextStepLink instanceof HTMLAnchorElement) {
-               nextStepLink.href = nextStep.href;
-               nextStepLink.textContent = nextStep.label;
+          const brandAlert = document.getElementById('brand-readiness-alert');
+          const brandAlertText = document.getElementById('brand-readiness-text');
+          if (brandAlert && brandAlertText && readinessData && !readinessData.ready && Array.isArray(readinessData.missing) && readinessData.missing.length > 0) {
+            const missingLabels = readinessData.missing.map((t) => {
+              const map = { logo: 'logo', palette: 'paleta de colores', identity_manual: 'manual de identidad', font_file: 'fuentes tipográficas', iconography: 'iconografía' };
+              return map[t] || t;
+            });
+            brandAlert.classList.remove('hidden');
+            brandAlertText.textContent = `Faltan: ${missingLabels.join(', ')}. Súbelos antes de crear un brief.`;
+          }
+
+          const reviewAlert = document.getElementById('review-alert');
+          const reviewAlertText = document.getElementById('review-alert-text');
+          if (reviewAlert && reviewAlertText && client.nextReviewAt) {
+            const reviewDate = new Date(client.nextReviewAt);
+            const now = new Date();
+            const daysUntilReview = Math.ceil((reviewDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            if (daysUntilReview <= 30 && daysUntilReview >= -7) {
+              reviewAlert.classList.remove('hidden');
+              if (daysUntilReview < 0) {
+                reviewAlertText.textContent = `Tu revisión trimestral está vencida desde hace ${Math.abs(daysUntilReview)} días. Contacta con tu account manager.`;
+              } else if (daysUntilReview === 0) {
+                reviewAlertText.textContent = `Tu revisión trimestral es hoy. Contacta con tu account manager.`;
+              } else {
+                reviewAlertText.textContent = `Tu revisión trimestral es en ${daysUntilReview} días. Contacta con tu account manager.`;
               }
+            }
+          }
+        }
 
-             if (latestBriefMeta && latestBriefDescription) {
-               if (latestBrief) {
-                 latestBriefMeta.textContent =
-                    `${latestBrief.tipo ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)}`;
+        const nextStep = nextStepForClient(client, jobs, readinessData?.ready ?? true);
+        if (nextStepTitle) nextStepTitle.textContent = nextStep.title;
+        if (nextStepDescription) nextStepDescription.textContent = nextStep.description;
+        if (nextStepBadge) nextStepBadge.textContent = nextStep.badge;
+        if (nextStepLink instanceof HTMLAnchorElement) {
+          nextStepLink.href = nextStep.href;
+          nextStepLink.textContent = nextStep.label;
+        }
 
-                 const excerpt = String(latestBrief.description ?? '').trim();
-                 latestBriefDescription.textContent =
-                   excerpt.length > 180 ? `${excerpt.slice(0, 177)}...` : excerpt || 'Brief recibido correctamente.';
-                }
-               }
+        if (latestBriefMeta && latestBriefDescription && latestBrief) {
+          latestBriefMeta.textContent = `${latestBrief.contentType ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)}`;
+          const excerpt = String(latestBrief.description ?? '').trim();
+          latestBriefDescription.textContent = excerpt.length > 180 ? `${excerpt.slice(0, 177)}...` : excerpt || 'Brief recibido correctamente.';
+        }
 
-             setText(
-                'metric-active-jobs',
-               String(jobs.filter((job) => ['pending', 'processing'].includes(job.status)).length),
-              );
-             setText(
-                'metric-delivered-jobs',
-               String(jobs.filter((job) => job.status === 'delivered').length),
-              );
+        setText('metric-active-jobs', String(jobs.filter((job) => ['pending', 'processing'].includes(job.status)).length));
+        setText('metric-delivered-jobs', String(jobs.filter((job) => job.status === 'delivered').length));
 
-             const planned = jobs.reduce((total, job) => total + Number(job.unitsPlanned ?? 0), 0);
-             const consumed = jobs.reduce((total, job) => total + Number(job.unitsConsumed ?? 0), 0);
-             setText('metric-units', `${formatNumber(consumed)} / ${formatNumber(planned)}`);
-             setText('metric-assets', String(assets.length));
+        const planned = jobs.reduce((total, job) => total + Number(job.unitsPlanned ?? 0), 0);
+        const consumed = jobs.reduce((total, job) => total + Number(job.unitsConsumed ?? 0), 0);
+        setText('metric-units', `${formatNumber(consumed)} / ${formatNumber(planned)}`);
+        setText('metric-assets', String(assetCount));
 
-             if (tbody) {
-               if (jobs.length === 0) {
-                 tbody.innerHTML = `
-                   <tr>
-                     <td colspan="6" class="px-6 py-8 text-center text-crm-muted">aún no tienes trabajos activos.</td>
-                   </tr>
-                 `;
-                } else {
-                  tbody.innerHTML = jobs.map((job) => `
-                     <tr class="hover:bg-crm-panel-soft transition">
-                       <td class="px-6 py-4">
-                         <p class="font-medium text-crm-text">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
-                         <p class="text-xs text-crm-muted mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
-                       </td>
-                       <td class="px-6 py-4">
-                         <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
-                           ${escapeHtml(job.status ?? 'pending')}
-                         </span>
-                       </td>
-                       <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.dueAt))}</td>
-                       <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
-                       <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.updatedAt))}</td>
-                       <td class="px-6 py-4 text-right">
-                         <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-text underline decoration-crm-border underline-offset-4 transition hover:decoration-crm-accent">Ver detalle</a>
-                       </td>
-                     </tr>
-                   `).join('');
-                }
-               }
+        if (tbody) {
+          if (jobs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-crm-muted">Aún no tienes trabajos activos.</td></tr>`;
+          } else {
+            tbody.innerHTML = jobs.map((job) => `
+              <tr class="hover:bg-crm-panel-soft transition">
+                <td class="px-6 py-4">
+                  <p class="font-medium" style="color: var(--gg-text);">${escapeHtml(job.briefText ?? 'Sin brief')}</p>
+                  <p class="text-xs text-crm-muted mt-1">${escapeHtml(job.platform ?? 'Sin plataforma')} · ${escapeHtml(job.type ?? 'Sin tipo')}</p>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
+                    ${escapeHtml(jobStatusLabel(job.status ?? 'pending'))}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.dueAt))}</td>
+                <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatNumber(job.unitsConsumed ?? 0))} / ${escapeHtml(formatNumber(job.unitsPlanned ?? 0))}</td>
+                <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.updatedAt))}</td>
+                <td class="px-6 py-4 text-right">
+                  <a href="/client/jobs/detail?id=${encodeURIComponent(job.id)}" class="font-medium text-crm-accent hover:opacity-75 transition underline-offset-4">Ver detalle</a>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
 
-              // Build dynamic timeline from real data
-               const timelineEl = document.getElementById('client-timeline');
-               const activityBadge = document.getElementById('activity-badge');
-               if (timelineEl) {
-                 const timelineEvents = [];
+        // Timeline
+        const timelineEl = document.getElementById('client-timeline');
+        const activityBadge = document.getElementById('activity-badge');
+        if (timelineEl) {
+          const timelineEvents = [];
+          const datasetStatus = client?.datasetStatus ?? 'pending_capture';
 
-                  // Dataset milestone
-                 const datasetStatus = client?.datasetStatus ?? 'pending_capture';
-                 if (datasetStatus === 'captured') {
-                   timelineEvents.push({
-                     label: 'Dataset completado',
-                     description: 'Captura de producto y referencias finalizada',
-                     date: null,
-                     color: 'var(--crm-success)',
-                     done: true,
-                    });
-                   } else {
-                   timelineEvents.push({
-                     label: 'Dataset pendiente',
-                     description: 'Esperando sesion de captura de producto y referencias',
-                     date: null,
-                     color: 'var(--crm-warning)',
-                     done: false,
-                    });
-                   }
+          if (datasetStatus === 'captured') {
+            timelineEvents.push({ label: 'Dataset completado', description: 'Captura de producto y referencias finalizada', date: null, color: 'var(--crm-success)', done: true });
+          } else {
+            timelineEvents.push({ label: 'Dataset pendiente', description: 'Esperando sesión de captura de producto y referencias', date: null, color: 'var(--crm-warning)', done: false });
+          }
 
-                  // Brief milestone
-                 if (latestBrief) {
-                   timelineEvents.push({
-                     label: 'Brief recibido',
-                     description: latestBrief.tipo ?? 'Brief de proyecto',
-                     date: latestBrief.createdAt,
-                     color: 'var(--crm-success)',
-                     done: true,
-                    });
-                   }
+          if (latestBrief) {
+            timelineEvents.push({ label: 'Brief recibido', description: latestBrief.contentType ?? 'Brief de proyecto', date: latestBrief.createdAt, color: 'var(--crm-success)', done: true });
+          }
 
-                  // Job milestones
-                 jobs.forEach((job) => {
-                   timelineEvents.push({
-                     label: job.briefText?.slice(0, 40) || 'Trabajo',
-                     description: `Estado: ${job.status ?? 'pending'} · ${job.platform ?? 'Sin plataforma'}`,
-                     date: job.updatedAt,
-                     color: job.status === 'delivered' ? 'var(--crm-success)' : job.status === 'completed' ? 'var(--crm-info)' : 'var(--crm-accent)',
-                     done: ['completed', 'delivered'].includes(job.status),
-                    });
-                   });
+          jobs.forEach((job) => {
+            timelineEvents.push({
+              label: job.briefText?.slice(0, 40) || 'Trabajo',
+              description: `Estado: ${jobStatusLabel(job.status ?? 'pending')} · ${job.platform ?? 'Sin plataforma'}`,
+              date: job.updatedAt,
+              color: job.status === 'delivered' ? 'var(--crm-success)' : job.status === 'completed' ? 'var(--crm-info)' : 'var(--crm-accent)',
+              done: ['completed', 'delivered'].includes(job.status),
+            });
+          });
 
-                  // Activity events from clientActivities
-                 activities.forEach((activity) => {
-                   timelineEvents.push({
-                     label: activity.type,
-                     description: activity.content || 'Actividad registrada',
-                     date: activity.createdAt,
-                     color: 'var(--crm-muted)',
-                     done: true,
-                    });
-                   });
+          activities.forEach((activity) => {
+            timelineEvents.push({ label: activity.type, description: activity.content || 'Actividad registrada', date: activity.createdAt, color: 'var(--crm-muted)', done: true });
+          });
 
-                  // Sort by date descending
-                 timelineEvents.sort((a, b) => {
-                   const aTime = a.date ? new Date(a.date).getTime() : 0;
-                   const bTime = b.date ? new Date(b.date).getTime() : 0;
-                   return bTime - aTime;
-                  });
+          timelineEvents.sort((a, b) => {
+            const aTime = a.date ? new Date(a.date).getTime() : 0;
+            const bTime = b.date ? new Date(b.date).getTime() : 0;
+            return bTime - aTime;
+          });
 
-                 if (timelineEvents.length === 0) {
-                   timelineEl.innerHTML = '<p class="text-sm text-crm-muted">sin actividad registrada aún.</p>';
-                    if (activityBadge) {
-                      activityBadge.textContent = 'Sin actividad';
-                      activityBadge.classList.remove('hidden');
-                    }
-                   } else {
-                    if (activityBadge) {
-                      activityBadge.textContent = `${timelineEvents.length} eventos`;
-                      activityBadge.classList.remove('hidden');
-                    }
-                     timelineEl.innerHTML = timelineEvents.map((event) => `
-                       <div class="relative">
-                         <div class="absolute -left-[41px] h-5 w-5 rounded-full" style="background: ${event.color}; box-shadow: 0 0 0 4px color-mix(in srgb, ${event.color} 20%, transparent);"></div>
-                         <div>
-                           <p class="text-sm font-medium text-crm-text">${escapeHtml(event.label)}</p>
-                           <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(event.description)}</p>
-                           ${event.date ? `<p class="text-xs text-crm-muted mt-1">${formatDate(event.date)}</p>` : ''}
-                         </div>
-                       </div>
-                     `).join('');
-                    }
-                   }
+          if (timelineEvents.length === 0) {
+            timelineEl.innerHTML = '<p class="text-sm text-crm-muted">Sin actividad registrada aún.</p>';
+            if (activityBadge) { activityBadge.textContent = 'Sin actividad'; activityBadge.classList.remove('hidden'); }
+          } else {
+            if (activityBadge) { activityBadge.textContent = `${timelineEvents.length} eventos`; activityBadge.classList.remove('hidden'); }
+            timelineEl.innerHTML = timelineEvents.map((event) => `
+              <div class="relative">
+                <div class="absolute -left-[41px] h-5 w-5 rounded-full" style="background: ${event.color}; box-shadow: 0 0 0 4px color-mix(in srgb, ${event.color} 20%, transparent);"></div>
+                <div>
+                  <p class="text-sm font-medium" style="color: var(--gg-text);">${escapeHtml(event.label)}</p>
+                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(event.description)}</p>
+                  ${event.date ? `<p class="text-xs text-crm-muted mt-1">${formatDate(event.date)}</p>` : ''}
+                </div>
+              </div>
+            `).join('');
+          }
+        }
 
-                  // Notifications feed
-                 const notificationsFeed = document.getElementById('notifications-feed');
-                 const unreadBadge = document.getElementById('unread-badge');
-                 if (unreadBadge && unreadCount > 0) {
-                   unreadBadge.textContent = String(unreadCount);
-                   unreadBadge.classList.remove('hidden');
-                  }
-                 if (notificationsFeed) {
-                   const recentNotifications = notifications.slice(0, 5);
-                   if (recentNotifications.length === 0) {
-                     notificationsFeed.innerHTML = '<p class="text-sm text-crm-muted">sin notificaciones recientes.</p>';
-                    } else {
-                      notificationsFeed.innerHTML = recentNotifications.map((n) => `
-                       <div class="flex items-start gap-3 ${n.read ? 'opacity-60' : ''}">
-                         <div class="w-2 h-2 mt-2 rounded-full" style="background: ${n.read ? 'var(--crm-muted)' : 'var(--crm-accent)'};"></div>
-                         <div>
-                           <p class="text-sm text-crm-text">${escapeHtml(n.title)}</p>
-                           <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(n.message)}</p>
-                           <p class="text-xs text-crm-muted mt-1">${formatDate(n.createdAt)}</p>
-                         </div>
-                       </div>
-                     `).join('');
-                    }
-                   }
-                } catch {
-                  if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-crm-danger">no se pudieron cargar tus trabajos.</td></tr>`;
-                  }
-                  const timelineEl = document.getElementById('client-timeline');
-                  if (timelineEl) timelineEl.innerHTML = '<p class="text-sm text-crm-danger">no se pudo cargar la actividad.</p>';
-                  const notificationsFeed = document.getElementById('notifications-feed');
-                  if (notificationsFeed) notificationsFeed.innerHTML = '<p class="text-sm text-crm-danger">no se pudieron cargar las notificaciones.</p>';
-                  const unreadBadge = document.getElementById('unread-badge');
-                  if (unreadBadge) unreadBadge.classList.add('hidden');
-                }
-           })();
-      </script>
+        // Notifications feed
+        const notificationsFeed = document.getElementById('notifications-feed');
+        const unreadBadge = document.getElementById('unread-badge');
+        if (unreadBadge && unreadCount > 0) { unreadBadge.textContent = String(unreadCount); unreadBadge.classList.remove('hidden'); }
+        if (notificationsFeed) {
+          const recent = notifications.slice(0, 5);
+          if (recent.length === 0) {
+            notificationsFeed.innerHTML = '<p class="text-sm text-crm-muted">Sin notificaciones recientes.</p>';
+          } else {
+            notificationsFeed.innerHTML = recent.map((n) => `
+              <div class="flex items-start gap-3 ${n.read ? 'opacity-60' : ''}">
+                <div class="w-2 h-2 mt-2 rounded-full flex-shrink-0" style="background: ${n.read ? 'var(--crm-muted)' : 'var(--crm-accent)'};"></div>
+                <div>
+                  <p class="text-sm font-medium" style="color: var(--gg-text);">${escapeHtml(n.title)}</p>
+                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(n.message)}</p>
+                  <p class="text-xs text-crm-muted mt-1">${formatDate(n.createdAt)}</p>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+
+      } catch {
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-crm-danger">No se pudieron cargar tus trabajos.</td></tr>`;
+        }
+        const timelineEl = document.getElementById('client-timeline');
+        if (timelineEl) timelineEl.innerHTML = '<p class="text-sm text-crm-danger">No se pudo cargar la actividad.</p>';
+        const notificationsFeed = document.getElementById('notifications-feed');
+        if (notificationsFeed) notificationsFeed.innerHTML = '<p class="text-sm text-crm-danger">No se pudieron cargar las notificaciones.</p>';
+      }
+    })();
+  </script>
 </ClientLayout>

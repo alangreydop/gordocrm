@@ -8,7 +8,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="crm-kicker">AI Engine</p>
-          <h1 class="mt-4 text-3xl font-black tracking-tight text-crm-text md:text-5xl">pipeline mappings</h1>
+          <h1 class="mt-4 text-3xl font-bold tracking-tight text-crm-text md:text-5xl">pipeline mappings</h1>
           <p class="crm-page-header__meta mt-4">
             Segmento × tipo × plataforma → pipeline_id. Se resuelve automáticamente al crear un trabajo.
           </p>
@@ -134,8 +134,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <td class="px-6 py-4">
               <span class="crm-badge crm-badge-default">${escapeHtml(m.clientSegment)}</span>
             </td>
-            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(m.jobType ?? '*')}</td>
-            <td class="px-6 py-4 text-crm-text-secondary">${escapeHtml(m.platform ?? '*')}</td>
+            <td class="px-6 py-4 text-crm-muted">${escapeHtml(m.jobType ?? '*')}</td>
+            <td class="px-6 py-4 text-crm-muted">${escapeHtml(m.platform ?? '*')}</td>
             <td class="px-6 py-4 font-mono text-crm-text">${escapeHtml(m.pipelineId)}</td>
             <td class="px-6 py-4">
               <span class="crm-badge ${(m.qaThreshold ?? 85) >= 85 ? 'crm-badge-success' : 'crm-badge-warning'}">${m.qaThreshold ?? 85}</span>
