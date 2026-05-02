@@ -8,10 +8,10 @@ const subscriptionOptions = [
 ];
 const datasetOptions = [
    ['pending_capture', 'Pendiente captura'],
-   ['captured', 'Capturado'],
-   ['trained', 'Entrenado'],
-   ['active', 'Activo'],
-   ['archived', 'Archivado'],
+   ['capture_ready', 'Listo para captura'],
+   ['capturing', 'Capturando'],
+   ['captured', 'ADN capturado'],
+   ['capture_failed', 'Captura fallida'],
 ];
 const segmentOptions = [
    ['rentable', 'Rentable'],
@@ -38,6 +38,7 @@ const marginOptions = [
             <div class="mt-4 flex flex-wrap gap-2">
               <span id="client-status" class="crm-badge crm-badge-default">—</span>
               <span id="client-dataset" class="crm-badge crm-badge-default">—</span>
+              <span id="client-brand-assets" class="crm-badge crm-badge-default">brand assets —</span>
             </div>
           </div>
           <div class="flex gap-3">
@@ -308,6 +309,7 @@ const marginOptions = [
        } = await import('../../../lib/api-client');
       const {
         datasetStatusClass,
+        datasetStatusLabel,
         jobStatusClass,
         stackLaneClass,
         subscriptionClass,
@@ -323,7 +325,8 @@ const marginOptions = [
       const emailEl = document.getElementById('client-email');
       const companyEl = document.getElementById('client-company');
       const statusEl = document.getElementById('client-status');
-      const datasetEl = document.getElementById('client-dataset');
+        const datasetEl = document.getElementById('client-dataset');
+        const brandAssetsEl = document.getElementById('client-brand-assets');
       const jobsHeading = document.getElementById('jobs-heading');
       const newJobLink = document.getElementById('new-job-link');
       const jobsBody = document.getElementById('client-jobs-body');
@@ -437,8 +440,20 @@ const marginOptions = [
          }
 
         if (datasetEl) {
-          datasetEl.textContent = `dataset ${client.datasetStatus ?? 'pending_capture'}`;
+          datasetEl.textContent = `ADN ${datasetStatusLabel(client.datasetStatus ?? 'pending_capture')}`;
           datasetEl.className = datasetStatusClass(client.datasetStatus ?? '');
+         }
+
+        if (brandAssetsEl) {
+          const readiness = client.brandReadiness;
+          const total = readiness?.totalAssets ?? 0;
+          const missing = Array.isArray(readiness?.missing) ? readiness.missing : [];
+          brandAssetsEl.textContent = missing.length === 0
+            ? `brand assets listos (${total})`
+            : `brand assets ${total}, faltan ${missing.join(', ')}`;
+          brandAssetsEl.className = missing.length === 0
+            ? 'crm-badge crm-badge-success'
+            : 'crm-badge crm-badge-warning';
          }
 
         if (newJobLink instanceof HTMLAnchorElement) {

@@ -14,6 +14,8 @@ export const siteLinks = {
   home: siteBase,
   portalHub: '/client',
   brief: '/client/brief-assistant',
+  newBrief: '/client/new-brief',
+  brandAssets: '/client/brand-assets',
   onboarding: '/client/onboarding',
   pricing: `${siteBase}/precios`,
   pricingInternal: '/client',

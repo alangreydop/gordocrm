@@ -5,9 +5,22 @@ export function jobStatusClass(status: string): string {
     {
       pending: 'crm-badge crm-badge-warning',
       processing: 'crm-badge crm-badge-info',
+      plan_generated: 'crm-badge crm-badge-info',
+      plan_rejected: 'crm-badge crm-badge-danger',
+      asset_factory_dispatched: 'crm-badge crm-badge-info',
+      asset_generated: 'crm-badge crm-badge-info',
+      qa_pending: 'crm-badge crm-badge-warning',
+      qa_evaluation: 'crm-badge crm-badge-warning',
+      qa_hitl_review: 'crm-badge crm-badge-warning',
+      approved: 'crm-badge crm-badge-success',
+      rejected: 'crm-badge crm-badge-danger',
+      delivery_ready: 'crm-badge crm-badge-accent',
+      crm_notified: 'crm-badge crm-badge-accent',
       completed: 'crm-badge crm-badge-success',
-      failed: 'crm-badge crm-badge-danger',
       delivered: 'crm-badge crm-badge-accent',
+      failed: 'crm-badge crm-badge-danger',
+      timeout: 'crm-badge crm-badge-danger',
+      cancelled: 'crm-badge crm-badge-default',
     }[status] ?? 'crm-badge crm-badge-default'
   );
 }
@@ -17,9 +30,22 @@ export function jobStatusLabel(status: string): string {
     {
       pending: 'Pendiente',
       processing: 'En proceso',
+      plan_generated: 'Plan generado',
+      plan_rejected: 'Plan rechazado',
+      asset_factory_dispatched: 'En fábrica de assets',
+      asset_generated: 'Asset generado',
+      qa_pending: 'QA pendiente',
+      qa_evaluation: 'QA evaluando',
+      qa_hitl_review: 'Revisión humana',
+      approved: 'Aprobado',
+      rejected: 'Rechazado',
+      delivery_ready: 'Listo para entrega',
+      crm_notified: 'CRM notificado',
       completed: 'Completado',
-      failed: 'Fallido',
       delivered: 'Entregado',
+      failed: 'Fallido',
+      timeout: 'Tiempo agotado',
+      cancelled: 'Cancelado',
     }[status] ?? status
   );
 }
@@ -48,10 +74,10 @@ export function datasetStatusClass(status: string): string {
   return (
     {
       pending_capture: 'crm-badge crm-badge-warning',
-      captured: 'crm-badge crm-badge-info',
-      trained: 'crm-badge crm-badge-accent',
-      active: 'crm-badge crm-badge-success',
-      archived: 'crm-badge crm-badge-default',
+      capture_ready: 'crm-badge crm-badge-info',
+      capturing: 'crm-badge crm-badge-accent',
+      captured: 'crm-badge crm-badge-success',
+      capture_failed: 'crm-badge crm-badge-danger',
     }[status] ?? 'crm-badge crm-badge-default'
   );
 }
@@ -60,10 +86,10 @@ export function datasetStatusLabel(status: string): string {
   return (
     {
       pending_capture: 'Pendiente captura',
-      captured: 'Capturado',
-      trained: 'Entrenado',
-      active: 'Activo',
-      archived: 'Archivado',
+      capture_ready: 'Listo para captura',
+      capturing: 'Capturando',
+      captured: 'ADN capturado',
+      capture_failed: 'Captura fallida',
     }[status] ?? status
   );
 }

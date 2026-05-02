@@ -7,6 +7,8 @@
 /* ── Sidebar: tighten brand block, remove old eyebrow text ── */
 .crm-sidebar__brand {
   border-bottom: 1px solid var(--crm-sidebar-border);
+  text-align: center;
+  justify-items: center;
 }
 
 /* Logo in sidebar — sized to match brand hierarchy */
@@ -31,7 +33,8 @@
   line-height: 1.6;
   color: var(--crm-sidebar-text);
   max-width: 24ch;
-  margin: 0;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* Nav links — tighten padding, sharper letter-spacing */

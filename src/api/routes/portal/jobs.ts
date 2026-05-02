@@ -3,6 +3,8 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import { resolveClientBrandFolder } from '../../../lib/client-storage.js';
+import { ensureClientBrandFolder } from '../../../lib/client-storage-db.js';
 import { sendFeedbackConfirmationEmail, sendJobCompletionEmail } from '../../../lib/email.js';
 import { resolvePipelineId } from './pipeline-mappings.js';
 import type { AppContext, AppBindings } from '../../../types/index.js';
@@ -338,6 +340,12 @@ jobRoutes.get('/:id', async (c) => {
       stackSnapshot: schema.jobs.stackSnapshot,
       clientGoal: schema.jobs.clientGoal,
       internalNotes: schema.jobs.internalNotes,
+      externalJobId: schema.jobs.externalJobId,
+      deliveryUrl: schema.jobs.deliveryUrl,
+      startedAt: schema.jobs.startedAt,
+      completedAt: schema.jobs.completedAt,
+      failedAt: schema.jobs.failedAt,
+      failureReason: schema.jobs.failureReason,
       createdAt: schema.jobs.createdAt,
       updatedAt: schema.jobs.updatedAt,
     })
@@ -369,9 +377,14 @@ jobRoutes.get('/:id', async (c) => {
       label: schema.assets.label,
       type: schema.assets.type,
       r2Key: schema.assets.r2Key,
+      fileSize: schema.assets.fileSize,
       deliveryUrl: schema.assets.deliveryUrl,
       status: schema.assets.status,
+      metadata: schema.assets.metadata,
+      sku: schema.assets.sku,
+      category: schema.assets.category,
       createdAt: schema.assets.createdAt,
+      updatedAt: schema.assets.updatedAt,
     })
     .from(schema.assets)
     .where(
@@ -399,6 +412,11 @@ jobRoutes.get('/:id', async (c) => {
     dueAt: jobRow.dueAt,
     unitsPlanned: jobRow.unitsPlanned,
     unitsConsumed: jobRow.unitsConsumed,
+    deliveryUrl: jobRow.deliveryUrl,
+    startedAt: jobRow.startedAt,
+    completedAt: jobRow.completedAt,
+    failedAt: jobRow.failedAt,
+    failureReason: jobRow.failureReason,
     createdAt: jobRow.createdAt,
     updatedAt: jobRow.updatedAt,
   };
@@ -558,7 +576,7 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
       },
       external_job_id: job.id, // Referencia al CRM
     }),
-    redirect: 'error',
+    redirect: 'manual',
   });
 
   if (!response.ok) {
@@ -582,6 +600,89 @@ jobRoutes.post('/:id/execute-ai', async (c) => {
     ok: true,
     ai_job_id: aiJob.id,
     message: 'Job enviado a AI Engine para ejecución',
+  });
+});
+
+jobRoutes.post('/:id/approve-orchestrator', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  const id = c.req.param('id');
+  const db = c.get('db');
+
+  const [job] = await db
+    .select({
+      id: schema.jobs.id,
+      externalJobId: schema.jobs.externalJobId,
+      status: schema.jobs.status,
+    })
+    .from(schema.jobs)
+    .where(eq(schema.jobs.id, id))
+    .limit(1);
+
+  if (!job) {
+    return c.json({ error: 'Job not found' }, 404);
+  }
+
+  if (!job.externalJobId) {
+    return c.json({ error: 'Job is missing orchestrator id' }, 400);
+  }
+
+  if (job.status === 'completed' || job.status === 'delivered') {
+    return c.json({ error: 'Job has already completed production' }, 409);
+  }
+
+  const orchestratorBaseUrl = resolveOrchestratorBase(c.env);
+  const orchestratorAdminKey = c.env.ORCHESTRATOR_ADMIN_KEY;
+  if (!orchestratorBaseUrl || !orchestratorAdminKey) {
+    return c.json({ error: 'Orchestrator environment is not configured' }, 503);
+  }
+
+  const approveUrl = `${orchestratorBaseUrl}/api/jobs/${encodeURIComponent(job.externalJobId)}/approve`;
+  const response = await fetch(approveUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-admin-key': orchestratorAdminKey,
+    },
+    body: JSON.stringify({ source: 'crm', sourceRef: job.id }),
+    redirect: 'manual',
+  });
+
+  const responseBody = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = typeof responseBody === 'object' && responseBody !== null && 'error' in responseBody
+      ? String((responseBody as { error?: unknown }).error)
+      : `Orchestrator approval failed: ${response.status}`;
+    const status = response.status === 400
+      ? 400
+      : response.status === 404
+        ? 404
+        : response.status === 409
+          ? 409
+          : response.status === 503
+            ? 503
+            : 502;
+    return c.json({ error }, status);
+  }
+
+  await db
+    .update(schema.jobs)
+    .set({
+      status: 'processing',
+      startedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(schema.jobs.id, id));
+
+  const [updatedJob] = await db.select().from(schema.jobs).where(eq(schema.jobs.id, id)).limit(1);
+
+  return c.json({
+    ok: true,
+    job: updatedJob,
+    orchestrator: responseBody,
   });
 });
 
@@ -771,6 +872,8 @@ jobRoutes.patch('/:id/assets/:assetId', async (c) => {
       r2Key: body.data.r2Key ?? undefined,
       deliveryUrl: body.data.deliveryUrl ?? undefined,
       status: body.data.status ?? undefined,
+      metadata: body.data.metadata ?? undefined,
+      updatedAt: new Date(),
     })
     .where(eq(schema.assets.id, assetId));
 
@@ -886,6 +989,9 @@ jobRoutes.post('/create-from-brief', async (c) => {
       clientSegment: schema.clients.segment,
       marginProfile: schema.clients.marginProfile,
       externalClientId: schema.clients.externalClientId,
+      company: schema.clients.company,
+      clientNumber: schema.clients.clientNumber,
+      brandFolder: schema.clients.brandFolder,
       optimizedBrief: schema.briefSubmissions.optimizedBrief,
     })
     .from(schema.briefSubmissions)
@@ -946,6 +1052,15 @@ jobRoutes.post('/create-from-brief', async (c) => {
       const realSku = extractBriefSku(ob);
       const imageUrls = extractBriefImageUrls(ob);
       const aspectRatio = extractAspectRatio(ob);
+      const storageClient = await ensureClientBrandFolder(db, {
+        id: brief.clientId,
+        name: brief.clientName ?? brief.email,
+        company: brief.company ?? null,
+        clientNumber: brief.clientNumber ?? null,
+        brandFolder: brief.brandFolder ?? null,
+        externalClientId: brief.externalClientId ?? null,
+      });
+      const brandFolder = resolveClientBrandFolder(storageClient);
 
       const url = orchestratorBaseUrl + '/api/jobs';
       const orchestratorRes = await fetch(url, {
@@ -955,7 +1070,8 @@ jobRoutes.post('/create-from-brief', async (c) => {
           'x-admin-key': orchestratorAdminKey,
         },
         body: JSON.stringify({
-          brandId: brief.externalClientId ?? brief.clientId,
+          brandId: brandFolder,
+          brandFolder,
           sku: realSku,
           modality: mapBriefType(brief.contentType),
           prompt,
@@ -968,7 +1084,7 @@ jobRoutes.post('/create-from-brief', async (c) => {
           requiresHitl: true,
           priority: brief.marginProfile === 'alto' ? 1 : 0,
         }),
-        redirect: 'error',
+        redirect: 'manual',
       });
 
       if (orchestratorRes.ok) {
@@ -992,9 +1108,27 @@ jobRoutes.post('/create-from-brief', async (c) => {
       } else {
         const errBody = await orchestratorRes.text().catch(() => '');
         console.error('Orchestrator job creation failed [' + orchestratorRes.status + ']: ' + errBody);
+          await db
+             .update(schema.jobs)
+             .set({
+              status: 'failed',
+              failureReason: 'Orchestrator creation failed: ' + orchestratorRes.status + ' ' + errBody.slice(0, 200),
+              internalNotes: 'Trabajo creado desde brief ' + brief.id + '. Orchestrator fallo: ' + orchestratorRes.status + ' ' + errBody.slice(0, 200),
+              updatedAt: new Date(),
+             })
+             .where(eq(schema.jobs.id, jobId));
       }
     } catch (err) {
       console.error('Orchestrator job creation error:', err);
+        await db
+            .update(schema.jobs)
+            .set({
+            status: 'failed',
+            failureReason: 'Orchestrator error: ' + String(err).slice(0, 200),
+            internalNotes: 'Trabajo creado desde brief ' + brief.id + '. Orchestrator error: ' + String(err).slice(0, 200),
+            updatedAt: new Date(),
+            })
+            .where(eq(schema.jobs.id, jobId));
     }
   }
 
@@ -1027,3 +1161,46 @@ jobRoutes.post('/create-from-brief', async (c) => {
   }, 201);
 });
 
+// POST /:id/transition — Trigger orchestrator state transition
+jobRoutes.post('/:id/transition', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') {
+    return c.json({ error: 'Admin access required' }, 403);
+  }
+
+  const db = c.get('db');
+  const jobId = c.req.param('id');
+  const body = await c.req.json().catch(() => ({}));
+  const event = (body as { event?: string }).event;
+
+  if (!event) {
+    return c.json({ error: 'Missing required field: event' }, 400);
+  }
+
+  const validEvents: string[] = [
+    'brief_received', 'plan_approved', 'plan_rejected', 'retry_plan',
+    'plan_retry_exhausted', 'assets_generated', 'qa_requested',
+    'brand_graph_unavailable', 'qa_passed', 'qa_in_band', 'qa_failed',
+    'hitl_approved', 'hitl_rejected', 'delivery_confirmed', 'crm_notified',
+    'timeout', 'cancel',
+  ];
+
+  if (!validEvents.includes(event)) {
+    return c.json({ error: `Invalid event: ${event}. Valid events: ${validEvents.join(', ')}` }, 400);
+  }
+
+  const env: { ANTHROPIC_API_KEY?: string; ASSETS?: R2Bucket; AGENT_STORE?: R2Bucket } = {};
+  if (c.env.ANTHROPIC_API_KEY) env.ANTHROPIC_API_KEY = c.env.ANTHROPIC_API_KEY;
+  if (c.env.ASSETS) env.ASSETS = c.env.ASSETS;
+  if (c.env.AGENT_STORE) env.AGENT_STORE = c.env.AGENT_STORE;
+
+  const { transitionJob } = await import('../../../lib/orchestrator.js');
+
+  const result = await transitionJob(db, env, jobId, event as never);
+
+  if (!result.success) {
+    return c.json({ error: result.error }, 400);
+  }
+
+  return c.json({ success: true, newState: result.newState });
+});

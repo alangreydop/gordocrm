@@ -4,7 +4,24 @@ import { siteLinks } from '../../lib/site-links';
 ---
 
 <ClientLayout title="Resumen">
+  <script id="__brief-url" type="application/json" set:html={JSON.stringify(siteLinks.newBrief)} />
+  <script id="__onboarding-url" type="application/json" set:html={JSON.stringify(siteLinks.onboarding)} />
+  <script id="__jobs-url" type="application/json" set:html={JSON.stringify('/client/jobs')} />
   <div class="space-y-6" role="region" aria-label="Contenido principal">
+
+    <!-- Brand assets readiness alert -->
+    <div id="brand-readiness-alert" class="hidden crm-alert crm-alert-warning">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <h3 class="text-sm font-semibold" style="color: var(--gg-text);">Brand assets incompletos</h3>
+          <p id="brand-readiness-text" class="text-xs text-crm-muted mt-1">Faltan activos de marca necesarios para producción.</p>
+          <a href="/client/brand-assets" class="text-xs font-medium mt-1 inline-block" style="color: var(--gg-accent);">Subir brand assets →</a>
+        </div>
+      </div>
+    </div>
 
     <!-- Review alert -->
     <div id="review-alert" class="hidden crm-alert crm-alert-warning">
@@ -89,7 +106,7 @@ import { siteLinks } from '../../lib/site-links';
           </span>
         </div>
         <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-          <a id="next-step-link" href={siteLinks.brief} class="crm-button crm-button-primary">
+          <a id="next-step-link" href={siteLinks.newBrief} class="crm-button crm-button-primary">
             Abrir siguiente paso
           </a>
           <a href="/client/jobs" class="crm-button crm-button-secondary">
@@ -113,7 +130,7 @@ import { siteLinks } from '../../lib/site-links';
           </p>
         </div>
         <div class="mt-4 grid gap-3">
-          <a href={siteLinks.brief} class="crm-link-tile">
+          <a href={siteLinks.newBrief} class="crm-link-tile">
             <p class="text-sm font-semibold" style="color: var(--gg-text);">Brief de proyecto</p>
             <p class="mt-1 text-sm text-crm-muted">Comparte referencias, producto, tono y necesidades nuevas.</p>
           </a>
@@ -204,7 +221,10 @@ import { siteLinks } from '../../lib/site-links';
 
   </div>
 
-  <script define:vars={{ briefUrl: siteLinks.brief, onboardingUrl: siteLinks.onboarding, jobsUrl: '/client/jobs' }}>
+  <script>
+    const __briefUrl = JSON.parse(document.getElementById('__brief-url')?.textContent ?? '""');
+    const __onboardingUrl = JSON.parse(document.getElementById('__onboarding-url')?.textContent ?? '""');
+    const __jobsUrl = JSON.parse(document.getElementById('__jobs-url')?.textContent ?? '"/client/jobs"');
     (async () => {
       const {
         api,
@@ -216,6 +236,7 @@ import { siteLinks } from '../../lib/site-links';
       const {
         datasetStatusClass,
         jobStatusClass,
+        jobStatusLabel,
         subscriptionClass,
       } = await import('../../lib/ui-helpers');
 
@@ -227,28 +248,40 @@ import { siteLinks } from '../../lib/site-links';
       const latestBriefMeta = document.getElementById('latest-brief-meta');
       const latestBriefDescription = document.getElementById('latest-brief-description');
 
-      const nextStepForClient = (client, jobs) => {
-        const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
-        const datasetStatus = client?.datasetStatus ?? 'pending_capture';
-        const activationCompleted = Boolean(client?.onboardingCompletedAt);
+     const nextStepForClient = (client, jobs, brandReady) => {
+       const activeJobs = jobs.filter((job) => ['pending', 'processing'].includes(job.status));
+       const datasetStatus = client?.datasetStatus ?? 'pending_capture';
+       const activationCompleted = Boolean(client?.onboardingCompletedAt);
+
+        // Onboarding first: without activation, production can't start
+        if (!activationCompleted) {
+          return {
+            badge: 'Activación',
+            title: 'Confirma la activación para que el equipo pueda arrancar.',
+            description: 'Necesitamos confirmar tu preparación, foco inicial y disponibilidad antes de entrar en producción. Toma 2 minutos.',
+            href: __onboardingUrl,
+            label: 'Confirmar activación',
+          };
+        }
+
+        // Brand assets before brief
+        if (!brandReady) {
+          return {
+            badge: 'Preparación',
+            title: 'Completa tus brand assets antes de crear un brief.',
+            description: 'Necesitamos tu logo, paleta de colores y manual de identidad para poder producir contenido alineado con tu marca.',
+            href: '/client/brand-assets',
+            label: 'Subir brand assets',
+          };
+        }
 
         if (datasetStatus === 'pending_capture') {
           return {
             badge: 'Preparación',
             title: 'Completa el brief para acelerar la sesión.',
             description: 'Aún estamos en fase de captura inicial. Cuanto mejor contexto nos dejes en tu cuenta, mejor saldrá la preparación del proyecto y la primera sesión.',
-            href: briefUrl,
+            href: __briefUrl,
             label: 'Completar brief',
-          };
-        }
-
-        if (datasetStatus === 'captured' && !activationCompleted) {
-          return {
-            badge: 'Activación',
-            title: 'Confirma la activación antes de arrancar la primera sesión.',
-            description: 'Ya tenemos la captura encaminada. Ahora necesitamos disponibilidad, foco inicial y bloqueos reales para arrancar sin fricción.',
-            href: onboardingUrl,
-            label: 'Confirmar activación',
           };
         }
 
@@ -261,7 +294,7 @@ import { siteLinks } from '../../lib/site-links';
             description: activationCompleted
               ? 'La activación ya está confirmada. Si quieres arrancar una nueva línea de trabajo, el brief es la puerta correcta.'
               : 'Si quieres arrancar un nuevo trabajo o abrir una nueva línea de contenido, el brief es la mejor puerta de entrada para alinear necesidades.',
-            href: briefUrl,
+            href: __briefUrl,
             label: 'Actualizar brief',
           };
         }
@@ -270,7 +303,7 @@ import { siteLinks } from '../../lib/site-links';
           badge: 'Seguimiento',
           title: 'Tu operación ya está en marcha.',
           description: 'Usa el portal para seguir entregables y mantennos alineados desde el brief cuando necesites sumar contexto, referencias o nuevos objetivos.',
-          href: jobsUrl,
+          href: __jobsUrl,
           label: 'Ver trabajos',
         };
       };
@@ -281,22 +314,15 @@ import { siteLinks } from '../../lib/site-links';
       };
 
       try {
-        const [session, jobsData, briefData, activitiesData, notificationsData, assetsData] = await Promise.all([
-          getSessionContext(),
-          api('/api/portal/jobs'),
-          api('/api/portal/briefs/latest').catch(() => ({ brief: null })),
-          api('/api/portal/client/activities').catch(() => ({ activities: [] })),
-          api('/api/portal/notifications').catch(() => ({ notifications: [], unreadCount: 0 })),
-          api('/api/portal/assets').catch(() => ({ assets: [] })),
-        ]);
-
-        const client = session?.client;
-        const jobs = Array.isArray(jobsData.jobs) ? jobsData.jobs : [];
-        const latestBrief = briefData?.brief ?? null;
-        const activities = Array.isArray(activitiesData.activities) ? activitiesData.activities : [];
-        const notifications = Array.isArray(notificationsData.notifications) ? notificationsData.notifications : [];
-        const unreadCount = notificationsData.unreadCount ?? 0;
-        const assets = Array.isArray(assetsData.assets) ? assetsData.assets : [];
+        const cockpit = await api('/api/portal/dashboard/client').catch(() => null);
+        const client = cockpit?.client ?? null;
+        const jobs = Array.isArray(cockpit?.jobs) ? cockpit.jobs : [];
+        const latestBrief = cockpit?.latestBrief ?? null;
+        const activities = Array.isArray(cockpit?.activities) ? cockpit.activities : [];
+        const notifications = Array.isArray(cockpit?.notifications) ? cockpit.notifications : [];
+        const unreadCount = cockpit?.unreadCount ?? 0;
+        const assetCount = cockpit?.assetCount ?? 0;
+        const readinessData = cockpit?.brandReadiness ?? { ready: true, missing: [] };
 
         if (client) {
           const heading = document.getElementById('client-heading');
@@ -326,6 +352,17 @@ import { siteLinks } from '../../lib/site-links';
 
           setText('metric-capacity', `Capacidad mensual: ${formatNumber(client.monthlyUnitCapacity ?? 0)} unidades`);
 
+          const brandAlert = document.getElementById('brand-readiness-alert');
+          const brandAlertText = document.getElementById('brand-readiness-text');
+          if (brandAlert && brandAlertText && readinessData && !readinessData.ready && Array.isArray(readinessData.missing) && readinessData.missing.length > 0) {
+            const missingLabels = readinessData.missing.map((t) => {
+              const map = { logo: 'logo', palette: 'paleta de colores', identity_manual: 'manual de identidad', font_file: 'fuentes tipográficas', iconography: 'iconografía' };
+              return map[t] || t;
+            });
+            brandAlert.classList.remove('hidden');
+            brandAlertText.textContent = `Faltan: ${missingLabels.join(', ')}. Súbelos antes de crear un brief.`;
+          }
+
           const reviewAlert = document.getElementById('review-alert');
           const reviewAlertText = document.getElementById('review-alert-text');
           if (reviewAlert && reviewAlertText && client.nextReviewAt) {
@@ -345,7 +382,7 @@ import { siteLinks } from '../../lib/site-links';
           }
         }
 
-        const nextStep = nextStepForClient(client, jobs);
+        const nextStep = nextStepForClient(client, jobs, readinessData?.ready ?? true);
         if (nextStepTitle) nextStepTitle.textContent = nextStep.title;
         if (nextStepDescription) nextStepDescription.textContent = nextStep.description;
         if (nextStepBadge) nextStepBadge.textContent = nextStep.badge;
@@ -355,7 +392,7 @@ import { siteLinks } from '../../lib/site-links';
         }
 
         if (latestBriefMeta && latestBriefDescription && latestBrief) {
-          latestBriefMeta.textContent = `${latestBrief.tipo ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)}`;
+          latestBriefMeta.textContent = `${latestBrief.contentType ?? 'brief'} · recibido ${formatDate(latestBrief.createdAt)}`;
           const excerpt = String(latestBrief.description ?? '').trim();
           latestBriefDescription.textContent = excerpt.length > 180 ? `${excerpt.slice(0, 177)}...` : excerpt || 'Brief recibido correctamente.';
         }
@@ -366,7 +403,7 @@ import { siteLinks } from '../../lib/site-links';
         const planned = jobs.reduce((total, job) => total + Number(job.unitsPlanned ?? 0), 0);
         const consumed = jobs.reduce((total, job) => total + Number(job.unitsConsumed ?? 0), 0);
         setText('metric-units', `${formatNumber(consumed)} / ${formatNumber(planned)}`);
-        setText('metric-assets', String(assets.length));
+        setText('metric-assets', String(assetCount));
 
         if (tbody) {
           if (jobs.length === 0) {
@@ -380,7 +417,7 @@ import { siteLinks } from '../../lib/site-links';
                 </td>
                 <td class="px-6 py-4">
                   <span class="inline-flex px-2 py-1 rounded text-xs font-medium ${jobStatusClass(job.status ?? '')}">
-                    ${escapeHtml(job.status ?? 'pending')}
+                    ${escapeHtml(jobStatusLabel(job.status ?? 'pending'))}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-crm-muted">${escapeHtml(formatDate(job.dueAt))}</td>
@@ -408,13 +445,13 @@ import { siteLinks } from '../../lib/site-links';
           }
 
           if (latestBrief) {
-            timelineEvents.push({ label: 'Brief recibido', description: latestBrief.tipo ?? 'Brief de proyecto', date: latestBrief.createdAt, color: 'var(--crm-success)', done: true });
+            timelineEvents.push({ label: 'Brief recibido', description: latestBrief.contentType ?? 'Brief de proyecto', date: latestBrief.createdAt, color: 'var(--crm-success)', done: true });
           }
 
           jobs.forEach((job) => {
             timelineEvents.push({
               label: job.briefText?.slice(0, 40) || 'Trabajo',
-              description: `Estado: ${job.status ?? 'pending'} · ${job.platform ?? 'Sin plataforma'}`,
+              description: `Estado: ${jobStatusLabel(job.status ?? 'pending')} · ${job.platform ?? 'Sin plataforma'}`,
               date: job.updatedAt,
               color: job.status === 'delivered' ? 'var(--crm-success)' : job.status === 'completed' ? 'var(--crm-info)' : 'var(--crm-accent)',
               done: ['completed', 'delivered'].includes(job.status),

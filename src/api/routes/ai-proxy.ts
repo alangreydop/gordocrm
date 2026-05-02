@@ -5,7 +5,7 @@
  * Forward del JWT del CRM para auth unificada.
  */
 
-import { Hono } from 'hono';
+import { Hono, MiddlewareHandler } from 'hono';
 import type { AppContext } from '../../types/index.js';
 import { requireAuth } from '../../lib/auth.js';
 
@@ -91,6 +91,13 @@ function resolveAIEngineBase(env: AppContext['Bindings']): string | undefined {
   return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
 }
 
+// Admin-only gate for mutation routes
+const requireAdmin: MiddlewareHandler<AppContext> = async (c, next) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') return c.json({ error: 'Admin access required' }, 403);
+  return next();
+};
+
 // Proxy para pipelines
 aiProxyRoutes.get('/pipelines', requireAuth, async (c) => {
   const token = c.get('aiEngineToken') as string;
@@ -105,7 +112,7 @@ aiProxyRoutes.get('/pipelines', requireAuth, async (c) => {
   return c.json(data);
 });
 
-aiProxyRoutes.post('/pipelines', requireAuth, async (c) => {
+aiProxyRoutes.post('/pipelines', requireAuth, requireAdmin, async (c) => {
   const token = c.get('aiEngineToken') as string;
   const aiEngineBase = c.get('aiEngineBase') as string;
   const body = await c.req.json();
@@ -156,7 +163,7 @@ aiProxyRoutes.get('/jobs', requireAuth, async (c) => {
   return c.json(data);
 });
 
-aiProxyRoutes.post('/jobs', requireAuth, async (c) => {
+aiProxyRoutes.post('/jobs', requireAuth, requireAdmin, async (c) => {
   const token = c.get('aiEngineToken') as string;
   const aiEngineBase = c.get('aiEngineBase') as string;
   const body = await c.req.json();
@@ -189,7 +196,7 @@ aiProxyRoutes.get('/jobs/:id', requireAuth, async (c) => {
 });
 
 // Proxy para approvals
-aiProxyRoutes.post('/approvals/:id/decide', requireAuth, async (c) => {
+aiProxyRoutes.post('/approvals/:id/decide', requireAuth, requireAdmin, async (c) => {
   const token = c.get('aiEngineToken') as string;
   const aiEngineBase = c.get('aiEngineBase') as string;
   const id = c.req.param('id');

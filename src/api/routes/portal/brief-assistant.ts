@@ -190,11 +190,25 @@ assistant.post('/submit', async (c) => {
         chatHistory: null,
         status: 'new',
         source: 'client-portal-form',
-        sourcePage: '/client/brief-assistant',
+        sourcePage: '/client/new-brief',
         createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .returning({ id: briefSubmissions.id });
+       updatedAt: new Date(),
+     })
+     .returning({ id: briefSubmissions.id });
+
+    // Log client activity for new brief
+    try {
+      await db.insert(schema.clientActivities).values({
+        id: crypto.randomUUID(),
+        clientId: client.id,
+        type: 'brief_submitted',
+        content: `Brief recibido: ${summary ? summary.slice(0, 80) : 'Brief estructurado desde portal'}`,
+        metadata: JSON.stringify({ briefId: inserted?.id, source: 'client-portal-form' }),
+        createdAt: new Date(),
+      });
+    } catch (e) {
+      console.error('[BriefAssistant] Failed to log activity:', e);
+    }
 
     return c.json({
       ok: true,
@@ -276,11 +290,25 @@ assistant.post('/chat', async (c) => {
           chatHistory: JSON.stringify(fullHistory),
           status: 'new',
           source: 'ai-assistant',
-          sourcePage: '/client/brief-assistant',
+          sourcePage: '/client/new-brief',
           createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning({ id: briefSubmissions.id });
+         updatedAt: new Date(),
+       })
+       .returning({ id: briefSubmissions.id });
+
+      // Log client activity for chat brief
+      try {
+        await db.insert(schema.clientActivities).values({
+          id: crypto.randomUUID(),
+          clientId: client.id,
+          type: 'brief_submitted',
+          content: `Brief conversacional recibido: ${summary ? summary.slice(0, 80) : 'Brief desde asistente'}`,
+          metadata: JSON.stringify({ briefId: inserted?.id, source: 'ai-assistant' }),
+          createdAt: new Date(),
+        });
+      } catch (e) {
+        console.error('[BriefAssistant] Failed to log activity:', e);
+      }
 
       return c.json({
         message:

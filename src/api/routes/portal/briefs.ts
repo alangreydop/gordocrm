@@ -3,6 +3,8 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import { resolveClientBrandFolder } from '../../../lib/client-storage.js';
+import { ensureClientBrandFolder } from '../../../lib/client-storage-db.js';
 import type { AppContext } from '../../../types/index.js';
 import {
   buildPromptFromBrief,
@@ -314,10 +316,23 @@ briefRoutes.post('/:id/create-job', async (c) => {
   if (orchestratorBaseUrl && orchestratorAdminKey) {
     try {
       const [clientRow] = await db
-        .select({ externalClientId: schema.clients.externalClientId })
+        .select({
+          id: schema.clients.id,
+          name: schema.clients.name,
+          company: schema.clients.company,
+          clientNumber: schema.clients.clientNumber,
+          brandFolder: schema.clients.brandFolder,
+          externalClientId: schema.clients.externalClientId,
+        })
         .from(schema.clients)
         .where(eq(schema.clients.id, brief.clientId))
         .limit(1);
+      const storageClient = clientRow
+        ? await ensureClientBrandFolder(db, clientRow)
+        : null;
+      const brandFolder = storageClient
+        ? resolveClientBrandFolder(storageClient)
+        : brief.clientId;
 
       const modality = mapBriefTypeToJobType(brief.tipo ?? 'foto') || 'image';
       const ob = parseOptimizedBrief(brief.optimizedBrief);
@@ -334,7 +349,8 @@ briefRoutes.post('/:id/create-job', async (c) => {
           'x-admin-key': orchestratorAdminKey,
         },
         body: JSON.stringify({
-          brandId: clientRow?.externalClientId ?? brief.clientId,
+          brandId: brandFolder,
+          brandFolder,
           sku: realSku,
           modality,
           prompt,
@@ -347,7 +363,7 @@ briefRoutes.post('/:id/create-job', async (c) => {
           requiresHitl: true,
           priority: brief.marginProfile === 'alto' ? 1 : 0,
         }),
-        redirect: 'error',
+        redirect: 'manual',
       });
 
       if (orchestratorRes.ok) {
@@ -371,9 +387,27 @@ briefRoutes.post('/:id/create-job', async (c) => {
       } else {
         const errBody = await orchestratorRes.text().catch(() => '');
         console.error(`Orchestrator job creation failed [${orchestratorRes.status}]: ${errBody}`);
+          await db
+             .update(schema.jobs)
+             .set({
+              status: 'failed',
+              failureReason: 'Orchestrator creation failed: ' + orchestratorRes.status + ' ' + errBody.slice(0, 200),
+              internalNotes: 'Trabajo creado desde brief ' + brief.id + '. Orchestrator fallo: ' + orchestratorRes.status + ' ' + errBody.slice(0, 200),
+              updatedAt: new Date(),
+             })
+             .where(eq(schema.jobs.id, jobId));
       }
     } catch (err) {
       console.error('Orchestrator job creation error:', err);
+        await db
+            .update(schema.jobs)
+            .set({
+            status: 'failed',
+            failureReason: 'Orchestrator error: ' + String(err).slice(0, 200),
+            internalNotes: 'Trabajo creado desde brief ' + brief.id + '. Orchestrator error: ' + String(err).slice(0, 200),
+            updatedAt: new Date(),
+            })
+            .where(eq(schema.jobs.id, jobId));
     }
   }
 
@@ -405,4 +439,3 @@ briefRoutes.post('/:id/create-job', async (c) => {
     orchestratorRunId,
   }, 201);
 });
-

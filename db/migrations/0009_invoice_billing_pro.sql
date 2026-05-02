@@ -17,4 +17,4 @@ ALTER TABLE invoices ADD COLUMN billing_pro_url TEXT;
 -- This allows different clients to have the same Billing Pro sequence numbers.
 -- Note: column names in this table are camelCase as created by Drizzle.
 DROP INDEX IF EXISTS invoices_invoice_number_unique;
-CREATE UNIQUE INDEX IF NOT EXISTS invoices_client_number_unique ON invoices(clientId, invoiceNumber);
+CREATE UNIQUE INDEX IF NOT EXISTS invoices_client_number_unique ON invoices(client_id, invoice_number);

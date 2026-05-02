@@ -41,3 +41,4 @@ test_root_owned_backup/
 portal/dist-codex/
 portal/dist.root-owned/
 portal/src/components.root-owned-*/
+.astro/

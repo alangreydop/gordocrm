@@ -10,6 +10,10 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { schema } from '../../../../db/index.js';
 import { requireAuth } from '../../../lib/auth.js';
+import {
+  enqueueBrandDnaCaptureIfReady,
+  processPendingBrandCaptures,
+} from '../../../lib/brand-dna-capture.js';
 import type { AppContext } from '../../../types/index.js';
 
 const brandGraphSchema = z.object({
@@ -100,4 +104,27 @@ brandGraphRoutes.put('/clients/:id/brand-graph', async (c) => {
     .where(eq(schema.clients.id, clientId));
 
   return c.json({ ok: true, brandGraph: parsed.data.brandGraph });
+});
+
+// POST /api/portal/brand-graphs/clients/:id/capture
+brandGraphRoutes.post('/clients/:id/capture', async (c) => {
+  const user = c.get('user');
+  if (user.role !== 'admin') return c.json({ error: 'Admin access required' }, 403);
+
+  const clientId = c.req.param('id');
+  const db = c.get('db');
+
+  const [client] = await db
+    .select({ id: schema.clients.id })
+    .from(schema.clients)
+    .where(eq(schema.clients.id, clientId))
+    .limit(1);
+
+  if (!client) return c.json({ error: 'Client not found' }, 404);
+
+  const capture = await enqueueBrandDnaCaptureIfReady(db, clientId);
+  if (capture.enqueued) {
+    c.executionCtx.waitUntil(processPendingBrandCaptures(db, c.env, 1));
+  }
+  return c.json({ ok: true, capture });
 });

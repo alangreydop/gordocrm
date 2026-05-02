@@ -208,3 +208,213 @@ export function numberInputValue(value: unknown): string {
 export function getQueryParam(name: string): string | null {
   return new URLSearchParams(window.location.search).get(name);
 }
+
+// ── Brief, Job & Upload Types ──
+
+export interface BriefData {
+  contentType?: string;
+  objective?: string;
+  usageContext?: string;
+  style?: string;
+  audience?: string;
+  cta?: string;
+  description?: string;
+  brandId?: string;
+  sku?: string;
+  aspectRatio?: string;
+  modality?: string;
+  productImageUrls?: string[];
+}
+
+export interface BriefResponse {
+  ok: boolean;
+  briefId: string | null;
+  message?: string;
+}
+
+export interface JobResponse {
+  ok: boolean;
+  job: {
+    id: string;
+    clientId: string;
+    status: string;
+    briefText: string | null;
+    type: string | null;
+    turnaround: string | null;
+    createdAt: string;
+  };
+  brief?: {
+    id: string;
+    status: string;
+    clientId: string;
+    clientName: string | null;
+  };
+}
+
+export interface UploadResponse {
+  asset: {
+    id: string;
+    jobId: string;
+    clientId: string;
+    label: string;
+    type: string;
+    r2Key: string;
+    deliveryUrl: string;
+    fileSize: number;
+    status: string;
+    sku: string | null;
+    category: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  deliveryUrl: string;
+  storagePath: string;
+  category: string;
+  limits: {
+    filesUsed: number;
+    filesMax: number;
+    storageUsed: number;
+    storageMax: number;
+  };
+}
+
+export interface BrandAsset {
+  id: string;
+  jobId: string;
+  label: string;
+  type: string;
+  deliveryUrl: string;
+  status: string;
+  sku: string | null;
+  category: string | null;
+  createdAt: string;
+}
+
+export interface BrandAssetsResponse {
+  assets: BrandAsset[];
+}
+
+// ── Brief ──
+
+export async function createBrief(data: BriefData): Promise<BriefResponse> {
+  return api<BriefResponse>('/api/portal/brief/assistant/submit', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+// ── Job from Brief ──
+
+export async function createJobFromBrief(briefId: string): Promise<JobResponse> {
+  return api<JobResponse>(`/api/portal/briefs/${briefId}/create-job`, {
+    method: 'POST',
+  });
+}
+
+// ── File Upload ──
+
+export async function uploadFile(
+  jobId: string,
+  file: File,
+  options: {
+    sku: string;
+    category: 'inputs' | 'assets';
+    asset_type?: 'logo' | 'typography' | 'font_file' | 'palette' | 'identity_manual' | 'iconography' | 'other';
+  },
+): Promise<UploadResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('category', options.category);
+  formData.append('sku', options.sku);
+  if (options.asset_type) {
+    formData.append('asset_type', options.asset_type);
+  }
+
+  const res = await fetch(`${API_BASE}/api/portal/upload/jobs/${jobId}/upload`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Upload error: ${res.status}`);
+  }
+
+  return res.json();
+}
+ 
+// ── Temporary Upload (pre-brief, no job required) ──
+
+export async function uploadTempFile(file: File): Promise<{ deliveryUrl: string; storagePath: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${API_BASE}/api/portal/upload/temp`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Upload error: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+// ── Brand Asset Upload (job-independent) ──
+
+export async function uploadBrandAsset(
+  file: File,
+  options: {
+    assetType: 'logo' | 'typography' | 'font_file' | 'palette' | 'identity_manual' | 'iconography' | 'other';
+    sku?: string;
+  },
+): Promise<UploadResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('asset_type', options.assetType);
+  if (options.sku) {
+    formData.append('sku', options.sku);
+  }
+
+  const res = await fetch(`${API_BASE}/api/portal/upload/brand-assets`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `Upload error: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+// ── Brand Assets ──
+
+export async function getBrandAssets(): Promise<BrandAssetsResponse> {
+  const data = await api<{ assets: BrandAsset[] }>('/api/portal/assets');
+  const brandAssets = data.assets.filter(
+    (a) => a.category === 'assets',
+  );
+  return { assets: brandAssets };
+}
+
+// ── Upload Quota ──
+
+export interface UploadQuota {
+  clientId: string;
+  filesUsed: number;
+  filesMax: number;
+  storageUsed: number;
+  storageMax: number;
+  storageRemaining: number;
+}
+
+export async function getUploadQuota(): Promise<UploadQuota> {
+  return api<UploadQuota>('/api/portal/upload/quota');
+}

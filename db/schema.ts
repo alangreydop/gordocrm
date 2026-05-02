@@ -49,6 +49,7 @@ export const clients = sqliteTable(
     leadSource: text('lead_source'),
     websiteUrl: text('website_url'),
     clientNumber: integer('client_number'),
+    brandFolder: text('brand_folder'), // Canonical R2 prefix for this client, e.g. puki_001
 
     // Campos fiscales (B2B)
     taxId: text('tax_id'), // CIF/NIF
@@ -71,6 +72,7 @@ export const clients = sqliteTable(
     index('idx_clients_next_review_at').on(table.nextReviewAt),
     index('idx_clients_tax_id').on(table.taxId),
     index('idx_clients_country').on(table.country),
+    uniqueIndex('idx_clients_brand_folder').on(table.brandFolder),
   ],
 );
 
@@ -129,7 +131,9 @@ export const jobs = sqliteTable(
     stackSnapshot: text('stack_snapshot'),
     clientGoal: text('client_goal'),
     internalNotes: text('internal_notes'),
-    deliveryUrl: text('deliveryUrl'),
+    retryCount: integer('retry_count').notNull().default(0),
+    qaRetryCount: integer('qa_retry_count').notNull().default(0),
+    deliveryUrl: text('delivery_url'),
     startedAt: integer('started_at', { mode: 'timestamp_ms' }),
     completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
     failedAt: integer('failed_at', { mode: 'timestamp_ms' }),
@@ -171,7 +175,7 @@ export const assets = sqliteTable(
     status: text('status').notNull().default('pending'), // pending, approved, rejected
     metadata: text('metadata'), // JSON string con metadata del asset
     sku: text('sku'), // Product SKU for brand-scoped folder structure
-    category: text('category'), // 'inputs' or 'brand-assets'
+    category: text('category'), // 'inputs' or 'assets'
 
     // The Vault - Semantic search fields
     description: text('description'), // AI-generated description
@@ -196,6 +200,35 @@ export const assets = sqliteTable(
     index('idx_assets_client_visible').on(table.clientVisible),
     index('idx_assets_created_at').on(table.createdAt),
     index('idx_assets_job_r2').on(table.jobId, table.r2Key),
+  ],
+);
+
+export const brandCaptureRuns = sqliteTable(
+  'brand_capture_runs',
+  {
+    id: text('id').primaryKey().$defaultFn(randomId),
+    clientId: text('client_id')
+      .notNull()
+      .references(() => clients.id),
+    triggerAssetId: text('trigger_asset_id').references(() => assets.id),
+    status: text('status').notNull().default('queued'),
+    sourceHash: text('source_hash'),
+    resultVersion: integer('result_version'),
+    snapshotR2Key: text('snapshot_r2_key'),
+    error: text('error'),
+    processingStartedAt: integer('processing_started_at', { mode: 'timestamp_ms' }),
+    completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(timestampNow),
+  },
+  (table) => [
+    check(
+      'brand_capture_runs_status_check',
+      sql`${table.status} IN ('queued', 'processing', 'completed', 'failed')`,
+    ),
+    index('idx_brand_capture_runs_client').on(table.clientId),
+    index('idx_brand_capture_runs_status').on(table.status),
+    index('idx_brand_capture_runs_source_hash').on(table.sourceHash),
   ],
 );
 

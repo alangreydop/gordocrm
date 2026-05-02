@@ -1,9 +1,12 @@
 import { Hono } from 'hono';
 import { eq, and, desc } from 'drizzle-orm';
 import { schema } from '../../../../db/index.js';
+import { requireAuth } from '../../../lib/auth.js';
 import type { AppContext } from '../../../types/index.js';
 
 const vault = new Hono<AppContext>();
+
+vault.use('*', requireAuth);
 
 const clients = schema.clients;
 const jobs = schema.jobs;
@@ -48,6 +51,7 @@ vault.get('/', async (c) => {
         dominantColors: schema.assets.dominantColors,
         createdAt: schema.assets.createdAt,
         jobTitle: schema.jobs.briefText,
+        sku: schema.assets.sku,
       })
       .from(schema.assets)
       .innerJoin(schema.jobs, eq(schema.assets.jobId, schema.jobs.id))
@@ -60,7 +64,30 @@ vault.get('/', async (c) => {
       )
       .orderBy(desc(schema.assets.createdAt));
 
-    return c.json({ assets: vaultAssets, total: vaultAssets.length });
+    // Group by SKU
+    const groups = new Map<string, typeof vaultAssets>();
+    const ungrouped: typeof vaultAssets = [];
+    for (const asset of vaultAssets) {
+      const key = asset.sku?.trim() || '';
+      if (!key) {
+        ungrouped.push(asset);
+      } else {
+        const existing = groups.get(key);
+        if (existing) {
+          existing.push(asset);
+        } else {
+          groups.set(key, [asset]);
+        }
+      }
+    }
+
+    const skuGroups = Array.from(groups.entries()).map(([sku, assets]) => ({
+      sku,
+      label: assets[0]?.label ? assets[0].label.split('_')[0] : sku,
+      assets,
+    }));
+
+    return c.json({ assets: vaultAssets, total: vaultAssets.length, groups: skuGroups, ungrouped });
   } catch (error) {
     console.error('[Vault] Error fetching assets:', error);
     return c.json({ error: 'Failed to fetch vault assets' }, 500);

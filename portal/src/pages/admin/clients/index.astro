@@ -75,12 +75,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     (async () => {
       const {
         api,
-        datasetStatusClass,
         escapeHtml,
         formatDate,
         formatNumber,
-        subscriptionClass,
       } = await import('../../../lib/api-client');
+      const {
+        datasetStatusClass,
+        subscriptionClass,
+      } = await import('../../../lib/ui-helpers');
 
       const tbody = document.getElementById('clients-body');
       const searchInput = document.getElementById('clients-search');

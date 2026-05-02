@@ -10,7 +10,9 @@ const { title } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
     { href: '/client', label: 'inicio' },
+    { href: '/client/new-brief', label: 'nuevo brief' },
     { href: '/client/jobs', label: 'trabajos' },
+    { href: '/client/brand-assets', label: 'identidad de marca' },
     { href: '/client/vault', label: 'vault' },
     { href: '/client/invoices', label: 'facturación' },
     { href: '/client/profile', label: 'cuenta' },
@@ -37,13 +39,13 @@ const navItems = [
         >
             <!-- Logo + brand -->
             <div class="crm-sidebar__brand" style="padding-bottom: 1.75rem; margin-bottom: 1.75rem;">
-                <a href="/client" aria-label="Grande&Gordo — Inicio">
+                <a href="/client" aria-label="Grande&Gordo — inicio">
                     <img
-                        src="https://logos.grandeandgordo.com/logoggblanco.png"
+                        src="/logo-blanco.png"
                         alt="Grande&Gordo"
                         width="160"
                         height="60"
-                        style="width: 30%; height: auto; display: block; margin: 0 auto 1.25rem;"
+                        style="width: min(72%, 190px); height: auto; object-fit: contain; display: block; margin: 0 auto 1.25rem;"
                         loading="eager"
                         decoding="async"
                     />
@@ -107,7 +109,7 @@ const navItems = [
                 <!-- Topbar -->
                 <div class="crm-topbar">
                     <div class="crm-topbar__context">
-                        <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="Abrir menú de navegación">
+                        <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="abrir menú de navegación">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
                         <div style="display: grid; gap: 2px;">
@@ -124,7 +126,7 @@ const navItems = [
                         <button
                             id="notifications-btn"
                             class="crm-topbar-button relative"
-                            aria-label="Notificaciones"
+                            aria-label="notificaciones"
                             aria-expanded="false"
                             aria-controls="notifications-dropdown"
                         >
@@ -134,7 +136,7 @@ const navItems = [
                             <span id="notifications-badge" class="absolute top-2 right-2 hidden h-2.5 w-2.5 rounded-full" style="background: var(--crm-accent);"></span>
                         </button>
 
-                        <div id="notifications-dropdown" class="crm-notification-dropdown hidden absolute right-0 mt-3 z-50" role="menu" aria-label="Notificaciones">
+                        <div id="notifications-dropdown" class="crm-notification-dropdown hidden absolute right-0 mt-3 z-50" role="menu" aria-label="notificaciones">
                             <div class="flex items-center justify-between px-5 py-4" style="border-bottom: 1px solid var(--crm-border);">
                                 <div>
                                     <p class="crm-kicker crm-kicker--accent">actividad</p>
@@ -189,10 +191,10 @@ const navItems = [
                 const diffMins = Math.floor(diffMs / 60000);
                 const diffHours = Math.floor(diffMins / 60);
                 const diffDays = Math.floor(diffHours / 24);
-                if (diffMins < 1) return 'Ahora mismo';
-                if (diffMins < 60) return `Hace ${diffMins}m`;
-                if (diffHours < 24) return `Hace ${diffHours}h`;
-                if (diffDays < 7) return `Hace ${diffDays}d`;
+                if (diffMins < 1) return 'ahora mismo';
+                if (diffMins < 60) return `hace ${diffMins}m`;
+                if (diffHours < 24) return `hace ${diffHours}h`;
+                if (diffDays < 7) return `hace ${diffDays}d`;
                 return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
             };
 
@@ -205,7 +207,7 @@ const navItems = [
 
             const loadNotifications = async () => {
                 try {
-                    const { api } = await import('../lib/api-client');
+                    const { api, escapeHtml } = await import('../lib/api-client');
                     const data = await api('/api/portal/notifications');
                     notificationsData = data.notifications || [];
 
@@ -278,12 +280,14 @@ const navItems = [
             if (breadcrumbs) {
                 const path = window.location.pathname;
                 const pages = {
-                    '/client/brief-assistant': { label: 'Brief', href: '/client/brief-assistant' },
-                    '/client/invoices': { label: 'Facturación', href: '/client/invoices' },
-                    '/client/profile': { label: 'Perfil', href: '/client/profile' },
-                    '/client/jobs': { label: 'Trabajos', href: '/client/jobs' },
-                    '/client/onboarding': { label: 'Onboarding', href: '/client/onboarding' },
-                    '/client/vault': { label: 'Vault', href: '/client/vault' },
+                    '/client/new-brief': { label: 'nuevo brief', href: '/client/new-brief' },
+                    '/client/brand-assets': { label: 'identidad de marca', href: '/client/brand-assets' },
+                    '/client/brief-assistant': { label: 'brief', href: '/client/brief-assistant' },
+                    '/client/invoices': { label: 'facturación', href: '/client/invoices' },
+                    '/client/profile': { label: 'cuenta', href: '/client/profile' },
+                    '/client/jobs': { label: 'trabajos', href: '/client/jobs' },
+                    '/client/onboarding': { label: 'onboarding', href: '/client/onboarding' },
+                    '/client/vault': { label: 'vault', href: '/client/vault' },
                 };
                 const currentPage = Object.entries(pages).find(([key]) => path.startsWith(key));
                 if (currentPage && (path !== '/client' && path !== '/client/')) {

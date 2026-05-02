@@ -32,13 +32,13 @@ const secondaryNavItems = [
 
         <aside id="main-sidebar" role="navigation" aria-label="Panel de control" class="crm-sidebar fixed z-40 flex h-full w-72 flex-col overflow-y-auto px-5 py-6 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:px-6 lg:py-8">
                 <div class="crm-sidebar__section crm-sidebar__brand" style="padding-bottom: 1.75rem; margin-bottom: 1.75rem;">
-                    <a href="/admin" aria-label="Grande&Gordo — Operaciones">
+                    <a href="/admin" aria-label="Grande&Gordo — operaciones">
                         <img
-                            src="https://logos.grandeandgordo.com/logoggblanco.png"
+                            src="/logo-blanco.png"
                             alt="Grande&Gordo"
                             width="160"
                             height="60"
-                            style="height: 32px; width: auto; margin-bottom: 1.25rem; display: block;"
+                            style="width: min(72%, 190px); height: auto; object-fit: contain; display: block; margin: 0 auto 1.25rem;"
                             loading="eager"
                             decoding="async"
                         />
@@ -123,7 +123,7 @@ const secondaryNavItems = [
                 <div class="crm-main-frame">
                     <div class="crm-topbar">
                         <div class="crm-topbar__context">
-                            <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="Abrir menú de navegación">
+                            <button id="sidebar-toggle" class="crm-topbar-button lg:hidden" aria-label="abrir menú de navegación">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                             </button>
                             <div class="grid gap-1">
@@ -162,7 +162,6 @@ const secondaryNavItems = [
             segment
                 .split('-')
                 .filter(Boolean)
-                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                 .join(' ');
 
         const topbarPath = document.getElementById('admin-topbar-path');
@@ -191,31 +190,31 @@ const secondaryNavItems = [
                     const data = await search(q);
                     let html = '';
                     if (data.clients.length > 0) {
-                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Clientes</div>';
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">clientes</div>';
                         for (const c of data.clients) {
                             html += `<a href="/admin/clients/detail?id=${encodeURIComponent(c.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(c.name)}</span>${c.company ? ` <span style="color: var(--crm-muted);">— ${escapeHtml(c.company)}</span>` : ''}</a>`;
                         }
                     }
                     if (data.briefs.length > 0) {
-                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Briefs</div>';
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">briefs</div>';
                         for (const b of data.briefs) {
                             html += `<a href="/admin/briefs" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(b.clientName ?? b.email)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(b.tipo)}</span></a>`;
                         }
                     }
                     if (data.jobs.length > 0) {
-                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Trabajos</div>';
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">trabajos</div>';
                         for (const j of data.jobs) {
                             html += `<a href="/admin/jobs/detail?id=${encodeURIComponent(j.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(j.briefText ?? '(sin brief)')}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(j.clientName)}</span></a>`;
                         }
                     }
                     if (data.invoices.length > 0) {
-                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">Facturas</div>';
+                        html += '<div class="px-4 py-2 text-[0.65rem] font-bold uppercase tracking-[0.2em]" style="color: var(--crm-muted); border-bottom: 1px solid var(--crm-border);">facturas</div>';
                         for (const invoice of data.invoices) {
                             html += `<a href="/admin/invoices/detail?id=${encodeURIComponent(invoice.id)}" class="block px-4 py-3 text-sm transition" style="color: var(--crm-text-secondary);"><span class="font-medium" style="color: var(--crm-text);">${escapeHtml(invoice.invoiceNumber)}</span> <span style="color: var(--crm-muted);">— ${escapeHtml(invoice.clientLegalName)}</span></a>`;
                         }
                     }
                     if (!html) {
-                        html = '<div class="px-4 py-3 text-sm" style="color: var(--crm-muted);">Sin resultados</div>';
+                        html = '<div class="px-4 py-3 text-sm" style="color: var(--crm-muted);">sin resultados</div>';
                     }
                     searchResults.innerHTML = html;
                     searchResults.classList.remove('hidden');

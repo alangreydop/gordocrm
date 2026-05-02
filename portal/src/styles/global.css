@@ -1083,6 +1083,8 @@ a, button, input, select, textarea {
 /* ── Sidebar brand block ── */
 .crm-sidebar__brand {
   border-bottom: 1px solid var(--crm-sidebar-border);
+  text-align: center;
+  justify-items: center;
 }
 
 .crm-sidebar__brand img {
@@ -1106,7 +1108,8 @@ a, button, input, select, textarea {
   line-height: 1.6;
   color: var(--crm-sidebar-text);
   max-width: 24ch;
-  margin: 0;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* ── Nav links ── */

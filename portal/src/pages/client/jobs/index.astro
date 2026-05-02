@@ -79,7 +79,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
         formatDate,
         formatNumber,
       } = await import('../../../lib/api-client');
-      const { jobStatusClass } = await import('../../../lib/ui-helpers');
+      const { jobStatusClass, jobStatusLabel } = await import('../../../lib/ui-helpers');
 
       const tbody = document.getElementById('jobs-body');
       const searchInput = document.getElementById('jobs-search');
@@ -158,7 +158,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
               <td class="px-6 py-4 text-crm-muted">${escapeHtml(job.type ?? '—')}</td>
               <td class="px-6 py-4">
                 <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium ${jobStatusClass(job.status ?? '')}">
-                  ${escapeHtml(job.status ?? 'pending')}
+                  ${escapeHtml(jobStatusLabel(job.status ?? 'pending'))}
                 </span>
               </td>
               <td class="px-6 py-4 text-crm-muted">

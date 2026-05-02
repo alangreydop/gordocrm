@@ -27,7 +27,8 @@ interface BrandGraph {
 
 /**
  * Score a single asset using Anthropic Claude vision.
- * Falls back to mock scores if ANTHROPIC_API_KEY is not configured.
+ * Fail-closed: throws if ANTHROPIC_API_KEY is not configured.
+ * Assets without QA scores remain 'pending' for human review.
  */
 export async function scoreAsset(params: {
   r2Key: string;
@@ -46,10 +47,10 @@ export async function scoreAsset(params: {
 
   const bytes = await object.arrayBuffer();
 
-  // If no API key, return mock scores (for development/testing)
+  // Fail-closed: no API key means no QA, which means no auto-approval.
+  // Assets without QA remain 'pending' until reviewed by a human.
   if (!anthropicApiKey) {
-    console.warn('[QA Engine] ANTHROPIC_API_KEY not configured, returning mock scores');
-    return generateMockScores(r2Key);
+    throw new Error('ANTHROPIC_API_KEY not configured — QA cannot run. Asset remains pending for human review.');
   }
 
   const base64Image = arrayBufferToBase64(bytes);
@@ -151,18 +152,4 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-function generateMockScores(r2Key: string): QaScores {
-  // Deterministic mock based on key hash
-  let hash = 0;
-  for (let i = 0; i < r2Key.length; i++) {
-    hash = ((hash << 5) - hash + r2Key.charCodeAt(i)) | 0;
-  }
-  const base = 60 + (Math.abs(hash) % 35);
-  return {
-    consistency: base,
-    composition: base + ((hash >> 8) % 10) - 5,
-    lighting: base + ((hash >> 16) % 10) - 5,
-    brandAlignment: base + ((hash >> 24) % 10) - 5,
-    overall: base,
-  };
-}
+// Mock scores removed — fail-closed: no API key means no QA, assets stay pending.

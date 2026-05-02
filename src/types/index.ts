@@ -5,10 +5,10 @@ export type UserRole = 'admin' | 'client';
 export type ClientSubscriptionStatus = 'active' | 'inactive' | 'cancelled';
 export type ClientDatasetStatus =
   | 'pending_capture'
+  | 'capture_ready'
+  | 'capturing'
   | 'captured'
-  | 'trained'
-  | 'active'
-  | 'archived';
+  | 'capture_failed';
 export type ClientSegment = 'rentable' | 'growth' | 'premium' | 'enterprise';
 export type MarginProfile = 'estrecho' | 'medio' | 'alto';
 export type JobStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'delivered';
@@ -50,7 +50,9 @@ export interface AppBindings {
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   AI_ENGINE_WEBHOOK_URL?: string;
+  AI_ENGINE_WEBHOOK_SECRET?: string;
   AI_ENGINE_JWT_SECRET?: string;
+  INVOICE_WEBHOOK_SECRET?: string;
   FAL_KEY?: string;
   OPENAI_API_KEY?: string;
   R2_ACCOUNT_ID?: string;
@@ -68,7 +70,11 @@ export interface AppBindings {
   ANTHROPIC_API_KEY?: string;
   CRON_SECRET?: string;
   PORTAL_URL?: string;
+  ORCHESTRATOR_BASE_URL?: string;
+  ORCHESTRATOR_ADMIN_KEY?: string;
   ASSETS?: R2Bucket;
+  BRANDS?: R2Bucket;
+  AGENT_STORE?: R2Bucket;
 }
 
 export interface AppVariables {

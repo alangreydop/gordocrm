@@ -12,17 +12,19 @@ import { siteLinks } from '../lib/site-links';
         <a href={siteLinks.home} class="login-back">grandeandgordo.com</a>
 
         <img
-          src="https://logos.grandeandgordo.com/logoggblanco.png"
+          src="/logo-blanco.png"
           alt="Grande&Gordo"
           width="160"
           height="60"
-          style="height: 30px; width: auto; display: block;"
+          style="width: min(58%, 220px); height: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem;"
           loading="eager"
           decoding="async"
         />
 
         <p class="crm-kicker crm-kicker--accent" style="margin-top: 0.25rem;">portal operativo</p>
-        <h1 class="login-title">entra en tu espacio de trabajo.</h1>
+        <h1 class="login-title">
+          entra en tu espacio de <em>trabajo.</em>
+        </h1>
         <p class="login-copy">
           brief, activación, entregables, vault y facturación viven aquí. Sin brochure. Sin ruido.
         </p>
@@ -49,7 +51,9 @@ import { siteLinks } from '../lib/site-links';
       <section class="login-panel">
         <div class="login-panel__head">
           <p class="crm-kicker">acceso</p>
-          <h2 class="login-panel__title">email y contraseña</h2>
+          <h2 class="login-panel__title">
+            email y <em>contraseña</em>
+          </h2>
           <p class="login-panel__copy">usa el usuario vinculado a tu cuenta del portal.</p>
         </div>
 
@@ -176,7 +180,9 @@ import { siteLinks } from '../lib/site-links';
       box-shadow: var(--shadow-strong);
       display: grid;
       align-content: start;
+      justify-items: center;
       gap: 1rem;
+      text-align: center;
     }
 
     .login-back {
@@ -185,6 +191,7 @@ import { siteLinks } from '../lib/site-links';
       color: rgba(255, 253, 253, 0.55);
       letter-spacing: 0.04em;
       transition: color var(--duration-fast) var(--ease-out);
+      justify-self: center;
     }
     .login-back:hover { color: var(--gg-text-white); }
 
@@ -192,8 +199,17 @@ import { siteLinks } from '../lib/site-links';
       font-size: clamp(2.3rem, 5vw, 4.5rem);
       line-height: 0.98;
       letter-spacing: -0.04em;
+      font-weight: 800;
       max-width: 9ch;
       color: var(--gg-text-white);
+      text-align: center;
+    }
+
+    .login-title em,
+    .login-panel__title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
     }
 
     .login-copy {
@@ -201,12 +217,14 @@ import { siteLinks } from '../lib/site-links';
       max-width: 34ch;
       line-height: 1.75;
       font-size: 0.9375rem;
+      text-align: center;
     }
 
     .login-notes {
       margin-top: auto;
       display: grid;
       border-top: 1px solid rgba(255, 255, 255, 0.12);
+      width: 100%;
     }
 
     .login-note {
@@ -216,6 +234,7 @@ import { siteLinks } from '../lib/site-links';
       padding: 1rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
       align-items: start;
+      text-align: center;
     }
     .login-note:last-child { border-bottom: 0; }
 

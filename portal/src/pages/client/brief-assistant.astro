@@ -323,6 +323,11 @@ import PageHeader from '../../components/PageHeader.astro';
         }
 
         applyLatestBrief(latestData?.brief ?? null);
+
+        // Pre-fill brandId from client company name if available
+        if (session.client.company && fields.brandId instanceof HTMLInputElement) {
+          fields.brandId.value = session.client.company.toLowerCase().replace(/\s+/g, "-");
+        }
       } catch (error) {
         console.error('Failed to load brief context', error);
       }

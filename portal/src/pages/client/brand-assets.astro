@@ -1,0 +1,462 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+---
+
+<ClientLayout title="Brand assets">
+  <div class="max-w-4xl mx-auto space-y-6" role="region" aria-label="Brand assets">
+    <PageHeader
+      kicker="identidad de marca"
+      title="Identidad de Marca"
+      description="Sube y gestiona los activos de tu marca: logo, tipografía, fuentes, paleta de colores, iconografía y manual de identidad."
+    />
+
+    <div id="upload-success" class="hidden crm-alert crm-alert-success" role="status" aria-live="polite"></div>
+    <div id="upload-error" class="hidden crm-alert crm-alert-danger" role="alert"></div>
+
+    <!-- Upload section -->
+    <section class="crm-panel">
+      <p class="crm-kicker crm-kicker--accent">subir activo</p>
+      <h2 class="mt-2 text-xl font-bold tracking-tight" style="letter-spacing: -0.03em; color: var(--gg-text);">añadir brand asset</h2>
+
+      <form id="upload-form" class="mt-5 space-y-5">
+        <div class="grid gap-5 md:grid-cols-2">
+          <div>
+            <label for="asset-type" class="brief-label">tipo de activo</label>
+            <select id="asset-type" class="crm-input w-full" required>
+              <option value="logo">Logo</option>
+              <option value="typography">Tipografía</option>
+              <option value="font_file">Fuente tipográfica</option>
+              <option value="palette">Paleta de colores</option>
+              <option value="identity_manual">Manual de identidad corporativa</option>
+              <option value="iconography">Iconografía / SVG</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+          <div>
+            <label for="asset-sku" class="brief-label">SKU / referencia</label>
+            <input id="asset-sku" type="text" maxlength="256" class="crm-input w-full" placeholder="Ej: brand-general" value="brand-general" />
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="brand-drop-zone" class="brief-dropzone">
+          <div class="brief-dropzone__inner">
+            <svg class="w-10 h-10" style="color: var(--gg-accent);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/>
+            </svg>
+            <p class="mt-3 text-sm font-medium" style="color: var(--gg-text);">Arrastra el archivo aquí o haz clic para seleccionar</p>
+            <p class="mt-1 text-xs text-crm-muted">JPG, PNG, WebP, SVG, PDF, fuentes (WOFF, WOFF2, TTF, OTF) · Máximo 20 MB</p>
+          </div>
+          <input id="brand-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml,application/pdf,font/woff,font/woff2,font/ttf,application/x-font-ttf,application/x-font-otf,application/font-woff,application/font-woff2" class="hidden" />
+        </div>
+
+        <div id="brand-file-preview" class="mt-3"></div>
+
+        <!-- Upload progress -->
+        <div id="brand-upload-progress" class="hidden">
+          <div class="flex items-center gap-3">
+            <div class="flex-1 h-2 rounded-full bg-[var(--gg-surface)] overflow-hidden">
+              <div id="brand-progress-bar" class="h-full rounded-full transition-all duration-300" style="width: 0%; background: var(--gg-accent);"></div>
+            </div>
+            <span id="brand-progress-text" class="text-xs text-crm-muted">0%</span>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" id="upload-btn" class="crm-button crm-button-primary" disabled>
+            <span id="upload-btn-text">Subir activo</span>
+            <span id="upload-btn-spinner" class="hidden">
+              <svg class="animate-spin w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+              Subiendo...
+            </span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Existing assets -->
+    <section class="crm-panel">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="crm-kicker">activos guardados</p>
+          <h2 class="mt-2 text-xl font-bold tracking-tight" style="letter-spacing: -0.03em; color: var(--gg-text);">tus brand assets</h2>
+        </div>
+        <div id="assets-count" class="inline-flex rounded-full border border-crm-border bg-crm-panel-soft px-3 py-1 text-xs font-medium text-crm-muted"></div>
+      </div>
+
+      <div id="assets-list" class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="col-span-full text-center py-8 text-crm-muted">Cargando assets...</div>
+      </div>
+    </section>
+
+    <!-- Quota -->
+    <section id="quota-section" class="crm-panel-soft p-4">
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-crm-muted">Almacenamiento utilizado</p>
+        <p id="quota-text" class="text-xs font-medium" style="color: var(--gg-text);">Calculando...</p>
+      </div>
+      <div class="mt-2 h-2 rounded-full bg-[var(--gg-surface)] overflow-hidden">
+        <div id="quota-bar" class="h-full rounded-full transition-all duration-500" style="width: 0%; background: var(--gg-accent);"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (async () => {
+      const { api, getSessionContext, uploadBrandAsset, getUploadQuota, escapeHtml, formatDate } = await import('../../lib/api-client');
+
+      // ── State ──
+      let selectedFile: File | null = null;
+
+      // ── DOM refs ──
+      const uploadForm = document.getElementById('upload-form') as HTMLFormElement;
+      const assetType = document.getElementById('asset-type') as HTMLSelectElement;
+      const assetSku = document.getElementById('asset-sku') as HTMLInputElement;
+      const dropZone = document.getElementById('brand-drop-zone');
+      const fileInput = document.getElementById('brand-file-input') as HTMLInputElement;
+      const filePreview = document.getElementById('brand-file-preview');
+      const progressContainer = document.getElementById('brand-upload-progress');
+      const progressBar = document.getElementById('brand-progress-bar');
+      const progressText = document.getElementById('brand-progress-text');
+      const uploadBtn = document.getElementById('upload-btn') as HTMLButtonElement;
+      const uploadBtnText = document.getElementById('upload-btn-text');
+      const uploadBtnSpinner = document.getElementById('upload-btn-spinner');
+      const successBox = document.getElementById('upload-success');
+      const errorBox = document.getElementById('upload-error');
+      const assetsList = document.getElementById('assets-list');
+      const assetsCount = document.getElementById('assets-count');
+      const quotaText = document.getElementById('quota-text');
+      const quotaBar = document.getElementById('quota-bar');
+
+      const ASSET_TYPE_LABELS: Record<string, string> = {
+        logo: 'Logo',
+        typography: 'Tipografía',
+        font_file: 'Fuente tipográfica',
+        palette: 'Paleta de colores',
+        identity_manual: 'Manual de identidad',
+        iconography: 'Iconografía / SVG',
+        other: 'Otro',
+      };
+
+      const ASSET_TYPE_ICONS: Record<string, string> = {
+        logo: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+        typography: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 16V8m0 0h6m-6 0h3"/></svg>',
+        palette: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>',
+        identity_manual: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+        other: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>',
+        font_file: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>',
+        iconography: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>',
+      };
+
+      function extractAssetType(r2Key: string | null): string {
+        if (!r2Key) return 'other';
+        const parts = r2Key.split('/');
+        // Canonical format: {brand_folder}/brand/assets/{type}_{timestamp}_{filename}
+        const assetsIdx = parts.indexOf('assets');
+        if (assetsIdx !== -1 && assetsIdx + 1 < parts.length) {
+          const filename = parts[assetsIdx + 1];
+          const typePrefix = filename.split('_')[0];
+          // slugify converts underscores to hyphens, so normalize back
+          const normalized = typePrefix.replace(/-/g, '_');
+          return ASSET_TYPE_LABELS[normalized] ? normalized : 'other';
+        }
+        // Legacy format: {brand_folder}/{sku}/brand-assets/{type}_{timestamp}_{filename}
+        const brandAssetsIdx = parts.indexOf('brand-assets');
+        if (brandAssetsIdx !== -1 && brandAssetsIdx + 1 < parts.length) {
+          const filename = parts[brandAssetsIdx + 1];
+          const typePrefix = filename.split('_')[0];
+          const normalized = typePrefix.replace(/-/g, '_');
+          return ASSET_TYPE_LABELS[normalized] ? normalized : 'other';
+        }
+        return 'other';
+      }
+
+      function isCanonicalBrandAsset(asset: any): boolean {
+        return asset?.category === 'assets'
+          && typeof asset.r2Key === 'string'
+          && asset.r2Key.includes('/brand/assets/');
+      }
+
+      function isPreviewableImage(asset: any): boolean {
+        const key = String(asset?.r2Key ?? '').toLowerCase();
+        const url = String(asset?.deliveryUrl ?? '').toLowerCase();
+        return /\.(svg|png|jpe?g|webp|gif|avif)(?:$|\?)/.test(key)
+          || /\.(svg|png|jpe?g|webp|gif|avif)(?:$|\?)/.test(url);
+      }
+
+      // ── Load client data ──
+      async function loadContext() {
+        try {
+          const ctx = await getSessionContext();
+          if (!ctx?.client) return;
+        } catch {
+          // Continue
+        }
+      }
+
+      // ── File selection ──
+      function setSelectedFile(file: File | null) {
+        selectedFile = file;
+        uploadBtn.disabled = !file;
+
+        if (filePreview) {
+          if (!file) {
+            filePreview.innerHTML = '';
+            return;
+          }
+
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+          if (file.type.startsWith('image/')) {
+            const url = URL.createObjectURL(file);
+            filePreview.innerHTML = `
+              <div class="flex items-center gap-3 p-3 rounded-xl border border-crm-border bg-crm-panel-soft">
+                <img src="${url}" alt="${escapeHtml(file.name)}" class="w-12 h-12 rounded-lg object-cover" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium truncate" style="color: var(--gg-text);">${escapeHtml(file.name)}</p>
+                  <p class="text-xs text-crm-muted">${sizeMB} MB · ${ASSET_TYPE_LABELS[assetType.value] || 'Activo'}</p>
+                </div>
+                <button type="button" id="remove-brand-file" class="text-crm-muted hover:text-crm-danger transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            `;
+            document.getElementById('remove-brand-file')?.addEventListener('click', () => {
+              setSelectedFile(null);
+            });
+          } else {
+            filePreview.innerHTML = `
+              <div class="flex items-center gap-3 p-3 rounded-xl border border-crm-border bg-crm-panel-soft">
+                <div class="w-12 h-12 rounded-lg bg-crm-panel-soft flex items-center justify-center" style="color: var(--gg-accent);">
+                  ${ASSET_TYPE_ICONS[assetType.value] || ASSET_TYPE_ICONS.other}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium truncate" style="color: var(--gg-text);">${escapeHtml(file.name)}</p>
+                  <p class="text-xs text-crm-muted">${sizeMB} MB · ${ASSET_TYPE_LABELS[assetType.value] || 'Activo'}</p>
+                </div>
+                <button type="button" id="remove-brand-file" class="text-crm-muted hover:text-crm-danger transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            `;
+            document.getElementById('remove-brand-file')?.addEventListener('click', () => {
+              setSelectedFile(null);
+            });
+          }
+        }
+      }
+
+      dropZone?.addEventListener('click', () => fileInput?.click());
+      fileInput?.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files[0]) {
+          setSelectedFile(fileInput.files[0]);
+        }
+        fileInput.value = '';
+      });
+
+      dropZone?.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('brief-dropzone--over');
+      });
+      dropZone?.addEventListener('dragleave', () => {
+        dropZone.classList.remove('brief-dropzone--over');
+      });
+      dropZone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('brief-dropzone--over');
+        if (e.dataTransfer?.files && e.dataTransfer.files[0]) {
+          setSelectedFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      // ── Upload ──
+      uploadForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!selectedFile) return;
+
+        uploadBtnText?.classList.add('hidden');
+        uploadBtnSpinner?.classList.remove('hidden');
+        if (errorBox) errorBox.classList.add('hidden');
+        if (successBox) successBox.classList.add('hidden');
+
+        if (progressContainer) progressContainer.classList.remove('hidden');
+
+        try {
+          const result = await uploadBrandAsset(selectedFile, {
+            sku: assetSku.value.trim() || 'brand-general',
+            assetType: assetType.value as 'logo' | 'typography' | 'font_file' | 'palette' | 'identity_manual' | 'iconography' | 'other',
+          });
+
+          if (successBox) {
+            successBox.textContent = `Activo "${selectedFile.name}" subido correctamente.`;
+            successBox.classList.remove('hidden');
+          }
+
+          setSelectedFile(null);
+          loadAssets();
+        } catch (err) {
+          if (errorBox) {
+            errorBox.textContent = err instanceof Error ? err.message : 'Error al subir el activo.';
+            errorBox.classList.remove('hidden');
+          }
+        } finally {
+          uploadBtnText?.classList.remove('hidden');
+          uploadBtnSpinner?.classList.add('hidden');
+          if (progressContainer) progressContainer.classList.add('hidden');
+        }
+      });
+
+      // ── Load assets ──
+      async function loadAssets() {
+        if (!assetsList) return;
+
+        try {
+          const data = await api<{ assets: any[] }>('/api/portal/assets');
+          const brandAssets = data.assets.filter(isCanonicalBrandAsset);
+
+          if (assetsCount) {
+            assetsCount.textContent = `${brandAssets.length} activo${brandAssets.length !== 1 ? 's' : ''}`;
+          }
+
+          if (brandAssets.length > 0) {
+            api('/api/portal/assets/brand-capture', { method: 'POST' }).catch(() => null);
+          }
+
+          if (brandAssets.length === 0) {
+            assetsList.innerHTML = `
+              <div class="col-span-full text-center py-8">
+                <div class="mx-auto w-12 h-12 rounded-full bg-crm-panel-soft flex items-center justify-center mb-3" style="color: var(--gg-accent);">
+                  ${ASSET_TYPE_ICONS.logo}
+                </div>
+                <p class="text-sm font-medium" style="color: var(--gg-text);">Sin brand assets todavía</p>
+                <p class="text-xs text-crm-muted mt-1">Sube tu logo, tipografía o manual de identidad para empezar.</p>
+              </div>
+            `;
+            return;
+          }
+
+          assetsList.innerHTML = brandAssets.map(asset => {
+            const typeLabel = ASSET_TYPE_LABELS[extractAssetType(asset.r2Key)] || ASSET_TYPE_LABELS['other'];
+            const isImage = isPreviewableImage(asset);
+            const sizeInfo = asset.fileSize ? `${(asset.fileSize / (1024 * 1024)).toFixed(1)} MB` : '';
+
+            return `
+              <div class="brand-asset-card">
+                <div class="brand-asset-card__visual">
+                  ${isImage && asset.deliveryUrl
+                    ? `<img src="${asset.deliveryUrl}" alt="${escapeHtml(asset.label)}" class="w-full h-full object-cover" loading="lazy" />`
+                    : `<div class="w-full h-full flex items-center justify-center" style="color: var(--gg-accent);">${ASSET_TYPE_ICONS[extractAssetType(asset.r2Key)] || ASSET_TYPE_ICONS.other}</div>`
+                  }
+                </div>
+                <div class="brand-asset-card__body">
+                  <p class="text-sm font-semibold truncate" style="color: var(--gg-text);">${escapeHtml(asset.label)}</p>
+                  <p class="text-xs text-crm-muted mt-0.5">${escapeHtml(typeLabel)}</p>
+                  <div class="flex items-center justify-between mt-2 pt-2 border-t border-crm-border">
+                    <span class="text-xs text-crm-muted">${formatDate(asset.createdAt)}</span>
+                    ${asset.deliveryUrl ? `<a href="${asset.deliveryUrl}" target="_blank" rel="noreferrer" class="text-xs font-semibold" style="color: var(--gg-accent);">Ver</a>` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } catch {
+          assetsList.innerHTML = `
+            <div class="col-span-full text-center py-8 text-crm-danger">
+              No se pudieron cargar los brand assets.
+            </div>
+          `;
+        }
+      }
+
+      // ── Load quota ──
+      async function loadQuota() {
+        if (!quotaText || !quotaBar) return;
+
+        try {
+          const quota = await getUploadQuota();
+          const usedMB = (quota.storageUsed / (1024 * 1024)).toFixed(1);
+          const maxMB = (quota.storageMax / (1024 * 1024)).toFixed(0);
+          const percent = Math.min(100, (quota.storageUsed / quota.storageMax) * 100);
+
+          quotaText.textContent = `${usedMB} MB de ${maxMB} MB`;
+          quotaBar.style.width = `${percent}%`;
+
+          if (percent > 80) {
+            quotaBar.style.background = 'var(--crm-danger)';
+          } else if (percent > 50) {
+            quotaBar.style.background = 'var(--crm-warning)';
+          }
+        } catch {
+          quotaText.textContent = 'No disponible';
+        }
+      }
+
+      // ── Initialize ──
+      await loadContext();
+      loadAssets();
+      loadQuota();
+    })();
+  </script>
+
+  <style>
+    .brief-label {
+      display: block;
+      margin-bottom: 0.55rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--crm-muted);
+      text-transform: lowercase;
+    }
+
+    .brief-dropzone {
+      position: relative;
+      border: 2px dashed var(--gg-border-strong);
+      border-radius: var(--radius-xl);
+      background: var(--gg-surface);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition:
+        border-color var(--duration-fast) var(--ease-out),
+        background var(--duration-fast) var(--ease-out);
+    }
+
+    .brief-dropzone:hover,
+    .brief-dropzone--over {
+      border-color: var(--gg-accent);
+      background: var(--gg-accent-soft);
+    }
+
+    .brief-dropzone__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .brand-asset-card {
+      border: 1px solid var(--gg-border);
+      border-radius: var(--radius-xl);
+      background: var(--gg-surface-strong);
+      overflow: hidden;
+      transition: border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+    }
+
+    .brand-asset-card:hover {
+      border-color: var(--gg-accent);
+      transform: translateY(-1px);
+    }
+
+    .brand-asset-card__visual {
+      aspect-ratio: 4/3;
+      background: var(--gg-surface);
+      overflow: hidden;
+    }
+
+    .brand-asset-card__body {
+      padding: 0.75rem 1rem;
+    }
+  </style>
+</ClientLayout>

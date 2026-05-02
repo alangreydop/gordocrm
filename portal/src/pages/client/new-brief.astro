@@ -1,0 +1,1091 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Nuevo brief">
+  <div class="brief-shell" role="region" aria-label="Crear nuevo brief de proyecto">
+    <header class="brief-header">
+      <p class="brief-eyebrow">Brief de proyecto</p>
+      <h1>Cuéntanos qué estás moviendo</h1>
+      <p class="brief-subhead">
+        Con un poco de contexto podemos entender bien el caso y preparar el siguiente paso sin ida y vuelta innecesaria.
+      </p>
+    </header>
+
+    <div class="brief-grid">
+      <aside class="brief-notes">
+        <div class="brief-notes__intro">
+          <p class="brief-notes__label">Cómo usamos esto</p>
+          <p>
+            No es un formulario burocrático. Es la forma de llegar al siguiente paso con una idea clara del producto y del trabajo.
+          </p>
+        </div>
+
+        <ol class="brief-rows">
+          <li class="brief-row">
+            <span class="brief-row__index">01</span>
+            <div class="brief-row__copy">
+              <h2>Contexto útil</h2>
+              <p>Producto, canales, timing y referencias. Lo mínimo para entender bien el caso.</p>
+            </div>
+          </li>
+          <li class="brief-row">
+            <span class="brief-row__index">02</span>
+            <div class="brief-row__copy">
+              <h2>Sin ida y vuelta absurda</h2>
+              <p>Si falta algo, lo pedimos después. El brief sirve para arrancar con claridad, no para frenarte.</p>
+            </div>
+          </li>
+          <li class="brief-row">
+            <span class="brief-row__index">03</span>
+            <div class="brief-row__copy">
+              <h2>Siguiente paso claro</h2>
+              <p>Revisamos el material y respondemos por email con el camino correcto.</p>
+            </div>
+          </li>
+        </ol>
+      </aside>
+
+      <div class="brief-panel">
+        <form id="brief-form" novalidate class="brief-form">
+          <div class="brief-field">
+            <label for="sku">
+              SKU / Referencia
+              <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="sku"
+              name="sku"
+              type="text"
+              required
+              maxlength="256"
+              placeholder="SKU-001"
+            />
+          </div>
+
+          <fieldset class="brief-field">
+            <legend>
+              ¿Qué necesitas producir?
+              <span aria-hidden="true">*</span>
+            </legend>
+            <div class="brief-options">
+              {[
+                { value: 'foto', label: 'Solo foto' },
+                { value: 'video', label: 'Solo vídeo' },
+                { value: 'ambos', label: 'Foto y vídeo' },
+              ].map((opt, i) => (
+                <label class="brief-option">
+                  <input type="radio" name="tipo" value={opt.value} required />
+                  <span class="brief-option__card">
+                    <small>{String(i + 1).padStart(2, '0')}</small>
+                    <strong>{opt.label}</strong>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset class="brief-field">
+            <legend>
+              Proporción
+              <span aria-hidden="true">*</span>
+            </legend>
+            <div class="brief-options">
+              {[
+                { value: '1:1', label: '1:1' },
+                { value: '16:9', label: '16:9' },
+                { value: '9:16', label: '9:16' },
+                { value: '4:5', label: '4:5' },
+                { value: '3:4', label: '3:4' },
+              ].map((opt, i) => (
+                <label class="brief-option">
+                  <input type="radio" name="aspectRatio" value={opt.value} required />
+                  <span class="brief-option__card">
+                    <small>{String(i + 1).padStart(2, '0')}</small>
+                    <strong>{opt.label}</strong>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset class="brief-field">
+            <legend>
+              Modalidad
+              <span aria-hidden="true">*</span>
+            </legend>
+            <div class="brief-options brief-options--2col">
+              {[
+                { value: 'image', label: 'Imagen' },
+                { value: 'video', label: 'Vídeo' },
+              ].map((opt, i) => (
+                <label class="brief-option">
+                  <input type="radio" name="modality" value={opt.value} required />
+                  <span class="brief-option__card">
+                    <small>{String(i + 1).padStart(2, '0')}</small>
+                    <strong>{opt.label}</strong>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div class="brief-field">
+            <label>
+              URLs de producto
+              <span aria-hidden="true">*</span>
+            </label>
+            <div id="url-list" class="brief-url-list">
+              <div class="brief-url-row">
+                <input
+                  type="url"
+                  name="productImageUrls"
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                  required
+                />
+              </div>
+            </div>
+            <button type="button" id="add-url-btn" class="brief-add-url">+ Añadir otro URL</button>
+            <p class="brief-help">Pega aquí los enlaces HTTPS de las imágenes del producto (mín 1, máx 10).</p>
+          </div>
+
+          <!-- Photo upload -->
+          <div class="brief-field">
+            <label>Fotos del producto</label>
+            <div id="drop-zone" class="brief-dropzone">
+              <div class="brief-dropzone__inner">
+                <svg class="brief-dropzone__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16V4m0 0L8 8m4-4l4 4M4 20h16"/>
+                </svg>
+                <p class="brief-dropzone__title">Arrastra las fotos aquí o haz clic para seleccionar</p>
+                <p class="brief-dropzone__hint">JPG, PNG, WebP · Máximo 5 archivos · 20 MB cada uno</p>
+              </div>
+              <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/jpg" multiple class="hidden" />
+            </div>
+            <div id="photo-previews" class="brief-photos"></div>
+          </div>
+
+          <div class="brief-field">
+            <label for="descripcion">
+              Contexto del proyecto
+              <span aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              required
+              rows="6"
+              maxlength="2000"
+              placeholder="Qué producto o marca es, qué piezas necesitas, para qué canales van, qué timing tenéis y cualquier referencia útil."
+            ></textarea>
+            <div class="brief-meta">
+              <p class="brief-help">Si tienes una referencia o una limitación importante, ponla aquí.</p>
+              <p id="char-count" class="brief-count">0 / 2000</p>
+            </div>
+          </div>
+
+          <!-- Optional advanced fields (collapsed by default) -->
+          <details class="brief-advanced">
+            <summary class="brief-advanced__toggle">+ Más detalles (opcional)</summary>
+            <div class="brief-advanced__body">
+              <div class="brief-field">
+                <label for="objective">Objetivo</label>
+                <textarea id="objective" name="objective" rows="3" maxlength="500" placeholder="Qué hay que conseguir con esta pieza o bloque de trabajo."></textarea>
+              </div>
+              <div class="brief-field">
+                <label for="usageContext">Canal o uso</label>
+                <textarea id="usageContext" name="usageContext" rows="3" maxlength="500" placeholder="Dónde va a vivir: PDP, Amazon, paid, redes, catálogo..."></textarea>
+              </div>
+              <div class="brief-field">
+                <label for="audience">Audiencia</label>
+                <input id="audience" name="audience" type="text" maxlength="300" placeholder="Ej: compradores Amazon, retail premium, paid social" />
+              </div>
+              <div class="brief-field">
+                <label for="style">Referencias, tono y límites</label>
+                <textarea id="style" name="style" rows="3" maxlength="600" placeholder="Estilo, referencias visuales, tono, lo que no debe pasar."></textarea>
+              </div>
+              <div class="brief-field">
+                <label for="cta">CTA o acción esperada</label>
+                <input id="cta" name="cta" type="text" maxlength="300" placeholder="Ej: ir a ficha, pedir muestra, clicar en campaña, guardar referencia" />
+              </div>
+            </div>
+          </details>
+
+          <div class="brief-actions">
+            <button type="submit" id="submit-btn" class="brief-submit">
+              <span id="btn-text">Enviar brief</span>
+              <svg id="btn-spinner" class="brief-spinner" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <div id="error-box" class="brief-message brief-message--error" hidden></div>
+
+        <div id="success-box" class="brief-message brief-message--success" hidden>
+          <p class="brief-message__eyebrow">Brief enviado</p>
+          <h2>Trabajo creado correctamente.</h2>
+          <p>Tu brief se ha enviado al equipo y el trabajo ya está en marcha. Puedes seguir el progreso desde tu panel.</p>
+          <div class="brief-success-links">
+            <a href="/client/jobs">Ver mis trabajos</a>
+            <button type="button" id="brief-another" class="brief-another-btn">Crear otro brief</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const { api, getSessionContext, createBrief, createJobFromBrief, uploadFile, uploadTempFile } = await import('../../lib/api-client');
+
+      // ── Load session ──
+      let brandId = '';
+      try {
+        const ctx = await getSessionContext();
+        if (!ctx?.client) {
+          window.location.href = '/login';
+          return;
+        }
+        if (ctx.client.company) {
+          brandId = ctx.client.company.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+        }
+      } catch {
+        window.location.href = '/login';
+        return;
+      }
+
+      // ── File state ──
+      let selectedFiles: File[] = [];
+      const MAX_FILES = 5;
+      const MAX_SIZE = 20 * 1024 * 1024;
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+      const MAX_URLS = 10;
+      const MAX_CHARS = 2000;
+
+      // ── DOM refs ──
+      const form = document.getElementById('brief-form') as HTMLFormElement;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const btnText = document.getElementById('btn-text') as HTMLElement;
+      const btnSpinner = document.getElementById('btn-spinner') as SVGElement;
+      const errorBox = document.getElementById('error-box') as HTMLElement;
+      const successBox = document.getElementById('success-box') as HTMLElement;
+      const descArea = document.getElementById('descripcion') as HTMLTextAreaElement;
+      const charCount = document.getElementById('char-count') as HTMLElement;
+      const urlList = document.getElementById('url-list') as HTMLElement;
+      const addUrlBtn = document.getElementById('add-url-btn') as HTMLButtonElement;
+      const dropZone = document.getElementById('drop-zone') as HTMLElement;
+      const fileInput = document.getElementById('file-input') as HTMLInputElement;
+      const photoPreviews = document.getElementById('photo-previews') as HTMLElement;
+      const anotherBtn = document.getElementById('brief-another') as HTMLButtonElement;
+
+      function setLoading(loading: boolean) {
+        submitBtn.disabled = loading;
+        btnText.textContent = loading ? 'Enviando...' : (btnText.dataset.idle || btnText.textContent);
+        btnSpinner.style.display = loading ? 'block' : 'none';
+      }
+
+      function showError(message: string) {
+        errorBox.textContent = message;
+        errorBox.hidden = false;
+        successBox.hidden = true;
+      }
+
+      function clearError() {
+        errorBox.hidden = true;
+        errorBox.textContent = '';
+      }
+
+      function showSuccess() {
+        successBox.hidden = false;
+        errorBox.hidden = true;
+        form.hidden = true;
+      }
+
+      // ── Char count ──
+      descArea.addEventListener('input', () => {
+        charCount.textContent = `${descArea.value.length} / ${MAX_CHARS}`;
+      });
+
+      // ── URL rows ──
+      function urlCount() {
+        return urlList.querySelectorAll('input[name="productImageUrls"]').length;
+      }
+
+      function updateAddBtn() {
+        addUrlBtn.disabled = urlCount() >= MAX_URLS;
+      }
+
+      addUrlBtn.addEventListener('click', () => {
+        if (urlCount() >= MAX_URLS) return;
+        const row = document.createElement('div');
+        row.className = 'brief-url-row';
+        const input = document.createElement('input');
+        input.type = 'url';
+        input.name = 'productImageUrls';
+        input.placeholder = 'https://ejemplo.com/imagen.jpg';
+        const rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'brief-url-remove';
+        rm.textContent = '×';
+        rm.setAttribute('aria-label', 'Eliminar URL');
+        rm.addEventListener('click', () => { row.remove(); updateAddBtn(); });
+        row.appendChild(input);
+        row.appendChild(rm);
+        urlList.appendChild(row);
+        updateAddBtn();
+      });
+
+      // ── Photo upload ──
+      function addFiles(files: FileList | File[]) {
+        for (const file of files) {
+          if (selectedFiles.length >= MAX_FILES) break;
+          if (!ALLOWED_TYPES.includes(file.type)) continue;
+          if (file.size > MAX_SIZE) continue;
+          if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) continue;
+          selectedFiles.push(file);
+        }
+        renderPreviews();
+      }
+
+      function removeFile(index: number) {
+        selectedFiles.splice(index, 1);
+        renderPreviews();
+      }
+
+      function renderPreviews() {
+        if (!photoPreviews) return;
+        if (selectedFiles.length === 0) {
+          photoPreviews.innerHTML = '';
+          return;
+        }
+        photoPreviews.innerHTML = selectedFiles.map((file, i) => {
+          const url = URL.createObjectURL(file);
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+          return `
+            <div class="brief-photo-card">
+              <div class="brief-photo-card__img">
+                <img src="${url}" alt="${file.name}" loading="lazy" />
+              </div>
+              <div class="brief-photo-card__info">
+                <p class="brief-photo-card__name">${file.name}</p>
+                <p class="brief-photo-card__size">${sizeMB} MB</p>
+              </div>
+              <button type="button" class="brief-photo-card__remove" data-remove="${i}" title="Eliminar">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+          `;
+        }).join('');
+        photoPreviews.querySelectorAll('[data-remove]').forEach(btn => {
+          btn.addEventListener('click', () => removeFile(Number((btn as HTMLElement).dataset.remove)));
+        });
+      }
+
+      dropZone?.addEventListener('click', () => fileInput?.click());
+      fileInput?.addEventListener('change', () => {
+        if (fileInput.files) addFiles(fileInput.files);
+        fileInput.value = '';
+      });
+      dropZone?.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('brief-dropzone--over'); });
+      dropZone?.addEventListener('dragleave', () => { dropZone.classList.remove('brief-dropzone--over'); });
+      dropZone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('brief-dropzone--over');
+        if (e.dataTransfer?.files) addFiles(e.dataTransfer.files);
+      });
+
+      // ── Validation ──
+      function getUrls(): string[] {
+        const inputs = urlList.querySelectorAll('input[name="productImageUrls"]');
+        return Array.from(inputs)
+          .map(inp => (inp instanceof HTMLInputElement ? inp.value.trim() : ''))
+          .filter(Boolean);
+      }
+
+      function validate(): boolean {
+        const sku = (document.getElementById('sku') as HTMLInputElement).value.trim();
+        if (!sku) { showError('Escribe el SKU o referencia del producto.'); return false; }
+
+        if (!(form as any).tipo.value) { showError('Selecciona qué necesitas producir.'); return false; }
+        if (!(form as any).aspectRatio.value) { showError('Selecciona la proporción.'); return false; }
+        if (!(form as any).modality.value) { showError('Selecciona la modalidad (imagen o vídeo).'); return false; }
+
+        const urls = getUrls();
+        if (urls.length === 0) { showError('Añade al menos una URL de imagen del producto.'); return false; }
+        for (const url of urls) {
+          if (!url.startsWith('https://')) { showError('Cada URL de imagen debe empezar con https://'); return false; }
+        }
+
+        if (!descArea.value.trim()) { showError('Cuéntanos al menos el contexto básico del proyecto.'); descArea.focus(); return false; }
+        if (descArea.value.length > MAX_CHARS) { showError('El contexto es demasiado largo (máx 2000 caracteres).'); return false; }
+
+        return true;
+      }
+
+      // ── Submit ──
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearError();
+        if (!validate()) return;
+
+        setLoading(true);
+        btnText.dataset.idle = btnText.dataset.idle || btnText.textContent;
+
+        try {
+          const sku = (document.getElementById('sku') as HTMLInputElement).value.trim();
+          const modality = (form as any).modality.value as string;
+          const contentType = (form as any).tipo.value as string;
+          const aspectRatio = (form as any).aspectRatio.value as string;
+          const description = descArea.value.trim();
+          const objective = (document.getElementById('objective') as HTMLTextAreaElement).value.trim();
+          const usageContext = (document.getElementById('usageContext') as HTMLTextAreaElement).value.trim();
+          const audience = (document.getElementById('audience') as HTMLInputElement).value.trim();
+          const style = (document.getElementById('style') as HTMLTextAreaElement).value.trim();
+          const cta = (document.getElementById('cta') as HTMLInputElement).value.trim();
+          let productImageUrls = getUrls();
+
+          // 1. Upload photos first (temp) so orchestrator gets the URLs
+          if (selectedFiles.length > 0) {
+            const uploadedUrls: string[] = [];
+            for (const file of selectedFiles) {
+              try {
+                const res = await uploadTempFile(file);
+                if (res.deliveryUrl) uploadedUrls.push(res.deliveryUrl);
+              } catch (uploadErr) {
+                console.error('Temp upload failed:', uploadErr);
+              }
+            }
+            productImageUrls = [...productImageUrls, ...uploadedUrls];
+          }
+
+          // 2. Create brief with all image URLs
+          const briefResult = await createBrief({
+            contentType,
+            objective,
+            usageContext,
+            style,
+            audience,
+            cta,
+            description,
+            brandId,
+            sku,
+            aspectRatio,
+            modality,
+            productImageUrls,
+          });
+
+          if (!briefResult.ok || !briefResult.briefId) {
+            throw new Error(briefResult.message || 'No se pudo crear el brief.');
+          }
+
+          // 3. Create job from brief (calls orchestrator server-side)
+          let jobId: string | null = null;
+          try {
+            const jobResult = await createJobFromBrief(briefResult.briefId);
+            if (jobResult.ok && jobResult.job) {
+              jobId = jobResult.job.id;
+            }
+          } catch {
+            // Job creation may fail — brief is still saved
+          }
+
+          showSuccess();
+        } catch (error) {
+          showError(error instanceof Error ? error.message : 'No hemos podido enviar el brief.');
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      // ── Create another ──
+      anotherBtn?.addEventListener('click', () => {
+        form.reset();
+        form.hidden = false;
+        selectedFiles = [];
+        renderPreviews();
+        successBox.hidden = true;
+        errorBox.hidden = true;
+        charCount.textContent = '0 / 2000';
+        // Reset URL rows to just 1
+        const rows = urlList.querySelectorAll('.brief-url-row');
+        rows.forEach((row, i) => { if (i > 0) row.remove(); });
+        const firstInput = urlList.querySelector('input[name="productImageUrls"]') as HTMLInputElement;
+        if (firstInput) firstInput.value = '';
+        updateAddBtn();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+  </script>
+
+  <style>
+    .brief-shell {
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+
+    .brief-header {
+      margin-bottom: 2rem;
+    }
+
+    .brief-eyebrow {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--gg-accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .brief-header h1 {
+      font-size: clamp(2rem, 3vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--gg-text);
+      line-height: 1.1;
+    }
+
+    .brief-subhead {
+      margin-top: 0.75rem;
+      font-size: 1.05rem;
+      color: var(--gg-text-muted);
+      max-width: 42rem;
+    }
+
+    .brief-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    /* ── Notes sidebar ── */
+    .brief-notes {
+      display: grid;
+      gap: 1.5rem;
+      padding-top: 1rem;
+    }
+
+    .brief-notes__intro {
+      display: grid;
+      gap: 0.5rem;
+      color: var(--gg-text-muted);
+    }
+
+    .brief-notes__label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gg-accent);
+    }
+
+    .brief-rows {
+      display: grid;
+      border-top: 1px solid var(--gg-border-strong);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .brief-row {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--gg-border);
+    }
+
+    .brief-row__index {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--gg-accent);
+    }
+
+    .brief-row__copy {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .brief-row__copy h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gg-text);
+    }
+
+    .brief-row__copy p {
+      color: var(--gg-text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* ── Form panel ── */
+    .brief-panel {
+      padding: clamp(1.5rem, 2vw, 2rem);
+      border: 1px solid var(--gg-border);
+      border-radius: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,248,251,0.98));
+      box-shadow: 0 1px 3px rgba(11,6,8,0.04), 0 8px 24px rgba(11,6,8,0.04);
+    }
+
+    .brief-form {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .brief-field {
+      display: grid;
+      gap: 0.5rem;
+      border-top: 1px solid var(--gg-border);
+      padding-top: 1.25rem;
+    }
+
+    .brief-field:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .brief-field label,
+    .brief-field legend {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--gg-text);
+    }
+
+    .brief-field span[aria-hidden='true'] {
+      color: var(--gg-accent);
+      margin-left: 0.15rem;
+    }
+
+    .brief-field input[type="text"],
+    .brief-field input[type="url"],
+    .brief-field textarea {
+      width: 100%;
+      padding: 0.85rem 0.9rem;
+      border: 1px solid var(--gg-border-strong);
+      border-radius: 0.6rem;
+      background: rgba(255,255,255,0.86);
+      color: var(--gg-text);
+      font-size: 0.92rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .brief-field input::placeholder,
+    .brief-field textarea::placeholder {
+      color: var(--gg-text-faint);
+    }
+
+    .brief-field input:focus,
+    .brief-field textarea:focus {
+      outline: 0;
+      border-color: var(--gg-accent);
+      box-shadow: 0 0 0 3px rgba(196,22,90,0.08);
+    }
+
+    .brief-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .brief-options--2col {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .brief-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .brief-option__card {
+      display: grid;
+      gap: 0.5rem;
+      min-height: 5rem;
+      padding: 0.85rem;
+      border: 1px solid var(--gg-border);
+      border-radius: 0.7rem;
+      background: rgba(255,255,255,0.8);
+      cursor: pointer;
+      transition: border-color 150ms ease, transform 150ms ease, background-color 150ms ease;
+    }
+
+    .brief-option__card small {
+      font-size: 1rem;
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-style: italic;
+      color: var(--gg-accent);
+    }
+
+    .brief-option__card strong {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--gg-text);
+    }
+
+    .brief-option input:checked + .brief-option__card,
+    .brief-option__card:hover {
+      border-color: var(--gg-accent);
+      background: rgba(247,214,227,0.42);
+    }
+
+    .brief-option input:checked + .brief-option__card {
+      transform: translateY(-1px);
+    }
+
+    .brief-help {
+      font-size: 0.78rem;
+      color: var(--gg-text-muted);
+    }
+
+    .brief-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    .brief-count {
+      font-size: 0.78rem;
+      color: var(--gg-text-muted);
+      white-space: nowrap;
+    }
+
+    /* ── URL list ── */
+    .brief-url-list {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .brief-url-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .brief-url-row input {
+      flex: 1;
+    }
+
+    .brief-url-remove {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gg-border-strong);
+      border-radius: 0.5rem;
+      background: rgba(255,255,255,0.8);
+      color: var(--gg-text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+
+    .brief-url-remove:hover {
+      border-color: #b42318;
+      color: #b42318;
+    }
+
+    .brief-add-url {
+      margin-top: 0.5rem;
+      padding: 0.55rem 1rem;
+      border: 1px dashed var(--gg-border-strong);
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--gg-accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 150ms ease, background-color 150ms ease;
+    }
+
+    .brief-add-url:hover {
+      border-color: var(--gg-accent);
+      background: rgba(196,22,90,0.04);
+    }
+
+    .brief-add-url:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ── Photo upload ── */
+    .brief-dropzone {
+      border: 2px dashed var(--gg-border-strong);
+      border-radius: 0.8rem;
+      background: var(--gg-surface);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease;
+    }
+
+    .brief-dropzone:hover,
+    .brief-dropzone--over {
+      border-color: var(--gg-accent);
+      background: var(--gg-accent-soft);
+    }
+
+    .brief-dropzone__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .brief-dropzone__icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      color: var(--gg-accent);
+    }
+
+    .brief-dropzone__title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--gg-text);
+    }
+
+    .brief-dropzone__hint {
+      font-size: 0.76rem;
+      color: var(--gg-text-muted);
+    }
+
+    .brief-photos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .brief-photo-card {
+      position: relative;
+      border-radius: 0.6rem;
+      overflow: hidden;
+      border: 1px solid var(--gg-border);
+      background: var(--gg-surface-strong);
+      transition: border-color 150ms ease;
+    }
+
+    .brief-photo-card:hover {
+      border-color: var(--gg-accent);
+    }
+
+    .brief-photo-card__img {
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--gg-surface);
+    }
+
+    .brief-photo-card__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brief-photo-card__info {
+      padding: 0.4rem 0.6rem;
+    }
+
+    .brief-photo-card__name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gg-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brief-photo-card__size {
+      font-size: 0.68rem;
+      color: var(--gg-text-muted);
+    }
+
+    .brief-photo-card__remove {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: rgba(11,6,8,0.7);
+      color: white;
+      border: 0;
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+
+    .brief-photo-card__remove:hover {
+      background: var(--gg-accent);
+    }
+
+    /* ── Advanced fields ── */
+    .brief-advanced {
+      border-top: 1px solid var(--gg-border);
+      padding-top: 0.5rem;
+    }
+
+    .brief-advanced__toggle {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gg-accent);
+      cursor: pointer;
+      padding: 0.5rem 0;
+      list-style: none;
+    }
+
+    .brief-advanced__toggle::-webkit-details-marker { display: none; }
+
+    .brief-advanced__body {
+      display: grid;
+      gap: 1.25rem;
+      padding-top: 0.75rem;
+    }
+
+    .brief-advanced__body .brief-field {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* ── Submit ── */
+    .brief-actions {
+      padding-top: 0.5rem;
+    }
+
+    .brief-submit {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 0;
+      border-radius: 0.6rem;
+      background: var(--gg-accent);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 150ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .brief-submit:hover {
+      background: var(--gg-accent-hover);
+    }
+
+    .brief-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .brief-spinner {
+      display: none;
+      width: 1.05rem;
+      height: 1.05rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .brief-message {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      border-radius: 0.7rem;
+      border: 1px solid var(--gg-border);
+    }
+
+    .brief-message[hidden] { display: none; }
+
+    .brief-message--error {
+      background: rgba(180,35,24,0.06);
+      border-color: rgba(180,35,24,0.18);
+      color: #8f241b;
+      font-size: 0.88rem;
+    }
+
+    .brief-message--success {
+      background: rgba(15,122,67,0.06);
+      border-color: rgba(15,122,67,0.16);
+    }
+
+    .brief-message__eyebrow {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-style: italic;
+      color: var(--gg-accent);
+    }
+
+    .brief-message--success h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--gg-text);
+    }
+
+    .brief-message--success p {
+      color: var(--gg-text-muted);
+      font-size: 0.92rem;
+    }
+
+    .brief-success-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      padding-top: 0.5rem;
+    }
+
+    .brief-success-links a {
+      color: var(--gg-accent);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .brief-another-btn {
+      background: none;
+      border: none;
+      color: var(--gg-accent);
+      font-size: 0.88rem;
+      font-weight: 400;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      padding: 0;
+    }
+
+    @media (max-width: 900px) {
+      .brief-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brief-options {
+        grid-template-columns: 1fr;
+      }
+
+      .brief-option__card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brief-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .brief-success-links {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</ClientLayout>
